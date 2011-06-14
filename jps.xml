@@ -1,0 +1,43 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+..\..\FrameXML\UI.xsd"> 
+	<Frame name="JPSFrame">
+		<Scripts>
+			<OnLoad> self.TimeSinceLastUpdate=0; </OnLoad>
+			<OnUpdate function="JPS_OnUpdate" />
+		</Scripts>
+	</Frame>
+
+	<Frame name="IconFrame" enableMouse="true" movable="true">
+		<Size><AbsDimension x="40" y="40"/></Size>
+		<Anchors><Anchor point="CENTER"/></Anchors>
+
+		<Scripts>
+			<OnMouseDown>
+				if button == "LeftButton" and not self.isMoving then
+				 self:StartMoving();
+				 self.isMoving = true;
+				end
+			 </OnMouseDown>
+			 <OnMouseUp>
+				if button == "LeftButton" and self.isMoving then
+				 self:StopMovingOrSizing();
+				 self.isMoving = false;
+				end
+			 </OnMouseUp>
+			 <OnHide>
+				if ( self.isMoving ) then
+				 self:StopMovingOrSizing();
+				 self.isMoving = false;
+				end
+			 </OnHide>
+		</Scripts>
+					
+		<Backdrop bgFile="Interface\Icons\Spell_Nature_Starfall"
+			edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<TileSize><AbsValue val="41"/></TileSize>
+			<EdgeSize><AbsValue val="13"/></EdgeSize>
+		</Backdrop>
+	</Frame>
+</Ui> 

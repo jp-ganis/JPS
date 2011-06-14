@@ -1,0 +1,29 @@
+## Interface: 40000
+## Title: Jp DPS Addon
+## Notes: Protect your LUA.
+## SavedVariables: jps.Panther, jps.Enabled
+## Dependencies:
+jps.lua
+jps.xml 
+jpdata.lua
+
+Rotations\druid_balance.lua
+Rotations\druid_feral.lua
+Rotations\druid_feral_cat.lua
+Rotations\druid_feral_bear.lua
+Rotations\druid_resto.lua
+Rotations\dk_blood.lua
+Rotations\shaman_enhancement.lua
+Rotations\shaman_elemental.lua
+Rotations\paladin_protadin.lua
+Rotations\paladin_ret.lua
+Rotations\mage_fire.lua
+Rotations\mage_arcane.lua
+Rotations\warlock_destro.lua
+Rotations\warlock_demo.lua
+Rotations\warlock_affliction.lua
+Rotations\warrior_fury.lua
+Rotations\warrior_prot.lua
+Rotations\hunter_bm.lua
+Rotations\hunter_mm.lua
+
