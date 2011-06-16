@@ -77,7 +77,7 @@ function jps.should_kick(unit)
 
   if target_spell and not unInterruptable then
     endTime = endTime - GetTime()*1000
-	if jps.PVPInterrupt = true then
+	if jps.PVPInterrupt == true then
 	    if endTime < 500+jps.Lag then
 	      return true
 	    end 
