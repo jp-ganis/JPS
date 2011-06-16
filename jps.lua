@@ -25,6 +25,7 @@ jps.IconSpell = nil
 jps.Havoc = false
 jps.Opening = true
 jps.Panther = false
+jps.PetHeal = false
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
@@ -127,6 +128,9 @@ function SlashCmdList.jps(msg, editbox)
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
 		print("Debug mode set to",jps.Debug)
+	elseif msg == "peth" then
+		jps.PetHeal = not jps.PetHeal
+		print("Pet heal set to",jps.PetHeal)
 	elseif msg == "multi" or msg == "multitarget" then
 		jps.MultiTarget = not jps.MultiTarget
 		print("MultiTarget mode set to",jps.MultiTarget)
@@ -192,7 +196,7 @@ function combat(self)
 	-- Rotations
 	jps.Rotations = { 
 		["Druid"] = { ["Feral"] = druid_feral, ["Balance"] = druid_balance, ["Restoration"] = druid_resto },
-		["Death Knight"] = { ["Blood"] = dk_blood },
+		["Death Knight"] = { ["Blood"] = dk_blood, ["Frost"] = dk_frost  },
 		["Shaman"] = { ["Enhancement"] = shaman_enhancement, ["Elemental"] = shaman_elemental },
 		["Paladin"] = { ["Protection"] = paladin_protadin, ["Retribution"] = paladin_ret },
 		["Warlock"] = { ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo, ["Affliction"] = warlock_affliction},
