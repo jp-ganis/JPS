@@ -94,6 +94,9 @@ function combatEventHandler(self, event, ...)
 		jps.Error = ...
 		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
 			jps.Cast("mangle(cat form)")
+                elseif jps.Error == "Target needs to be in front of you." then
+			jps.UpdateInterval = 1
+			TurnLeftStart(GetTime()*1000 + 1000)
 		end
 	-- RaidStatus Update
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
