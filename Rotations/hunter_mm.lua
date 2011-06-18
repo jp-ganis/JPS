@@ -10,7 +10,8 @@ function hunter_mm(self)
    local chim_ready,chim_timeleft,_ = GetSpellCooldown("Chimera Shot");
 
 	-- Interupting, Borrowed directly from feral cat
-	if jps.Interrupts and jps.should_kick("target") and cd("Silencing Shot") == 0 
+	if jps.Interrupts and jps.should_kick("target") and cd("Silencing Shot") == 0 then
+		print("Silencing Target")
 		return "Silencing Shot"
 	end
 
@@ -26,8 +27,10 @@ function hunter_mm(self)
       spell = "Serpent Sting"
    elseif cd("Chimera Shot") <= 0.4 and up("player") >= 44 then
       spell = "Chimera Shot"
-   elseif jps.UseCDs and cd("Rapid Fire") == 0 and not ub("player","rapid fire")then
+   elseif jps.UseCDs and cd("Rapid Fire") == 0 and not ub("player","rapid fire") then
       spell = "Rapid Fire"
+   elseif jps.UseCDs and jps.Lifeblood and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
+	  spell = "Lifeblood"
    elseif jps.UseCDs and cd("Rapid Fire") > 0 and (raf_timeleft-(GetTime()-raf_ready)>=120) and not ub("player","rapid fire") and cd("readiness") == 0 then
       spell = "Readiness"
    elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.8 and up("player") > 50 and (chim_timeleft-(GetTime()-chim_ready)>=3)then

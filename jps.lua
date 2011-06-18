@@ -3,13 +3,13 @@ jps = {}
 jps.Version = "0.9.1"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
-jps.Enabled = false
+jps.Enabled = true
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
 jps.Interrupts = true
 jps.PVPInterrupt = true
-jps.UseCDs = false
+jps.UseCDs = true
 jps.MultiTarget = false
 jps.Debug = false
 -- Utility
@@ -24,9 +24,9 @@ jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
 jps.Havoc = false
-jps.Opening = true
+jps.Opening = false
 jps.Panther = false
-jps.PetHeal = false
+jps.PetHeal = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
@@ -203,10 +203,10 @@ function combat(self)
 		["Death Knight"] = { ["Blood"] = dk_blood, ["Frost"] = dk_frost  },
 		["Shaman"] = { ["Enhancement"] = shaman_enhancement, ["Elemental"] = shaman_elemental },
 		["Paladin"] = { ["Protection"] = paladin_protadin, ["Retribution"] = paladin_ret },
-		["Warlock"] = { ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo, ["Affliction"] = warlock_affliction},
-		["Hunter"] = { ["Marksmanship"] = hunter_mm, ["Beast Mastery"] = hunter_bm },
+		["Warlock"] = { ["Affliction"] = warlock_affl, ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo },
+		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm },
 		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane },
-		["Warrior"] = { ["Fury"] = warrior_fury, ["Protection"] = warrior_prot },
+		["Warrior"] = { ["Fury"] = warrior_fury },
 		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_shadow }
 	}
 	-- Check for the Rotation
