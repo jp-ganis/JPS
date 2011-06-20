@@ -25,12 +25,12 @@ HPS for your class and spec.
 /jps enable (e)			Enables JPS
 /jps disable (d)		Disables JPS
 /jps toggle (t)			Toggle whether JPS is enabled or not
-/jps multi				Toggle support for AOE
-/jps cds				Use cooldowns in rotations
-/jps interrupts (int)	Interrupt spell casting where possible
+/jps multi			Toggle support for AOE
+/jps cds			Use cooldowns in rotations
+/jps interrupts (int)		Interrupt spell casting where possible
 /jps panther			Use Druid T11 Bonus
 
-/jps debug				Enable debug output
+/jps debug			Enable debug output
 
 
 ==============================================================================
