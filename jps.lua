@@ -22,6 +22,7 @@ jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
 jps.IconSpell = nil
+jps.resetClickToMove = false
 -- Class Specific
 jps.Havoc = false
 jps.Opening = true
@@ -76,10 +77,12 @@ function combatEventHandler(self, event, ...)
 	elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_SENT" then
 		if ... == "player" then
 			jps.Casting = true
+			jps.resetClickToMove = false
 		end
   elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and (UnitChannelInfo("player") == nil)) or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
 		if ... == "player" then
 			jps.Casting = false
+			jps.resetClickToMove = false
 		end
   elseif event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" or (event == "UNIT_SPELLCAST_CHANNEL_UPDATE" and (UnitChannelInfo("player")==nil))then
 		if ... == "player" then
@@ -94,6 +97,8 @@ function combatEventHandler(self, event, ...)
 		jps.Error = ...
 		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
 			jps.Cast("mangle(cat form)")
+                elseif jps.Error == "Target needs to be in front of you." then 
+			jps.resetClickToMove = true
 		end
 	-- RaidStatus Update
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
@@ -214,6 +219,14 @@ function combat(self)
 		print("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
 		jps.Enabled = false
 		return
+	end
+	-- ClickToMove to Face Target 
+	if jps.resetClickToMove then 
+		SetCVar("autointeract", "1")
+		jps.UpdateInterval = 1.0
+	else 
+		SetCVar("autointeract", "0")
+		jps.UpdateInterval = 0.1
 	end
 	-- Lag
 	_,_,jps.Lag = GetNetStats()
