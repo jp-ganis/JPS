@@ -1,4 +1,4 @@
-## Interface: 40100
+## Interface: 40200
 ## Title: Jp DPS Addon
 ## Notes: Protect your LUA.
 ## SavedVariables: jps.Panther, jps.Enabled
