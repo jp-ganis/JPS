@@ -1,5 +1,5 @@
 function hunter_mm(self)
-   Marksmanship Hunter by Chiffon with additions by Scribe
+   -- Marksmanship Hunter by Chiffon with additions by Scribe
    -- Change this to your Aimed Shot binding --
    local clickMF = "/click ActionButton3"
    ------------------------------------------

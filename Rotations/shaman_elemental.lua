@@ -7,7 +7,7 @@ function shaman_elemental(self)
    
    if lsCount < 2 then
       spell = "lightning shield"
-   elseif lsCount == 9 and fsDuration > 6 cd("earth shock") == 0 then
+   elseif lsCount == 9 and fsDuration > 6 and cd("earth shock") == 0 then
       spell = "earth shock"
    elseif mana < 0.6 and cd("thunderstorm") == 0 then
       spell = "thunderstorm"   
