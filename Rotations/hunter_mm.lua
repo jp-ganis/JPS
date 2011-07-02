@@ -1,5 +1,5 @@
 function hunter_mm(self)
-   Marksmanship Hunter by Chiffon with additions by Scribe
+   -- Marksmanship Hunter by Chiffon with additions by Scribe
    -- Change this to your Aimed Shot binding --
    local clickMF = "/click ActionButton3"
    ------------------------------------------
@@ -25,22 +25,30 @@ function hunter_mm(self)
       spell = "Kill Shot"
    elseif not jps.MultiTarget and not UnitDebuff("target", "Serpent Sting",nil,"PLAYER") and up("player") > 25 and UnitHealth("target") > 50000 then 
       spell = "Serpent Sting"
-   elseif cd("Chimera Shot") <= 0.4 and up("player") >= 44 then
+   elseif cd("Chimera Shot") == 0 and up("player") >= 44 then
       spell = "Chimera Shot"
    elseif jps.UseCDs and cd("Rapid Fire") == 0 and not ub("player","rapid fire") then
       spell = "Rapid Fire"
    elseif jps.UseCDs and jps.Lifeblood and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
 	  spell = "Lifeblood"
-   elseif jps.UseCDs and cd("Rapid Fire") > 0 and (raf_timeleft-(GetTime()-raf_ready)>=120) and not ub("player","rapid fire") and cd("readiness") == 0 then
+   elseif jps.UseCDs and cd("Rapid Fire") > 0 and jps.get_cooldown("Rapid Fire") >= 120 and not ub("player","rapid fire") and cd("readiness") == 0 then
       spell = "Readiness"
-   elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.8 and up("player") > 50 and (chim_timeleft-(GetTime()-chim_ready)>=3)then
+   elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.9 and up("player") > 55 and jps.get_cooldown("Chimera Shot") > 4 then
 	  -- Aimed Shot
-      r(clickMF)
-   elseif up("player") > 64 then
+      -- r(clickMF)
+	spell = "Aimed Shot"
+   elseif up("player") > 66 then
+	if ub("player","rapid fire") then
+		-- In rapid fire use Aimed shot to dump focus
+		-- r(clickMF)
+		spell = "Aimed Shot"
+	else 
       spell = "Arcane Shot"
+	end
    elseif ub("player", "Fire!") then 
 	  -- Instant Aimed Shot
-      r(clickMF)
+      -- r(clickMF)
+		spell = "Aimed Shot"
    elseif GetUnitSpeed("player") > 0 and not ub("player", "Aspect of the Fox") then
       spell = "Aspect of the Fox"
    else
