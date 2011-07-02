@@ -13,7 +13,7 @@ function shaman_elemental(self)
       spell = "thunderstorm"   
    elseif fsDuration < 2 and cd("flame shock") == 0 then
       spell = "flame shock"
-   elseif speed > 0 then
+   elseif speed > 0 and not ub("player","ghost wolf") then
       spell = "ghost wolf"
    elseif cd("lava burst") == 0 and cd("elemental mastery") == 0 and UnitHealth("target") > 500000 then
       spell = "elemental mastery"      
