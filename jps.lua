@@ -98,14 +98,52 @@ function combatEventHandler(self, event, ...)
 		end
 	-- RaidStatus Update
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
-		local unit = ...
-		if UnitIsFriend("player",unit) then
-			jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
-		end
+		jpsHeal_Raid()
 	end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
+
+function jpsHeal_Raid(self)
+
+	table.remove(jps.RaidStatus)
+	
+	local group_type
+	group_type="raid";
+	nps=1;
+	npe=GetNumRaidMembers();
+	if npe==0 then
+	group_type="party"
+	nps=0;
+	npe=GetNumPartyMembers();
+	end;
+
+	for i=nps,npe do
+		if i==0 then
+		unit="player"
+		else
+		unit=group_type..i
+		end
+		jps.RaidStatus[unit] = {["name"] = UnitName(unit),["hp"] = UnitHealthMax(unit) - UnitHealth(unit),["hpct"] = UnitHealth(unit) / UnitHealthMax(unit)}
+	end
+	
+	local function sortMyTable(a,b) return jps.RaidStatus[a]["hp"] > jps.RaidStatus[b]["hp"] end 
+	
+	local sortedKeys = { }
+	for k,v in pairs(jps.RaidStatus) do table.insert(sortedKeys, k) end
+	table.sort(sortedKeys, sortMyTable)
+
+	--for i,k in ipairs(sortedKeys) do
+        --print(jps.RaidStatus[k].hp,"/",jps.RaidStatus[k].name)
+	--end
+	
+	TargetTable1 = sortedKeys[1]
+	TargetTable2 = sortedKeys[2]
+	if (#sortedKeys)==1 then TargetTable2=TargetTable1 end
+	--print(jps.RaidStatus[TargetTable1].hp,"/",jps.RaidStatus[TargetTable1].name)
+	--print(jps.RaidStatus[TargetTable2].hp,"/",jps.RaidStatus[TargetTable2].name)
+
+end
 
 function SlashCmdList.jps(msg, editbox)
 	if msg == "toggle" or msg == "t" then
