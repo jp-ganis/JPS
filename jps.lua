@@ -209,8 +209,8 @@ function combat(self)
 		["Paladin"] = { ["Protection"] = paladin_protadin, ["Retribution"] = paladin_ret },
 		["Warlock"] = { ["Affliction"] = warlock_affl, ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo },
 		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm, ["Survival"] = hunter_sv },
-		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane },
-		["Warrior"] = { ["Fury"] = warrior_fury },
+		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane, ["Frost"] = mage_frost },
+		["Warrior"] = { ["Fury"] = warrior_fury, ["Protection"] = warrior_prot, ["Arms"] = warrior_arms },
 		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_shadow }
 	}
 	-- Check for the Rotation

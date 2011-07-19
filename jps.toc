@@ -22,9 +22,13 @@ Rotations\priest_shadow.lua
 Rotations\priest_holy.lua
 Rotations\mage_fire.lua
 Rotations\mage_arcane.lua
+Rotations\mage_frost.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_destro.lua
 Rotations\warlock_demo.lua
+Rotations\warrior_prot.lua
+Rotations\warrior_fury.lua
+Rotations\warrior_arms.lua
 Rotations\hunter_mm.lua
 Rotations\hunter_bm.lua
 Rotations\hunter_sv.lua
