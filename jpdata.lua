@@ -42,7 +42,16 @@ function jps.buff_duration(unit,spell)
 end
 
 function jps.debuff_duration(unit,spell)
-	local _,_,_,_,_,_,duration,_,_,_,_ = UnitDebuff(unit,spell)
+	local _,_,_,_,_,_,duration,caster,_,_ = UnitDebuff(unit,spell)
+	if caster~="player" then return 0 end
+	if duration==nil then return 0 end
+	duration = duration-GetTime()-jps.Lag
+	if duration < 0 then return 0 end
+	return duration
+end
+
+function jps.notmydebuff_duration(unit,spell)
+	local _,_,_,_,_,_,duration,_,caster,_,_ = UnitDebuff(unit,spell)
 	if duration==nil then return 0 end
 	duration = duration-GetTime()-jps.Lag
 	if duration < 0 then return 0 end
@@ -71,9 +80,10 @@ function jps.get_buff_stacks(unit,spell)
 	return count
 end
 
-function jps.should_kick(unit)
+function jps.should_pvpkick(unit)
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
   local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
+	if target_spell == "Release Aberrations" then return false end
 
   if target_spell and not unInterruptable then
     endTime = endTime - GetTime()*1000
@@ -84,6 +94,19 @@ function jps.should_kick(unit)
     return true
   end 
 
+	return false
+end
+
+function jps.should_kick(unit)
+	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
+  local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
+	if target_spell == "Release Aberrations" then return false end
+  if target_spell and not unInterruptable then
+		return true
+	end
+  if chanelling and not notInterruptible then
+    return true
+  end 
 	return false
 end
 
