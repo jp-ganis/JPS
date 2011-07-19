@@ -87,9 +87,13 @@ function jps.should_pvpkick(unit)
 
   if target_spell and not unInterruptable then
     endTime = endTime - GetTime()*1000
-    if endTime < 500+jps.Lag then
-      return true
-    end 
+	if jps.PVPInterrupt == true then
+	    if endTime < 500+jps.Lag then
+	      return true
+	    end 
+	else 
+		return true
+	end
   elseif chanelling and not notInterruptible then
     return true
   end 
