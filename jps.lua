@@ -208,7 +208,7 @@ function combat(self)
 		["Shaman"] = { ["Enhancement"] = shaman_enhancement, ["Elemental"] = shaman_elemental },
 		["Paladin"] = { ["Protection"] = paladin_protadin, ["Retribution"] = paladin_ret },
 		["Warlock"] = { ["Affliction"] = warlock_affl, ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo },
-		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm },
+		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm, ["Survival"] = hunter_sv },
 		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane },
 		["Warrior"] = { ["Fury"] = warrior_fury },
 		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_shadow }
