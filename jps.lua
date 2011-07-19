@@ -2,13 +2,14 @@
 jps = {}
 jps.Version = "0.9.1"
 jps.RaidStatus = {}
-jps.UpdateInterval = 0.1
-jps.Enabled = false
+jps.UpdateInterval = 0.2
+jps.Enabled = true
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
 jps.Interrupts = true
-jps.UseCDs = false
+jps.PVPInterrupt = true
+jps.UseCDs = true
 jps.MultiTarget = false
 jps.Debug = false
 -- Utility
@@ -23,11 +24,13 @@ jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
 jps.Havoc = false
-jps.Opening = true
+jps.Opening = false
 jps.Panther = false
+jps.PetHeal = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
+jps.Lifeblood = true
 jps.Macro = "jpsMacro"
 
 -- Slash Cmd
@@ -127,15 +130,24 @@ function SlashCmdList.jps(msg, editbox)
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
 		print("Debug mode set to",jps.Debug)
+	elseif msg == "peth" then
+		jps.PetHeal = not jps.PetHeal
+		print("Pet heal set to",jps.PetHeal)
 	elseif msg == "multi" or msg == "multitarget" then
 		jps.MultiTarget = not jps.MultiTarget
 		print("MultiTarget mode set to",jps.MultiTarget)
+	elseif msg == "lifeblood" or msg == "lb" then
+		jps.Lifeblood = not jps.Lifeblood
+		print("Lifeblood set to",jps.MultiTarget)
 	elseif msg == "cds" then
 		jps.UseCDs = not jps.UseCDs
 		print("Cooldown use set to",jps.UseCDs)
 	elseif msg == "int" or msg == "interrupts" then
 		jps.Interrupts = not jps.Interrupts
 		print("Interrupt use set to",jps.Interrupts)
+	elseif msg == "pint" then
+		jps.PVPInterrupt = not jps.PVPInterrupt
+		print("PVP Interrupt use set to",jps.PVPInterrupt)
 	elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
 		jps.MacroSpam = not jps.MacroSpam
 		print("MacroSpam flag is now set to",jps.MacroSpam)
@@ -192,13 +204,13 @@ function combat(self)
 	-- Rotations
 	jps.Rotations = { 
 		["Druid"] = { ["Feral"] = druid_feral, ["Balance"] = druid_balance, ["Restoration"] = druid_resto },
-		["Death Knight"] = { ["Blood"] = dk_blood },
+		["Death Knight"] = { ["Blood"] = dk_blood, ["Frost"] = dk_frost  },
 		["Shaman"] = { ["Enhancement"] = shaman_enhancement, ["Elemental"] = shaman_elemental },
 		["Paladin"] = { ["Protection"] = paladin_protadin, ["Retribution"] = paladin_ret },
-		["Warlock"] = { ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo, ["Affliction"] = warlock_affliction},
-		["Hunter"] = { ["Marksmanship"] = hunter_mm, ["Beast Mastery"] = hunter_bm },
+		["Warlock"] = { ["Affliction"] = warlock_affl, ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo },
+		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm },
 		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane },
-		["Warrior"] = { ["Fury"] = warrior_fury, ["Protection"] = warrior_prot },
+		["Warrior"] = { ["Fury"] = warrior_fury },
 		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_shadow }
 	}
 	-- Check for the Rotation

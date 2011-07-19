@@ -1,0 +1,56 @@
+==============================================================================
+= JPS - A PLUA AUTOMATED PLAY ADDON FOR WORLD OF WARCRAFT                    =
+==============================================================================
+
+This addon in combination with a protected LUA hack will help you get the most
+out of your WoW experience. See commands below for a full list of available 
+commands
+
+
+==============================================================================
+= USAGE                                                                      =
+==============================================================================
+
+With protected LUA enabled (through and external hack, not included with this
+package) this addon will play on your behalf, detecting your class and spec
+simply attacking a target will cause the mod to take over. Using all the best
+spells and abilities with split second timing to ensure maximum DPS, TPS or
+HPS for your class and spec.
+
+
+==============================================================================
+= COMMANDS                                                                   =
+==============================================================================
+
+/jps enable (e)			Enables JPS
+/jps disable (d)		Disables JPS
+/jps toggle (t)			Toggle whether JPS is enabled or not
+/jps multi			Toggle support for AOE
+/jps cds			Use cooldowns in rotations
+/jps interrupts (int)		Interrupt spell casting where possible
+/jps panther			Use Druid T11 Bonus
+
+/jps debug			Enable debug output
+
+
+==============================================================================
+= UNSUPPORTED BUILDS AND CLASSES                                             =
+==============================================================================
+
+As we work on this mod it's easier to list what's currently unsupported and 
+have people tick off the work as it's completed. If a spec is not listed below
+you can assume it's supported
+
+Frost DK
+Unholy DK 
+SV Hunter
+Holydin
+Frost Mage
+Afflication Lock
+Resto Shaman
+Protection Warrior
+Arms Warrior
+Disc Priest
+Assass Rogue
+Combat Rogue 
+Subtlety Rogue

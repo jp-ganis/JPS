@@ -1,37 +1,60 @@
 function hunter_mm(self)
-	-- Credit (and thanks!) to scottland3.
+   -- Marksmanship Hunter by Chiffon with additions by Scribe
+   -- Change this to your Aimed Shot binding --
+   local clickMF = "/click ActionButton3"
+   ------------------------------------------
+   local up = UnitPower
+   local r = RunMacroText;
    local spell = nil
-   local sps_duration = jps.debuff_duration("target","serpent sting")
-   local iss_duration = jps.buff_duration("player","improved steady shot")
-   local raf_duration = jps.buff_duration("player","rapid fire")
+   local raf_ready,raf_timeleft,_ = GetSpellCooldown("Rapid Fire");
+   local chim_ready,chim_timeleft,_ = GetSpellCooldown("Chimera Shot");
 
-   if UnitHealth("target")/UnitHealthMax("target") <= 0.2 and cd("Kill Shot") == 0 then
+	-- Interupting, Borrowed directly from feral cat
+	if jps.Interrupts and jps.should_kick("target") and cd("Silencing Shot") == 0 then
+		print("Silencing Target")
+		return "Silencing Shot"
+	end
+
+   if jps.PetHeal and not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.9 then
+      spell = "Mend Pet"
+   elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
+      spell = "Aspect of the Hawk"
+   elseif jps.MultiTarget and up("player") > 40 then
+      spell = "Multi-Shot"
+   elseif UnitHealth("target")/UnitHealthMax("target") <= 0.2 and cd("Kill Shot") == 0 then
       spell = "Kill Shot"
-   elseif ub("player", "Fire!") then 
-      spell = "Aimed Shot"
-   elseif UnitHealth("target")/UnitHealthMax("target") > 0.2 and not ud("target", "Hunter's Mark") then 
-      spell = "Hunter's Mark"
-   elseif raf_duration < 1.8 and ub("player","rapid fire") and cd("readiness") == 0 then
-      spell = "readiness"
-   elseif IsSpellInRange("Arcane Shot","target") == 0 then
-      spell = "disengage"
-   elseif sps_duration < 1.8 then 
+   elseif not jps.MultiTarget and not UnitDebuff("target", "Serpent Sting",nil,"PLAYER") and up("player") > 25 and UnitHealth("target") > 50000 then 
       spell = "Serpent Sting"
-   elseif cd("Chimera Shot") == 0 and sps_duration < 3 then 
+   elseif cd("Chimera Shot") == 0 and up("player") >= 44 then
       spell = "Chimera Shot"
-   elseif cd("Chimera Shot") == 0 and sps_duration > 12 then
-      spell = "Chimera Shot"
-   elseif cd("rapid fire") == 0 and UnitHealth("target") > 100000 then
-      spell = "rapid fire"
-   elseif iss_duration < 3 then
-      spell = "steady shot"
-   elseif UnitPower("player") > 85 then 
-      spell = "arcane shot" 
-   elseif UnitPower("player") >= 80 and ub("player","rapid fire") then 
-      spell = "aimed shot"
-   else 
+   elseif jps.UseCDs and cd("Rapid Fire") == 0 and not ub("player","rapid fire") then
+      spell = "Rapid Fire"
+   elseif jps.UseCDs and jps.Lifeblood and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
+	  spell = "Lifeblood"
+   elseif jps.UseCDs and cd("Rapid Fire") > 0 and jps.get_cooldown("Rapid Fire") >= 120 and not ub("player","rapid fire") and cd("readiness") == 0 then
+      spell = "Readiness"
+   elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.9 and up("player") > 55 and jps.get_cooldown("Chimera Shot") > 4 then
+	  -- Aimed Shot
+      -- r(clickMF)
+	spell = "Aimed Shot"
+   elseif up("player") > 66 then
+	if ub("player","rapid fire") then
+		-- In rapid fire use Aimed shot to dump focus
+		-- r(clickMF)
+		spell = "Aimed Shot"
+	else 
+      spell = "Arcane Shot"
+	end
+   elseif ub("player", "Fire!") then 
+	  -- Instant Aimed Shot
+      -- r(clickMF)
+		spell = "Aimed Shot"
+   elseif GetUnitSpeed("player") > 0 and not ub("player", "Aspect of the Fox") then
+      spell = "Aspect of the Fox"
+   else
       spell = "Steady Shot" 
    end
 
-	return spell
+
+   return spell
 end
