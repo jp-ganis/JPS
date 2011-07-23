@@ -211,7 +211,7 @@ function combat(self)
 		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm, ["Survival"] = hunter_sv },
 		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane, ["Frost"] = mage_frost },
 		["Warrior"] = { ["Fury"] = warrior_fury, ["Protection"] = warrior_prot, ["Arms"] = warrior_arms },
-		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_shadow }
+		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_holy  }
 	}
 	-- Check for the Rotation
 	if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
