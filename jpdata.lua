@@ -33,6 +33,13 @@ function jps.get_cooldown(spell)
 	return cd
 end
 
+function jps.get_pet_cooldown(spell)
+	local start,duration,_ = GetPetActionCooldown(spell)
+	local cd = start+duration-GetTime()-jps.Lag
+	if cd < 0 then return 0 end
+	return cd
+end
+
 function jps.buff_duration(unit,spell)
 	local _,_,_,_,_,_,duration,_,_,_,_ = UnitBuff(unit,spell)
 	if duration == nil then return 0 end
