@@ -23,6 +23,7 @@ Rotations\priest_holy.lua
 Rotations\mage_fire.lua
 Rotations\mage_arcane.lua
 Rotations\mage_frost.lua
+Rotations\rogue_assass.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_destro.lua
 Rotations\warlock_demo.lua
