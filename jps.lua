@@ -95,6 +95,8 @@ function combatEventHandler(self, event, ...)
 		jps.Error = ...
 		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
 			jps.Cast("mangle(cat form)")
+		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
+			jps.cast("mutilate")
 		end
 	-- RaidStatus Update
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
@@ -210,6 +212,7 @@ function combat(self)
 		["Warlock"] = { ["Affliction"] = warlock_affl, ["Destruction"] = warlock_destro, ["Demonology"] = warlock_demo },
 		["Hunter"] = { ["Beast Mastery"] = hunter_bm, ["Marksmanship"] = hunter_mm, ["Survival"] = hunter_sv },
 		["Mage"] = { ["Fire"] = mage_fire, ["Arcane"] = mage_arcane, ["Frost"] = mage_frost },
+		["Rogue"] = { ["Assassination"] = rogue_assass },
 		["Warrior"] = { ["Fury"] = warrior_fury, ["Protection"] = warrior_prot, ["Arms"] = warrior_arms },
 		["Priest"] = { ["Shadow"] = priest_shadow, ["Holy"] = priest_shadow }
 	}
