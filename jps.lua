@@ -1,6 +1,6 @@
 -- Universal
 jps = {}
-jps.Version = "0.9.1"
+jps.Version = "0.9.2"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.2
 jps.Enabled = true
