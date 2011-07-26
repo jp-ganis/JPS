@@ -33,7 +33,7 @@ function druid_feral_cat(self)
 		if jps.Opening then
 			if not ud("target","faerie fire") and cd("faerie fire (feral)") == 0 then
 				spell = "faerie fire (feral)"
-			elseif mangle_duration < 1 and not ud("target","trauma") and cp > 0 then
+			elseif mangle_duration < 1 and not ud("target","trauma") then
 				spell = "mangle(cat form)"
 			elseif cp > 0 and sr_duration < 1 then
 				spell = "savage roar"
@@ -56,7 +56,7 @@ function druid_feral_cat(self)
 				spell = "faerie fire (feral)"
 			elseif mangle_duration < 1 and not ud("target","trauma") and not ud("target","hemorrhage") then
 				spell = "mangle(cat form)"
-			elseif cd("berserk") == 0 and tf_cd > 15 and energy > 80 and jps.UseCDs then
+			elseif cd("berserk") == 0 and tf_cd > 25 and energy > 80 and jps.UseCDs then
 				spell = "berserk"
 			elseif execute_phase and (cp == 5 or rip_duration < 2) and rip_duration > 0 then
 				spell = "ferocious bite"
