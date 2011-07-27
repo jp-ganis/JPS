@@ -16,7 +16,7 @@ function druid_feral_cat(self)
 			return "skull bash(cat form)"
 	end
 
-	if not ub("player","cat form") or IsSpellInRange("shred","target") ~= 1 or not jps.MultiTarget then
+	if not ub("player","cat form") or (IsSpellInRange("shred","target") ~= 1 and not jps.MultiTarget) then
 		return nil
 	end
 
