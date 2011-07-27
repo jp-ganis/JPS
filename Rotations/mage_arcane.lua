@@ -12,6 +12,10 @@ function mage_arcane(self)
 	local abDuration = jps.debuff_duration("player","arcane blast")	
 	local useManagem = "/use mana gem"
 	local engineering = "/use 10"
+
+	if UnitChannelInfo("player") then
+		return nil
+	end
 		
 	if cd("flame orb") == 0 and jps.Multitarget then
 		spell = "flame orb"		
