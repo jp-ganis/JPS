@@ -1,4 +1,4 @@
-function warrior_fury_fr(self)
+function warrior_fury(self)
 	
 	local spell = nil
 	local playerHealth = UnitHealth("player")/UnitHealthMax("player")
