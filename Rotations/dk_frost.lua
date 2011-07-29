@@ -55,11 +55,11 @@ elseif cd("Raise Dead") == 0 and jps.UseCDs then
 --Single Target--
 --Boss Rotation [stops if aggro]--
   elseif UnitExists("target") and UnitCanAttack("player","target") and (not jps.MultiTarget) and (UnitLevel("target") >= 87 or UnitClassification("target") == "worldboss") and UnitThreatSituation("player","target") ~= 3 then
-        if not ud("target","Blood Plague") and cd("Outbreak")== 0 then
+        if not ud("target","Blood Plague",nil,"PLAYER") and cd("Outbreak")== 0 then
             spell = "Outbreak"
-        elseif not ud("target","Blood Plague") then
+        elseif not ud("target","Blood Plague",nil,"PLAYER") then
             spell = "Plague Strike"
-        elseif not ud("target","Frost Fever") then
+        elseif not ud("target","Frost Fever",nil,"PLAYER") then
             spell = "Howling Blast"
         elseif ub("player","Freezing Fog") and ius("Howling Blast") then
             spell = "Howling Blast"
@@ -83,11 +83,11 @@ elseif cd("Raise Dead") == 0 and jps.UseCDs then
 
 --Regular Rotation--
   elseif UnitExists("target") and UnitCanAttack("player","target") and (not jps.MultiTarget) and UnitLevel("target") < 87 then
-        if not ud("target","Blood Plague") and cd("Outbreak")== 0 then
+        if not ud("target","Blood Plague",nil,"PLAYER") and cd("Outbreak")== 0 then
             spell = "Outbreak"
-        elseif not ud("target","Blood Plague") then
+        elseif not ud("target","Blood Plague",nil,"PLAYER") then
             spell = "Plague Strike"
-        elseif not ud("target","Frost Fever") then
+        elseif not ud("target","Frost Fever",nil,"PLAYER") then
             spell = "Howling Blast"
         elseif ub("player","Freezing Fog") and ius("Howling Blast") then
             spell = "Howling Blast"
