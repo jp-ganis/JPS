@@ -198,7 +198,7 @@ function priest_holy(self)
 		priest_spell = "Renew"
 	
 	-- Prayer of mending in case  at least 2 party members have suffered enough healthloss
-	elseif jps.CanCast("Prayer of Mending", priest_target) and not ub(priest_target,"Prayer of Mending") and health_pct < 0.8 and health_deficiency > getaverage_heal("Prayer of Mending") and prayerofhealingcount > 1 then
+	elseif jps.CanCast("Prayer of Mending", priest_target) and not ub(priest_target,"Prayer of Mending") and health_pct < 0.8 and health_deficiency > getaverage_heal("Prayer of Mending") and prayerofhealingcount > 1 and cd("Prayer of Mending") then
 		priest_spell = "Prayer of Mending"
 	
 	-- Insta cast flashheal for 0 mana in case surge of light and target is missing enough health to avoid overhealing--
