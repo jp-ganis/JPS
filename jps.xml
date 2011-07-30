@@ -34,10 +34,8 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 			 </OnHide>
 		</Scripts>
 					
-		<Backdrop bgFile="Interface\Icons\Spell_Nature_Starfall"
-			edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+		<Backdrop bgFile="Interface\AddOns\JPS\jps.tga" tile="false">
 			<TileSize><AbsValue val="41"/></TileSize>
-			<EdgeSize><AbsValue val="13"/></EdgeSize>
 		</Backdrop>
 	</Frame>
 </Ui> 
