@@ -32,6 +32,7 @@ jps.MacroSpam = false
 jps.Fishing = false
 jps.Lifeblood = true
 jps.Macro = "jpsMacro"
+jps.OutOfSightPlayers = {}
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
