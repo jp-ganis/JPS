@@ -12,7 +12,7 @@ function hunter_sv(self)
 	elseif jps.MultiTarget and focus > 40 then
 		spell = "Multi-Shot"
 		
-	elseif sting_duration < 2 focus > 25 then
+	elseif sting_duration < 2 and focus > 25 then
 		spell = "Serpent Sting"
 	
 	elseif ub("player", "Lock and Load") then
