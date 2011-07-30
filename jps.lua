@@ -204,42 +204,43 @@ end
 
 function combat(self) 
     -- Rotations
-	-- I hate ugly tables :p (Phelps)
-    jps.Rotations = { 
-        ["Druid"]        = { ["Feral"]         = druid_feral,
-                             ["Balance"]       = druid_balance,
-                             ["Restoration"]   = druid_resto },
-        
-        ["Death Knight"] = { ["Blood"]         = dk_blood,
-                             ["Frost"]         = dk_frost  },
-            
-        ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
-                             ["Elemental"]     = shaman_elemental },
-        
-        ["Paladin"]      = { ["Protection"]    = paladin_protadin,
-                             ["Retribution"]   = paladin_ret },
-        
-        ["Warlock"]      = { ["Affliction"]    = warlock_affl,
-                             ["Destruction"]   = warlock_destro,
-                             ["Demonology"]    = warlock_demo },
-        
-        ["Hunter"]       = { ["Beast Mastery"] = hunter_bm,
-                             ["Marksmanship"]  = hunter_mm,
-                             ["Survival"]      = hunter_sv },
-                    
-        ["Mage"]         = { ["Fire"]          = mage_fire,
-                             ["Arcane"]        = mage_arcane,
-                             ["Frost"]         = mage_frost },
-                            
-        ["Rogue"]        = { ["Assassination"] = rogue_assass },
-        
-        ["Warrior"]      = { ["Fury"]          = warrior_fury,
-                             ["Protection"]    = warrior_prot,
-                             ["Arms"]          = warrior_arms },
-                            
-        ["Priest"]       = { ["Shadow"]        = priest_shadow,
-                             ["Holy"]          = priest_holy }
-    }
+	if jps.Rotations == nil then
+    	jps.Rotations = { 
+    	    ["Druid"]        = { ["Feral"]         = druid_feral,
+    	                         ["Balance"]       = druid_balance,
+    	                         ["Restoration"]   = druid_resto },
+    	    
+    	    ["Death Knight"] = { ["Blood"]         = dk_blood,
+    	                         ["Frost"]         = dk_frost  },
+    	        
+    	    ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
+    	                         ["Elemental"]     = shaman_elemental },
+    	    
+    	    ["Paladin"]      = { ["Protection"]    = paladin_protadin,
+    	                         ["Retribution"]   = paladin_ret },
+    	    
+    	    ["Warlock"]      = { ["Affliction"]    = warlock_affl,
+    	                         ["Destruction"]   = warlock_destro,
+    	                         ["Demonology"]    = warlock_demo },
+    	    
+    	    ["Hunter"]       = { ["Beast Mastery"] = hunter_bm,
+    	                         ["Marksmanship"]  = hunter_mm,
+    	                         ["Survival"]      = hunter_sv },
+    	                
+    	    ["Mage"]         = { ["Fire"]          = mage_fire,
+    	                         ["Arcane"]        = mage_arcane,
+    	                         ["Frost"]         = mage_frost },
+    	                        
+    	    ["Rogue"]        = { ["Assassination"] = rogue_assass },
+    	    
+    	    ["Warrior"]      = { ["Fury"]          = warrior_fury,
+    	                         ["Protection"]    = warrior_prot,
+    	                         ["Arms"]          = warrior_arms },
+    	                        
+    	    ["Priest"]       = { ["Shadow"]        = priest_shadow,
+    	                         ["Holy"]          = priest_holy }
+    	}
+	end
     
     -- Check for the Rotation
     if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
@@ -247,7 +248,7 @@ function combat(self)
         jps.Enabled = false
         return
     end
-    
+
     -- Lag
     _,_,jps.Lag = GetNetStats()
     jps.Lag = jps.Lag/100
