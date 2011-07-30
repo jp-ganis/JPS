@@ -3,7 +3,7 @@ function hunter_sv(self)
 	local focus = UnitPower("player")
 	local sting_duration = jps.debuff_duration("target","Serpent Sting")
 	
-	if not ud("target","Hunter's Mark") then
+	if not ud("target","Hunter's Mark") and not jps.MultiTarget then
 		spell = "Hunter's Mark"
 	
 	elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
@@ -12,7 +12,7 @@ function hunter_sv(self)
 	elseif jps.MultiTarget and focus > 40 then
 		spell = "Multi-Shot"
 		
-	elseif sting_duration < 2 then
+	elseif sting_duration < 2 focus > 25 then
 		spell = "Serpent Sting"
 	
 	elseif ub("player", "Lock and Load") then
@@ -21,7 +21,7 @@ function hunter_sv(self)
 	elseif cd("Explosive Shot") == 0 and focus > 44 then
 		spell = "Explosive Shot"
 		
-	elseif cd("Black Arrow") == 0 then
+	elseif cd("Black Arrow") == 0  and focus > 35 then
 		spell = "Black Arrow"
 		
 	elseif UnitHealth("target")/UnitHealthMax("target") <= 0.2 and cd("Kill Shot") == 0 then
