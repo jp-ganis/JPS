@@ -12,14 +12,6 @@ function paladin_protadin(self)
       spell = "Divine Plea"
    elseif UnitIsEnemy("player", "target") and jps.should_kick("target") and cd("Rebuke") == 0 and IsSpellInRange("Rebuke", "target") == 1 then
       SpellStopCasting() spell = "Rebuke"
-   elseif jps.buff_duration("Player", "Grand Crusader") > 0 then --easiest way to grab the GC proc, may create some clashes in rotation
-      spell = "Avenger's Shield"
-   elseif cd("Hammer of the Righteous")==0 then --keep CS/Hammer on CD, generating HP
-		if jps.MultiTarget then
-			spell = "Hammer of the Righteous"
-		else
-			spell = "Crusader Strike"
-		end
    elseif power>=3 then -- spend HP in the correct way, threshold for WoG is 70%, feel free to change
 		if myHealth <= .7 and cd("Word of Glory")==0 then
 			spell = "Word of Glory"
@@ -27,6 +19,14 @@ function paladin_protadin(self)
 			spell = "Inquisition"
 		else
       		spell = "Shield of the Righteous"
+		end
+   elseif jps.buff_duration("Player", "Grand Crusader") > 0 then --easiest way to grab the GC proc, may create some clashes in rotation
+      spell = "Avenger's Shield"
+   elseif cd("Hammer of the Righteous")==0 then --keep CS/Hammer on CD, generating HP
+		if jps.MultiTarget then
+			spell = "Hammer of the Righteous"
+		else
+			spell = "Crusader Strike"
 		end
    elseif cd("Judgement")==0 then --return mana asap
       spell = "Judgement"
