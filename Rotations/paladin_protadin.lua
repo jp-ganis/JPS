@@ -1,5 +1,5 @@
 function paladin_protadin(self)
-	-- Complete re-write for 4.2 by GoCarGo.
+		-- Complete re-write for 4.2 by GoCarGo.
         local myHealthPercent = UnitHealth("player")/UnitHealthMax("player") * 100
         local targetHealthPercent = UnitHealth("target")/UnitHealthMax("target") * 100
         local myManaPercent = UnitMana("player")/UnitManaMax("player") * 100
@@ -7,17 +7,30 @@ function paladin_protadin(self)
         local spell = nil
 
 	-- Interrupt, works equally well with "focus" instead of "target"
-	if jps.Interrupts and jps.should_kick("target") and cd("Rebuke") == 0 and myManaPercent >= 35 then
+	if jps.Interrupts and jps.should_kick("target") and cd("Rebuke") == 0 and myManaPercent >= 25 then
 		return "Rebuke"
 	end
 
-        --Check for Righteous Fury and Seal
+        --***************COMMENT This out if you are not A Blood Elf**********************
+        if jps.Interrupts and jps.should_kick("target") and cd("Arcane Torrent") == 0 then
+		return "Arcane Torrent"
+	end
+
+        --Check for Righteous Fury, Seal, Aura and Mana levels
         if not ub("player","Righteous Fury") then
                 return "Righteous Fury"
         end
         
         if not ub("player","Seal of Truth") then
                 return "Seal of Truth"
+        end
+
+        if not ub("player","Devotion Aura") then
+                return "Devotion Aura"
+        end
+
+        if myManaPercent < 35 and cd("Divine Plea") == 0 then
+                spell = "Divine Plea"
         end
 
 	-- Check we're in melee range, if not pull with AS.
@@ -62,14 +75,15 @@ function paladin_protadin(self)
 			spell = "Hammer of the Righteous"
 		elseif cd("Avenger's Shield") == 0 then
 			spell = "Avenger's Shield"
-                elseif cd("Consecration") == 0 and myManaPercent > 35 then
+                elseif cd("Consecration") == 0 and myManaPercent > 55 then
 			spell = "Consecration"
+                elseif cd("Judgement") == 0 then
+			spell = "Judgement"                
                 elseif cd("Holy Wrath") == 0 then
 			spell = "Holy Wrath"
 		elseif cd("Hammer of Wrath") == 0 and targetHealthPercent < 20 then
 			spell = "Hammer of Wrath"
-		elseif cd("Judgement") == 0 then
-			spell = "Judgement"
+		
                 end
 	end
 
