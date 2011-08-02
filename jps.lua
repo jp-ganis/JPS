@@ -23,7 +23,6 @@ jps.Lag = nil
 jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
-jps.Havoc = false
 jps.Opening = false
 jps.Panther = false
 jps.PetHeal = true
@@ -146,9 +145,6 @@ function SlashCmdList.jps(msg, editbox)
     elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
         jps.MacroSpam = not jps.MacroSpam
         print("MacroSpam flag is now set to",jps.MacroSpam)
-    elseif msg == "havoc" then
-        jps.Havoc = not jps.Havoc
-        print("Bane of Havoc flag is now set to",jps.Havoc)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
         print("Opening flag is now set to",jps.Opening)
