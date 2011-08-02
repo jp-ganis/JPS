@@ -47,15 +47,15 @@ combatFrame:RegisterEvent("PLAYER_LOGIN")
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_START")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_SENT")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_START")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_SENT")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+--combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
@@ -72,19 +72,6 @@ function combatEventHandler(self, event, ...)
         jps.Opening = true
         jps.RaidStatus = {}
         collectgarbage("collect")
-    -- Casting - Credit (and thanks!) to walkistalki for the channeling and pet stuff.
-    elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_SENT" then
-        if ... == "player" then
-            jps.Casting = true
-        end
-  elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and (UnitChannelInfo("player") == nil)) or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-        if ... == "player" then
-            jps.Casting = false
-        end
-  elseif event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" or (event == "UNIT_SPELLCAST_CHANNEL_UPDATE" and (UnitChannelInfo("player")==nil))then
-        if ... == "player" then
-            jps.Casting = false
-        end
     -- Fishes
     elseif event == "BAG_UPDATE" and jps.Fishing then
         RunMacro("MG")
@@ -265,6 +252,12 @@ function combat(self)
     
     -- Movement
     jps.Moving = GetUnitSpeed("player") > 0
+
+		-- Casting
+		if UnitCastingInfo("player") then jps.Casting = true
+			elseif UnitChannelInfo("player") then jps.Casting = true
+			else jps.Casting = false
+		end
     
     -- Get spell from rotation.
     jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
