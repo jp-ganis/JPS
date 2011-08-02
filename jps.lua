@@ -3,11 +3,12 @@ jps = {}
 jps.Version = "0.9.2"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.2
+jps.Enabled = true
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
 jps.Interrupts = true
-jps.PVPInterrupt = true
+jps.PVPInterrupt = false
 jps.Debug = false
 -- Utility
 jps.Target = nil
@@ -19,13 +20,14 @@ jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
 jps.IconSpell = nil
+-- Class Specific
 jps.Opening = false
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
-jps.Lifeblood = true
 jps.Macro = "jpsMacro"
 jps.OutOfSightPlayers = {}
+
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
@@ -35,31 +37,27 @@ ub = UnitBuff
 ud = UnitDebuff
 
 combatFrame = CreateFrame("FRAME", nil)
-combatFrame:RegisterEvent("ADDON_LOADED");
 combatFrame:RegisterEvent("PLAYER_LOGIN")
-combatFrame:RegisterEvent("PLAYER_LOGOUT");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_START")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_SENT")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_START")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_SENT")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+--combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+--combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 
 function combatEventHandler(self, event, ...)
-    if event == "PLAYER_ALIVE" or event == "PLAYER_LOGIN" then
+    if event == "PLAYER_LOGIN" then
         jps.Class = UnitClass("player")
-        jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
-        if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
-        if not jps.Enabled then IconFrame:Hide() end
+				jps.detectSpec()
     elseif event == "PLAYER_REGEN_DISABLED" then
         jps.Combat = true
         if jps.Enabled then combat() end
@@ -68,19 +66,6 @@ function combatEventHandler(self, event, ...)
         jps.Opening = true
         jps.RaidStatus = {}
         collectgarbage("collect")
-    -- Casting - Credit (and thanks!) to walkistalki for the channeling and pet stuff.
-    elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_SENT" then
-        if ... == "player" then
-            jps.Casting = true
-        end
-  elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and (UnitChannelInfo("player") == nil)) or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
-        if ... == "player" then
-            jps.Casting = false
-        end
-  elseif event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" or (event == "UNIT_SPELLCAST_CHANNEL_UPDATE" and (UnitChannelInfo("player")==nil))then
-        if ... == "player" then
-            jps.Casting = false
-        end
     -- Fishes
     elseif event == "BAG_UPDATE" and jps.Fishing then
         RunMacro("MG")
@@ -99,6 +84,9 @@ function combatEventHandler(self, event, ...)
         if UnitIsFriend("player",unit) then
             jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
         end
+	-- Dual Spec Respec
+	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
+		jps.detectSpec()
 	elseif event == "ADDON_LOADED" and ... == "JPS" then
 		if jpsIconSize == nil then
 			jpsIconSize = 36
@@ -110,31 +98,18 @@ function combatEventHandler(self, event, ...)
 			IconFrame:SetWidth(jps.IconSize)
 			IconFrame:SetHeight(jps.IconSize)
 		end
-		
 		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
 		elseif jpsEnabled == true then jps.Enabled = true,true
 		else jps.Enabled = false end
-		
 		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
 		elseif jpsUseCDs == true then jps.UseCDs = true
 		else jps.UseCDs = false end
-		
-		if jpsHavoc == nil then jpsHavoc,jps.Havoc = false,false
-		elseif jpsHavoc == true then jps.Havoc = true
-		else jps.Havoc = false end
-		
-		if jpsPanther == nil then jpsPantherd,jps.Panther = false,false
-		elseif jpsPanther == true then jps.Panther = true
-		else jps.Panther = false end
-		
 		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
 		elseif jpsPetHeal == true then jps.PetHeal = true
 		else jps.PetHeal = false end
-		
 		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
 		elseif jpsMultiTarget == true then jps.MultiTarget = true
 		else jps.MultiTarget = false end
-		
 	elseif event == "PLAYER_LOGOUT" then
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
@@ -142,29 +117,35 @@ function combatEventHandler(self, event, ...)
 		jpsPetHeal = jps.PetHeal
 		jpsPanther = jps.Panther
 		jpsHavoc = jps.Havoc
-    end
+	end
+	
+	end
+end
+
+function jps.detectSpec()
+	jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
+	if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
+	if not jps.Enabled then IconFrame:Hide() end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
 
-function SlashCmdList.jps(cmd, editbox)
-	local msg, rest = cmd:match("^(%S*)%s*(.-)$");
+function SlashCmdList.jps(msg, editbox)
     if msg == "toggle" or msg == "t" then
         if jps.Enabled == false then msg = "e"
         else msg = "d" end
     end
-    if msg== "disable" or msg == "d" then
+    if msg == "disable" or msg == "d" then
         jps.Enabled = false
         IconFrame:Hide()
         print "JPS Disabled."
-    elseif msg== "enable" or msg == "e" then
+    elseif msg == "enable" or msg == "e" then
         jps.Enabled = true
         jps.NextCast = nil
         IconFrame:Show()
         print "JPS Enabled."
-    elseif msg == "panther" then
-        jps.Panther = not jps.Panther
-        print("T11 4pc use set to",jps.Panther)
+		elseif msg == "respec" then
+				jps.detectSpec()
     elseif msg == "fishing" then
         jps.Fishing = not jps.Fishing
         print("Murglesnout & Grey Deletion now",jps.Fishing)
@@ -177,9 +158,6 @@ function SlashCmdList.jps(cmd, editbox)
     elseif msg == "multi" or msg == "multitarget" then
         jps.MultiTarget = not jps.MultiTarget
         print("MultiTarget mode set to",jps.MultiTarget)
-    elseif msg == "lifeblood" or msg == "lb" then
-        jps.Lifeblood = not jps.Lifeblood
-        print("Lifeblood set to",jps.MultiTarget)
     elseif msg == "cds" then
         jps.UseCDs = not jps.UseCDs
         print("Cooldown use set to",jps.UseCDs)
@@ -192,18 +170,9 @@ function SlashCmdList.jps(cmd, editbox)
     elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
         jps.MacroSpam = not jps.MacroSpam
         print("MacroSpam flag is now set to",jps.MacroSpam)
-    elseif msg == "havoc" then
-        jps.Havoc = not jps.Havoc
-        print("Bane of Havoc flag is now set to",jps.Havoc)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
         print("Opening flag is now set to",jps.Opening)
-	elseif msg == "size" then
-		jps.IconSize = tonumber(rest)
-		IconFrame:SetWidth(jps.IconSize)
-		IconFrame:SetHeight(jps.IconSize)
-		jpsIconBorder:SetWidth(jps.IconSize)
-		jpsIconBorder:SetHeight(jps.IconSize)
     elseif msg == "help" then
         print("Slash Commands:")
         print("/jps - Show enabled status.")
@@ -227,11 +196,9 @@ function SlashCmdList.jps(cmd, editbox)
         print("jps.UseCDs:",jps.UseCDs)
         print("jps.Opening:",jps.Opening)
         print("jps.Interrupts:",jps.Interrupts)
-        if jps.Spec == "Feral" then
-            print("jps.Panther:",jps.Panther)
-        end
         print("jps.MacroSpam:",jps.MacroSpam)
         print("jps.Fishing:",jps.Fishing)
+				print("Use /jps help for help.")
     end
 end
 
@@ -300,6 +267,12 @@ function combat(self)
     
     -- Movement
     jps.Moving = GetUnitSpeed("player") > 0
+
+		-- Casting
+		if UnitCastingInfo("player") then jps.Casting = true
+			elseif UnitChannelInfo("player") then jps.Casting = true
+			else jps.Casting = false
+		end
     
     -- Get spell from rotation.
     jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
@@ -315,6 +288,7 @@ function combat(self)
     -- Return spellcast.
     return jps.ThisCast
 end
+
 
 -- Create the dragable Icon frame, anchor point for textures
 IconFrame = CreateFrame("Frame", "IconFrame", UIParent)

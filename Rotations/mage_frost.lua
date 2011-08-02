@@ -7,8 +7,8 @@ function mage_frost(self)
 		spell = "deep freeze"
 	elseif ub("player","fingers of frost") and ub("player","brain freeze") then
 		spell = "frostfire bolt"
-	elseif jps.get_pet_cooldown("freeze") == 0 then
-		CastPetAction("freeze")
+	elseif jps.get_pet_cooldown("5") == 0 then
+		CastPetAction("5")
 		CameraOrSelectOrMoveStart()
 		CameraOrSelectOrMoveStop()
 	else

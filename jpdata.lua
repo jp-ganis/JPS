@@ -81,8 +81,8 @@ function jps.get_cooldown(spell)
 	return cd
 end
 
-function jps.get_pet_cooldown(spell)
-	local start,duration,_ = GetPetActionCooldown(spell)
+function jps.get_pet_cooldown(index)
+	local start,duration,_ = GetPetActionCooldown(index)
 	local cd = start+duration-GetTime()-jps.Lag
 	if cd < 0 then return 0 end
 	return cd

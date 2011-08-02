@@ -2,7 +2,7 @@
 ## Title: |cffff8000Jp DPS AddOn
 ## Notes: Protect your LUA.
 ## SavedVariables: jpsIconSize
-## SavedVariablesPerCharacter: jpsUseCDs, jpsMultiTarget, jpsPanther, jpsEnabled, jpsPetHeal, jpsHavoc
+## SavedVariablesPerCharacter: jpsUseCDs, jpsMultiTarget, jpsEnabled, jpsPetHeal
 ## Dependencies:
 jps.lua
 jps.xml 
