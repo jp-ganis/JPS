@@ -56,7 +56,7 @@ function jps.Cast(spell)
 	end
 end
 
-function jps.CanCast(spell, unit)
+function jps.can_cast(spell, unit)
 	if UnitExists(unit) and UnitIsVisible(unit) and UnitIsFriend(unit) then
 		if IsSpellInRange(spell, unit) then	return 1 end
 	end
