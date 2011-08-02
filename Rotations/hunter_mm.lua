@@ -29,7 +29,7 @@ function hunter_mm(self)
       spell = "Chimera Shot"
    elseif jps.UseCDs and cd("Rapid Fire") == 0 and not ub("player","rapid fire") then
       spell = "Rapid Fire"
-   elseif jps.UseCDs and jps.Lifeblood and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
+   elseif jps.UseCDs and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
 	  spell = "Lifeblood"
    elseif jps.UseCDs and cd("Rapid Fire") > 0 and jps.get_cooldown("Rapid Fire") >= 120 and not ub("player","rapid fire") and cd("readiness") == 0 then
       spell = "Readiness"

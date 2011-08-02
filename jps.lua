@@ -30,7 +30,6 @@ jps.PetHeal = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
-jps.Lifeblood = true
 jps.Macro = "jpsMacro"
 jps.OutOfSightPlayers = {}
 
@@ -135,9 +134,6 @@ function SlashCmdList.jps(msg, editbox)
     elseif msg == "multi" or msg == "multitarget" then
         jps.MultiTarget = not jps.MultiTarget
         print("MultiTarget mode set to",jps.MultiTarget)
-    elseif msg == "lifeblood" or msg == "lb" then
-        jps.Lifeblood = not jps.Lifeblood
-        print("Lifeblood set to",jps.MultiTarget)
     elseif msg == "cds" then
         jps.UseCDs = not jps.UseCDs
         print("Cooldown use set to",jps.UseCDs)
