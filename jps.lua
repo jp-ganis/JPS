@@ -9,8 +9,6 @@ jps.Class = nil
 jps.Spec = nil
 jps.Interrupts = true
 jps.PVPInterrupt = false
-jps.UseCDs = true
-jps.MultiTarget = false
 jps.Debug = false
 -- Utility
 jps.Target = nil
@@ -24,7 +22,6 @@ jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
 jps.Opening = false
-jps.PetHeal = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
@@ -41,6 +38,8 @@ ud = UnitDebuff
 
 combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
+combatFrame:RegisterEvent("ADDON_LOADED");
+combatFrame:RegisterEvent("PLAYER_LOGOUT");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -87,10 +86,40 @@ function combatEventHandler(self, event, ...)
         if UnitIsFriend("player",unit) then
             jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
         end
-		-- Dual Spec Respec
-		elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
-			jps.detectSpec()
+	-- Dual Spec Respec
+	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
+		jps.detectSpec()
+	elseif event == "ADDON_LOADED" and ... == "JPS" then
+		if jpsIconSize == nil then
+			jpsIconSize = 36
+			jps.IconSize = jpsIconSize
+			IconFrame:SetWidth(jps.IconSize)
+			IconFrame:SetHeight(jps.IconSize)
+		else
+			jps.IconSize = jpsIconSize 
+			IconFrame:SetWidth(jps.IconSize)
+			IconFrame:SetHeight(jps.IconSize)
 		end
+		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
+		elseif jpsEnabled == true then jps.Enabled = true,true
+		else jps.Enabled = false end
+		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
+		elseif jpsUseCDs == true then jps.UseCDs = true
+		else jps.UseCDs = false end
+		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
+		elseif jpsPetHeal == true then jps.PetHeal = true
+		else jps.PetHeal = false end
+		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
+		elseif jpsMultiTarget == true then jps.MultiTarget = true
+		else jps.MultiTarget = false end
+	elseif event == "PLAYER_LOGOUT" then
+		jpsIconSize = jps.IconSize
+		jpsEnabled = jps.Enabled
+		jpsMultiTarget = jps.MultiTarget
+		jpsPetHeal = jps.PetHeal
+		jpsPanther = jps.Panther
+		jpsHavoc = jps.Havoc
+	end
 end
 
 function jps.detectSpec()
@@ -101,7 +130,8 @@ end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
 
-function SlashCmdList.jps(msg, editbox)
+function SlashCmdList.jps(cmd, editbox)
+	local msg, rest = cmd:match("^(%S*)%s*(.-)$");
     if msg == "toggle" or msg == "t" then
         if jps.Enabled == false then msg = "e"
         else msg = "d" end
@@ -144,6 +174,10 @@ function SlashCmdList.jps(msg, editbox)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
         print("Opening flag is now set to",jps.Opening)
+	elseif msg == "size" then
+		jps.IconSize = tonumber(rest)
+		IconFrame:SetWidth(jps.IconSize)
+		IconFrame:SetHeight(jps.IconSize)
     elseif msg == "help" then
         print("Slash Commands:")
         print("/jps - Show enabled status.")
@@ -259,3 +293,31 @@ function combat(self)
     -- Return spellcast.
     return jps.ThisCast
 end
+
+
+-- Create the dragable Icon frame, anchor point for textures
+IconFrame = CreateFrame("Frame", "IconFrame", UIParent)
+IconFrame:SetMovable(true)
+IconFrame:EnableMouse(true)
+IconFrame:RegisterForDrag("LeftButton")
+IconFrame:SetScript("OnDragStart", IconFrame.StartMoving)
+IconFrame:SetScript("OnDragStop", IconFrame.StopMovingOrSizing)
+IconFrame:SetPoint("CENTER")
+jpsIconTex = IconFrame:CreateTexture("ARTWORK") -- create the spell icon texture
+jpsIconTex:SetPoint('TOPRIGHT', IconFrame, -2, -2) -- inset it by 3px or pt or w/e the game uses
+jpsIconTex:SetPoint('BOTTOMLEFT', IconFrame, 2, 2)
+jpsIconTex:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard border
+jpsIconTex:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
+
+-- barrowed this, along with the texture from nMainbar
+jpsIconBorder = IconFrame:CreateTexture(nil, "OVERLAY") -- create the border texture
+jpsIconBorder:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
+jpsIconBorder:SetPoint('TOPRIGHT', IconFrame, 1, 1) -- outset the points a bit so it goes around the spell icon
+jpsIconBorder:SetPoint('BOTTOMLEFT', IconFrame, -1, -1)
+jpsIconBorder:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
+jpsIconShadow = IconFrame:CreateTexture(nil, "BACKGROUND") -- create the icon frame
+jpsIconShadow:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
+jpsIconShadow:SetPoint('TOPRIGHT', jpsIconBorder, 4.5, 4.5) -- outset the points a bit so it goes around the border
+jpsIconShadow:SetPoint('BOTTOMLEFT', jpsIconBorder, -4.5, -4.5) -- outset the points a bit so it goes around the border
+jpsIconShadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
+jpsIconShadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans

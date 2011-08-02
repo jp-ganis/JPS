@@ -28,7 +28,7 @@ function rogue_assass(self)
 		spell = "mutilate"
 	end
 
-	if spell = "envenom" and cp == 5 and cd("cold blood") == 0 and jps.UseCDs then
+	if spell == "envenom" and cp == 5 and cd("cold blood") == 0 and jps.UseCDs then
 		jps.Cast("cold blood")
 	end
 
