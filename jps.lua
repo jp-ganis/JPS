@@ -101,9 +101,10 @@ function combatEventHandler(self, event, ...)
 			jpsIcon:SetHeight(jps.IconSize)
 		end
 		
-		jps.toggleEnabled(jpsEnabled)
-		jps.toggleCDs(jpsUseCDs)
-		jps.toggleMulti(jpsMultiTarget)
+		if jpsEnabled == nil then jps.toggleEnabled(true)   else jps.toggleEnabled(jpsEnabled) end
+		if jpsUseCDs == nil then jps.toggleCDs(true)        else jps.toggleCDs(jpsUseCDs) end
+		if jpsMultiTarget == nil then jps.toggleMulti(false) else jps.toggleMulti(jpsMultiTarget) end
+		if jpsToggles == nil then jps.toggleToggles(true)   else jps.toggleToggles(jpsToggles) end
 		
 		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
 		elseif jpsPetHeal == true then jps.PetHeal = true
@@ -114,8 +115,7 @@ function combatEventHandler(self, event, ...)
 		jpsEnabled = jps.Enabled
 		jpsMultiTarget = jps.MultiTarget
 		jpsPetHeal = jps.PetHeal
-		jpsPanther = jps.Panther
-		jpsHavoc = jps.Havoc
+		jpsUseCDs = jps.UseCDs
 	end
 end
 
@@ -287,13 +287,18 @@ function combat(self)
     return jps.ThisCast
 end
 
-
+-- Create the frame that does all the work, pew pew..
+JPSFrame = CreateFrame("Frame", "JPSFrame")
+JPSFrame:SetScript("OnUpdate", function(self, elapsed)
+	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
+	JPS_OnUpdate(self, elapsed)
+end)
 
 -- Create the dragable Icon frame, anchor point for everything else
 jpsIcon = CreateFrame("Button", "jpsIcon", UIParent)
 jpsIcon:SetMovable(true)
 jpsIcon:EnableMouse(true)
-jpsIcon:RegisterForClicks("LeftButtonUp")
+jpsIcon:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 jpsIcon:RegisterForDrag("LeftButton")
 jpsIcon:SetScript("OnDragStart", jpsIcon.StartMoving)
 jpsIcon:SetScript("OnDragStop", jpsIcon.StopMovingOrSizing)
@@ -320,9 +325,11 @@ jpsIcon.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set t
 jpsIcon.shadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
 
 jpsIcon:SetScript("OnClick", function(self, button)
-
-	jps.toggleEnabled()
-	
+	if button == "LeftButton" then
+		jps.toggleEnabled()
+	elseif button == "RightButton" then
+		jps.toggleToggles()
+	end
 end)
 
 ToggleCDs = CreateFrame("Button", "ToggleCDs", jpsIcon)
@@ -448,4 +455,25 @@ function jps.toggleMulti( value )
 	return
 end
 
+function jps.toggleToggles( values )
+	if value ~= nil then
+		jps.Toggles = value
+		if value == true then
+			ToggleMulti:Show()
+			ToggleCDs:Show()
+		else
+			ToggleMulti:Hide()
+			ToggleCDs:Hide()
+		end
+		return
+	end
+	if jps.Toggles then
+		ToggleMulti:Hide()
+		ToggleCDs:Hide()
+	else
+		ToggleMulti:Show()
+		ToggleCDs:Show()
+	end
+	jps.Toggles = not jps.Toggles
+end
 
