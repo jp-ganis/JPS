@@ -93,25 +93,22 @@ function combatEventHandler(self, event, ...)
 		if jpsIconSize == nil then
 			jpsIconSize = 36
 			jps.IconSize = jpsIconSize
-			IconFrame:SetWidth(jps.IconSize)
-			IconFrame:SetHeight(jps.IconSize)
+			jpsIcon:SetWidth(jps.IconSize)
+			jpsIcon:SetHeight(jps.IconSize)
 		else
 			jps.IconSize = jpsIconSize 
-			IconFrame:SetWidth(jps.IconSize)
-			IconFrame:SetHeight(jps.IconSize)
+			jpsIcon:SetWidth(jps.IconSize)
+			jpsIcon:SetHeight(jps.IconSize)
 		end
-		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
-		elseif jpsEnabled == true then jps.Enabled = true,true
-		else jps.Enabled = false end
-		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
-		elseif jpsUseCDs == true then jps.UseCDs = true
-		else jps.UseCDs = false end
+		
+		jps.toggleEnabled(jpsEnabled)
+		jps.toggleCDs(jpsUseCDs)
+		jps.toggleMulti(jpsMultiTarget)
+		
 		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
 		elseif jpsPetHeal == true then jps.PetHeal = true
 		else jps.PetHeal = false end
-		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
-		elseif jpsMultiTarget == true then jps.MultiTarget = true
-		else jps.MultiTarget = false end
+		
 	elseif event == "PLAYER_LOGOUT" then
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
@@ -125,7 +122,7 @@ end
 function jps.detectSpec()
 	jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
 	if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
-	if not jps.Enabled then IconFrame:Hide() end
+	if not jps.Enabled then jpsIcon:Hide() end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
@@ -137,16 +134,12 @@ function SlashCmdList.jps(cmd, editbox)
         else msg = "d" end
     end
     if msg == "disable" or msg == "d" then
-        jps.Enabled = false
-        IconFrame:Hide()
-        print "JPS Disabled."
+		jps.toggleEnabled(false)
     elseif msg == "enable" or msg == "e" then
-        jps.Enabled = true
         jps.NextCast = nil
-        IconFrame:Show()
-        print "JPS Enabled."
-		elseif msg == "respec" then
-				jps.detectSpec()
+		jps.toggleEnabled(true)
+	elseif msg == "respec" then
+			jps.detectSpec()
     elseif msg == "fishing" then
         jps.Fishing = not jps.Fishing
         print("Murglesnout & Grey Deletion now",jps.Fishing)
@@ -157,10 +150,10 @@ function SlashCmdList.jps(cmd, editbox)
         jps.PetHeal = not jps.PetHeal
         print("Pet heal set to",jps.PetHeal)
     elseif msg == "multi" or msg == "multitarget" then
-        jps.MultiTarget = not jps.MultiTarget
+        jps.toggleMulti()
         print("MultiTarget mode set to",jps.MultiTarget)
     elseif msg == "cds" then
-        jps.UseCDs = not jps.UseCDs
+		jps.toggleCDs()
         print("Cooldown use set to",jps.UseCDs)
     elseif msg == "int" or msg == "interrupts" then
         jps.Interrupts = not jps.Interrupts
@@ -176,8 +169,8 @@ function SlashCmdList.jps(cmd, editbox)
         print("Opening flag is now set to",jps.Opening)
 	elseif msg == "size" then
 		jps.IconSize = tonumber(rest)
-		IconFrame:SetWidth(jps.IconSize)
-		IconFrame:SetHeight(jps.IconSize)
+		jpsIcon:SetWidth(jps.IconSize)
+		jpsIcon:SetHeight(jps.IconSize)
     elseif msg == "help" then
         print("Slash Commands:")
         print("/jps - Show enabled status.")
@@ -295,29 +288,164 @@ function combat(self)
 end
 
 
--- Create the dragable Icon frame, anchor point for textures
-IconFrame = CreateFrame("Frame", "IconFrame", UIParent)
-IconFrame:SetMovable(true)
-IconFrame:EnableMouse(true)
-IconFrame:RegisterForDrag("LeftButton")
-IconFrame:SetScript("OnDragStart", IconFrame.StartMoving)
-IconFrame:SetScript("OnDragStop", IconFrame.StopMovingOrSizing)
-IconFrame:SetPoint("CENTER")
-jpsIconTex = IconFrame:CreateTexture("ARTWORK") -- create the spell icon texture
-jpsIconTex:SetPoint('TOPRIGHT', IconFrame, -2, -2) -- inset it by 3px or pt or w/e the game uses
-jpsIconTex:SetPoint('BOTTOMLEFT', IconFrame, 2, 2)
-jpsIconTex:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard border
-jpsIconTex:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
+
+-- Create the dragable Icon frame, anchor point for everything else
+jpsIcon = CreateFrame("Button", "jpsIcon", UIParent)
+jpsIcon:SetMovable(true)
+jpsIcon:EnableMouse(true)
+jpsIcon:RegisterForClicks("LeftButtonUp")
+jpsIcon:RegisterForDrag("LeftButton")
+jpsIcon:SetScript("OnDragStart", jpsIcon.StartMoving)
+jpsIcon:SetScript("OnDragStop", jpsIcon.StopMovingOrSizing)
+jpsIcon:SetPoint("CENTER")
+
+
+jpsIcon.texture = jpsIcon:CreateTexture("ARTWORK") -- create the spell icon texture
+jpsIcon.texture:SetPoint('TOPRIGHT', jpsIcon, -2, -2) -- inset it by 3px or pt or w/e the game uses
+jpsIcon.texture:SetPoint('BOTTOMLEFT', jpsIcon, 2, 2)
+jpsIcon.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard border
+jpsIcon.texture:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
 
 -- barrowed this, along with the texture from nMainbar
-jpsIconBorder = IconFrame:CreateTexture(nil, "OVERLAY") -- create the border texture
-jpsIconBorder:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
-jpsIconBorder:SetPoint('TOPRIGHT', IconFrame, 1, 1) -- outset the points a bit so it goes around the spell icon
-jpsIconBorder:SetPoint('BOTTOMLEFT', IconFrame, -1, -1)
-jpsIconBorder:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
-jpsIconShadow = IconFrame:CreateTexture(nil, "BACKGROUND") -- create the icon frame
-jpsIconShadow:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
-jpsIconShadow:SetPoint('TOPRIGHT', jpsIconBorder, 4.5, 4.5) -- outset the points a bit so it goes around the border
-jpsIconShadow:SetPoint('BOTTOMLEFT', jpsIconBorder, -4.5, -4.5) -- outset the points a bit so it goes around the border
-jpsIconShadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
-jpsIconShadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
+jpsIcon.border = jpsIcon:CreateTexture(nil, "OVERLAY") -- create the border texture
+jpsIcon.border:SetParent(jpsIcon) -- link it with the icon frame so it drags around with it
+jpsIcon.border:SetPoint('TOPRIGHT', jpsIcon, 1, 1) -- outset the points a bit so it goes around the spell icon
+jpsIcon.border:SetPoint('BOTTOMLEFT', jpsIcon, -1, -1)
+jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
+jpsIcon.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND") -- create the icon frame
+jpsIcon.shadow:SetParent(jpsIcon) -- link it with the icon frame so it drags around with it
+jpsIcon.shadow:SetPoint('TOPRIGHT', jpsIcon.border, 4.5, 4.5) -- outset the points a bit so it goes around the border
+jpsIcon.shadow:SetPoint('BOTTOMLEFT', jpsIcon.border, -4.5, -4.5) -- outset the points a bit so it goes around the border
+jpsIcon.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
+jpsIcon.shadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
+
+jpsIcon:SetScript("OnClick", function(self, button)
+
+	jps.toggleEnabled()
+	
+end)
+
+ToggleCDs = CreateFrame("Button", "ToggleCDs", jpsIcon)
+ToggleCDs:RegisterForClicks("LeftButtonUp")
+ToggleCDs:SetPoint("CENTER")
+ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 40, 0)
+ToggleCDs:SetHeight(36)
+ToggleCDs:SetWidth(36)
+ToggleCDs.texture = ToggleCDs:CreateTexture()
+ToggleCDs.texture:SetAllPoints()
+ToggleCDs.texture:SetTexture("Interface\\Icons\\Spell_Holy_BorrowedTime")
+ToggleCDs.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93)
+ToggleCDs.border = ToggleCDs:CreateTexture(nil, "OVERLAY")
+ToggleCDs.border:SetParent(ToggleCDs)
+ToggleCDs.border:SetPoint('TOPRIGHT', ToggleCDs, 1, 1)
+ToggleCDs.border:SetPoint('BOTTOMLEFT', ToggleCDs, -1, -1)
+ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+
+ToggleCDs.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
+ToggleCDs.shadow:SetParent(ToggleCDs)
+ToggleCDs.shadow:SetPoint('TOPRIGHT', ToggleCDs.border, 4.5, 4.5) 
+ToggleCDs.shadow:SetPoint('BOTTOMLEFT', ToggleCDs.border, -4.5, -4.5) 
+ToggleCDs.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")
+ToggleCDs.shadow:SetVertexColor(0, 0, 0, 0.85)  
+
+
+ToggleCDs:SetScript("OnClick", function(self, button)
+
+	jps.toggleCDs()
+	
+end)
+
+
+ToggleMulti = CreateFrame("Button", "ToggleMulti", jpsIcon)
+ToggleMulti:RegisterForClicks("LeftButtonUp")
+ToggleMulti:SetPoint("CENTER")
+ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 80, 0)
+ToggleMulti:SetHeight(36)
+ToggleMulti:SetWidth(36)
+ToggleMulti.texture = ToggleMulti:CreateTexture()
+ToggleMulti.texture:SetAllPoints()
+ToggleMulti.texture:SetTexture("Interface\\Icons\\achievement_arena_5v5_3")
+ToggleMulti.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93)
+ToggleMulti.border = ToggleMulti:CreateTexture(nil, "OVERLAY") -- create the
+ToggleMulti.border:SetParent(ToggleMulti) -- link it with the icon frame so 
+ToggleMulti.border:SetPoint('TOPRIGHT', ToggleMulti, 1, 1) -- outset the poi
+ToggleMulti.border:SetPoint('BOTTOMLEFT', ToggleMulti, -1, -1)
+ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+
+ToggleMulti.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
+ToggleMulti.shadow:SetParent(ToggleMulti)
+ToggleMulti.shadow:SetPoint('TOPRIGHT', ToggleMulti.border, 4.5, 4.5) 
+ToggleMulti.shadow:SetPoint('BOTTOMLEFT', ToggleMulti.border, -4.5, -4.5) 
+ToggleMulti.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")
+ToggleMulti.shadow:SetVertexColor(0, 0, 0, 0.85)
+
+ToggleMulti:SetScript("OnClick", function(self, button)
+
+	jps.toggleMulti()
+
+end)
+
+function jps.toggleCDs( value )
+	if value ~= nil then
+		jps.UseCDs = value
+		if value == true then
+			ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		else
+			ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		end
+		return
+	end
+	if jps.UseCDs then
+		ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		print "JPS: Cooldown Usage Disabled."
+	else
+		ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		print "JPS: Cooldown Usage Enabled."
+	end
+	jps.UseCDs = not jps.UseCDs
+	return
+end
+
+function jps.toggleEnabled( value )
+	if value ~= nil then
+		jps.Enabled = value
+		if value == true then
+			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		else
+			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		end
+		return
+	end
+	if jps.Enabled then
+		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		print "JPS: Disabled."
+	else
+		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		print "JPS: Enabled."
+	end
+	jps.Enabled = not jps.Enabled
+	return
+end
+
+function jps.toggleMulti( value )
+	if value ~= nil then
+		jps.MultiTarget = value
+		if value == true then
+			ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		else
+			ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		end
+		return
+	end
+	if jps.MultiTarget then
+		ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		print "JPS: Multi-Target Disabled."
+	else
+		ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		print "JPS: Multi-Target Enabled."
+	end
+	jps.MultiTarget = not jps.MultiTarget
+	return
+end
+
+

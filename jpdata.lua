@@ -122,7 +122,7 @@ end
 
 function jps.set_jps_icon(spell)
 	local icon = GetSpellTexture(spell)
-	jpsIconTex:SetTexture(icon)
+	jpsIcon.texture:SetTexture(icon)
 	jps.IconSpell = spell
 end
 
