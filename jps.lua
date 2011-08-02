@@ -3,7 +3,6 @@ jps = {}
 jps.Version = "0.9.2"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.2
-jps.Enabled = true
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
@@ -43,7 +42,9 @@ ub = UnitBuff
 ud = UnitDebuff
 
 combatFrame = CreateFrame("FRAME", nil)
+combatFrame:RegisterEvent("ADDON_LOADED");
 combatFrame:RegisterEvent("PLAYER_LOGIN")
+combatFrame:RegisterEvent("PLAYER_LOGOUT");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -105,12 +106,36 @@ function combatEventHandler(self, event, ...)
         if UnitIsFriend("player",unit) then
             jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
         end
+	elseif event == "ADDON_LOADED" and ... == "JPS" then
+		if jpsIconSize == nil then
+			jpsIconSize = 41
+			jps.IconSize = jpsIconSize
+			IconFrame:SetWidth(jps.IconSize)
+			IconFrame:SetHeight(jps.IconSize)
+		else
+			jps.IconSize = jpsIconSize 
+			IconFrame:SetWidth(jps.IconSize)
+			IconFrame:SetHeight(jps.IconSize)
+		end
+		
+		if jpsEnabled == nil then
+			jpsEnabled = true
+		elseif jpsEnabled == true then
+			jps.Enabled = true
+		else
+			jps.Enabled = false
+		end
+		
+	elseif event == "PLAYER_LOGOUT" then
+		jpsIconSize = jps.IconSize
+		jpsEnabled = jps.Enabled
     end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
 
-function SlashCmdList.jps(msg, editbox)
+function SlashCmdList.jps(cmd, editbox)
+	local msg, rest = cmd:match("^(%S*)%s*(.-)$");
     if msg == "toggle" or msg == "t" then
         if jps.Enabled == false then msg = "e"
         else msg = "d" end
@@ -160,6 +185,10 @@ function SlashCmdList.jps(msg, editbox)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
         print("Opening flag is now set to",jps.Opening)
+	elseif msg == "size" then
+		jps.IconSize = tonumber(rest)
+		IconFrame:SetWidth(jps.IconSize)
+		IconFrame:SetHeight(jps.IconSize)
     elseif msg == "help" then
         print("Slash Commands:")
         print("/jps - Show enabled status.")
@@ -271,3 +300,15 @@ function combat(self)
     -- Return spellcast.
     return jps.ThisCast
 end
+
+IconFrame = CreateFrame("Frame", "IconFrame", UIParent)
+IconFrame:SetMovable(true)
+IconFrame:EnableMouse(true)
+IconFrame:RegisterForDrag("LeftButton")
+IconFrame:SetScript("OnDragStart", IconFrame.StartMoving)
+IconFrame:SetScript("OnDragStop", IconFrame.StopMovingOrSizing)
+IconFrame:SetPoint("CENTER")
+jpsIconTex = IconFrame:CreateTexture("ARTWORK")
+jpsIconTex:SetAllPoints()
+jpsIconTex:SetTexCoord(0.07, 0.92, 0.07, 0.93)
+jpsIconTex:SetTexture("Interface\\AddOns\\JPS\\jps.tga")

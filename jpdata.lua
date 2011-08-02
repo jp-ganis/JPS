@@ -122,11 +122,7 @@ end
 
 function jps.set_jps_icon(spell)
 	local icon = GetSpellTexture(spell)
-	IconFrame:SetBackdrop( {
-		bgFile = icon,
-		edgeFile = "Interface\DialogFrame\UI-DialogBox-Border", tile = true, tileSize = 41, edgeSize = 13,
-		insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	})
+	jpsIconTex:SetTexture(icon)
 	jps.IconSpell = spell
 end
 
