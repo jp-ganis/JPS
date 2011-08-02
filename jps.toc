@@ -1,7 +1,8 @@
 ## Interface: 40200
-## Title: Jp DPS Addon
+## Title: |cffff8000Jp DPS AddOn
 ## Notes: Protect your LUA.
-## SavedVariables: jps.Panther, jps.Enabled
+## SavedVariables: jpsIconSize
+## SavedVariablesPerCharacter: jpsUseCDs, jpsMultiTarget, jpsEnabled
 ## Dependencies:
 jps.lua
 jps.xml 
