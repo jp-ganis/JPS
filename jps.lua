@@ -38,6 +38,8 @@ ud = UnitDebuff
 
 combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
+combatFrame:RegisterEvent("ADDON_LOADED");
+combatFrame:RegisterEvent("PLAYER_LOGOUT");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -117,8 +119,6 @@ function combatEventHandler(self, event, ...)
 		jpsPetHeal = jps.PetHeal
 		jpsPanther = jps.Panther
 		jpsHavoc = jps.Havoc
-	end
-	
 	end
 end
 
