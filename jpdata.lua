@@ -63,7 +63,7 @@ function jps.CanCast(spell, unit)
 	return 0
 end
 
-function jps.CanDispell( unit, ... )
+function jps.can_dispell( unit, ... )
 	for _, dtype in pairs(...) do
 		if jps.Dispells[dtype] ~= nil then
 			for _, spell in pairs(jps.Dispells[dtype]) do
