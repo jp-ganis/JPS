@@ -130,7 +130,8 @@ end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
 
-function SlashCmdList.jps(msg, editbox)
+function SlashCmdList.jps(cmd, editbox)
+	local msg, rest = cmd:match("^(%S*)%s*(.-)$");
     if msg == "toggle" or msg == "t" then
         if jps.Enabled == false then msg = "e"
         else msg = "d" end
@@ -173,6 +174,10 @@ function SlashCmdList.jps(msg, editbox)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
         print("Opening flag is now set to",jps.Opening)
+	elseif msg == "size" then
+		jps.IconSize = tonumber(rest)
+		IconFrame:SetWidth(jps.IconSize)
+		IconFrame:SetHeight(jps.IconSize)
     elseif msg == "help" then
         print("Slash Commands:")
         print("/jps - Show enabled status.")
