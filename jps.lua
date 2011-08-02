@@ -8,8 +8,6 @@ jps.Class = nil
 jps.Spec = nil
 jps.Interrupts = true
 jps.PVPInterrupt = true
-jps.UseCDs = true
-jps.MultiTarget = false
 jps.Debug = false
 -- Utility
 jps.Target = nil
@@ -21,18 +19,13 @@ jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
 jps.IconSpell = nil
--- Class Specific
-jps.Havoc = false
 jps.Opening = false
-jps.Panther = false
-jps.PetHeal = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
 jps.Lifeblood = true
 jps.Macro = "jpsMacro"
 jps.OutOfSightPlayers = {}
-
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
@@ -118,17 +111,37 @@ function combatEventHandler(self, event, ...)
 			IconFrame:SetHeight(jps.IconSize)
 		end
 		
-		if jpsEnabled == nil then
-			jpsEnabled = true
-		elseif jpsEnabled == true then
-			jps.Enabled = true
-		else
-			jps.Enabled = false
-		end
+		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
+		elseif jpsEnabled == true then jps.Enabled = true,true
+		else jps.Enabled = false end
+		
+		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
+		elseif jpsUseCDs == true then jps.UseCDs = true
+		else jps.UseCDs = false end
+		
+		if jpsHavoc == nil then jpsHavoc,jps.Havoc = false,false
+		elseif jpsHavoc == true then jps.Havoc = true
+		else jps.Havoc = false end
+		
+		if jpsPanther == nil then jpsPantherd,jps.Panther = false,false
+		elseif jpsPanther == true then jps.Panther = true
+		else jps.Panther = false end
+		
+		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
+		elseif jpsPetHeal == true then jps.PetHeal = true
+		else jps.PetHeal = false end
+		
+		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
+		elseif jpsMultiTarget == true then jps.MultiTarget = true
+		else jps.MultiTarget = false end
 		
 	elseif event == "PLAYER_LOGOUT" then
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
+		jpsMultiTarget = jps.MultiTarget
+		jpsPetHeal = jps.PetHeal
+		jpsPanther = jps.Panther
+		jpsHavoc = jps.Havoc
     end
 end
 
