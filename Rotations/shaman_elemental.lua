@@ -12,15 +12,17 @@ function shaman_elemental(self)
       spell = "blood fury"
    elseif lsCount < 2 then
       spell = "lightning shield"
-   elseif lsCount == 9 and fsDuration > 6 and cd("earth shock") == 0 then
+   elseif lsCount >= 7 and fsDuration > 6 and cd("earth shock") == 0 then
       spell = "earth shock"
    elseif mana < 0.6 and cd("thunderstorm") == 0 then
       spell = "thunderstorm"   
    elseif fsDuration < 2 and cd("flame shock") == 0 then
       spell = "flame shock"
-   elseif speed > 0 and not ub("player","ghost wolf") then
-      spell = "ghost wolf"
-   elseif cd("lava burst") == 0 and cd("elemental mastery") == 0 and UnitHealth("target") > 500000 then
+   elseif jps.Moving and not ub("player","spiritwalker's grace") and cd("spiritwalker's grace") == 0 then
+      spell = "spiritwalker's grace"
+	 elseif jps.Moving and not ub("player","spiritwalker's grace") then
+	 		spell = "lightning bolt"
+   elseif cd("lava burst") == 0 and cd("elemental mastery") == 0 then
       spell = "elemental mastery"      
    elseif cd("lava burst") == 0 then
       spell = "lava burst"
@@ -29,5 +31,8 @@ function shaman_elemental(self)
    else
       spell = "lightning bolt"
 	end
+
+  if jps.Casting and spell ~= "spiritwalker's grace" then return nil end
+
 	return spell
 end
