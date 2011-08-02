@@ -3,7 +3,7 @@ function shaman_elemental(self)
    local mana = UnitMana("player")/UnitManaMax("player")
    local speed = GetUnitSpeed("player")   
    local lsCount = jps.get_buff_stacks("player","lightning shield")
-   local fsDuration = jps.buff_duration("target","flame shock")
+   local fsDuration = jps.debuff_duration("target","flame shock")
    
    if jps.Interrupts and cd("wind shear") == 0 and jps.should_kick("target") and mana > .4 then 
       SpellStopCasting()
