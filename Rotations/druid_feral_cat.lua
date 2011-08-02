@@ -7,6 +7,7 @@ function druid_feral_cat(self)
 	local sr_duration = jps.buff_duration("player","savage roar")
 	local mangle_duration = jps.notmydebuff_duration("target","mangle")
 	local execute_phase = UnitHealth("target")/UnitHealthMax("target") <= 0.25
+	local pantherBonus = ub("player","strength of the panther")
 	local spell = nil
 
 	local target_spell, _, _, _, _, endTime, _, _, interrupt = UnitCastingInfo("target")
@@ -24,7 +25,7 @@ function druid_feral_cat(self)
 	local pantherCount = jps.get_buff_stacks("player","strength of the panther")
 
 	if jps.MultiTarget then
-		if jps.Panther and (pantherCount < 3 or panther_duration < 4) then
+		if pantherBonus and pantherCount == 3 and panther_duration < 4 then
 			spell = "mangle(cat form)"
 		else
 			spell = "swipe"
@@ -33,7 +34,7 @@ function druid_feral_cat(self)
 		if jps.Opening then
 			if not ud("target","faerie fire") and cd("faerie fire (feral)") == 0 then
 				spell = "faerie fire (feral)"
-			elseif mangle_duration < 1 and not ud("target","trauma") then
+			elseif mangle_duration < 1 and not ud("target","trauma") and not ud("target","hemorrhage") then
 				spell = "mangle(cat form)"
 			elseif cp > 0 and sr_duration < 1 then
 				spell = "savage roar"
@@ -46,7 +47,7 @@ function druid_feral_cat(self)
 				spell = "tiger's fury"
 			elseif cd("tiger's fury") == 0 and energy <= 35 and not ub("player","clearcasting") then
 				spell = "tiger's fury"
-			elseif jps.Panther and (pantherCount < 3 or pantherDuration < 4) then
+			elseif pantherBonus and (pantherCount < 3 or pantherDuration < 4) then
 				spell = "mangle(cat form)"
 			elseif ub("player","stampede") and (jps.buff_duration("player","stampede") <= 2 or ub("player","tiger's fury")) then
 				spell = "ravage"

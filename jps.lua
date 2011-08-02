@@ -24,7 +24,6 @@ jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
 jps.Opening = false
-jps.Panther = false
 jps.PetHeal = true
 -- Misc.
 jps.MacroSpam = false
@@ -118,9 +117,6 @@ function SlashCmdList.jps(msg, editbox)
         print "JPS Enabled."
 		elseif msg == "respec" then
 				jps.detectSpec()
-    elseif msg == "panther" then
-        jps.Panther = not jps.Panther
-        print("T11 4pc use set to",jps.Panther)
     elseif msg == "fishing" then
         jps.Fishing = not jps.Fishing
         print("Murglesnout & Grey Deletion now",jps.Fishing)
@@ -171,9 +167,6 @@ function SlashCmdList.jps(msg, editbox)
         print("jps.UseCDs:",jps.UseCDs)
         print("jps.Opening:",jps.Opening)
         print("jps.Interrupts:",jps.Interrupts)
-        if jps.Spec == "Feral" then
-            print("jps.Panther:",jps.Panther)
-        end
         print("jps.MacroSpam:",jps.MacroSpam)
         print("jps.Fishing:",jps.Fishing)
     end
