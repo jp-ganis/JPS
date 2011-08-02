@@ -116,9 +116,6 @@ function combatEventHandler(self, event, ...)
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
 		jpsMultiTarget = jps.MultiTarget
-		jpsPetHeal = jps.PetHeal
-		jpsPanther = jps.Panther
-		jpsHavoc = jps.Havoc
 	end
 end
 
@@ -183,9 +180,6 @@ function SlashCmdList.jps(cmd, editbox)
         print("/jps - Show enabled status.")
         print("/jps enable/disable - Enable/Disable the addon.")
         print("/jps spam - Toggle spamming of a given macro.")
-        if jps.Spec == "Feral" then
-            print("/jps panther - Toggle Feral T11 4pc.")
-        end
         print("/jps cds - Toggle use of cooldowns.")
         print("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
         print("/jps interrupts - Toggle interrupting")
