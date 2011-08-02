@@ -101,47 +101,20 @@ function combatEventHandler(self, event, ...)
 			jpsIcon:SetWidth(jps.IconSize)
 			jpsIcon:SetHeight(jps.IconSize)
 		end
-<<<<<<< HEAD
-
-		--jpsEnabled
-		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
-		elseif jpsEnabled == true then jps.Enabled = true,true
-		else jps.Enabled = false end
-
-		--jpsUseCDs
-		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
-		elseif jpsUseCDs == true then jps.UseCDs = true
-		else jps.UseCDs = false end
-
-		--jpsMultiTarget
-		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
-		elseif jpsMultiTarget == true then jps.MultiTarget = true
-		else jps.MultiTarget = false end
-	
-	-- On Logout
-=======
-		
+		-- jpsOptions
 		if jpsEnabled == nil then jps.toggleEnabled(true)   else jps.toggleEnabled(jpsEnabled) end
 		if jpsUseCDs == nil then jps.toggleCDs(true)        else jps.toggleCDs(jpsUseCDs) end
 		if jpsMultiTarget == nil then jps.toggleMulti(false) else jps.toggleMulti(jpsMultiTarget) end
 		if jpsToggles == nil then jps.toggleToggles(true)   else jps.toggleToggles(jpsToggles) end
 		if jpsToggleDir == nil then jps.setToggleDir("right") else jps.setToggleDir(jpsToggleDir) end
 		
-		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
-		elseif jpsPetHeal == true then jps.PetHeal = true
-		else jps.PetHeal = false end
-		
->>>>>>> 5883a7d3f383b80bf5251bddefe46cdac681934a
+	-- On Logout
 	elseif event == "PLAYER_LOGOUT" then
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
 		jpsMultiTarget = jps.MultiTarget
-<<<<<<< HEAD
-=======
-		jpsPetHeal = jps.PetHeal
 		jpsUseCDs = jps.UseCDs
 		jpsToggleDir = jps.ToggleDir
->>>>>>> 5883a7d3f383b80bf5251bddefe46cdac681934a
 	end
 end
 
@@ -171,18 +144,11 @@ function SlashCmdList.jps(cmd, editbox)
         write("Murglesnout & Grey Deletion now",jps.Fishing)
     elseif msg == "debug" then
         jps.Debug = not jps.Debug
-<<<<<<< HEAD
-        print("Debug mode set to",jps.Debug)
-=======
         write("Debug mode set to",jps.Debug)
-    elseif msg == "peth" then
-        jps.PetHeal = not jps.PetHeal
-        write("Pet heal set to",jps.PetHeal)
->>>>>>> 5883a7d3f383b80bf5251bddefe46cdac681934a
     elseif msg == "multi" or msg == "multitarget" then
         jps.toggleMulti()
     elseif msg == "cds" then
-		jps.toggleCDs()
+				jps.toggleCDs()
     elseif msg == "int" or msg == "interrupts" then
         jps.Interrupts = not jps.Interrupts
         write("Interrupt use set to",jps.Interrupts)
@@ -200,28 +166,14 @@ function SlashCmdList.jps(cmd, editbox)
 		jpsIcon:SetWidth(jps.IconSize)
 		jpsIcon:SetHeight(jps.IconSize)
     elseif msg == "help" then
-<<<<<<< HEAD
-        print("Slash Commands:")
-        print("/jps - Show enabled status.")
-        print("/jps enable/disable - Enable/Disable the addon.")
-        print("/jps spam - Toggle spamming of a given macro.")
-        print("/jps cds - Toggle use of cooldowns.")
-        print("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
-        print("/jps interrupts - Toggle interrupting")
-        print("/jps help - Show this help text.")
-=======
         write("Slash Commands:")
         write("/jps - Show enabled status.")
         write("/jps enable/disable - Enable/Disable the addon.")
         write("/jps spam - Toggle spamming of a given macro.")
-        if jps.Spec == "Feral" then
-            write("/jps panther - Toggle Feral T11 4pc.")
-        end
         write("/jps cds - Toggle use of cooldowns.")
         write("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
         write("/jps interrupts - Toggle interrupting")
         write("/jps help - Show this help text.")
->>>>>>> 5883a7d3f383b80bf5251bddefe46cdac681934a
     elseif msg == "pew" then
         combat()
     else
@@ -351,19 +303,6 @@ jpsIcon.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard bord
 jpsIcon.texture:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
 
 -- barrowed this, along with the texture from nMainbar
-<<<<<<< HEAD
-jpsIconBorder = IconFrame:CreateTexture(nil, "OVERLAY") -- create the border texture
-jpsIconBorder:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
-jpsIconBorder:SetPoint('TOPRIGHT', IconFrame, 1, 1) -- outset the points a bit so it goes around the spell icon
-jpsIconBorder:SetPoint('BOTTOMLEFT', IconFrame, -1, -1)
-jpsIconBorder:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
-jpsIconShadow = IconFrame:CreateTexture(nil, "BACKGROUND") -- create the icon frame
-jpsIconShadow:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
-jpsIconShadow:SetPoint('TOPRIGHT', jpsIconBorder, 4.5, 4.5) -- outset the points a bit so it goes around the border
-jpsIconShadow:SetPoint('BOTTOMLEFT', jpsIconBorder, -4.5, -4.5) -- outset the points a bit so it goes around the border
-jpsIconShadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
-jpsIconShadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
-=======
 jpsIcon.border = jpsIcon:CreateTexture(nil, "OVERLAY") -- create the border texture
 jpsIcon.border:SetParent(jpsIcon) -- link it with the icon frame so it drags around with it
 jpsIcon.border:SetPoint('TOPRIGHT', jpsIcon, 1, 1) -- outset the points a bit so it goes around the spell icon
@@ -586,5 +525,3 @@ function jps.toggleToggles( values )
 	end
 	jps.Toggles = not jps.Toggles
 end
-
->>>>>>> 5883a7d3f383b80bf5251bddefe46cdac681934a
