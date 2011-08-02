@@ -15,7 +15,7 @@ function hunter_mm(self)
 		return "Silencing Shot"
 	end
 
-   if jps.PetHeal and not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.9 then
+   if not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.9 then
       spell = "Mend Pet"
    elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
       spell = "Aspect of the Hawk"

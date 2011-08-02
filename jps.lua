@@ -106,9 +106,6 @@ function combatEventHandler(self, event, ...)
 		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
 		elseif jpsUseCDs == true then jps.UseCDs = true
 		else jps.UseCDs = false end
-		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
-		elseif jpsPetHeal == true then jps.PetHeal = true
-		else jps.PetHeal = false end
 		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
 		elseif jpsMultiTarget == true then jps.MultiTarget = true
 		else jps.MultiTarget = false end
@@ -150,9 +147,6 @@ function SlashCmdList.jps(cmd, editbox)
     elseif msg == "debug" then
         jps.Debug = not jps.Debug
         print("Debug mode set to",jps.Debug)
-    elseif msg == "peth" then
-        jps.PetHeal = not jps.PetHeal
-        print("Pet heal set to",jps.PetHeal)
     elseif msg == "multi" or msg == "multitarget" then
         jps.MultiTarget = not jps.MultiTarget
         print("MultiTarget mode set to",jps.MultiTarget)

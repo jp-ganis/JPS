@@ -15,8 +15,8 @@ function hunter_bm(self)
 	end
 
     -- Normal rotation
-	if jps.PetHeal and not ub("pet","Mend Pet") and target_health_percent <= 90 then
-	      spell = "Mend Pet"
+	if not ub("pet","Mend Pet") and target_health_percent <= 90 then
+	  spell = "Mend Pet"
 	elseif target_health_percent <= 20 and cd("Kill Shot") == 0 then
 		spell = "Kill Shot"
 	elseif target_health_percent > 30 and not ud("target", "Hunter's Mark") then 
