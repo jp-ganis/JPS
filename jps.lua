@@ -56,14 +56,21 @@ combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 
+
+function write(...)
+	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", ...), 1, 1, 1);
+end
+
 function combatEventHandler(self, event, ...)
     if event == "PLAYER_LOGIN" then
         jps.Class = UnitClass("player")
 				jps.detectSpec()
     elseif event == "PLAYER_REGEN_DISABLED" then
         jps.Combat = true
+		jps.toggleCombat(true)
         if jps.Enabled then combat() end
     elseif event == "PLAYER_REGEN_ENABLED" then
+		jps.toggleCombat(false)
         jps.Combat = false
         jps.Opening = true
         jps.RaidStatus = {}
@@ -105,6 +112,7 @@ function combatEventHandler(self, event, ...)
 		if jpsUseCDs == nil then jps.toggleCDs(true)        else jps.toggleCDs(jpsUseCDs) end
 		if jpsMultiTarget == nil then jps.toggleMulti(false) else jps.toggleMulti(jpsMultiTarget) end
 		if jpsToggles == nil then jps.toggleToggles(true)   else jps.toggleToggles(jpsToggles) end
+		if jpsToggleDir == nil then jps.setToggleDir("right") else jps.setToggleDir(jpsToggleDir) end
 		
 		if jpsPetHeal == nil then jpsPetHeal,jps.PetHeal = false,false
 		elseif jpsPetHeal == true then jps.PetHeal = true
@@ -116,12 +124,13 @@ function combatEventHandler(self, event, ...)
 		jpsMultiTarget = jps.MultiTarget
 		jpsPetHeal = jps.PetHeal
 		jpsUseCDs = jps.UseCDs
+		jpsToggleDir = jps.ToggleDir
 	end
 end
 
 function jps.detectSpec()
 	jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
-	if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
+	if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
 	if not jps.Enabled then jpsIcon:Hide() end
 end
 
@@ -142,61 +151,59 @@ function SlashCmdList.jps(cmd, editbox)
 			jps.detectSpec()
     elseif msg == "fishing" then
         jps.Fishing = not jps.Fishing
-        print("Murglesnout & Grey Deletion now",jps.Fishing)
+        write("Murglesnout & Grey Deletion now",jps.Fishing)
     elseif msg == "debug" then
         jps.Debug = not jps.Debug
-        print("Debug mode set to",jps.Debug)
+        write("Debug mode set to",jps.Debug)
     elseif msg == "peth" then
         jps.PetHeal = not jps.PetHeal
-        print("Pet heal set to",jps.PetHeal)
+        write("Pet heal set to",jps.PetHeal)
     elseif msg == "multi" or msg == "multitarget" then
         jps.toggleMulti()
-        print("MultiTarget mode set to",jps.MultiTarget)
     elseif msg == "cds" then
 		jps.toggleCDs()
-        print("Cooldown use set to",jps.UseCDs)
     elseif msg == "int" or msg == "interrupts" then
         jps.Interrupts = not jps.Interrupts
-        print("Interrupt use set to",jps.Interrupts)
+        write("Interrupt use set to",jps.Interrupts)
     elseif msg == "pint" then
         jps.PVPInterrupt = not jps.PVPInterrupt
-        print("PVP Interrupt use set to",jps.PVPInterrupt)
+        write("PVP Interrupt use set to",jps.PVPInterrupt)
     elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
         jps.MacroSpam = not jps.MacroSpam
-        print("MacroSpam flag is now set to",jps.MacroSpam)
+        write("MacroSpam flag is now set to",jps.MacroSpam)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
-        print("Opening flag is now set to",jps.Opening)
+        write("Opening flag is now set to",jps.Opening)
 	elseif msg == "size" then
 		jps.IconSize = tonumber(rest)
 		jpsIcon:SetWidth(jps.IconSize)
 		jpsIcon:SetHeight(jps.IconSize)
     elseif msg == "help" then
-        print("Slash Commands:")
-        print("/jps - Show enabled status.")
-        print("/jps enable/disable - Enable/Disable the addon.")
-        print("/jps spam - Toggle spamming of a given macro.")
+        write("Slash Commands:")
+        write("/jps - Show enabled status.")
+        write("/jps enable/disable - Enable/Disable the addon.")
+        write("/jps spam - Toggle spamming of a given macro.")
         if jps.Spec == "Feral" then
-            print("/jps panther - Toggle Feral T11 4pc.")
+            write("/jps panther - Toggle Feral T11 4pc.")
         end
-        print("/jps cds - Toggle use of cooldowns.")
-        print("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
-        print("/jps interrupts - Toggle interrupting")
-        print("/jps help - Show this help text.")
+        write("/jps cds - Toggle use of cooldowns.")
+        write("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
+        write("/jps interrupts - Toggle interrupting")
+        write("/jps help - Show this help text.")
     elseif msg == "pew" then
         combat()
     else
         if jps.Enabled then
-            print("JPS v"..jps.Version.." Enabled - Ready and Waiting.")
+            write("JPS v"..jps.Version.." Enabled - Ready and Waiting.")
         else 
-            print "JPS Disabled - Waiting on Standby."
+            write "JPS Disabled - Waiting on Standby."
         end
-        print("jps.UseCDs:",jps.UseCDs)
-        print("jps.Opening:",jps.Opening)
-        print("jps.Interrupts:",jps.Interrupts)
-        print("jps.MacroSpam:",jps.MacroSpam)
-        print("jps.Fishing:",jps.Fishing)
-				print("Use /jps help for help.")
+        write("jps.UseCDs:",jps.UseCDs)
+        write("jps.Opening:",jps.Opening)
+        write("jps.Interrupts:",jps.Interrupts)
+        write("jps.MacroSpam:",jps.MacroSpam)
+        write("jps.Fishing:",jps.Fishing)
+				write("Use /jps help for help.")
     end
 end
 
@@ -254,7 +261,7 @@ function combat(self)
     
     -- Check for the Rotation
     if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
-        print("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
+        write("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
         jps.Enabled = false
         return
     end
@@ -325,16 +332,21 @@ jpsIcon.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set t
 jpsIcon.shadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
 
 jpsIcon:SetScript("OnClick", function(self, button)
+	
 	if button == "LeftButton" then
 		jps.toggleEnabled()
 	elseif button == "RightButton" then
-		jps.toggleToggles()
+		if IsShiftKeyDown() then
+			jps.setToggleDir()
+		else
+			jps.toggleToggles()
+		end
+		
 	end
 end)
 
 ToggleCDs = CreateFrame("Button", "ToggleCDs", jpsIcon)
 ToggleCDs:RegisterForClicks("LeftButtonUp")
-ToggleCDs:SetPoint("CENTER")
 ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 40, 0)
 ToggleCDs:SetHeight(36)
 ToggleCDs:SetWidth(36)
@@ -365,7 +377,6 @@ end)
 
 ToggleMulti = CreateFrame("Button", "ToggleMulti", jpsIcon)
 ToggleMulti:RegisterForClicks("LeftButtonUp")
-ToggleMulti:SetPoint("CENTER")
 ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 80, 0)
 ToggleMulti:SetHeight(36)
 ToggleMulti:SetWidth(36)
@@ -392,6 +403,48 @@ ToggleMulti:SetScript("OnClick", function(self, button)
 
 end)
 
+function jps.setToggleDir( dir )
+	if dir ~= nil then
+		if dir == "right" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 80, 0)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 40, 0)
+			jps.ToggleDir = "right"
+		elseif dir == "left" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, -80, 0)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, -40, 0)
+			jps.ToggleDir = "left"
+		elseif dir == "up" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, 80)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, 40)
+			jps.ToggleDir = "up"
+		elseif dir == "down" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, -80)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, -40)
+			jps.ToggleDir = "down"
+		end
+	else 
+		dir = jps.ToggleDir
+		if dir == "right" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 80, 0)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 40, 0)
+			jps.ToggleDir = "down"
+		elseif dir == "left" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, -80, 0)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, -40, 0)
+			jps.ToggleDir = "up"
+		elseif dir == "up" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, 80)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, 40)
+			jps.ToggleDir = "right"
+		elseif dir == "down" then
+			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, -80)
+			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, -40)
+			jps.ToggleDir = "left"
+		end
+	end
+	
+end
+
 function jps.toggleCDs( value )
 	if value ~= nil then
 		jps.UseCDs = value
@@ -404,10 +457,10 @@ function jps.toggleCDs( value )
 	end
 	if jps.UseCDs then
 		ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
-		print "JPS: Cooldown Usage Disabled."
+		write (" Cooldown Usage Disabled.")
 	else
 		ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
-		print "JPS: Cooldown Usage Enabled."
+		write (" Cooldown Usage Enabled.")
 	end
 	jps.UseCDs = not jps.UseCDs
 	return
@@ -425,10 +478,10 @@ function jps.toggleEnabled( value )
 	end
 	if jps.Enabled then
 		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
-		print "JPS: Disabled."
+		write("Disabled.")
 	else
 		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
-		print "JPS: Enabled."
+		write("Enabled.")
 	end
 	jps.Enabled = not jps.Enabled
 	return
@@ -446,13 +499,25 @@ function jps.toggleMulti( value )
 	end
 	if jps.MultiTarget then
 		ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
-		print "JPS: Multi-Target Disabled."
+		write("Multi-Target Disabled.")
 	else
 		ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
-		print "JPS: Multi-Target Enabled."
+		write("Multi-Target Enabled.")
 	end
 	jps.MultiTarget = not jps.MultiTarget
 	return
+end
+
+function jps.toggleCombat( status )
+	if status == true then
+		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_combat.tga")
+	else
+		if jps.Enabled then
+			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		else
+			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		end
+	end
 end
 
 function jps.toggleToggles( values )
