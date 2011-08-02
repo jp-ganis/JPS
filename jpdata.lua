@@ -13,6 +13,37 @@ jps.Specs = {
     ["Mage"]         = { [1] = "Arcane",           [2] = "Fire",         [3] = "Frost"      },
 }
 
+jps.Dispells = {
+	["Magic"] = {
+		"Static Disruption", -- Akil'zon
+		"Consuming Darkness", -- Argaloth
+		"Emberstrike", -- Erunak Stonespeaker
+		"Binding Shadows", -- Erudax
+		"Divine Reckoning", -- Temple Guardian Anhuur
+		"Static Cling", -- Asaad, noobs shouldn't get hit by this, but get real....
+		"Pain and Suffering", -- Baron Ashbury
+		"Cursed Veil" -- Baron Silverlaine
+		-- "Wither", -- Ammunae
+	},
+	
+	["Poison"] = {
+		"Viscous Poison", -- Lockmaw
+	},
+	
+	["Disease"] = {
+		"Plague of Ages", -- High Prophet Barim
+	},
+	
+	["Curse"] = {
+		"Curse of Blood", -- High Priestess Azil
+		"Cursed Bullets", -- Lord Godfrey
+	},
+	
+	["Enrage"] = { -- hunters pretty much
+		"Enrage", -- Generic Enrage, used all over the place
+	}	
+}
+
 -- Functions
 function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
@@ -25,6 +56,23 @@ function jps.Cast(spell)
 	end
 end
 
+function jps.can_cast(spell, unit)
+	if UnitExists(unit) and UnitIsVisible(unit) and UnitIsFriend(unit) then
+		if IsSpellInRange(spell, unit) then	return 1 end
+	end
+	return 0
+end
+
+function jps.can_dispell( unit, ... )
+	for _, dtype in pairs(...) do
+		if jps.Dispells[dtype] ~= nil then
+			for _, spell in pairs(jps.Dispells[dtype]) do
+				if ud( unit, spell ) then return 1 end
+			end
+		end
+	end
+	return 0
+end
 
 function jps.get_cooldown(spell)
 	local start,duration,_ = GetSpellCooldown(spell)
@@ -38,6 +86,13 @@ function jps.get_pet_cooldown(index)
 	local cd = start+duration-GetTime()-jps.Lag
 	if cd < 0 then return 0 end
 	return cd
+end
+
+function jps.buff( spell, unit )
+	if unit == nil then unit = "player" end
+	local buff,_,_,_,_,_,_,_,_,_,_ = UnitBuff(unit, spell)
+	if buff ~= nil then return 1 end
+	return 0
 end
 
 function jps.buff_duration(unit,spell)
@@ -67,11 +122,7 @@ end
 
 function jps.set_jps_icon(spell)
 	local icon = GetSpellTexture(spell)
-	IconFrame:SetBackdrop( {
-		bgFile = icon,
-		edgeFile = "Interface\DialogFrame\UI-DialogBox-Border", tile = true, tileSize = 41, edgeSize = 13,
-		insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	})
+	jpsIconTex:SetTexture(icon)
 	jps.IconSpell = spell
 end
 
