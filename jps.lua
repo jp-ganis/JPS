@@ -43,14 +43,6 @@ combatFrame:RegisterEvent("PLAYER_LOGOUT");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_START")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_SENT")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
---combatFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
 --combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_HEALTH")
@@ -89,6 +81,8 @@ function combatEventHandler(self, event, ...)
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
 		jps.detectSpec()
+	
+	-- ADDON_LOADED
 	elseif event == "ADDON_LOADED" and ... == "JPS" then
 		if jpsIconSize == nil then
 			jpsIconSize = 36
@@ -100,15 +94,23 @@ function combatEventHandler(self, event, ...)
 			IconFrame:SetWidth(jps.IconSize)
 			IconFrame:SetHeight(jps.IconSize)
 		end
+
+		--jpsEnabled
 		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
 		elseif jpsEnabled == true then jps.Enabled = true,true
 		else jps.Enabled = false end
+
+		--jpsUseCDs
 		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
 		elseif jpsUseCDs == true then jps.UseCDs = true
 		else jps.UseCDs = false end
+
+		--jpsMultiTarget
 		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
 		elseif jpsMultiTarget == true then jps.MultiTarget = true
 		else jps.MultiTarget = false end
+	
+	-- On Logout
 	elseif event == "PLAYER_LOGOUT" then
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
