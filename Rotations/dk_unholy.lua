@@ -19,10 +19,10 @@ function dk_unholy(self)
 	         SpellStopCasting() spell = "strangulate"
 
 	--Cooldowns--
-	elseif ius("Pillar of Frost") and cd("Pillar of Frost") == 0 and jps.UseCDs then
-	     spell = "Pillar of Frost"   
-	elseif cd("Raise Dead") == 0 and jps.UseCDs then 
-	     spell = "Raise Dead"
+	elseif ius("Unholy Frenzy") and cd("Unholy Frenzy") == 0 and jps.UseCDs then
+	     spell = "Unholy Frenzy"   
+	elseif ius("Summon Gargoyle") and cd("Summon Gargoyle") == 0 and jps.UseCDs then 
+	     spell = "Summon Gargoyle"
 
 	--Buffs--
 	  elseif not ub("player","Horn of Winter") and cd("Horn of Winter") == 0 then
@@ -32,20 +32,26 @@ function dk_unholy(self)
 
 	--Multitarget--
 	  elseif UnitExists("target") and UnitCanAttack("player","target") and jps.MultiTarget then
-	     if cd("Death and Decay") == 0 and IsShiftKeyDown() then
+	     if ius("Dark Transformation") then
+	        spell = "Dark Transformation"
+	     elseif not ud("target","Frost Fever") and ius("Icy Touch") then
+	        spell = "Icy Touch"
+	     elseif not ud("target","Blood Plague") and ius("Plague Strike") then
+	        spell = "Plague Strike"
+	     elseif ius("Pestilence") then
+	        spell = "Pestilence"
+	     elseif cd("Death and Decay") == 0 then
 	        spell = "Death and Decay"
 	        CameraOrSelectOrMoveStart()
 	        CameraOrSelectOrMoveStop()
-	     elseif ub("player","Freezing Fog") and ius("Howling Blast") then
-	        spell = "Howling Blast"
-	     elseif ius ("Howling Blast") then
-	         spell = "Howling Blast"
-	     elseif power >= 80 and ius("Frost Strike") then
-	        spell = "Frost Strike"
-	     elseif unholy1c == true and ius("Plague Strike") then
-	        spell = "Plague Strike"
-	     elseif power >= 32 and ius("Frost Strike") then
-	        spell = "Frost Strike"
+	     elseif ius("Blood Boil") then
+	        spell = "Blood Boil"
+	     elseif ius("Scourge Strike") then
+	        spell = "Scourge Strike"
+	     elseif ius("Festering Strike") then
+	        spell = "Festering Strike"
+	     elseif power >= 40 and ius("Death Coil") then
+	        spell = "Death Coil"
 	     elseif cd("Horn of Winter") == 0 then
 	            spell= "Horn of Winter"
 	     end
