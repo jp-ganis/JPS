@@ -108,7 +108,7 @@ function combatEventHandler(self, event, ...)
         end
 	elseif event == "ADDON_LOADED" and ... == "JPS" then
 		if jpsIconSize == nil then
-			jpsIconSize = 41
+			jpsIconSize = 36
 			jps.IconSize = jpsIconSize
 			IconFrame:SetWidth(jps.IconSize)
 			IconFrame:SetHeight(jps.IconSize)
@@ -189,6 +189,8 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.IconSize = tonumber(rest)
 		IconFrame:SetWidth(jps.IconSize)
 		IconFrame:SetHeight(jps.IconSize)
+		jpsIconBorder:SetWidth(jps.IconSize)
+		jpsIconBorder:SetHeight(jps.IconSize)
     elseif msg == "help" then
         print("Slash Commands:")
         print("/jps - Show enabled status.")
@@ -301,6 +303,7 @@ function combat(self)
     return jps.ThisCast
 end
 
+-- Create the dragable Icon frame, anchor point for textures
 IconFrame = CreateFrame("Frame", "IconFrame", UIParent)
 IconFrame:SetMovable(true)
 IconFrame:EnableMouse(true)
@@ -308,7 +311,21 @@ IconFrame:RegisterForDrag("LeftButton")
 IconFrame:SetScript("OnDragStart", IconFrame.StartMoving)
 IconFrame:SetScript("OnDragStop", IconFrame.StopMovingOrSizing)
 IconFrame:SetPoint("CENTER")
-jpsIconTex = IconFrame:CreateTexture("ARTWORK")
-jpsIconTex:SetAllPoints()
-jpsIconTex:SetTexCoord(0.07, 0.92, 0.07, 0.93)
-jpsIconTex:SetTexture("Interface\\AddOns\\JPS\\jps.tga")
+jpsIconTex = IconFrame:CreateTexture("ARTWORK") -- create the spell icon texture
+jpsIconTex:SetPoint('TOPRIGHT', IconFrame, -2, -2) -- inset it by 3px or pt or w/e the game uses
+jpsIconTex:SetPoint('BOTTOMLEFT', IconFrame, 2, 2)
+jpsIconTex:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard border
+jpsIconTex:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
+
+-- barrowed this, along with the texture from nMainbar
+jpsIconBorder = IconFrame:CreateTexture(nil, "OVERLAY") -- create the border texture
+jpsIconBorder:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
+jpsIconBorder:SetPoint('TOPRIGHT', IconFrame, 1, 1) -- outset the points a bit so it goes around the spell icon
+jpsIconBorder:SetPoint('BOTTOMLEFT', IconFrame, -1, -1)
+jpsIconBorder:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
+jpsIconShadow = IconFrame:CreateTexture(nil, "BACKGROUND") -- create the icon frame
+jpsIconShadow:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
+jpsIconShadow:SetPoint('TOPRIGHT', jpsIconBorder, 4.5, 4.5) -- outset the points a bit so it goes around the border
+jpsIconShadow:SetPoint('BOTTOMLEFT', jpsIconBorder, -4.5, -4.5) -- outset the points a bit so it goes around the border
+jpsIconShadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
+jpsIconShadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
