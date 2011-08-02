@@ -169,6 +169,7 @@ function SlashCmdList.jps(msg, editbox)
         print("jps.Interrupts:",jps.Interrupts)
         print("jps.MacroSpam:",jps.MacroSpam)
         print("jps.Fishing:",jps.Fishing)
+				print("Use /jps help for help.")
     end
 end
 
