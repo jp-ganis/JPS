@@ -61,11 +61,9 @@ combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 
 function combatEventHandler(self, event, ...)
-    if event == "PLAYER_ALIVE" or event == "PLAYER_LOGIN" then
+    if event == "PLAYER_LOGIN" then
         jps.Class = UnitClass("player")
-        jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
-        if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
-        if not jps.Enabled then IconFrame:Hide() end
+				jps.detectSpec()
     elseif event == "PLAYER_REGEN_DISABLED" then
         jps.Combat = true
         if jps.Enabled then combat() end
@@ -105,7 +103,16 @@ function combatEventHandler(self, event, ...)
         if UnitIsFriend("player",unit) then
             jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
         end
-    end
+		-- Dual Spec Respec
+		elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
+			jps.detectSpec()
+		end
+end
+
+function jps.detectSpec()
+	jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
+	if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
+	if not jps.Enabled then IconFrame:Hide() end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
@@ -115,15 +122,17 @@ function SlashCmdList.jps(msg, editbox)
         if jps.Enabled == false then msg = "e"
         else msg = "d" end
     end
-    if msg== "disable" or msg == "d" then
+    if msg == "disable" or msg == "d" then
         jps.Enabled = false
         IconFrame:Hide()
         print "JPS Disabled."
-    elseif msg== "enable" or msg == "e" then
+    elseif msg == "enable" or msg == "e" then
         jps.Enabled = true
         jps.NextCast = nil
         IconFrame:Show()
         print "JPS Enabled."
+		elseif msg == "respec" then
+				jps.detectSpec()
     elseif msg == "panther" then
         jps.Panther = not jps.Panther
         print("T11 4pc use set to",jps.Panther)
