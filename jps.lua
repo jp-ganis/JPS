@@ -9,6 +9,7 @@ jps.Spec = nil
 jps.Interrupts = true
 jps.PVPInterrupt = false
 jps.Debug = false
+jps.Lag = 0
 -- Utility
 jps.Target = nil
 jps.Casting = false
