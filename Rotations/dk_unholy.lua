@@ -1,6 +1,6 @@
 function dk_unholy(self)
 
-	-- Version 0.1 by kyletxag.
+	-- Version 0.2 by kyletxag.
 	local ius = IsUsableSpell
 	local spell = nil
 	local power = UnitPower("player",6)
@@ -31,7 +31,7 @@ function dk_unholy(self)
 
 
 
-	--Single Target--
+	--Rotation--
 	  elseif UnitExists("target") and UnitCanAttack("player","target") then -- for boss later (and UnitLevel("target") < 87)
 		if not IsPetAttackActive() then
 			PetAttack()
