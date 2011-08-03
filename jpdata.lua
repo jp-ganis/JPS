@@ -179,6 +179,28 @@ function jps.should_kick(unit)
 	return false
 end
 
+function jps.create_timer( name, duration )
+	jps.Timers[name] = {}
+	jps.Timers[name]["expire"] = duration+GetTime()
+end
+
+function jps.check_timer( name )
+	if jps.Timers[name] ~= nil then
+		local expire = jps.Timers[name]["expire"]
+		local now = GetTime()
+		
+		if expire < now then
+			jps.Timers[name] = nil
+			return 0
+		else
+			local remaining = expire - now
+			return remaining
+		end
+	else
+		return 0
+	end
+end
+
 -- walkistalki healing functions
 jps.HealValues = {}
 
