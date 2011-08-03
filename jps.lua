@@ -19,6 +19,7 @@ jps.Error = nil
 jps.Lag = 0
 jps.Moving = nil
 jps.IconSpell = nil
+jps.Timers = {}
 -- Class Specific
 jps.Opening = false
 -- Misc.
