@@ -190,7 +190,7 @@ function jps.check_timer( name )
 			jps.Timers[name] = nil
 			return 0
 		else
-			return jps.Timers[name] - now
+		return jps.Timers[name] - now
 		end
 	end
 	return 0
