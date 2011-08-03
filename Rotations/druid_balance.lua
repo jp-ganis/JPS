@@ -1,8 +1,14 @@
 function druid_balance(self)
+	local my_hp = UnitHealth("player")/UnitHealthMax("player")
 	local power = UnitPower("player",SPELL_POWER_ECLIPSE)
 	local eclipse = GetEclipseDirection()
 	if eclipse == "none" then eclipse = "sun" end
 	local spell = nil
+
+	if my_hp < .6 and GetShapeshiftForm() ~= 5 then
+		jps.Target = "player"
+		return "regrowth"
+	end
 
 	local is_duration = jps.debuff_duration("target","insect swarm")
 	local mf_duration = jps.debuff_duration("target","moonfire")

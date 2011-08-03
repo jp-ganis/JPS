@@ -96,6 +96,15 @@ function jps.buff( spell, unit )
 end
 
 function jps.buff_duration(unit,spell)
+	local _,_,_,_,_,_,duration,_,caster,_,_ = UnitBuff(unit,spell)
+	if caster ~= "player" then return 0 end
+	if duration == nil then return 0 end
+	duration = duration-GetTime()-jps.Lag
+	if duration < 0 then return 0 end
+	return duration
+end
+
+function jps.notmybuff_duration(unit,spell)
 	local _,_,_,_,_,_,duration,_,_,_,_ = UnitBuff(unit,spell)
 	if duration == nil then return 0 end
 	duration = duration-GetTime()-jps.Lag
@@ -122,7 +131,7 @@ end
 
 function jps.set_jps_icon(spell)
 	local icon = GetSpellTexture(spell)
-	jpsIconTex:SetTexture(icon)
+	jpsIcon.texture:SetTexture(icon)
 	jps.IconSpell = spell
 end
 
