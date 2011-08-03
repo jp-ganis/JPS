@@ -16,7 +16,7 @@ jps.LastCast = nil
 jps.ThisCast = nil
 jps.NextCast = nil
 jps.Error = nil
-jps.Lag = nil
+jps.Lag = 0
 jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
