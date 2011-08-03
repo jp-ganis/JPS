@@ -3,7 +3,6 @@ jps = {}
 jps.Version = "0.9.2"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.2
-jps.Enabled = true
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
@@ -48,14 +47,21 @@ combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 
+
+function write(...)
+	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", ...), 1, 1, 1);
+end
+
 function combatEventHandler(self, event, ...)
     if event == "PLAYER_LOGIN" then
         jps.Class = UnitClass("player")
 				jps.detectSpec()
     elseif event == "PLAYER_REGEN_DISABLED" then
         jps.Combat = true
+		jps.toggleCombat(true)
         if jps.Enabled then combat() end
     elseif event == "PLAYER_REGEN_ENABLED" then
+		jps.toggleCombat(false)
         jps.Combat = false
         jps.Opening = true
         jps.RaidStatus = {}
@@ -87,41 +93,35 @@ function combatEventHandler(self, event, ...)
 		if jpsIconSize == nil then
 			jpsIconSize = 36
 			jps.IconSize = jpsIconSize
-			IconFrame:SetWidth(jps.IconSize)
-			IconFrame:SetHeight(jps.IconSize)
+			jpsIcon:SetWidth(jps.IconSize)
+			jpsIcon:SetHeight(jps.IconSize)
 		else
 			jps.IconSize = jpsIconSize 
-			IconFrame:SetWidth(jps.IconSize)
-			IconFrame:SetHeight(jps.IconSize)
+			jpsIcon:SetWidth(jps.IconSize)
+			jpsIcon:SetHeight(jps.IconSize)
 		end
-
-		--jpsEnabled
-		if jpsEnabled == nil then jpsEnabled,jps.Enabled = true,true
-		elseif jpsEnabled == true then jps.Enabled = true,true
-		else jps.Enabled = false end
-
-		--jpsUseCDs
-		if jpsUseCDs == nil then jpsUseCDs,jps.UseCDs = true,true
-		elseif jpsUseCDs == true then jps.UseCDs = true
-		else jps.UseCDs = false end
-
-		--jpsMultiTarget
-		if jpsMultiTarget == nil then jpsMultiTarget,jps.MultiTarget  = false,false
-		elseif jpsMultiTarget == true then jps.MultiTarget = true
-		else jps.MultiTarget = false end
-	
+		-- jpsOptions
+		if jpsEnabled == nil then jps.toggleEnabled(true)   else jps.toggleEnabled(jpsEnabled) end
+		if jpsUseCDs == nil then jps.toggleCDs(true)        else jps.toggleCDs(jpsUseCDs) end
+		if jpsMultiTarget == nil then jps.toggleMulti(false) else jps.toggleMulti(jpsMultiTarget) end
+		if jpsToggles == nil then jps.toggleToggles(true)   else jps.toggleToggles(jpsToggles) end
+		if jpsToggleDir == nil then jps.setToggleDir("right") else jps.setToggleDir(jpsToggleDir) end
+		if jpsIconSize == nil then jps.resize(36) else jps.resize(jpsIconSize) end
+		
+		
 	-- On Logout
 	elseif event == "PLAYER_LOGOUT" then
 		jpsIconSize = jps.IconSize
 		jpsEnabled = jps.Enabled
 		jpsMultiTarget = jps.MultiTarget
+		jpsUseCDs = jps.UseCDs
+		jpsToggleDir = jps.ToggleDir
 	end
 end
 
 function jps.detectSpec()
 	jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
-	if jps.Spec then print (":::: JPS Online for your",jps.Spec,jps.Class,"::::") end
-	if not jps.Enabled then IconFrame:Hide() end
+	if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
@@ -133,67 +133,59 @@ function SlashCmdList.jps(cmd, editbox)
         else msg = "d" end
     end
     if msg == "disable" or msg == "d" then
-        jps.Enabled = false
-        IconFrame:Hide()
-        print "JPS Disabled."
+		jps.toggleEnabled(false)
     elseif msg == "enable" or msg == "e" then
-        jps.Enabled = true
         jps.NextCast = nil
-        IconFrame:Show()
-        print "JPS Enabled."
-		elseif msg == "respec" then
-				jps.detectSpec()
+		jps.toggleEnabled(true)
+	elseif msg == "respec" then
+		jps.detectSpec()
     elseif msg == "fishing" then
         jps.Fishing = not jps.Fishing
-        print("Murglesnout & Grey Deletion now",jps.Fishing)
+        write("Murglesnout & Grey Deletion now",jps.Fishing)
     elseif msg == "debug" then
         jps.Debug = not jps.Debug
-        print("Debug mode set to",jps.Debug)
+        write("Debug mode set to",jps.Debug)
     elseif msg == "multi" or msg == "multitarget" then
-        jps.MultiTarget = not jps.MultiTarget
-        print("MultiTarget mode set to",jps.MultiTarget)
+        jps.toggleMulti()
     elseif msg == "cds" then
-        jps.UseCDs = not jps.UseCDs
-        print("Cooldown use set to",jps.UseCDs)
+		jps.toggleCDs()
     elseif msg == "int" or msg == "interrupts" then
         jps.Interrupts = not jps.Interrupts
-        print("Interrupt use set to",jps.Interrupts)
+        write("Interrupt use set to",jps.Interrupts)
     elseif msg == "pint" then
         jps.PVPInterrupt = not jps.PVPInterrupt
-        print("PVP Interrupt use set to",jps.PVPInterrupt)
+        write("PVP Interrupt use set to",jps.PVPInterrupt)
     elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
         jps.MacroSpam = not jps.MacroSpam
-        print("MacroSpam flag is now set to",jps.MacroSpam)
+        write("MacroSpam flag is now set to",jps.MacroSpam)
     elseif msg == "opening" then
         jps.Opening = not jps.Opening
-        print("Opening flag is now set to",jps.Opening)
+        write("Opening flag is now set to",jps.Opening)
 	elseif msg == "size" then
-		jps.IconSize = tonumber(rest)
-		IconFrame:SetWidth(jps.IconSize)
-		IconFrame:SetHeight(jps.IconSize)
+		jps.resize( rest )
     elseif msg == "help" then
-        print("Slash Commands:")
-        print("/jps - Show enabled status.")
-        print("/jps enable/disable - Enable/Disable the addon.")
-        print("/jps spam - Toggle spamming of a given macro.")
-        print("/jps cds - Toggle use of cooldowns.")
-        print("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
-        print("/jps interrupts - Toggle interrupting")
-        print("/jps help - Show this help text.")
+        write("Slash Commands:")
+        write("/jps - Show enabled status.")
+        write("/jps enable/disable - Enable/Disable the addon.")
+        write("/jps spam - Toggle spamming of a given macro.")
+        write("/jps cds - Toggle use of cooldowns.")
+        write("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
+        write("/jps interrupts - Toggle interrupting")
+        write("/jps help - Show this help text.")
     elseif msg == "pew" then
         combat()
     else
         if jps.Enabled then
-            print("JPS v"..jps.Version.." Enabled - Ready and Waiting.")
+            write("JPS v"..jps.Version.." Enabled - Ready and Waiting.")
         else 
-            print "JPS Disabled - Waiting on Standby."
+            write "JPS Disabled - Waiting on Standby."
         end
-        print("jps.UseCDs:",jps.UseCDs)
-        print("jps.Opening:",jps.Opening)
-        print("jps.Interrupts:",jps.Interrupts)
-        print("jps.MacroSpam:",jps.MacroSpam)
-        print("jps.Fishing:",jps.Fishing)
-				print("Use /jps help for help.")
+        write("jps.UseCDs:",jps.UseCDs)
+        write("jps.Opening:",jps.Opening)
+        write("jps.Interrupts:",jps.Interrupts)
+        write("jps.MacroSpam:",jps.MacroSpam)
+        write("jps.Fishing:",jps.Fishing)
+		write("Use /jps help for help.")
     end
 end
 
@@ -252,7 +244,7 @@ function combat(self)
     
     -- Check for the Rotation
     if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
-        print("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
+        write("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
         jps.Enabled = false
         return
     end
@@ -284,31 +276,3 @@ function combat(self)
     -- Return spellcast.
     return jps.ThisCast
 end
-
-
--- Create the dragable Icon frame, anchor point for textures
-IconFrame = CreateFrame("Frame", "IconFrame", UIParent)
-IconFrame:SetMovable(true)
-IconFrame:EnableMouse(true)
-IconFrame:RegisterForDrag("LeftButton")
-IconFrame:SetScript("OnDragStart", IconFrame.StartMoving)
-IconFrame:SetScript("OnDragStop", IconFrame.StopMovingOrSizing)
-IconFrame:SetPoint("CENTER")
-jpsIconTex = IconFrame:CreateTexture("ARTWORK") -- create the spell icon texture
-jpsIconTex:SetPoint('TOPRIGHT', IconFrame, -2, -2) -- inset it by 3px or pt or w/e the game uses
-jpsIconTex:SetPoint('BOTTOMLEFT', IconFrame, 2, 2)
-jpsIconTex:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard border
-jpsIconTex:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
-
--- barrowed this, along with the texture from nMainbar
-jpsIconBorder = IconFrame:CreateTexture(nil, "OVERLAY") -- create the border texture
-jpsIconBorder:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
-jpsIconBorder:SetPoint('TOPRIGHT', IconFrame, 1, 1) -- outset the points a bit so it goes around the spell icon
-jpsIconBorder:SetPoint('BOTTOMLEFT', IconFrame, -1, -1)
-jpsIconBorder:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
-jpsIconShadow = IconFrame:CreateTexture(nil, "BACKGROUND") -- create the icon frame
-jpsIconShadow:SetParent(IconFrame) -- link it with the icon frame so it drags around with it
-jpsIconShadow:SetPoint('TOPRIGHT', jpsIconBorder, 4.5, 4.5) -- outset the points a bit so it goes around the border
-jpsIconShadow:SetPoint('BOTTOMLEFT', jpsIconBorder, -4.5, -4.5) -- outset the points a bit so it goes around the border
-jpsIconShadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
-jpsIconShadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
