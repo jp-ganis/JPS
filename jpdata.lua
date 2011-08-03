@@ -179,6 +179,23 @@ function jps.should_kick(unit)
 	return false
 end
 
+function jps.create_timer( name, duration )
+	jps.Timers[name] = duration+GetTime()
+end
+
+function jps.check_timer( name )
+	if jps.Timers[name] ~= nil then
+		local now = GetTime()
+		if jps.Timers[name] < now then
+			jps.Timers[name] = nil
+			return 0
+		else
+		return jps.Timers[name] - now
+		end
+	end
+	return 0
+end
+
 -- walkistalki healing functions
 jps.HealValues = {}
 

@@ -28,48 +28,28 @@ function dk_unholy(self)
 	  elseif HP < 0.2 and ius("Icebound Fortitude") then
 	     spell = "Icebound Fortitude"
 
-	--Multitarget--
-	  elseif UnitExists("target") and UnitCanAttack("player","target") and jps.MultiTarget then
-	     if ius("Dark Transformation") then
-	        spell = "Dark Transformation"
-        elseif FF_duration < 2 and BP_duration < 2 and cd("Outbreak") == 0 then
-            spell = "Outbreak"
-        elseif BP_duration < 2 then
-            spell = "Plague Strike"
-        elseif FF_duration < 2 then
-            spell = "Icy Touch"
-	     elseif ius("Pestilence") then
-	        spell = "Pestilence"
-	     elseif cd("Death and Decay") == 0 then
-	        spell = "Death and Decay"
-	        CameraOrSelectOrMoveStart()
-	        CameraOrSelectOrMoveStop()
-	     elseif ius("Blood Boil") then
-	        spell = "Blood Boil"
-	     elseif ius("Scourge Strike") then
-	        spell = "Scourge Strike"
-	     elseif ius("Festering Strike") then
-	        spell = "Festering Strike"
-	     elseif power >= 40 and ius("Death Coil") then
-	        spell = "Death Coil"
-	     elseif cd("Horn of Winter") == 0 then
-	            spell= "Horn of Winter"
-	     end
+
+
 
 	--Single Target--
-	  elseif UnitExists("target") and UnitCanAttack("player","target") and (not jps.MultiTarget) then -- for boss later (and UnitLevel("target") < 87)
+	  elseif UnitExists("target") and UnitCanAttack("player","target") then -- for boss later (and UnitLevel("target") < 87)
 		if not IsPetAttackActive() then
 			PetAttack()
 		elseif ius("Dark Transformation") then
 	        spell = "Dark Transformation"
-		elseif cd("Summon Gargoyle") == 0 and ius("Summon Gargoyle") and DT_pet and power >= 60 and jps.UseCDs then
+		elseif cd("Summon Gargoyle") == 0 and ius("Summon Gargoyle") and DT_pet and power >= 60 then
 	        spell = "Summon Gargoyle"
         elseif FF_duration < 2 and BP_duration < 2 and cd("Outbreak") == 0 then
             spell = "Outbreak"
-        elseif BP_duration < 2 then
+        elseif BP_duration < 2 and cd("Plague Strike") == 0 then
             spell = "Plague Strike"
-        elseif FF_duration < 2 then
+        elseif FF_duration < 2 and cd("Icy Touch") == 0 then
             spell = "Icy Touch"
+		elseif ub("player","Sudden Doom") then
+			spell="Death Coil"
+		elseif jps.check_timer("pest") == 0 and jps.MultiTarget then
+			jps.create_timer("pest", "15")
+		    spell = "Pestilence"
 	    elseif cd("Death and Decay") == 0 and ius("Death and Decay") then
 	        spell = "Death and Decay"
 	        CameraOrSelectOrMoveStart()
@@ -77,8 +57,16 @@ function dk_unholy(self)
         elseif ius("Scourge Strike") and SI_stacks < 5 then
             spell = "Scourge Strike"
         elseif ius("Festering Strike") then
-            spell = "Festering Strike"
+			if jps.MultiTarget then
+				spell= "Blood Boil"
+			elseif not jps.MultiTarget then
+            	spell = "Festering Strike"
+			end
         elseif power >= 40 and not DT_pet then
+			spell= "Death Coil"
+		elseif power >= 100 and DT_pet then
+			spell= "Death Coil"
+		elseif power >= 40 and DT_pet and cd("Summon Gargoyle") > 0 then
 			spell= "Death Coil"
         elseif cd("Blood Tap") == 0 then 
             spell= "Blood Tap"
