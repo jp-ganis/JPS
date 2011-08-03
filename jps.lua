@@ -210,7 +210,8 @@ function combat(self)
     	                         ["Balance"]       = druid_balance,
     	                         ["Restoration"]   = druid_resto },
     	    
-    	    ["Death Knight"] = { ["Blood"]         = dk_blood,
+    	    ["Death Knight"] = { ["Unholy"]        = dk_unholy,
+								 ["Blood"]         = dk_blood,
     	                         ["Frost"]         = dk_frost  },
     	        
     	    ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
