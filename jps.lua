@@ -9,7 +9,6 @@ jps.Spec = nil
 jps.Interrupts = true
 jps.PVPInterrupt = false
 jps.Debug = false
-jps.Lag = 0
 -- Utility
 jps.Target = nil
 jps.Casting = false
@@ -17,7 +16,7 @@ jps.LastCast = nil
 jps.ThisCast = nil
 jps.NextCast = nil
 jps.Error = nil
-jps.Lag = nil
+jps.Lag = 0
 jps.Moving = nil
 jps.IconSpell = nil
 -- Class Specific
