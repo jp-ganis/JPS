@@ -12,6 +12,7 @@ Rotations\druid_feral.lua
 Rotations\druid_feral_cat.lua
 Rotations\druid_feral_bear.lua
 Rotations\druid_resto.lua
+Rotations\dk_unholy.lua
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
 Rotations\shaman_enhancement.lua
