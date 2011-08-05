@@ -1,3 +1,11 @@
+jps.GUInormal = "Interface\\AddOns\\JPS\\media\\jps.tga"
+jps.GUIshadow = "Interface\\AddOns\\JPS\\media\\shadow.tga"
+jps.GUIborder = "Interface\\AddOns\\JPS\\media\\border.tga"
+jps.GUIborder_active = "Interface\\AddOns\\JPS\\media\\border_on.tga"
+jps.GUIborder_combat = "Interface\\AddOns\\JPS\\media\\border_combat.tga"
+jps.GUIicon_cd = "Interface\\Icons\\Spell_Holy_BorrowedTime"
+jps.GUIicon_multi = "Interface\\Icons\\achievement_arena_5v5_3"
+
 -- Create the frame that does all the work, pew pew..
 JPSFrame = CreateFrame("Frame", "JPSFrame")
 JPSFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -20,19 +28,19 @@ jpsIcon.texture = jpsIcon:CreateTexture("ARTWORK") -- create the spell icon text
 jpsIcon.texture:SetPoint('TOPRIGHT', jpsIcon, -2, -2) -- inset it by 2px or pt or w/e the game uses
 jpsIcon.texture:SetPoint('BOTTOMLEFT', jpsIcon, 2, 2)
 jpsIcon.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93) -- cut off the blizzard border
-jpsIcon.texture:SetTexture("Interface\\AddOns\\JPS\\media\\jps.tga") -- set the default texture
+jpsIcon.texture:SetTexture(jps.GUInormal) -- set the default texture
 
 -- barrowed this, along with the texture from nMainbar
 jpsIcon.border = jpsIcon:CreateTexture(nil, "OVERLAY") -- create the border texture
 jpsIcon.border:SetParent(jpsIcon) -- link it with the icon frame so it drags around with it
 jpsIcon.border:SetPoint('TOPRIGHT', jpsIcon, 1, 1) -- outset the points a bit so it goes around the spell icon
 jpsIcon.border:SetPoint('BOTTOMLEFT', jpsIcon, -1, -1)
-jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga") -- set the texture
+jpsIcon.border:SetTexture(jps.GUIborder) -- set the texture
 jpsIcon.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND") -- create the icon frame
 jpsIcon.shadow:SetParent(jpsIcon) -- link it with the icon frame so it drags around with it
 jpsIcon.shadow:SetPoint('TOPRIGHT', jpsIcon.border, 4.5, 4.5) -- outset the points a bit so it goes around the border
 jpsIcon.shadow:SetPoint('BOTTOMLEFT', jpsIcon.border, -4.5, -4.5) -- outset the points a bit so it goes around the border
-jpsIcon.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")  -- set the texture
+jpsIcon.shadow:SetTexture(jps.GUIshadow)  -- set the texture
 jpsIcon.shadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
 
 jpsIcon:SetScript("OnClick", function(self, button)
@@ -57,19 +65,19 @@ ToggleCDs:SetWidth(36)
 ToggleCDs.texture = ToggleCDs:CreateTexture()
 ToggleCDs.texture:SetPoint('TOPRIGHT', ToggleCDs, -3, -3)
 ToggleCDs.texture:SetPoint('BOTTOMLEFT', ToggleCDs, 3, 3)
-ToggleCDs.texture:SetTexture("Interface\\Icons\\Spell_Holy_BorrowedTime")
+ToggleCDs.texture:SetTexture(jps.GUIicon_cd)
 ToggleCDs.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93)
 ToggleCDs.border = ToggleCDs:CreateTexture(nil, "OVERLAY")
 ToggleCDs.border:SetParent(ToggleCDs)
 ToggleCDs.border:SetPoint('TOPRIGHT', ToggleCDs, 1, 1)
 ToggleCDs.border:SetPoint('BOTTOMLEFT', ToggleCDs, -1, -1)
-ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+ToggleCDs.border:SetTexture(jps.GUIborder)
 
 ToggleCDs.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
 ToggleCDs.shadow:SetParent(ToggleCDs)
 ToggleCDs.shadow:SetPoint('TOPRIGHT', ToggleCDs.border, 4.5, 4.5) 
 ToggleCDs.shadow:SetPoint('BOTTOMLEFT', ToggleCDs.border, -4.5, -4.5) 
-ToggleCDs.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")
+ToggleCDs.shadow:SetTexture(jps.GUIshadow)
 ToggleCDs.shadow:SetVertexColor(0, 0, 0, 0.85)  
 
 
@@ -88,19 +96,19 @@ ToggleMulti:SetWidth(36)
 ToggleMulti.texture = ToggleMulti:CreateTexture()
 ToggleMulti.texture:SetPoint('TOPRIGHT', ToggleMulti, -3, -3)
 ToggleMulti.texture:SetPoint('BOTTOMLEFT', ToggleMulti, 3, 3)
-ToggleMulti.texture:SetTexture("Interface\\Icons\\achievement_arena_5v5_3")
+ToggleMulti.texture:SetTexture(jps.GUIicon_multi)
 ToggleMulti.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93)
 ToggleMulti.border = ToggleMulti:CreateTexture(nil, "OVERLAY") -- create the
 ToggleMulti.border:SetParent(ToggleMulti) -- link it with the icon frame so 
 ToggleMulti.border:SetPoint('TOPRIGHT', ToggleMulti, 1, 1) -- outset the poi
 ToggleMulti.border:SetPoint('BOTTOMLEFT', ToggleMulti, -1, -1)
-ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+ToggleMulti.border:SetTexture(jps.GUIborder)
 
 ToggleMulti.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
 ToggleMulti.shadow:SetParent(ToggleMulti)
 ToggleMulti.shadow:SetPoint('TOPRIGHT', ToggleMulti.border, 4.5, 4.5) 
 ToggleMulti.shadow:SetPoint('BOTTOMLEFT', ToggleMulti.border, -4.5, -4.5) 
-ToggleMulti.shadow:SetTexture("Interface\\AddOns\\JPS\\media\\shadow.tga")
+ToggleMulti.shadow:SetTexture(jps.GUIshadow)
 ToggleMulti.shadow:SetVertexColor(0, 0, 0, 0.85)
 
 ToggleMulti:SetScript("OnClick", function(self, button)
@@ -124,8 +132,8 @@ function jps.resize( size )
 end
 
 function jps.setToggleDir( dir )
-	paddingA = jps.IconSize + 4
-	paddingB = jps.IconSize * 2 + 8
+	local paddingA = jps.IconSize + 4
+	local paddingB = jps.IconSize * 2 + 8
 	if dir ~= nil then
 		if dir == "right" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, paddingB, 0)
@@ -171,17 +179,17 @@ function jps.toggleCDs( value )
 	if value ~= nil then
 		jps.UseCDs = value
 		if value == true then
-			ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+			ToggleCDs.border:SetTexture(jps.GUIborder_active)
 		else
-			ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+			ToggleCDs.border:SetTexture(jps.GUIborder)
 		end
 		return
 	end
 	if jps.UseCDs then
-		ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		ToggleCDs.border:SetTexture(jps.GUIborder)
 		write (" Cooldown Usage Disabled.")
 	else
-		ToggleCDs.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		ToggleCDs.border:SetTexture(jps.GUIborder_active)
 		write (" Cooldown Usage Enabled.")
 	end
 	jps.UseCDs = not jps.UseCDs
@@ -195,17 +203,17 @@ function jps.toggleEnabled( value )
 	if value ~= nil then
 		jps.Enabled = value
 		if value == true then
-			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+			jpsIcon.border:SetTexture(jps.GUIborder_active)
 		else
-			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+			jpsIcon.border:SetTexture(jps.GUIborder)
 		end
 		return
 	end
 	if jps.Enabled then
-		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		jpsIcon.border:SetTexture(jps.GUIborder)
 		write("Disabled.")
 	else
-		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		jpsIcon.border:SetTexture(jps.GUIborder_active)
 		write("Enabled.")
 	end
 	jps.Enabled = not jps.Enabled
@@ -216,17 +224,17 @@ function jps.toggleMulti( value )
 	if value ~= nil then
 		jps.MultiTarget = value
 		if value == true then
-			ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+			ToggleMulti.border:SetTexture(jps.GUIborder_active)
 		else
-			ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+			ToggleMulti.border:SetTexture(jps.GUIborder)
 		end
 		return
 	end
 	if jps.MultiTarget then
-		ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+		ToggleMulti.border:SetTexture(jps.GUIborder)
 		write("Multi-Target Disabled.")
 	else
-		ToggleMulti.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+		ToggleMulti.border:SetTexture(jps.GUIborder_active)
 		write("Multi-Target Enabled.")
 	end
 	jps.MultiTarget = not jps.MultiTarget
@@ -235,14 +243,24 @@ end
 
 function jps.toggleCombat( status )
 	if status == true then
-		jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_combat.tga")
+		if not jps.Enabled then
+			jpsIcon.border:SetTexture(jps.GUIborder)
+		else
+			jpsIcon.border:SetTexture(jps.GUIborder_combat)
+		end
 	else
 		if jps.Enabled then
-			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border_on.tga")
+			jpsIcon.border:SetTexture(jps.GUIborder_active)
 		else
-			jpsIcon.border:SetTexture("Interface\\AddOns\\JPS\\media\\border.tga")
+			jpsIcon.border:SetTexture(jps.GUIborder)
 		end
 	end
+end
+
+function jps.set_jps_icon( spell )
+	local icon = GetSpellTexture(spell)
+	jpsIcon.texture:SetTexture(icon)
+	jps.IconSpell = spell
 end
 
 function jps.toggleToggles( values )

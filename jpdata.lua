@@ -129,12 +129,6 @@ function jps.notmydebuff_duration(unit,spell)
 	return duration
 end
 
-function jps.set_jps_icon(spell)
-	local icon = GetSpellTexture(spell)
-	jpsIcon.texture:SetTexture(icon)
-	jps.IconSpell = spell
-end
-
 function jps.get_debuff_stacks(unit,spell)	
 	local _, _, _, count, _, _, _, _, _ = UnitDebuff(unit,spell)
 	if count == nil then count = 0 end
@@ -190,7 +184,7 @@ function jps.check_timer( name )
 			jps.Timers[name] = nil
 			return 0
 		else
-		return jps.Timers[name] - now
+			return jps.Timers[name] - now
 		end
 	end
 	return 0
