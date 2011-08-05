@@ -18,7 +18,8 @@ function hunter_sv(self)
 		spell = "Trap Launcher"
 		
 	elseif IsShiftKeyDown() and jps.MultiTarget and ub("player", "Trap Launcher") and cd("Explosive Trap") then
-		jps.worldClick = true
+		CameraOrSelectOrMoveStart()
+		CameraOrSelectOrMoveStop()
 		spell = "Explosive Trap"
 		
 	elseif jps.MultiTarget and focus > 40 then
