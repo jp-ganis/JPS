@@ -21,7 +21,7 @@ jps.Moving = nil
 jps.IconSpell = nil
 jps.Timers = {}
 -- Class Specific
-jps.Opening = false
+jps.Opening = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
@@ -47,6 +47,7 @@ combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
+combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 
 function write(...)
@@ -54,23 +55,27 @@ function write(...)
 end
 
 function combatEventHandler(self, event, ...)
+	
     if event == "PLAYER_LOGIN" then
-        jps.Class = UnitClass("player")
-				jps.detectSpec()
+		jps.detectSpec()
+		
     elseif event == "PLAYER_REGEN_DISABLED" then
         jps.Combat = true
 		jps.toggleCombat(true)
         if jps.Enabled then combat() end
+
     elseif event == "PLAYER_REGEN_ENABLED" then
 		jps.toggleCombat(false)
         jps.Combat = false
         jps.Opening = true
         jps.RaidStatus = {}
         collectgarbage("collect")
+
     -- Fishes
     elseif event == "BAG_UPDATE" and jps.Fishing then
         RunMacro("MG")
         RunMacro("MGG")
+
     -- UI Error checking - for LoS and Shred-fails.
     elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
         jps.Error = ...
@@ -79,12 +84,14 @@ function combatEventHandler(self, event, ...)
         elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
             jps.cast("mutilate")
         end
+
     -- RaidStatus Update
     elseif event == "UNIT_HEALTH" and jps.Enabled then
         local unit = ...
         if UnitIsFriend("player",unit) then
             jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
         end
+
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
 		jps.detectSpec()
@@ -121,8 +128,11 @@ function combatEventHandler(self, event, ...)
 end
 
 function jps.detectSpec()
-	jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
-	if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
+	jps.Class = UnitClass("player")
+	if jps.Class then
+		jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
+		if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
+	end
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
@@ -142,7 +152,7 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.detectSpec()
     elseif msg == "fishing" then
         jps.Fishing = not jps.Fishing
-        write("Murglesnout & Grey Deletion now",jps.Fishing)
+        write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
     elseif msg == "debug" then
         jps.Debug = not jps.Debug
         write("Debug mode set to",jps.Debug)
@@ -177,15 +187,10 @@ function SlashCmdList.jps(cmd, editbox)
         combat()
     else
         if jps.Enabled then
-            write("JPS v"..jps.Version.." Enabled - Ready and Waiting.")
+            write("Enabled - Ready and Waiting.")
         else 
-            write "JPS Disabled - Waiting on Standby."
+            write("Disabled - Waiting on Standby.")
         end
-        write("jps.UseCDs:",jps.UseCDs)
-        write("jps.Opening:",jps.Opening)
-        write("jps.Interrupts:",jps.Interrupts)
-        write("jps.MacroSpam:",jps.MacroSpam)
-        write("jps.Fishing:",jps.Fishing)
 		write("Use /jps help for help.")
     end
 end
@@ -211,7 +216,7 @@ function combat(self)
     	                         ["Restoration"]   = druid_resto },
     	    
     	    ["Death Knight"] = { ["Unholy"]        = dk_unholy,
-								 ["Blood"]         = dk_blood,
+                                 ["Blood"]         = dk_blood,
     	                         ["Frost"]         = dk_frost  },
     	        
     	    ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,

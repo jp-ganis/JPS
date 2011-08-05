@@ -6,8 +6,20 @@ function hunter_sv(self)
 	if not ud("target","Hunter's Mark") and not jps.MultiTarget then
 		spell = "Hunter's Mark"
 	
+	elseif jps.Opening and UnitExists("focus") and cd("Misdirection") then
+		jps.Target = "focus"
+		spell = "Misdirection"
+		jps.Opening = false
+	
 	elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
 		spell = "Aspect of the Hawk"
+		
+	elseif IsShiftKeyDown() and jps.MultiTarget and not ub("player", "Trap Launcher") and cd("Explosive Trap") then
+		spell = "Trap Launcher"
+		
+	elseif IsShiftKeyDown() and jps.MultiTarget and ub("player", "Trap Launcher") and cd("Explosive Trap") then
+		jps.worldClick = true
+		spell = "Explosive Trap"
 		
 	elseif jps.MultiTarget and focus > 40 then
 		spell = "Multi-Shot"
