@@ -129,8 +129,11 @@ end
 
 function jps.detectSpec()
 	jps.Class = UnitClass("player")
+	local specID = GetPrimaryTalentTree()
+	--local specName = specID and select(2, GetTalentTabInfo(specID))
+	local _, specName = GetTalentTabInfo( specID )
 	if jps.Class then
-		jps.Spec = jps.Specs[jps.Class][GetPrimaryTalentTree()]
+		jps.Spec = specName
 		if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
 	end
 end
