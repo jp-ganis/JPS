@@ -51,8 +51,10 @@ combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 
 function write(...)
-	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", ...), 1, 1, 1);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...)));
 end
+
+
 
 function combatEventHandler(self, event, ...)
 	
