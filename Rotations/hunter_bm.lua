@@ -21,7 +21,9 @@ function hunter_bm(self)
 
     -- Normal rotation
 	if not ub("pet","Mend Pet") and target_health_percent <= 90 then
-	  spell = "Mend Pet"
+	    spell = "Mend Pet"
+    elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
+        spell = "Aspect of the Hawk"
 	elseif target_health_percent <= 20 and cd("Kill Shot") == 0 then
 		spell = "Kill Shot"
 	elseif target_health_percent > 30 and not ud("target", "Hunter's Mark") then 
@@ -46,6 +48,8 @@ function hunter_bm(self)
 		spell = "Arcane Shot"
 	elseif IsSpellInRange("Arcane Shot","target") == 0 then
 		spell = "disengage"
+	elseif GetUnitSpeed("player") > 0 and not ub("player", "Aspect of the Fox") then
+	    spell = "Aspect of the Fox"
 	elseif jps.get_cooldown("Kill Command") > 0.5 then
 		-- make up some more focus
 		spell = "Cobra Shot"
