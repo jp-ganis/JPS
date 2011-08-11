@@ -6,6 +6,7 @@
 jps.lua
 jpsgui.lua
 jpdata.lua
+bindings.xml
 
 Rotations\druid_balance.lua
 Rotations\druid_feral.lua
