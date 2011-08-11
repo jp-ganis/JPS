@@ -10,6 +10,7 @@ jps.Interrupts = true
 jps.PVPInterrupt = false
 jps.PvP = false
 jps.Debug = false
+jps.Defensive = false
 -- Utility
 jps.Target = nil
 jps.Casting = false
@@ -60,44 +61,44 @@ end
 
 function combatEventHandler(self, event, ...)
 	
-    if event == "PLAYER_LOGIN" then
+	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
 		
 	elseif event == "INSPECT_READY" then
 		jps.detectSpec()
 		
-    elseif event == "PLAYER_REGEN_DISABLED" then
-        jps.Combat = true
+	elseif event == "PLAYER_REGEN_DISABLED" then
+		jps.Combat = true
 		jps.toggleCombat(true)
-        if jps.Enabled then combat() end
+		if jps.Enabled then combat() end
 
-    elseif event == "PLAYER_REGEN_ENABLED" then
+	elseif event == "PLAYER_REGEN_ENABLED" then
 		jps.toggleCombat(false)
-        jps.Combat = false
-        jps.Opening = true
-        jps.RaidStatus = {}
-        collectgarbage("collect")
+		jps.Combat = false
+		jps.Opening = true
+		jps.RaidStatus = {}
+		collectgarbage("collect")
 
-    -- Fishes
-    elseif event == "BAG_UPDATE" and jps.Fishing then
-        RunMacro("MG")
-        RunMacro("MGG")
+	-- Fishes
+	elseif event == "BAG_UPDATE" and jps.Fishing then
+		RunMacro("MG")
+		RunMacro("MGG")
 
-    -- UI Error checking - for LoS and Shred-fails.
-    elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
-        jps.Error = ...
-        if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
-            jps.Cast("mangle(cat form)")
-        elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
-            jps.cast("mutilate")
-        end
+	-- UI Error checking - for LoS and Shred-fails.
+	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
+		jps.Error = ...
+		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
+			jps.Cast("mangle(cat form)")
+		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
+			jps.cast("mutilate")
+		end
 
-    -- RaidStatus Update
-    elseif event == "UNIT_HEALTH" and jps.Enabled then
-        local unit = ...
-        if UnitIsFriend("player",unit) then
-            jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
-        end
+	-- RaidStatus Update
+	elseif event == "UNIT_HEALTH" and jps.Enabled then
+		local unit = ...
+		if UnitIsFriend("player",unit) then
+			jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
+		end
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -116,10 +117,10 @@ function combatEventHandler(self, event, ...)
 			jpsIcon:SetHeight(jps.IconSize)
 		end
 		-- jpsOptions
-		if jpsEnabled == nil then jps.toggleEnabled(true)   else jps.toggleEnabled(jpsEnabled) end
-		if jpsUseCDs == nil then jps.toggleCDs(true)        else jps.toggleCDs(jpsUseCDs) end
+		if jpsEnabled == nil then jps.toggleEnabled(true)	else jps.toggleEnabled(jpsEnabled) end
+		if jpsUseCDs == nil then jps.toggleCDs(true)		else jps.toggleCDs(jpsUseCDs) end
 		if jpsMultiTarget == nil then jps.toggleMulti(false) else jps.toggleMulti(jpsMultiTarget) end
-		if jpsToggles == nil then jps.toggleToggles(true)   else jps.toggleToggles(jpsToggles) end
+		if jpsToggles == nil then jps.toggleToggles(true)	else jps.toggleToggles(jpsToggles) end
 		if jpsToggleDir == nil then jps.setToggleDir("right") else jps.setToggleDir(jpsToggleDir) end
 		if jpsIconSize == nil then jps.resize(36) else jps.resize(jpsIconSize) end
 		
@@ -150,149 +151,152 @@ combatFrame:SetScript("OnEvent", combatEventHandler)
 
 function SlashCmdList.jps(cmd, editbox)
 	local msg, rest = cmd:match("^(%S*)%s*(.-)$");
-    if msg == "toggle" or msg == "t" then
-        if jps.Enabled == false then msg = "e"
-        else msg = "d" end
-    end
-    if msg == "disable" or msg == "d" then
+	if msg == "toggle" or msg == "t" then
+		if jps.Enabled == false then msg = "e"
+		else msg = "d" end
+	end
+	if msg == "disable" or msg == "d" then
 		jps.toggleEnabled(false)
-    elseif msg == "enable" or msg == "e" then
-        jps.NextCast = nil
+	elseif msg == "enable" or msg == "e" then
+		jps.NextCast = nil
 		jps.toggleEnabled(true)
 	elseif msg == "respec" then
 		jps.detectSpec()
-    elseif msg == "fishing" then
-        jps.Fishing = not jps.Fishing
-        write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
-    elseif msg == "debug" then
-        jps.Debug = not jps.Debug
-        write("Debug mode set to",jps.Debug)
-    elseif msg == "multi" or msg == "multitarget" then
-        jps.toggleMulti()
-    elseif msg == "cds" then
+	elseif msg == "fishing" then
+		jps.Fishing = not jps.Fishing
+		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
+	elseif msg == "debug" then
+		jps.Debug = not jps.Debug
+		write("Debug mode set to",tostring(jps.Debug))
+	elseif msg == "multi" or msg == "multitarget" then
+		jps.toggleMulti()
+	elseif msg == "cds" then
 		jps.toggleCDs()
-    elseif msg == "int" or msg == "interrupts" then
-        jps.Interrupts = not jps.Interrupts
-        write("Interrupt use set to",jps.Interrupts)
-    elseif msg == "pint" then
-        jps.PVPInterrupt = not jps.PVPInterrupt
-        write("PVP Interrupt use set to",jps.PVPInterrupt)
-    elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
-        jps.MacroSpam = not jps.MacroSpam
-        write("MacroSpam flag is now set to",jps.MacroSpam)
-		elseif msg == "pvp" then
-			jps.PvP = not jps.PvP
-			write("PvP mode is now set to",jps.PvP)
-    elseif msg == "opening" then
-        jps.Opening = not jps.Opening
-        write("Opening flag is now set to",jps.Opening)
+	elseif msg == "int" or msg == "interrupts" then
+		jps.Interrupts = not jps.Interrupts
+		write("Interrupt use set to",tostring(jps.Interrupts))
+	elseif msg == "pint" then
+		jps.PVPInterrupt = not jps.PVPInterrupt
+		write("PVP Interrupt use set to",tostring(jps.PVPInterrupt))
+	elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
+		jps.MacroSpam = not jps.MacroSpam
+		write("MacroSpam flag is now set to",tostring(jps.MacroSpam))
+	elseif msg == "pvp" then
+		jps.PvP = not jps.PvP
+		write("PvP mode is now set to",tostring(jps.PvP))
+	elseif msg == "opening" then
+		jps.Opening = not jps.Opening
+		write("Opening flag is now set to",tostring(jps.Opening))
 	elseif msg == "size" then
 		jps.resize( rest )
-    elseif msg == "help" then
-        write("Slash Commands:")
-        write("/jps - Show enabled status.")
-        write("/jps enable/disable - Enable/Disable the addon.")
-        write("/jps spam - Toggle spamming of a given macro.")
-        write("/jps cds - Toggle use of cooldowns.")
-        write("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
-        write("/jps interrupts - Toggle interrupting")
-        write("/jps help - Show this help text.")
-    elseif msg == "pew" then
-        combat()
-    else
-        if jps.Enabled then
-            write("Enabled - Ready and Waiting.")
-        else 
-            write("Disabled - Waiting on Standby.")
-        end
+	elseif msg == "def" or msg == "defensive" then
+		jps.Defensive = not jps.Defensive
+		write("Defensive cooldown usage set to", tostring(jps.Defensive))
+	elseif msg == "help" then
+		write("Slash Commands:")
+		write("/jps - Show enabled status.")
+		write("/jps enable/disable - Enable/Disable the addon.")
+		write("/jps spam - Toggle spamming of a given macro.")
+		write("/jps cds - Toggle use of cooldowns.")
+		write("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
+		write("/jps interrupts - Toggle interrupting")
+		write("/jps help - Show this help text.")
+	elseif msg == "pew" then
+		combat()
+	else
+		if jps.Enabled then
+			write("Enabled - Ready and Waiting.")
+		else 
+			write("Disabled - Waiting on Standby.")
+		end
 		write("Use /jps help for help.")
-    end
+	end
 end
 
 function JPS_OnUpdate(self,elapsed)
-    self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-    if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-        if jps.MacroSpam and not jps.Casting then
-            RunMacro(jps.Macro)
-        elseif jps.Combat and jps.Enabled then
-            combat()
-            self.TimeSinceLastUpdate = 0
-        end
-    end
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
+	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
+		if jps.MacroSpam and not jps.Casting then
+			RunMacro(jps.Macro)
+		elseif jps.Combat and jps.Enabled then
+			combat()
+			self.TimeSinceLastUpdate = 0
+		end
+	end
 end
 
 function combat(self) 
-    -- Rotations
+	-- Rotations
 	if jps.Rotations == nil then
-    	jps.Rotations = { 
-    	    ["Druid"]        = { ["Feral"]         = druid_feral,
-    	                         ["Balance"]       = druid_balance,
-    	                         ["Restoration"]   = druid_resto },
-    	    
-    	    ["Death Knight"] = { ["Unholy"]        = dk_unholy,
+        jps.Rotations = { 
+            ["Druid"]        = { ["Feral"]         = druid_feral,
+                                 ["Balance"]       = druid_balance,
+                                 ["Restoration"]   = druid_resto },
+            
+            ["Death Knight"] = { ["Unholy"]        = dk_unholy,
                                  ["Blood"]         = dk_blood,
-    	                         ["Frost"]         = dk_frost  },
-    	        
-    	    ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
-    	                         ["Elemental"]     = shaman_elemental },
-    	    
-    	    ["Paladin"]      = { ["Protection"]    = paladin_protadin,
-    	                         ["Retribution"]   = paladin_ret },
-    	    
-    	    ["Warlock"]      = { ["Affliction"]    = warlock_affl,
-    	                         ["Destruction"]   = warlock_destro,
-    	                         ["Demonology"]    = warlock_demo },
-    	    
-    	    ["Hunter"]       = { ["Beast Mastery"] = hunter_bm,
-    	                         ["Marksmanship"]  = hunter_mm,
-    	                         ["Survival"]      = hunter_sv },
-    	                
-    	    ["Mage"]         = { ["Fire"]          = mage_fire,
-    	                         ["Arcane"]        = mage_arcane,
-    	                         ["Frost"]         = mage_frost },
-    	                        
-    	    ["Rogue"]        = { ["Assassination"] = rogue_assass },
-    	    
-    	    ["Warrior"]      = { ["Fury"]          = warrior_fury,
-    	                         ["Protection"]    = warrior_prot,
-    	                         ["Arms"]          = warrior_arms },
-    	                        
-    	    ["Priest"]       = { ["Shadow"]        = priest_shadow,
-    	                         ["Holy"]          = priest_holy }
-    	}
+                                 ["Frost"]         = dk_frost  },
+                
+            ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
+                                 ["Elemental"]     = shaman_elemental },
+            
+            ["Paladin"]      = { ["Protection"]    = paladin_protadin,
+                                 ["Retribution"]   = paladin_ret },
+            
+            ["Warlock"]      = { ["Affliction"]    = warlock_affl,
+                                 ["Destruction"]   = warlock_destro,
+                                 ["Demonology"]    = warlock_demo },
+            
+            ["Hunter"]       = { ["Beast Mastery"] = hunter_bm,
+                                 ["Marksmanship"]  = hunter_mm,
+                                 ["Survival"]      = hunter_sv },
+                        
+            ["Mage"]         = { ["Fire"]          = mage_fire,
+                                 ["Arcane"]        = mage_arcane,
+                                 ["Frost"]         = mage_frost },
+                                
+            ["Rogue"]        = { ["Assassination"] = rogue_assass },
+            
+            ["Warrior"]      = { ["Fury"]          = warrior_fury,
+                                 ["Protection"]    = warrior_prot,
+                                 ["Arms"]          = warrior_arms },
+                                
+            ["Priest"]       = { ["Shadow"]        = priest_shadow,
+                                 ["Holy"]          = priest_holy }
+        }
 	end
-    
-    -- Check for the Rotation
-    if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
-        write("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
-        jps.Enabled = false
-        return
-    end
+	
+	-- Check for the Rotation
+	if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
+		write("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
+		jps.Enabled = false
+		return
+	end
 
-    -- Lag
-    _,_,jps.Lag = GetNetStats()
-    jps.Lag = jps.Lag/100
-    
-    -- Movement
-    jps.Moving = GetUnitSpeed("player") > 0
+	-- Lag
+	_,_,jps.Lag = GetNetStats()
+	jps.Lag = jps.Lag/100
+	
+	-- Movement
+	jps.Moving = GetUnitSpeed("player") > 0
 
 		-- Casting
 		if UnitCastingInfo("player") then jps.Casting = true
 			elseif UnitChannelInfo("player") then jps.Casting = true
 			else jps.Casting = false
 		end
-    
-    -- Get spell from rotation.
-    jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
-    
-    -- Check spell usability.
-    if jps.ThisCast then
-        jps.Cast(jps.ThisCast)
-    end
-    
-    -- Hide Error
-    StaticPopup1:Hide()
-    
-    -- Return spellcast.
-    return jps.ThisCast
+	
+	-- Get spell from rotation.
+	jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
+	
+	-- Check spell usability.
+	if jps.ThisCast then
+		jps.Cast(jps.ThisCast)
+	end
+	
+	-- Hide Error
+	StaticPopup1:Hide()
+	
+	-- Return spellcast.
+	return jps.ThisCast
 end
