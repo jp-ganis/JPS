@@ -1,0 +1,11 @@
+<Bindings>
+	<Binding name="JPSTOGGLE" description="Toggle JPS Status" header="JPS">
+		jps.toggleEnabled()
+	</Binding>
+	<Binding name="JPSTOGGLEMULTI" description="Toggle JPS Multi Target" header="JPS">
+		jps.toggleMulti()
+	</Binding>
+	<Binding name="JPSTOGGLECD" description="Toggle JPS Cooldown Usage" header="JPS">
+		jps.toggleCDs()
+	</Binding>
+</Bindings>
