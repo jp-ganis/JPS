@@ -15,6 +15,11 @@ function hunter_mm(self)
 		return "Silencing Shot"
 	end
 
+	if jps.Opening and UnitExists("focus") and cd("Misdirection") then
+		jps.Target = "focus"
+		spell = "Misdirection"
+		jps.Opening = false
+
    if not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.5 and UnitHealth("pet") then
       spell = "Mend Pet"
    elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
