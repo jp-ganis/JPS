@@ -21,7 +21,17 @@ function hunter_bm(self)
 		spell = "Kill Shot"
 	elseif target_health_percent > 30 and not ud("target", "Hunter's Mark") then 
 		spell = "Hunter's Mark"
-	elseif not UnitDebuff("target", "Serpent Sting",nil,"PLAYER") then 
+	elseif IsShiftKeyDown() and jps.MultiTarget and not ub("player", "Trap Launcher") and cd("Explosive Trap") then
+		spell = "Trap Launcher"
+	elseif IsShiftKeyDown() and jps.MultiTarget and ub("player", "Trap Launcher") and cd("Explosive Trap") then
+		CameraOrSelectOrMoveStart()
+		CameraOrSelectOrMoveStop()
+		spell = "Explosive Trap"
+	elseif jps.MultiTarget and focus > 40 then
+		spell = "Multi-Shot"
+	elseif jps.MultiTarget and focus < 40 then
+		spell = "Cobra Shot"
+	elseif not jps.MultiTarget and UnitDebuff("target", "Serpent Sting",nil,"PLAYER") then 
 		spell = "Serpent Sting"
 	elseif focus > 36 and cd("Kill Command") == 0 and pet_attacking == true then
 		-- most dps from here
