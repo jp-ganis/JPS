@@ -32,9 +32,9 @@ function hunter_bm(self)
 		print("Aggro! Feign Death cast.")
 		jps.create_timer("feign", "2")
 		spell = "Feign Death"
-	elseif not jps.check_timer("feign") then
+	elseif jps.check_timer("feign") > 0 then
 		spell = nil
-	elseif ub("player", "Feign Death") and jps.check_timer("feign") then
+	elseif ub("player", "Feign Death") and jps.check_timer("feign") == 0 then
 		CancelUnitBuff("player", "Feign Death")
 		spell = nil
 	elseif not ub("pet","Mend Pet") and target_health_percent <= 90 then
