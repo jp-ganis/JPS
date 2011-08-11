@@ -175,7 +175,7 @@ function SlashCmdList.jps(cmd, editbox)
     elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
         jps.MacroSpam = not jps.MacroSpam
         write("MacroSpam flag is now set to",jps.MacroSpam)
-		elseif msg = "pvp" then
+		elseif msg == "pvp" then
 			jps.PvP = not jps.PvP
 			write("PvP mode is now set to",jps.PvP)
     elseif msg == "opening" then
