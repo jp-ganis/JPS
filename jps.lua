@@ -46,6 +46,7 @@ combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 --combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
+combatFrame:RegisterEvent("INSPECT_READY")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
@@ -60,6 +61,9 @@ end
 function combatEventHandler(self, event, ...)
 	
     if event == "PLAYER_LOGIN" then
+		NotifyInspect("player")
+		
+	elseif event == "INSPECT_READY" then
 		jps.detectSpec()
 		
     elseif event == "PLAYER_REGEN_DISABLED" then
@@ -132,12 +136,13 @@ end
 
 function jps.detectSpec()
 	jps.Class = UnitClass("player")
-	local specID = GetPrimaryTalentTree()
-	--local specName = specID and select(2, GetTalentTabInfo(specID))
-	local _, specName = GetTalentTabInfo( specID )
 	if jps.Class then
-		jps.Spec = specName
-		if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
+		local id = GetPrimaryTalentTree()
+		local _,name,_,_,_,_,_,_ = GetTalentTabInfo( id )
+		if name then
+			jps.Spec = name
+			if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
+		end
 	end
 end
 
