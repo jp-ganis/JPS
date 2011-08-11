@@ -14,13 +14,30 @@ function hunter_bm(self)
 		local green_light_wrath = true
 	end
 
-	if jps.Opening and UnitExists("focus") and cd("Misdirection") then
+	-- Misdirecting to pet if not in a party
+	if GetNumPartyMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
+		jps.Target = "pet"
+		spell = "Misdirection"
+		jps.Opening = false	
+		
+	-- Misdirecting to focus if set
+	elseif jps.Opening and UnitExists("focus") and cd("Misdirection") then
+		print("Misdirecting to",GetUnitName("focus", showServerName)..".")
 		jps.Target = "focus"
 		spell = "Misdirection"
 		jps.Opening = false
-
+		
     -- Normal rotation
-	if not ub("pet","Mend Pet") and target_health_percent <= 90 then
+	elseif UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.check_timer("feign") and GetNumPartyMembers() > 0 then
+		print("Aggro! Feign Death cast.")
+		jps.create_timer("feign", "2")
+		spell = "Feign Death"
+	elseif not jps.check_timer("feign") then
+		spell = nil
+	elseif ub("player", "Feign Death") and jps.check_timer("feign") then
+		CancelUnitBuff("player", "Feign Death")
+		spell = nil
+	elseif not ub("pet","Mend Pet") and target_health_percent <= 90 then
 	    spell = "Mend Pet"
     elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
         spell = "Aspect of the Hawk"
