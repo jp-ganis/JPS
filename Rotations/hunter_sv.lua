@@ -3,13 +3,18 @@ function hunter_sv(self)
 	local focus = UnitPower("player")
 	local sting_duration = jps.debuff_duration("target","Serpent Sting")
 	
-	if not ud("target","Hunter's Mark") and not jps.MultiTarget then
-		spell = "Hunter's Mark"
+	if GetNumPartyMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
+		jps.Target = "pet"
+		spell = "Misdirection"
+		jps.Opening = false
 	
-	elseif jps.Opening and UnitExists("focus") and cd("Misdirection") then
+	elseif jps.Opening and UnitExists("focus") == 1 and cd("Misdirection") == 0 then
 		jps.Target = "focus"
 		spell = "Misdirection"
 		jps.Opening = false
+		
+	elseif not ud("target","Hunter's Mark") and not jps.MultiTarget then
+		spell = "Hunter's Mark"
 	
 	elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
 		spell = "Aspect of the Hawk"
