@@ -1,17 +1,4 @@
 -- Lookup Tables
--- Specs
-jps.Specs = {
-    ["Death Knight"] = { [1] = "Blood",            [2] = "Frost",        [3] = "Unholy"     },
-    ["Druid"]        = { [1] = "Balance",          [2] = "Feral",        [3] = "Restoration"},
-    ["Warlock"]      = { [1] = "Affliction",       [2] = "Demonology",   [3] = "Destruction"},
-    ["Priest"]       = { [1] = "Discipline",       [2] = "Holy",         [3] = "Shadow"     },
-    ["Warrior"]      = { [1] = "Arms",             [2] = "Fury",         [3] = "Protection" },
-    ["Paladin"]      = { [1] = "Holy",             [2] = "Protection",   [3] = "Retribution"},
-    ["Shaman"]       = { [1] = "Elemental",        [2] = "Enhancement",  [3] = "Restoration"},
-    ["Rogue"]        = { [1] = "Assassination",    [2] = "Combat",       [3] = "Subtlety"   },
-    ["Hunter"]       = { [1] = "Beast Mastery",    [2] = "Marksmanship", [3] = "Survival"   },
-    ["Mage"]         = { [1] = "Arcane",           [2] = "Fire",         [3] = "Frost"      },
-}
 
 jps.Dispells = {
 	["Magic"] = {
