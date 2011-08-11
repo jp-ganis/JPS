@@ -23,13 +23,13 @@ elseif UnitIsEnemy("player", "target") and (UnitCastingInfo("target") or UnitCha
 --Cooldowns--
 elseif ius("Pillar of Frost") and cd("Pillar of Frost") == 0 and jps.UseCDs then
      spell = "Pillar of Frost"   
-elseif cd("Raise Dead") == 0 and jps.UseCDs then 
+elseif cd("Raise Dead") == 0 and cd("Raise Dead") == 0 and jps.UseCDs then 
      spell = "Raise Dead"
 
 --Buffs--
   elseif not ub("player","Horn of Winter") and cd("Horn of Winter") == 0 then
      spell = "Horn of Winter" 
-  elseif HP < 0.2 and ius("Icebound Fortitude") then
+  elseif HP < 0.2 and ius("Icebound Fortitude") and cd("Icebound Fortitude") == 0 then
      spell = "Icebound Fortitude"
       
 --Multitarget--
