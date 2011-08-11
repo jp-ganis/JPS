@@ -14,6 +14,11 @@ function hunter_bm(self)
 		local green_light_wrath = true
 	end
 
+	if jps.Opening and UnitExists("focus") and cd("Misdirection") then
+		jps.Target = "focus"
+		spell = "Misdirection"
+		jps.Opening = false
+
     -- Normal rotation
 	if not ub("pet","Mend Pet") and target_health_percent <= 90 then
 	  spell = "Mend Pet"
