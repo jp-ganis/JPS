@@ -19,6 +19,12 @@ function hunter_mm(self)
       spell = "Mend Pet"
    elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
       spell = "Aspect of the Hawk"
+   elseif IsShiftKeyDown() and jps.MultiTarget and not ub("player", "Trap Launcher") and cd("Explosive Trap") then
+	  spell = "Trap Launcher"
+   elseif IsShiftKeyDown() and jps.MultiTarget and ub("player", "Trap Launcher") and cd("Explosive Trap") then
+	  CameraOrSelectOrMoveStart()
+	  CameraOrSelectOrMoveStop()
+	  spell = "Explosive Trap"
    elseif jps.MultiTarget and up("player") > 40 then
       spell = "Multi-Shot"
    elseif UnitHealth("target")/UnitHealthMax("target") <= 0.2 and cd("Kill Shot") == 0 then
