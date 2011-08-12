@@ -3,7 +3,18 @@ function hunter_sv(self)
 	local focus = UnitPower("player")
 	local sting_duration = jps.debuff_duration("target","Serpent Sting")
 	
-	if GetNumPartyMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
+	if UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.check_timer("feign") == 0 then
+   		jps.create_timer("feign", "2")
+   		spell = "Feign Death"
+
+   	elseif jps.check_timer("feign") > 0 then
+   		spell = nil
+
+   	elseif ub("player", "Feign Death") and jps.check_timer("feign") == 0 then
+   		CancelUnitBuff("player", "Feign Death")
+   		spell = nil
+	
+	elseif GetNumPartyMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
 		jps.Target = "pet"
 		spell = "Misdirection"
 		jps.Opening = false
