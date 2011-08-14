@@ -12,8 +12,8 @@ function shaman_elemental(self)
       spell = "blood fury"
    elseif lsCount < 2 then
       spell = "lightning shield"
-	 elseif jps.buff_duration("player","totemic wrath") == 0 then
-	 		spell = "searing totem"
+	 --elseif jps.buff_duration("player","totemic wrath") == 0 then
+	 	--	spell = "searing totem"
    elseif lsCount >= 7 and fsDuration > 6 and cd("earth shock") == 0 then
       spell = "earth shock"
    elseif mana < 0.6 and cd("thunderstorm") == 0 then
