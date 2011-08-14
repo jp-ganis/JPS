@@ -45,7 +45,6 @@ combatFrame:RegisterEvent("PLAYER_LOGOUT");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
---combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("INSPECT_READY")
 combatFrame:RegisterEvent("UNIT_HEALTH")
@@ -60,7 +59,6 @@ end
 
 
 function combatEventHandler(self, event, ...)
-	
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
 		
@@ -229,7 +227,7 @@ function combat(self)
 	-- Rotations
 	if jps.Rotations == nil then
         jps.Rotations = { 
-            ["Druid"]        = { ["Feral"]         = druid_feral,
+            ["Druid"]        = { ["Feral Combat"]         = druid_feral,
                                  ["Balance"]       = druid_balance,
                                  ["Restoration"]   = druid_resto },
             

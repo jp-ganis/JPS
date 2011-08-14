@@ -1,5 +1,4 @@
 -- Lookup Tables
-
 jps.Dispells = {
 	["Magic"] = {
 		"Static Disruption", -- Akil'zon
