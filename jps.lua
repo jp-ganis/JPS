@@ -216,7 +216,7 @@ function JPS_OnUpdate(self,elapsed)
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
 		if jps.MacroSpam and not jps.Casting then
 			RunMacro(jps.Macro)
-		elseif jps.Combat and jps.Enabled then
+		elseif jps.Combat and jps.Enabled and IsMounted() == nil then
 			combat()
 			self.TimeSinceLastUpdate = 0
 		end
@@ -227,7 +227,7 @@ function combat(self)
 	-- Rotations
 	if jps.Rotations == nil then
         jps.Rotations = { 
-            ["Druid"]        = { ["Feral Combat"]         = druid_feral,
+            ["Druid"]        = { ["Feral Combat"]  = druid_feral,
                                  ["Balance"]       = druid_balance,
                                  ["Restoration"]   = druid_resto },
             
