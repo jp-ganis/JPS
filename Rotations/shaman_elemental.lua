@@ -24,7 +24,7 @@ function shaman_elemental(self)
       spell = "spiritwalker's grace"
 	 elseif jps.Moving and not ub("player","spiritwalker's grace") then
 	 		spell = "lightning bolt"
-   elseif cd("lava burst") == 0 and cd("elemental mastery") == 0 then
+   elseif cd("lava burst") == 0 and cd("elemental mastery") == 0 and jps.UseCDs then
       spell = "elemental mastery"      
    elseif cd("lava burst") == 0 then
 	 		spell = "lava burst"

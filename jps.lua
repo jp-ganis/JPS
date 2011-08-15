@@ -214,11 +214,14 @@ end
 function JPS_OnUpdate(self,elapsed)
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
+
 		if jps.MacroSpam and not jps.Casting then
 			RunMacro(jps.Macro)
-		elseif jps.Combat and jps.Enabled and IsMounted() == nil then
-			combat()
+
+		elseif jps.Combat and jps.Enabled then
+			if not IsMounted() then combat() end
 			self.TimeSinceLastUpdate = 0
+
 		end
 	end
 end
