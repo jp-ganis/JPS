@@ -43,8 +43,8 @@ function jps.Cast(spell)
 end
 
 function jps.can_cast(spell, unit)
-	if UnitExists(unit) and UnitIsVisible(unit) and UnitIsFriend(unit) then
-		if IsSpellInRange(spell, unit) then	return 1 end
+	if UnitExists(unit) and UnitIsVisible(unit) and UnitIsFriend("player",unit) then
+		if IsSpellInRange(spell, unit) then return 1 end
 	end
 	return 0
 end
