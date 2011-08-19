@@ -79,8 +79,15 @@ function combatEventHandler(self, event, ...)
 
 	-- Fishes
 	elseif event == "BAG_UPDATE" and jps.Fishing then
-		RunMacro("MG")
-		RunMacro("MGG")
+		for bag = 0,4,1 do
+		  for slot = 1, GetContainerNumSlots(bag), 1 do
+			local name = GetContainerItemLink(bag,slot)
+			  if name and (string.find(name,"ff9d9d9d") or string.find(name,"Murglesnout")) then
+				PickupContainerItem(bag,slot)
+				DeleteCursorItem()
+			  end 
+			end 
+		  end 
 
 	-- UI Error checking - for LoS and Shred-fails.
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
