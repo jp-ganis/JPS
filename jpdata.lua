@@ -37,7 +37,6 @@ function jps.Cast(spell)
 	CastSpellByName(spell,jps.Target)	
 	jps.Target = "target"
 	if jps.IconSpell ~= spell then
-		jps.set_jps_icon(spell)
 		if jps.Debug then print(spell, jps.Target) end
 	end
 end
