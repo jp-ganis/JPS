@@ -79,7 +79,6 @@ function combatEventHandler(self, event, ...)
 
 	-- Fishes
 	elseif event == "BAG_UPDATE" and jps.Fishing then
-		jps.set_jps_icon( GetSpellTexture("Fishing") )
 		for bag = 0,4,1 do
 		  for slot = 1, GetContainerNumSlots(bag), 1 do
 			local name = GetContainerItemLink(bag,slot)
