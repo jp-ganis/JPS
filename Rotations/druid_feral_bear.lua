@@ -107,7 +107,7 @@ function druid_feral_bear(self)
 			spell = "Demoralizing Roar"
 		elseif lacCount < 3 or lacDuration < 1 then
 			spell = "lacerate"
-		elseif lacCount == 3 and false then
+		elseif lacCount == 3 then
 			spell = "pulverize"
 		elseif cd("Faerie Fire (Feral)") == 0 then
 			spell = "Faerie Fire (Feral)"
