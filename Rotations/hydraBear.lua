@@ -55,7 +55,7 @@ function hydraBear(self)
 		{"barkskin",				hp < 75 },
 		{"survival instincts",		hp < 40 },
 		{"frenzied regeneration",	hp < 25 },
-		{"demoralizing roar",		not jps.debuff("demoralizing roar") },
+		{"demoralizing roar",		"refresh" },
 		-- Offense
 		{"berserk",					jps.UseCDs },
 		-- Taunts
