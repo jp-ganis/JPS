@@ -30,6 +30,9 @@ function parseSpellTable(hydra_table)
 			if not jps.buff(spell,"target") then
 				conditions = not jps.buff(spell,"target")
 			end
+		-- onCD, instead of just "true"
+		elseif conditions == "onCD" then
+			conditions = true
 		end
 
 		-- Return
