@@ -13,6 +13,8 @@ function hydraBear(self)
 	local lacCount = jps.getDebuffStacks("lacerate")
 	local lacDuration = jps.getDebuffDuration("lacerate")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
+	local refresh = "refresh"
+	local onCD = "onCD"
 
     --Taunt if not attacking me and if my focus target pulls agro
     if UnitExists("focus") and UnitIsFriend("focus","player") then
@@ -55,7 +57,7 @@ function hydraBear(self)
 		{"barkskin",				hp < 75 },
 		{"survival instincts",		hp < 40 },
 		{"frenzied regeneration",	hp < 25 },
-		{"demoralizing roar",		"refresh" },
+		{"demoralizing roar",		refresh },
 		-- Offense
 		{"berserk",					jps.UseCDs },
 		-- Taunts
@@ -67,11 +69,10 @@ function hydraBear(self)
 		{"thrash",					jps.MultiTarget },
 		-- Single Target
 		{"mangle(bear form)",		rage >= 20 or ub("player","berserk") },
-		{"thrash",					"onCD" },
-		{"faerie fire (feral)",		not jps.debuff("faerie fire") },
+		{"faerie fire (feral)",		refresh },
 		{"pulverize",				lacCount == 3 },
 		{"lacerate",				lacCount < 3 or lacDuration < 1 },
-		{"faerie fire (feral)",		"onCD" },
+		{"faerie fire (feral)",		onCD },
 	}
 
 
