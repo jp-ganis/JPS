@@ -67,11 +67,11 @@ function hydraBear(self)
 		{"thrash",					jps.MultiTarget },
 		-- Single Target
 		{"mangle(bear form)",		rage >= 20 or ub("player","berserk") },
-		{"thrash",					true },
+		{"thrash",					"onCD" },
 		{"faerie fire (feral)",		not jps.debuff("faerie fire") },
 		{"pulverize",				lacCount == 3 },
 		{"lacerate",				lacCount < 3 or lacDuration < 1 },
-		{"faerie fire (feral)",		true },
+		{"faerie fire (feral)",		"onCD" },
 	}
 
 
