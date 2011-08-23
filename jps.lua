@@ -303,7 +303,7 @@ function combat(self)
 	jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
 	
 	-- Check spell usability.
-	if jps.ThisCast and not jps.Casting then
+	if jps.ThisCast and not jps.Casting and cd(jps.ThisCast) == 0 then
    		jps.Cast(jps.ThisCast)
    	end
 	
