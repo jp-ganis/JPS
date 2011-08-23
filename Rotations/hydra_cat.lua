@@ -1,4 +1,4 @@
-function hydra_cat(self)
+function hydraCat(self)
 	--jpganis
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
@@ -13,11 +13,11 @@ function hydra_cat(self)
 	{
 		--{"spell",				conditionOne and (conditionTwo or conditionThree) },
 
-		--{ nil,					not jps.buff("cat form") },
+		{ nil,					not jps.buff("cat form") },
 
 		{"berserk", 			tfCD > 25 and energy > 80 and jps.UseCDs },
 		{"tiger's fury", 		IsSpellInRange("shred","target") and ((energy <= 35 and not jps.buff("clearcasting")) or energy <= 26) },
-		{"skull bash(cat form)",jps.shouldKick() },
+		{"skull bash(cat form)",jps.shouldKick() and jps.Interrupts },
 		{"faerie fire (feral)", not jps.debuff("faerie fire") and (energy < 15 or not IsSpellInRange("shred","target")) },
 		{"ravage", 				jps.buff("stampede") and (jps.buffDuration("stampede") < 2 or jps.buff("tiger's fury")) },
 		{"mangle(cat form)", 	mangleDuration < 1 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
