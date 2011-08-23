@@ -6,7 +6,7 @@ function hydraBear(self)
 	local focusThreatDuration = 0
 	local targetShouldBeTaunted = false
 	local targetThreatDuration = 0
-	local targetTargetTanking = ub("targettarget","bear form") or ub(tTarget,"defensive stance") or ub(tTarget,"blood presence") or ub(tTarget,"righteous fury")
+	local targetTargetTanking = ub("targettarget","bear form") or ub("targettarget","defensive stance") or ub("targettarget","blood presence") or ub("targettarget","righteous fury")
 
 	-- Other stuff
 	local rage = UnitMana("player")
