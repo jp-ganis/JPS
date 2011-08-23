@@ -1,3 +1,5 @@
+-- Huge thanks to BenPhelps for these SO sexy buttons.
+
 jps.GUInormal = "Interface\\AddOns\\JPS\\media\\jps.tga"
 jps.GUIshadow = "Interface\\AddOns\\JPS\\media\\shadow.tga"
 jps.GUIborder = "Interface\\AddOns\\JPS\\media\\border.tga"

@@ -1,6 +1,8 @@
+-- JPS, PLua DPS Addon by jpganis
+-- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 jps = {}
-jps.Version = "0.9.2"
+jps.Version = "0.9.9b"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.2
 jps.Combat = false
@@ -55,7 +57,6 @@ combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 function write(...)
 	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...)));
 end
-
 
 
 function combatEventHandler(self, event, ...)
@@ -173,7 +174,7 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
 		write("Debug mode set to",tostring(jps.Debug))
-	elseif msg == "multi" or msg == "multitarget" then
+	elseif msg == "multi" or msg == "multitarget" or msg == "aoe" then
 		jps.toggleMulti()
 	elseif msg == "cds" then
 		jps.toggleCDs()
@@ -275,6 +276,9 @@ function combat(self)
         }
 	end
 	
+	-- Loading check.
+	if not jps.Class then return end
+
 	-- Check for the Rotation
 	if not jps.Rotations[jps.Class] or not jps.Rotations[jps.Class][jps.Spec] then
 		write("Sorry! JPS does not yet have a rotation for your",jps.Spec,jps.Class.."...yet.")
@@ -289,11 +293,11 @@ function combat(self)
 	-- Movement
 	jps.Moving = GetUnitSpeed("player") > 0
 
-		-- Casting
-		if UnitCastingInfo("player") then jps.Casting = true
-			elseif UnitChannelInfo("player") then jps.Casting = true
-			else jps.Casting = false
-		end
+	-- Casting
+	if UnitCastingInfo("player") then jps.Casting = true
+	elseif UnitChannelInfo("player") then jps.Casting = true
+	else jps.Casting = false
+	end
 	
 	-- Get spell from rotation.
 	jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
