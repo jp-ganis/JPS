@@ -1,9 +1,4 @@
--- JPS Helper Functions
---jpganis
-
-
 -- Lookup Tables
--- Credit (and thanks!) to BenPhelps
 jps.Dispells = {
 	["Magic"] = {
 		"Static Disruption", -- Akil'zon
@@ -36,25 +31,14 @@ jps.Dispells = {
 }
 
 -- Functions
-function jps.Cast(spell)
-	if not jps.Target then jps.Target = "target" end
-	if not jps.Casting then jps.LastCast = spell end
-	CastSpellByName(spell,jps.Target)	
-	jps.Target = "target"
-	if jps.IconSpell ~= spell then
-		jps.set_jps_icon( spell )
-		if jps.Debug then print(spell, jps.Target) end
-	end
-end
-
-function jps.canCast(spell, unit)
+function jps.can_cast(spell, unit)
 	if UnitExists(unit) and UnitIsVisible(unit) and UnitIsFriend("player",unit) then
 		if IsSpellInRange(spell, unit) then return 1 end
 	end
 	return 0
 end
 
-function jps.canDispell( unit, ... )
+function jps.can_dispell( unit, ... )
 	for _, dtype in pairs(...) do
 		if jps.Dispells[dtype] ~= nil then
 			for _, spell in pairs(jps.Dispells[dtype]) do
@@ -65,34 +49,21 @@ function jps.canDispell( unit, ... )
 	return 0
 end
 
-function jps.getCooldown(spell)
+function jps.get_cooldown(spell)
 	local start,duration,_ = GetSpellCooldown(spell)
 	local cd = start+duration-GetTime()-jps.Lag
 	if cd < 0 then return 0 end
 	return cd
 end
 
-function jps.getPetCooldown(index)
+function jps.get_pet_cooldown(index)
 	local start,duration,_ = GetPetActionCooldown(index)
 	local cd = start+duration-GetTime()-jps.Lag
 	if cd < 0 then return 0 end
 	return cd
 end
 
-function jps.buff( spell, unit )
-	if unit == nil then unit = "player" end
-	if UnitBuff(unit, spell) then return true end
-	return false
-end
-
-function jps.debuff( spell, unit )
-	if unit == nil then unit = "target" end
-	if UnitDebuff(unit, spell) then return true end
-	return false
-end
-
-function jps.buffDuration( spell, unit)
-	if unit == nil then unit = "player" end
+function jps.buff_duration(unit,spell)
 	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitBuff(unit,spell)
 	if caster ~= "player" then return 0 end
 	if expire == nil then return 0 end
@@ -101,8 +72,7 @@ function jps.buffDuration( spell, unit)
 	return duration
 end
 
-function jps.notmyBuffDuration( spell, unit )
-	if unit == nil then unit = "target" end
+function jps.notmybuff_duration(unit,spell)
 	local _,_,_,_,_,_,expire,_,_,_,_ = UnitBuff(unit,spell)
 	if expire == nil then return 0 end
 	duration = expire-GetTime()-jps.Lag
@@ -110,8 +80,7 @@ function jps.notmyBuffDuration( spell, unit )
 	return duration
 end
 
-function jps.debuffDuration( spell, unit )
-	if unit == nil then unit = "target" end
+function jps.debuff_duration(unit,spell)
 	local _,_,_,_,_,_,duration,caster,_,_ = UnitDebuff(unit,spell)
 	if caster~="player" then return 0 end
 	if duration==nil then return 0 end
@@ -120,8 +89,7 @@ function jps.debuffDuration( spell, unit )
 	return duration
 end
 
-function jps.notmyDebuffDuration( spell, unit )
-	if unit == nil then unit = "target" end
+function jps.notmydebuff_duration(unit,spell)
 	local _,_,_,_,_,_,duration,_,caster,_,_ = UnitDebuff(unit,spell)
 	if duration==nil then return 0 end
 	duration = duration-GetTime()-jps.Lag
@@ -129,22 +97,19 @@ function jps.notmyDebuffDuration( spell, unit )
 	return duration
 end
 
-function jps.getDebuffStacks( spell, unit )
-	if unit == nil then unit = "target" end
+function jps.get_debuff_stacks(unit,spell)	
 	local _, _, _, count, _, _, _, _, _ = UnitDebuff(unit,spell)
 	if count == nil then count = 0 end
 	return count
 end
 
-function jps.getBuffStacks( spell, unit )
-	if unit == nil then unit = "player" end
+function jps.get_buff_stacks(unit,spell)	
 	local _, _, _, count, _, _, _, _, _ = UnitBuff(unit,spell)
 	if count == nil then count = 0 end
 	return count
 end
 
-function jps.shouldPvPKick(unit)
-	if unit == nil then unit = "target" end
+function jps.should_pvpkick(unit)
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
   	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
@@ -163,8 +128,7 @@ function jps.shouldPvPKick(unit)
 	return false
 end
 
-function jps.shouldKick(unit)
-	if unit == nil then unit = "target" end
+function jps.should_kick(unit)
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
@@ -177,13 +141,11 @@ function jps.shouldKick(unit)
 	return false
 end
 
-
--- BenPhelps' Timer Functions
-function jps.createTimer( name, duration )
+function jps.create_timer( name, duration )
 	jps.Timers[name] = duration+GetTime()
 end
 
-function jps.checkTimer( name )
+function jps.check_timer( name )
 	if jps.Timers[name] ~= nil then
 		local now = GetTime()
 		if jps.Timers[name] < now then
@@ -194,4 +156,64 @@ function jps.checkTimer( name )
 		end
 	end
 	return 0
+end
+
+-- walkistalki healing functions
+jps.HealValues = {}
+
+function jps.update_healtable(...)
+	local temparglist = {...}
+	if temparglist[5] == GetUnitName("player") and (temparglist[2] == "SPELL_HEAL" or temparglist[2] == "SPELL_PERIODIC_HEAL") and temparglist[15] == 0 then
+		if jps.HealValues[temparglist[11]] == nil then
+			jps.HealValues[temparglist[11]] = {["healtotal"] = temparglist[13],["healcount"] = 1, ["averageheal"] = temparglist[13]}
+		else
+			jps.HealValues[temparglist[11]]["healtotal"]   = jps.HealValues[temparglist[11]]["healtotal"] + temparglist[13]
+			jps.HealValues[temparglist[11]]["healcount"]   = jps.HealValues[temparglist[11]]["healcount"] + 1
+			jps.HealValues[temparglist[11]]["averageheal"] = jps.HealValues[temparglist[11]]["healtotal"] / jps.HealValues[temparglist[11]]["healcount"]
+		end
+	end
+end
+
+function jps.reset_healtable(self)
+	for k,v in pairs(healtable) do
+		jps.HealValues[k]["healtotal"]= jps.HealValues[k]["averageheal"]
+		jps.HealValues[k]["healcount"]= 1
+	end
+end
+
+function jps.getaverage_heal(spellname)
+	if jps.HealValues[spellname] ~= nil then
+		return jps.HealValues[spellname]["averageheal"]
+	else
+		return 0
+	end
+end
+
+function jps.UpdateOutOfSightPlayers(self)
+   if #jps.OutOfSightPlayers > 0 then
+	  for i = #jps.OutOfSightPlayers, 1, -1 do
+		 if GetTime() - jps.OutOfSightPlayers[i][2] > 2 then
+			table.remove(jps.OutOfSightPlayers,i)
+		 end
+	  end
+   end
+end
+
+function jps.PlayerIsExcluded(playerName)
+	for i = 1, #jps.OutOfSightPlayers do
+		if jps.OutOfSightPlayers[i][1] ==	 playerName then
+			return true
+		end
+	end
+	return false
+end
+
+function jps.ExcludePlayer(playername)
+	if playername == nil then
+		playername = "nil"
+	end
+	local playerexclude = {}
+	table.insert(playerexclude, playername)
+	table.insert(playerexclude, GetTime())
+	table.insert(jps.OutOfSightPlayers,playerexclude)
 end

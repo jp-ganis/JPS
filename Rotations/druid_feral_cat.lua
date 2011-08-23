@@ -8,6 +8,7 @@ function druid_feral_cat(self)
 	local mangle_duration = jps.notmydebuff_duration("target","mangle")
 	local execute_phase = UnitHealth("target")/UnitHealthMax("target") <= 0.25
 	local pantherBonus = ub("player","strength of the panther")
+	pantherBonus = false
 	local spell = nil
 
 	if jps.Interrupts and jps.should_kick("target") and cd("skull bash") == 0 then
