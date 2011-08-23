@@ -10,11 +10,8 @@ function druid_feral_cat(self)
 	local pantherBonus = ub("player","strength of the panther")
 	local spell = nil
 
-	local target_spell, _, _, _, _, endTime, _, _, interrupt = UnitCastingInfo("target")
-	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo("target")
-
 	if jps.Interrupts and jps.should_kick("target") and cd("skull bash") == 0 then
-			return "skull bash(cat form)"
+		return "skull bash(cat form)"
 	end
 
 	if not ub("player","cat form") or (IsSpellInRange("shred","target") ~= 1 and not jps.MultiTarget) then
@@ -31,6 +28,7 @@ function druid_feral_cat(self)
 			spell = "swipe"
 		end
 	else
+		-- OPENER --
 		if jps.Opening then
 			if not ud("target","faerie fire") and cd("faerie fire (feral)") == 0 then
 				spell = "faerie fire (feral)"
