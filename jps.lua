@@ -263,7 +263,8 @@ function combat(self)
                                  ["Arcane"]        = mage_arcane,
                                  ["Frost"]         = mage_frost },
                                 
-            ["Rogue"]        = { ["Assassination"] = rogue_assass },
+            ["Rogue"]        = { ["Assassination"] = rogue_assass,
+								 ["Subtlety"] = rogue_sub },
             
             ["Warrior"]      = { ["Fury"]          = warrior_fury,
                                  ["Protection"]    = warrior_prot,
