@@ -21,7 +21,8 @@ Rotations\druid_resto.lua
 Rotations\hunter_bm.lua
 Rotations\hunter_mm.lua
 Rotations\hunter_sv.lua
-Rotations\hydra_cat.lua
+Rotations\hydraCat.lua
+Rotations\hydraBear.lua
 Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
 Rotations\mage_frost.lua

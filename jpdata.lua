@@ -131,7 +131,8 @@ end
 
 function jps.getDebuffStacks( spell, unit )
 	if unit == nil then unit = "target" end
-	local _, _, _, count, _, _, _, _, _ = UnitDebuff(unit,spell)
+	local _, _, _, count, _, _, caster, _, _ = UnitDebuff(unit,spell)
+	if caster~="player" then return 0 end
 	if count == nil then count = 0 end
 	return count
 end
