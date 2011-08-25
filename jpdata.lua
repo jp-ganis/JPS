@@ -65,14 +65,14 @@ function jps.canDispell( unit, ... )
 	return 0
 end
 
-function jps.getCooldown(spell)
+function jps.cooldown(spell)
 	local start,duration,_ = GetSpellCooldown(spell)
 	local cd = start+duration-GetTime()-jps.Lag
 	if cd < 0 then return 0 end
 	return cd
 end
 
-function jps.getPetCooldown(index)
+function jps.petCooldown(index)
 	local start,duration,_ = GetPetActionCooldown(index)
 	local cd = start+duration-GetTime()-jps.Lag
 	if cd < 0 then return 0 end
@@ -129,15 +129,15 @@ function jps.notmyDebuffDuration( spell, unit )
 	return duration
 end
 
-function jps.getDebuffStacks( spell, unit )
+function jps.debuffStacks( spell, unit )
 	if unit == nil then unit = "target" end
-	local _, _, _, count, _, _, caster, _, _ = UnitDebuff(unit,spell)
-	if caster~="player" then return 0 end
+	local _,_,_,count, _,_,_,caster, _,_ = UnitDebuff(unit,spell)
+	if caster ~= "player" then return 0 end
 	if count == nil then count = 0 end
 	return count
 end
 
-function jps.getBuffStacks( spell, unit )
+function jps.buffStacks( spell, unit )
 	if unit == nil then unit = "player" end
 	local _, _, _, count, _, _, _, _, _ = UnitBuff(unit,spell)
 	if count == nil then count = 0 end

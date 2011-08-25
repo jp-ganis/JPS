@@ -11,8 +11,6 @@ function hydraCat(self)
 
 	local spellTable =
 	{
-		--{"spell",				conditionOne and (conditionTwo or conditionThree) },
-
 		{ nil,					not jps.buff("cat form") },
 
 		{"berserk", 			tfCD > 25 and energy > 80 and jps.UseCDs },

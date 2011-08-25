@@ -10,7 +10,7 @@ function hydraBear(self)
 
 	-- Other stuff
 	local rage = UnitMana("player")
-	local lacCount = jps.getDebuffStacks("lacerate")
+	local lacCount = jps.debuffStacks("lacerate")
 	local lacDuration = jps.debuffDuration("lacerate")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 	local refresh = "refresh"
@@ -46,7 +46,7 @@ function hydraBear(self)
         end 
     end 
 
-
+	-- Moves
 	local spellTable =
 	{
 		{nil,						not jps.buff("bear form") },
@@ -57,7 +57,6 @@ function hydraBear(self)
 		{"barkskin",				hp < 75 },
 		{"survival instincts",		hp < 40 },
 		{"frenzied regeneration",	hp < 25 },
-		{"demoralizing roar",		refresh },
 		-- Offense
 		{"berserk",					jps.UseCDs },
 		-- Taunts
@@ -69,10 +68,10 @@ function hydraBear(self)
 		{"thrash",					jps.MultiTarget },
 		-- Single Target
 		{"mangle(bear form)",		rage >= 20 or ub("player","berserk") },
-		{"faerie fire (feral)",		refresh },
 		{"pulverize",				lacCount == 3 },
 		{"lacerate",				lacCount < 3 or lacDuration < 1 },
 		{"faerie fire (feral)",		onCD },
+		{"demoralizing roar",		refresh },
 	}
 
 
