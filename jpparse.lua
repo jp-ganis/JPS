@@ -1,13 +1,13 @@
 -- JPS Priority List Stuff
 --jpganis
-function ImReallySureICanCastThisShit(spell)
-	local target = jps.Target
-	if target == nil then target = "target" end
+function ImReallySureICanCastThisShit(spell,unit)
+	if unit == nil then unit = "target" end
 	local _, spellID = GetSpellBookItemInfo(spell)
 	
+	if not UnitIsVisible(unit) then return false end
 	if not IsSpellKnown(spellID) then return false end
 	if jps.getCooldown(spell) ~= 0	then return false end
-	if SpellHasRange(spell)==1 and IsSpellInRange(spell,target)==0 then return false end
+	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	
 	return true
 end

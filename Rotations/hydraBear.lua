@@ -11,7 +11,7 @@ function hydraBear(self)
 	-- Other stuff
 	local rage = UnitMana("player")
 	local lacCount = jps.getDebuffStacks("lacerate")
-	local lacDuration = jps.getDebuffDuration("lacerate")
+	local lacDuration = jps.debuffDuration("lacerate")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 	local refresh = "refresh"
 	local onCD = "onCD"
@@ -77,3 +77,4 @@ function hydraBear(self)
 
 
 	return parseSpellTable(spellTable)
+end

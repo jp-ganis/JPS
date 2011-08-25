@@ -178,6 +178,16 @@ function jps.shouldKick(unit)
 	return false
 end
 
+-- Racial/Profession CDs Check
+
+function jps.checkProfsAndRacials()
+	-- Draenei, Dwarf, Worgen, Human, Gnome, Night Elf
+	-- Tauren, Goblin, Orc, Troll, Forsaken, Blood Elf
+	local dpsMoves = {"lifeblood","berserking","blood fury","engiGloves"}
+	local defMoves = {"gift of the naaru","stoneform"}
+	local otherMoves = {"arcane torrent","will of the forsaken"}
+end
+	
 
 -- BenPhelps' Timer Functions
 function jps.createTimer( name, duration )
