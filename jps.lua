@@ -24,6 +24,8 @@ jps.Lag = 0
 jps.Moving = nil
 jps.IconSpell = nil
 jps.Timers = {}
+jps.DPSRacial = nil
+jps.DefRacial = nil
 -- Class Specific
 jps.Opening = true
 -- Misc.
