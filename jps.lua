@@ -98,7 +98,7 @@ function combatEventHandler(self, event, ...)
 		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
 			jps.Cast("mangle(cat form)")
 		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
-			jps.cast("mutilate")
+			jps.Cast("mutilate")
 		end
 
 	-- RaidStatus Update
