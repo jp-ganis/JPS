@@ -8,4 +8,7 @@
 	<Binding name="JPSTOGGLECD" description="Toggle JPS Cooldown Usage" header="JPS">
 		jps.toggleCDs()
 	</Binding>
+	<Binding name="JPSTOGGLEPVP" description="Toggle JPS PvP Mode" header="JPS">
+		jps.toggleCDs()
+	</Binding>
 </Bindings>
