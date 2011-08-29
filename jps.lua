@@ -131,6 +131,15 @@ function combatEventHandler(self, event, ...)
 		if jpsToggles == nil then jps.toggleToggles(true)	else jps.toggleToggles(jpsToggles) end
 		if jpsToggleDir == nil then jps.setToggleDir("right") else jps.setToggleDir(jpsToggleDir) end
 		if jpsIconSize == nil then jps.resize(36) else jps.resize(jpsIconSize) end
+		-- Racials
+		local race = UnitRace("player")
+		if race == "troll" then
+			jps.DPSRacial = "berserking"
+		elseif race == "orc" then
+			jps.DPSRacial = "blood fury"
+		elseif race == "gnome" then --for my testing
+			jps.DPSRacial = "lifeblood"
+		end
 		
 		
 	-- On Logout
@@ -271,7 +280,7 @@ function combat(self)
             
             ["Warrior"]      = { ["Fury"]          = warrior_fury,
                                  ["Protection"]    = warrior_prot,
-                                 ["Arms"]          = warrior_arms },
+                                 ["Arms"]          = pvp_warrior_arms },
                                 
             ["Priest"]       = { ["Shadow"]        = priest_shadow,
                                  ["Holy"]          = priest_holy }

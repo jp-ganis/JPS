@@ -40,3 +40,5 @@ Rotations\warlock_destro.lua
 Rotations\warrior_arms.lua
 Rotations\warrior_fury.lua
 Rotations\warrior_prot.lua
+
+Rotations\pvp_warrior_arms.lua

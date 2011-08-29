@@ -3,7 +3,10 @@
 function ImReallySureICanCastThisShit( spell, unit )
 	if unit == nil then unit = "target" end
 	local _, spellID = GetSpellBookItemInfo(spell)
-	
+	local usable, nomana = IsUsableSpell(spell)
+
+	if nomana then return false end
+	if not usable then return false end
 	if not UnitIsVisible(unit) then return false end
 	if not IsSpellKnown(spellID) then return false end
 	if jps.cooldown(spell) ~= 0	then return false end
@@ -18,8 +21,13 @@ function parseSpellTable( hydra_table )
 		local conditions = table[2]
 
 		-- Special Cases
+		-- Nested table
+		if spell == "nested" and conditions then
+			local nestedSpell =	parseSpellTable(table[3])
+			if nestedSpell then spell = nestedSpell
+			else spell = nil end
 		-- Just refresh debuff/buff when it drops off.
-		if conditions == "refresh" then
+		elseif conditions == "refresh" then
 			if IsHarmfulSpell(spell) then
 				conditions = not jps.debuff(spell)
 			else
@@ -37,8 +45,8 @@ function parseSpellTable( hydra_table )
 
 		-- Otherwise:
 		-- Return spell if conditions are true.
-		if conditions then
-			jps.Target = table[3]
+		if conditions and spell then
+			if type(table[3]) == "string" then jps.Target = table[3] end
 			if ImReallySureICanCastThisShit( spell,jps.Target ) then
 				return spell
 			end
