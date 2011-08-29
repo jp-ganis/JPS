@@ -178,14 +178,48 @@ function jps.shouldKick(unit)
 	return false
 end
 
+function jps.hp(message)
+	if message == "abs" or message == "absolute" then
+		return UnitHealth("player")
+	else
+		return UnitHealth("player")/UnitHealthMax("player")
+	end
+end
+
+function jps.targetHP(message)
+	if message == "abs" or message == "absolute" then
+		return UnitHealth("target")
+	else
+		return UnitHealth("target")/UnitHealthMax("target")
+	end
+end
+
 -- Racial/Profession CDs Check
 
 function jps.checkProfsAndRacials()
 	-- Draenei, Dwarf, Worgen, Human, Gnome, Night Elf
 	-- Tauren, Goblin, Orc, Troll, Forsaken, Blood Elf
-	local dpsMoves = {"lifeblood","berserking","blood fury","engiGloves"}
-	local defMoves = {"gift of the naaru","stoneform"}
-	local otherMoves = {"arcane torrent","will of the forsaken"}
+	local usables = {}
+	local moves =
+	{
+		"lifeblood",
+		"berserking",
+		"blood fury",
+		--"engiGloves",
+		--"gift of the naaru",
+		--"stoneform",
+		--"arcane torrent",
+		--"will of the forsaken",
+	}
+
+	for _, move in pairs(moves) do
+		if GetSpellBookItemInfo(move) then
+			table.insert(usables,move)
+		end
+	end
+
+	return usables
+
 end
 	
 
