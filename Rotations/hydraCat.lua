@@ -14,6 +14,7 @@ function hydraCat(self)
 		{ nil,					not jps.buff("cat form") },
 
 		{"berserk", 			tfCD > 25 and energy > 80 and jps.UseCDs },
+		{jps.DPSRacial,			jps.LastCast == "berserk" },
 		{"tiger's fury", 		IsSpellInRange("shred","target") and ((energy <= 35 and not jps.buff("clearcasting")) or energy <= 26) },
 		{"skull bash(cat form)",jps.shouldKick() and jps.Interrupts },
 		{"faerie fire (feral)", not jps.debuff("faerie fire") and (energy < 15 or not IsSpellInRange("shred","target")) },

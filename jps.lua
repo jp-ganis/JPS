@@ -137,7 +137,7 @@ function combatEventHandler(self, event, ...)
 			jps.DPSRacial = "berserking"
 		elseif race == "orc" then
 			jps.DPSRacial = "blood fury"
-		elseif race == "gnome" then --for my testing
+		elseif GetSpellBookItemInfo("lifeblood") ~= nil then
 			jps.DPSRacial = "lifeblood"
 		end
 		
