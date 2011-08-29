@@ -280,7 +280,7 @@ function combat(self)
             
             ["Warrior"]      = { ["Fury"]          = warrior_fury,
                                  ["Protection"]    = warrior_prot,
-                                 ["Arms"]          = pvp_warrior_arms },
+                                 ["Arms"]          = warrior_arms },
                                 
             ["Priest"]       = { ["Shadow"]        = priest_shadow,
                                  ["Holy"]          = priest_holy }
