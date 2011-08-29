@@ -41,4 +41,6 @@ function warrior_arms_pvp(self)
 		{ "slam",					onCD }, 
 	}
 
+	return parseSpellTable(spellTable)
+
 end
