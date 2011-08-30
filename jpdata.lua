@@ -162,6 +162,7 @@ function jps.shouldKick(unit)
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
+	if target_spell == "Brushfire" then return false end
 	if target_spell and not unInterruptable then
 		return true
 	end
