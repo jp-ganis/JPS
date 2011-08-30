@@ -15,19 +15,32 @@ function ImReallySureICanCastThisShit( spell, unit )
 	return true
 end
 
-function parseSpellTable( hydra_table )
-	for _, table in pairs(hydra_table) do
+function parseSpellTable( hydraTable )
+	for _, table in pairs(hydraTable) do
 		local spell = table[1]
 		local conditions = table[2]
+		local stopCasting = table[4]
 		if type(table[3]) == "string" then jps.Target = table[3]
 		else jps.Target = nil end
 
 		-- Special Cases
 		-- Nested table
 		if spell == "nested" and conditions then
-			local nestedSpell =	parseSpellTable(table[3])
-			if nestedSpell then spell = nestedSpell
-			else spell = nil end
+			spell =	parseSpellTable(table[3])
+
+		-- Iterate over a table of multiple targets.
+		elseif type(table[3]) == "table" and conditions then
+			sub_hydraTable = {}
+			for i=1, #table[3] do
+				sub_Item = {}
+				table.insert( hydraItem, spell )
+				table.insert( hydraItem, conditions )
+				table.insert( hydraItem, target[i] )
+				table.insert( hydraItem, stopCasting )
+				table.insert( sub_hydraTable, hydraItem )
+			end
+			spell = parseSpellTable(sub_hydraTable)
+
 		-- Just refresh debuff/buff when it drops off.
 		elseif conditions == "refresh" then
 			if IsHarmfulSpell(spell) then
@@ -35,6 +48,7 @@ function parseSpellTable( hydra_table )
 			else
 				conditions = not jps.buff( spell,jps.Target )
 			end
+
 		-- onCD, instead of just "true"
 		elseif conditions == "onCD" then
 			conditions = true
@@ -44,6 +58,7 @@ function parseSpellTable( hydra_table )
 		-- Return spell if conditions are true.
 		if conditions and spell then
 			if ImReallySureICanCastThisShit( spell,jps.Target ) then
+				if stopCasting then SpellStopCasting() end
 				return spell
 			end
 		end
