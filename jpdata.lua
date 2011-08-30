@@ -178,11 +178,12 @@ function jps.shouldKick(unit)
 	return 0
 end
 
-function jps.hp(message)
+function jps.hp(unit,message)
+	if unit == nil then unit = "player" end
 	if message == "abs" or message == "absolute" then
-		return UnitHealth("player")
+		return UnitHealth(unit)
 	else
-		return UnitHealth("player")/UnitHealthMax("player")
+		return UnitHealth(unit)/UnitHealthMax(unit)
 	end
 end
 

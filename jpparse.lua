@@ -28,19 +28,6 @@ function parseSpellTable( hydraTable )
 		if spell == "nested" and conditions then
 			spell =	parseSpellTable(table[3])
 
-		-- Iterate over a table of multiple targets.
-		elseif type(table[3]) == "table" and conditions then
-			sub_hydraTable = {}
-			for i=1, #table[3] do
-				sub_Item = {}
-				table.insert( hydraItem, spell )
-				table.insert( hydraItem, conditions )
-				table.insert( hydraItem, target[i] )
-				table.insert( hydraItem, stopCasting )
-				table.insert( sub_hydraTable, hydraItem )
-			end
-			spell = parseSpellTable(sub_hydraTable)
-
 		-- Just refresh debuff/buff when it drops off.
 		elseif conditions == "refresh" then
 			if IsHarmfulSpell(spell) then
