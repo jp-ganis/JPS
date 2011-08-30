@@ -11,6 +11,7 @@ function warrior_arms_pvp(self)
 
 	local spellTable = 
 	{
+		{ "charge",					onCD },
 		{ "hamstring",				hamstringDuration < 2 and not jps.buff("hand of freedom","target")},
 		{ "pummel",					jps.shouldPvPKick() },
 		{ nil,						jps.buff("bladestorm") },
