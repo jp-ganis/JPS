@@ -26,13 +26,14 @@ jps.IconSpell = nil
 jps.Timers = {}
 jps.DPSRacial = nil
 jps.DefRacial = nil
+jps.Lifeblood = nil
 -- Class Specific
 jps.Opening = true
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
 jps.Macro = "jpsMacro"
-jps.OutOfSightPlayers = {}
+jps.HealerBlacklist = {}
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
@@ -111,7 +112,7 @@ function combatEventHandler(self, event, ...)
 				delta = jps.RaidStatus[unit]["hp"] - hp
 			end
 			jps.RaidStatus[unit] = { ["hp"] = hp, ["hpabs"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["delta"] = delta }
-		end
+		end 
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -145,7 +146,7 @@ function combatEventHandler(self, event, ...)
 		elseif GetSpellBookItemInfo("lifeblood") ~= nil then
 			jps.DPSRacial = "lifeblood"
 		elseif race == "dwarf" then
-			jps.defRacial = "Stoneform"
+			jps.defRacial = "stoneform"
 		end
 		
 		
@@ -265,7 +266,7 @@ function combat(self)
                                  ["Frost"]         = dk_frost  },
                 
             ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
-                                 ["Elemental"]     = shaman_elemental 
+                                 ["Elemental"]     = shaman_elemental,
 								 ["Restoration"]   = shaman_resto_pvp },
             
             ["Paladin"]      = { ["Protection"]    = paladin_protadin,

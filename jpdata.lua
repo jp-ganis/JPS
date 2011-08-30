@@ -43,26 +43,19 @@ function jps.Cast(spell)
 	jps.Target = nil
 	if jps.IconSpell ~= spell then
 		jps.set_jps_icon( spell )
-		if jps.Debug then print(spell, jps.Target) end
+		if jps.Debug then write(spell, jps.Target) end
 	end
-end
-
-function jps.canCast(spell, unit)
-	if UnitExists(unit) and UnitIsVisible(unit) and UnitIsFriend("player",unit) then
-		if IsSpellInRange(spell, unit) then return 1 end
-	end
-	return 0
 end
 
 function jps.canDispell( unit, ... )
 	for _, dtype in pairs(...) do
 		if jps.Dispells[dtype] ~= nil then
 			for _, spell in pairs(jps.Dispells[dtype]) do
-				if ud( unit, spell ) then return 1 end
+				if ud( unit, spell ) then return true end
 			end
 		end
 	end
-	return 0
+	return false
 end
 
 function jps.cooldown(spell)
@@ -81,14 +74,14 @@ end
 
 function jps.buff( spell, unit )
 	if unit == nil then unit = "player" end
-	if UnitBuff(unit, spell) then return 1 end
-	return 0
+	if UnitBuff(unit, spell) then return true end
+	return false
 end
 
 function jps.debuff( spell, unit )
 	if unit == nil then unit = "target" end
-	if UnitDebuff(unit, spell) then return 1 end
-	return 0
+	if UnitDebuff(unit, spell) then return true end
+	return false
 end
 
 function jps.buffDuration( spell, unit)
@@ -148,34 +141,34 @@ function jps.shouldPvPKick(unit)
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
   	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == "Release Aberrations" then return 0 end
+	if target_spell == "Release Aberrations" then return false end
 	if target_spell and not unInterruptable then
 		endTime = endTime - GetTime()*1000
 		if jps.PVPInterrupt == true then
 			if endTime < 500+jps.Lag then
-				return 1
+				return true
 			end 
 		else 
-			return 1
+			return true
 		end
 	elseif chanelling and not notInterruptible then
-		return 1
+		return true
 	end
-	return 0
+	return false
 end
 
 function jps.shouldKick(unit)
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == "Release Aberrations" then return 0 end
+	if target_spell == "Release Aberrations" then return false end
 	if target_spell and not unInterruptable then
-		return 1
+		return true
 	end
 	if chanelling and not notInterruptible then
-		return 1
+		return true
 	end 
-	return 0
+	return false
 end
 
 function jps.hp(unit,message)
@@ -195,8 +188,21 @@ function jps.targetHP(message)
 	end
 end
 
--- Racial/Profession CDs Check
+function jps.lowestInRaidStatus()
+	local lowestHP = 1
+	local lowestUnit = nil
+	for name, details in pairs(jps.RaidStatus) do
+		if details["hp"] < lowestHP then
+			lowestHP = details["hp"]
+			lowestUnit = name
+		end
+	end
 
+	return lowestUnit
+end
+
+
+-- Racial/Profession CDs Check
 function jps.checkProfsAndRacials()
 	-- Draenei, Dwarf, Worgen, Human, Gnome, Night Elf
 	-- Tauren, Goblin, Orc, Troll, Forsaken, Blood Elf
