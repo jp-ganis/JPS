@@ -113,6 +113,7 @@ function jps.should_pvpkick(unit)
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
   	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
+	if target_spell == "Brushfire" then return false end
 	if target_spell and not unInterruptable then
 		endTime = endTime - GetTime()*1000
 		if jps.PVPInterrupt == true then
@@ -132,6 +133,7 @@ function jps.should_kick(unit)
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
+	if target_spell == "Brushfire" then return false end
 	if target_spell and not unInterruptable then
 		return true
 	end
