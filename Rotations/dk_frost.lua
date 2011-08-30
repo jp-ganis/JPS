@@ -15,9 +15,9 @@ function dk_frost(self)
 
 
 --Interrupts--
-if UnitIsEnemy("player", "target") and (UnitCastingInfo("target") or UnitChannelInfo("target")) and cd("mind freeze") == 0 and IsSpellInRange("mind freeze", "target") == 1 and power >= 20 then
+if UnitIsEnemy("player", "target") and jps.shouldKick() and cd("mind freeze") == 0 then
          SpellStopCasting() spell = "mind freeze"
-elseif UnitIsEnemy("player", "target") and (UnitCastingInfo("target") or UnitChannelInfo("target")) and cd("strangulate") == 0 and IsSpellInRange("strangulate", "target") == 1 then
+elseif UnitIsEnemy("player", "target") and jps.shouldKick() and cd("strangulate") == 0 then
          SpellStopCasting() spell = "strangulate"
 
 --Cooldowns--
