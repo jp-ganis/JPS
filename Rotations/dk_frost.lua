@@ -17,8 +17,8 @@ function dk_frost(self)
 --Interrupts--
 if UnitIsEnemy("player", "target") and jps.shouldKick() and cd("mind freeze") == 0 then
          SpellStopCasting() spell = "mind freeze"
-elseif UnitIsEnemy("player", "target") and jps.shouldKick() and cd("strangulate") == 0 then
-         SpellStopCasting() spell = "strangulate"
+--elseif UnitIsEnemy("player", "target") and jps.shouldKick() and cd("strangulate") == 0 then
+--         SpellStopCasting() spell = "strangulate"
 
 --Cooldowns--
 elseif ius("Pillar of Frost") and cd("Pillar of Frost") == 0 and jps.UseCDs then
