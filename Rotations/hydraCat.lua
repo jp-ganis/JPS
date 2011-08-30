@@ -2,7 +2,7 @@ function hydraCat(self)
 	--jpganis
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
-	local tfCD = jps.getCooldown("tiger's fury")
+	local tfCD = jps.cooldown("tiger's fury")
 	local ripDuration = jps.debuffDuration("rip")
 	local rakeDuration = jps.debuffDuration("rake")
 	local srDuration = jps.buffDuration("savage roar")
