@@ -19,6 +19,8 @@ function parseSpellTable( hydra_table )
 	for _, table in pairs(hydra_table) do
 		local spell = table[1]
 		local conditions = table[2]
+		if type(table[3]) == "string" then jps.Target = table[3]
+		else jps.Target = nil end
 
 		-- Special Cases
 		-- Nested table
@@ -29,14 +31,9 @@ function parseSpellTable( hydra_table )
 		-- Just refresh debuff/buff when it drops off.
 		elseif conditions == "refresh" then
 			if IsHarmfulSpell(spell) then
-				conditions = not jps.debuff(spell)
+				conditions = not jps.debuff( spell,jps.Target )
 			else
-				conditions = not jps.buff(spell)
-			end
-		-- Refresh on target.
-		elseif conditions == "refreshTarget" then
-			if not jps.buff(spell,"target") then
-				conditions = not jps.buff(spell,"target")
+				conditions = not jps.buff( spell,jps.Target )
 			end
 		-- onCD, instead of just "true"
 		elseif conditions == "onCD" then
@@ -46,7 +43,6 @@ function parseSpellTable( hydra_table )
 		-- Otherwise:
 		-- Return spell if conditions are true.
 		if conditions and spell then
-			if type(table[3]) == "string" then jps.Target = table[3] end
 			if ImReallySureICanCastThisShit( spell,jps.Target ) then
 				return spell
 			end
