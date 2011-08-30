@@ -40,7 +40,7 @@ function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
 	CastSpellByName(spell,jps.Target)	
-	jps.Target = "target"
+	jps.Target = nil
 	if jps.IconSpell ~= spell then
 		jps.set_jps_icon( spell )
 		if jps.Debug then print(spell, jps.Target) end
@@ -81,14 +81,14 @@ end
 
 function jps.buff( spell, unit )
 	if unit == nil then unit = "player" end
-	if UnitBuff(unit, spell) then return true end
-	return false
+	if UnitBuff(unit, spell) then return 1 end
+	return 0
 end
 
 function jps.debuff( spell, unit )
 	if unit == nil then unit = "target" end
-	if UnitDebuff(unit, spell) then return true end
-	return false
+	if UnitDebuff(unit, spell) then return 1 end
+	return 0
 end
 
 function jps.buffDuration( spell, unit)
@@ -148,34 +148,34 @@ function jps.shouldPvPKick(unit)
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
   	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == "Release Aberrations" then return false end
+	if target_spell == "Release Aberrations" then return 0 end
 	if target_spell and not unInterruptable then
 		endTime = endTime - GetTime()*1000
 		if jps.PVPInterrupt == true then
 			if endTime < 500+jps.Lag then
-				return true
+				return 1
 			end 
 		else 
-			return true
+			return 1
 		end
 	elseif chanelling and not notInterruptible then
-		return true
+		return 1
 	end
-	return false
+	return 0
 end
 
 function jps.shouldKick(unit)
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == "Release Aberrations" then return false end
+	if target_spell == "Release Aberrations" then return 0 end
 	if target_spell and not unInterruptable then
-		return true
+		return 1
 	end
 	if chanelling and not notInterruptible then
-		return true
+		return 1
 	end 
-	return false
+	return 0
 end
 
 function jps.hp(message)
