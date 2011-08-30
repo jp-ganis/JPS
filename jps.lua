@@ -105,7 +105,12 @@ function combatEventHandler(self, event, ...)
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
 		local unit = ...
 		if UnitIsFriend("player",unit) then
-			jps.RaidStatus[unit] = { ["hp"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["freshness"] = 0 }
+			local delta = 0;
+			local hp = jps.hp(unit)
+			if jps.RaidStatus[unit] then
+				delta = jps.RaidStatus[unit]["hp"] - hp
+			end
+			jps.RaidStatus[unit] = { ["hp"] = hp, ["hpabs"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["delta"] = delta }
 		end
 
 	-- Dual Spec Respec
@@ -139,6 +144,8 @@ function combatEventHandler(self, event, ...)
 			jps.DPSRacial = "blood fury"
 		elseif GetSpellBookItemInfo("lifeblood") ~= nil then
 			jps.DPSRacial = "lifeblood"
+		elseif race == "dwarf" then
+			jps.defRacial = "Stoneform"
 		end
 		
 		
@@ -258,7 +265,8 @@ function combat(self)
                                  ["Frost"]         = dk_frost  },
                 
             ["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
-                                 ["Elemental"]     = shaman_elemental },
+                                 ["Elemental"]     = shaman_elemental 
+								 ["Restoration"]   = shaman_resto_pvp },
             
             ["Paladin"]      = { ["Protection"]    = paladin_protadin,
                                  ["Retribution"]   = paladin_ret },

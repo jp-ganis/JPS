@@ -34,6 +34,7 @@ Rotations\rogue_assass.lua
 Rotations\rogue_sub.lua
 Rotations\shaman_elemental.lua
 Rotations\shaman_enhancement.lua
+Rotations\shaman_resto_pvp.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
 Rotations\warlock_destro.lua
