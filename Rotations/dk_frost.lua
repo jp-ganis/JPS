@@ -1,113 +1,48 @@
---(Kiwi 1.1) Thanks to htordeux for his superior syntaxing skillz :)--
+--jpganis
 
 function dk_frost(self)
+	local rp = UnitPower("player")
 
-  local ius = IsUsableSpell
-  local spell = nil
-  local power = UnitPower("player",6)
-  local frost1a,frost1b,frost1c = GetRuneCooldown(5)
-  local frost2a,frost2b,frost2c = GetRuneCooldown(6)
-  local death1a,death1b,death1c = GetRuneCooldown(1)
-  local death2a,death2b,death2c = GetRuneCooldown(2)
-  local unholy1a,unholy1b,unholy1c = GetRuneCooldown(3)
-  local unholy2a,unholy2b,unholy2c = GetRuneCooldown(4)
-  local HP = UnitHealth("player")/UnitHealthMax("player")
+	local spellTable = 
+	{
+		-- Kicks
+		{ "mind freeze",		jps.shouldKick() },
+		{ "mind freeze",		jps.shouldKick("focus"), "focus" },
 
+		-- Offence
+		{ "pillar of frost",	jps.useCDs },
+		{ jps.DPSRacial,		jps.useCDs },
 
---Interrupts--
-if UnitIsEnemy("player", "target") and jps.shouldKick() and cd("mind freeze") == 0 then
-         SpellStopCasting() spell = "mind freeze"
---elseif UnitIsEnemy("player", "target") and jps.shouldKick() and cd("strangulate") == 0 then
---         SpellStopCasting() spell = "strangulate"
+		-- Defence
+		{ "raise dead",			jps.hp() <= 0.4 and rp >= 50 },
+		{ "death pact",			GetTotemTimeLeft(1) > 0 },
+		{ "icebound fortitude",	jps.hp() < 0.5 or (jps.debuff("deep freeze","player") or jps.debuff("kidney shot","player")) and jps.UseCDs },
+		{ "death strike",		jps.hp() < 0.6 },
 
---Cooldowns--
-elseif ius("Pillar of Frost") and cd("Pillar of Frost") == 0 and jps.UseCDs then
-     spell = "Pillar of Frost"   
-elseif cd("Raise Dead") == 0 and cd("Raise Dead") == 0 and jps.UseCDs then 
-     spell = "Raise Dead"
+		-- Horn of Winter
+		{ "horn of winter",		not jps.buff("horn of winter") },
 
---Buffs--
-  elseif not ub("player","Horn of Winter") and cd("Horn of Winter") == 0 then
-     spell = "Horn of Winter" 
-  elseif HP < 0.2 and ius("Icebound Fortitude") and cd("Icebound Fortitude") == 0 then
-     spell = "Icebound Fortitude"
-      
---Multitarget--
-  elseif UnitExists("target") and UnitCanAttack("player","target") and jps.MultiTarget then
-     if cd("Death and Decay") == 0 and IsShiftKeyDown() then
-        spell = "Death and Decay"
-        CameraOrSelectOrMoveStart()
-        CameraOrSelectOrMoveStop()
-     elseif ub("player","Freezing Fog") and ius("Howling Blast") then
-        spell = "Howling Blast"
-     elseif ius ("Howling Blast") then
-         spell = "Howling Blast"
-     elseif power >= 80 and ius("Frost Strike") then
-        spell = "Frost Strike"
-     elseif unholy1c == true and ius("Plague Strike") then
-        spell = "Plague Strike"
-     elseif power >= 32 and ius("Frost Strike") then
-        spell = "Frost Strike"
-     elseif cd("Horn of Winter") == 0 then
-            spell= "Horn of Winter"
-     end
+		-- AoE
+		{ "death and decay",	jps.MultiTarget },
 
---Single Target--
---Boss Rotation [stops if aggro]--
-  elseif UnitExists("target") and UnitCanAttack("player","target") and (not jps.MultiTarget) and (UnitLevel("target") >= 87 or UnitClassification("target") == "worldboss") and UnitThreatSituation("player","target") ~= 3 then
-        if not ud("target","Blood Plague",nil,"PLAYER") and cd("Outbreak")== 0 then
-            spell = "Outbreak"
-        elseif not ud("target","Blood Plague",nil,"PLAYER") then
-            spell = "Plague Strike"
-        elseif not ud("target","Frost Fever",nil,"PLAYER") then
-            spell = "Howling Blast"
-        elseif ub("player","Freezing Fog") and ius("Howling Blast") then
-            spell = "Howling Blast"
-        elseif ub("player","Killing Machine") and ius("Obliterate") then
-            spell = "Obliterate"
-        elseif ub("player","Killing Machine") and ius("Frost Strike") and ((death1b > 2 and death2b >2) or (death1b>2 and frost1b>2) or (death1b>2 and frost2b>2) or (death1b>2 and unholy1b>2) or 
-        (death1b>2 and unholy2b>2) or (death2b>2 and frost1b>2) or (death2b>2 and frost2b>2) or (death2b>2 and unholy1b>2) or (death2b>2 and unholy2b>2) or (frost1>2 and unholy1>2) or 
-        (frost1b>2 and unholy2b>2) or (frost2b>2 and unholy1b>2) or (frost2b>2 and unholy2b>2)) then
-            spell = "Frost Strike"
-        elseif power >= 80 then
-            spell= "Frost Strike"
-        elseif ius("Obliterate") then
-            spell = "Obliterate"
-        elseif power >= 32 then
-            spell = "Frost Strike"
-        elseif cd("Blood Tap") == 0 then 
-            spell= "Blood Tap"
-        elseif cd("Horn of Winter") == 0 then
-            spell= "Horn of Winter"
-     end
+		-- Mofes
+		{ "howling blast",		not jps.debuff("frost fever") or jps.buff("freezing fog")},
+		{ "plague strike",		not jps.debuff("blood plague") },
+		{ "obliterate",			"onCD" },
+		{ "frost strike",		"onCD" },
+		
+		-- Refresh it while we're here
+		{ "horn of winter",		true },
+	}
 
---Regular Rotation--
-  elseif UnitExists("target") and UnitCanAttack("player","target") and (not jps.MultiTarget) and UnitLevel("target") < 87 then
-        if not ud("target","Blood Plague",nil,"PLAYER") and cd("Outbreak")== 0 then
-            spell = "Outbreak"
-        elseif not ud("target","Blood Plague",nil,"PLAYER") then
-            spell = "Plague Strike"
-        elseif not ud("target","Frost Fever",nil,"PLAYER") then
-            spell = "Howling Blast"
-        elseif ub("player","Freezing Fog") and ius("Howling Blast") then
-            spell = "Howling Blast"
-        elseif ub("player","Killing Machine") and ius("Obliterate") then
-            spell = "Obliterate"
-        elseif ub("player","Killing Machine") and ius("Frost Strike") and ((death1b > 2 and death2b >2) or (death1b>2 and frost1b>2) or (death1b>2 and frost2b>2) or (death1b>2 and unholy1b>2) or 
-        (death1b>2 and unholy2b>2) or (death2b>2 and frost1b>2) or (death2b>2 and frost2b>2) or (death2b>2 and unholy1b>2) or (death2b>2 and unholy2b>2) or (frost1>2 and unholy1>2) or 
-        (frost1b>2 and unholy2b>2) or (frost2b>2 and unholy1b>2) or (frost2b>2 and unholy2b>2)) then
-            spell = "Frost Strike"
-        elseif power >= 80 then
-            spell= "Frost Strike"
-        elseif ius("Obliterate") then
-            spell = "Obliterate"
-        elseif power >= 32 then
-            spell = "Frost Strike"
-        elseif cd("Blood Tap") == 0 then 
-            spell= "Blood Tap"
-        elseif cd("Horn of Winter") == 0 then
-            spell= "Horn of Winter"
-     end
-  end
-return spell
+	local spell = parseSpellTable( spellTable )
+
+	if spell == "death and decay" then
+		jps.Cast( spell )
+		CameraOrSelectOrMoveStart()
+		CameraOrSelectOrMoveStop()
+		spell = nil
+	end
+
+	return spell
 end
