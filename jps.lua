@@ -271,7 +271,8 @@ function combat(self)
 								 ["Restoration"]   = shaman_resto_pvp },
             
             ["Paladin"]      = { ["Protection"]    = paladin_protadin,
-                                 ["Retribution"]   = paladin_ret },
+                                 ["Retribution"]   = paladin_ret,
+								 ["Holy"]		   = paladin_holy },
             
             ["Warlock"]      = { ["Affliction"]    = warlock_affl,
                                  ["Destruction"]   = warlock_destro,
