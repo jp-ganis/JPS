@@ -37,7 +37,7 @@ function paladin_holy(self)
 		{ "lay on hands",		defaultHP < 0.03 and jps.UseCDs, defaultTarget },
 		{ "divine protection",	jps.hp() < 0.15 and jps.UseCDs, me },
 		{ "hand of protection",	defaultHP() < 0.15 and jps.UseCDs, defaultTarget },
-		{ "holy raidiance",		jps.MultiTarget and jps.UseCDs },
+		{ "holy radiance",		jps.MultiTarget and jps.UseCDs },
 		{ "light of dawn",		jps.MultiTarget and holyPower > 2 },
 	}
 
