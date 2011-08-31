@@ -180,6 +180,15 @@ function jps.hp(unit,message)
 	end
 end
 
+function jps.hpInc(unit,message)
+	if unit == nil then unit = "player" end
+	if message == "abs" or message == "absolute" then
+		return UnitHealth(unit) + UnitGetIncomingHeals(unit)
+	else
+		return UnitHealth(unit)/UnitHealthMax(unit) + UnitGetIncomingHeals(unit)/UnitHealthMax(unit)
+	end
+end
+
 function jps.targetHP(message)
 	if message == "abs" or message == "absolute" then
 		return UnitHealth("target")
@@ -228,6 +237,26 @@ function jps.checkProfsAndRacials()
 	return usables
 
 end
+
+-- Lowest HP in RaidStatus
+function jps.lowestFriendly()
+	local lowestUnit = nil
+	local lowestHP = UnitHealthMax("player")*100
+
+	for unit, unitTable in pairs(jps.RaidStatus) do
+		local thisHP = jps.RaidStatus[unit]["hp"]
+		if thisHP < lowestHP then
+			if not UnitIsDeadOrGhost(unit) and UnitIsVisible(unit) and UnitInRange(unit) then
+				lowestHP = thisHP
+				lowestUnit = unit
+			end
+		end
+	end
+
+	return lowestUnit
+end
+
+
 	
 
 -- BenPhelps' Timer Functions

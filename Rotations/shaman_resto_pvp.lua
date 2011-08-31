@@ -5,7 +5,6 @@ function shaman_resto_pvp(self)
 	local focus = "focus"
 	local me = "player"
 	local friendlies = {}
-	local desperateFunction = function(unit) return jps.hp(unit) < 0.2 end
 
 	-- Populate friendlies
 	for name, _ in pairs(jps.RaidStatus) do table.insert( friendlies, name ) end
@@ -46,6 +45,10 @@ function shaman_resto_pvp(self)
 		end
 	end 
 
+	-- lowest friendly
+	local defaultTarget = jps.lowestFriendly()
+	local defaultHP = jps.hpInc(defaultTarget)
+
 	-- Priority Table
 	local spellTable = {
 			-- If I'm ghost-wolfing around I'm probably running around, so don't pop out to heal till I say.
@@ -59,35 +62,18 @@ function shaman_resto_pvp(self)
 			{ jps.defRacial,			jps.hp() < 0.6 or (jps.defRacial == "stoneform" and jps.debuff("rip","player")) },
 
 			-- Heal anyone really desperate.
-			{ "nature's swiftness",		desperateFunction, friendlies },
-			{ "greater healing wave",	desperateFunction, friendlies, jps.LastCast == "nature's swiftness" },
-			{ "riptide",				desperateFunction, friendlies },
-			{ "unleash elements",		desperateFunction, friendlies },
-			{ "greater healing wave",	desperateFunction, friendlies, jps.buff("tidal waves") },
+			{ "nature's swiftness",		defaultHP < 0.35, defaultTarget },
+			{ "greater healing wave",	defaultHP < 0.35 and jps.buff("nature's swiftness"), defaultTarget },
 
 			-- Earth shield (I manually put it on other people)
 			{ "earth shield",			jps.hp() < 0.5 and not jps.buff("earth shield"), me },
 
-			-- Heals (prioritize myself)
-			{ "riptide",				jps.hp() < 0.8, me },
-			{ "riptide",				function (unit) return jps.hp(unit) < 0.8 end, friendlies },
+			-- Heals
+			{ "riptide",				defaultHP < 0.8, defaultTarget },
+			{ "unleash elements",		defaultHP < 0.8, defaultTarget },
 
-			{ "unleash elements",		jps.hp() < 0.8, me },
-			{ "unleash elements",		function (unit) return jps.hp(unit) < 0.8 end, friendlies },
-
-			{ "greater healing wave",	jps.hp() < 0.5 and jps.buff("tidal waves"), me },
-			{ "healing surge",			jps.hp() < 0.5, me },
-
-			{ "greater healing wave",	function (unit) return jps.hp(unit) < 0.5 end, friendlies, jps.buff("tidal waves") },
-			{ "healing surge",			function (unit) return jps.hp(unit) < 0.5 end, friendlies },
-
-			{ "healing wave",			jps.hp() < 0.75 and jps.buff("tidal waves") and mana < 0.6, me },
-			{ "greater healing wave",	jps.hp() < 0.75 and jps.buff("tidal waves"), me },
-
-			{ "greater healing wave",	function (unit) return jps.hp(unit) < 0.85 end, friendlies, jps.buff("tidal waves") },
-
-			{ "healing wave",			jps.hp() < 0.97 and jps.buff("tidal waves"), me },
-			{ "healing wave",			function (unit) return jps.hp(unit) < 0.97 end, friendlies },
+			{ "greater healing wave",	defaultHP < 0.8 and jps.buff("tidal waves"), defaultTarget },
+			{ "healing surge",			defaultHP < 0.6, defaultTarget },
 
 			-- Kick.
 			{ "wind shear",				jps.shouldKick(focus), focus },

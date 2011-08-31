@@ -107,7 +107,8 @@ function combatEventHandler(self, event, ...)
 		local unit = ...
 		if UnitIsFriend("player",unit) then
 			local delta = 0;
-			local hp = jps.hp(unit)
+			local hpInc = UnitGetIncomingHeals(unit) / UnitHealthMax(unit)
+			local hp = jps.hp(unit) + hpInc
 			if jps.RaidStatus[unit] then
 				delta = jps.RaidStatus[unit]["hp"] - hp
 			end
