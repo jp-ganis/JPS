@@ -6,8 +6,10 @@ function paladin_holy(self)
 	local me = "player"
 
 	-- Tank is focus.
-	if UnitExists("focus") then 
-		tank = "focus" end
+	if UnitExists("focus") then tank = "focus"
+	else tank = jps.findMeATank() end
+
+	if not UnitExists(tank) then tank == "player" end
 
 	-- Find a target to judge.
 	if UnitIsEnemy(me, "focustarget") then
@@ -26,6 +28,7 @@ function paladin_holy(self)
 	local spellTable =
 	{
 		{ "seal of insight",	"refresh" },
+		{ "beacon of light",	not jps.buff("beacon of light",tank), tank },
 		{ "judgement",			UnitExists(judgeTarget) },	
 		{ "holy shock",			defaultHP < 0.9, defaultTarget },
 		{ "word of glory",		defaultHP < 0.85 and holyPower > 2, defaultTarget },

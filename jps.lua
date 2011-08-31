@@ -4,7 +4,7 @@
 jps = {}
 jps.Version = "1.0.0"
 jps.RaidStatus = {}
-jps.UpdateInterval = 0.2
+jps.UpdateInterval = 0.1
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil

@@ -257,6 +257,23 @@ function jps.lowestFriendly()
 end
 
 
+-- Find potential tank
+function jps.couldBeTank( unit )
+	if UnitGroupRolesAssigned(unit) == "TANK" then return true
+	elseif jps.buff( "righteous fury",unit ) then return true
+	elseif jps.buff( "blood presence",unit ) then return true
+	elseif jps.buff( "bear form",unit ) then return true
+	end
+end
+
+function jps.findMeATank()
+	for unit, _ in pairs(jps.RaidStatus) do
+		if jps.couldBetank(unit) then return unit end
+	end
+
+	return nil
+end
+
 	
 
 -- BenPhelps' Timer Functions
