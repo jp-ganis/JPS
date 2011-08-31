@@ -71,7 +71,7 @@ function hydraBear(self)
 		{"pulverize",				lacCount == 3 },
 		{"lacerate",				lacCount < 3 or lacDuration < 1 },
 		{"faerie fire (feral)",		onCD },
-		{"demoralizing roar",		refresh },
+		{"demoralizing roar",		not jps.debuff("demoralizing roar" },
 	}
 
 
