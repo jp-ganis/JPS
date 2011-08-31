@@ -267,11 +267,13 @@ function jps.couldBeTank( unit )
 end
 
 function jps.findMeATank()
+	if UnitExists("focus") then return "focus" end
+
 	for unit, _ in pairs(jps.RaidStatus) do
 		if jps.couldBetank(unit) then return unit end
 	end
 
-	return nil
+	return "player"
 end
 
 	

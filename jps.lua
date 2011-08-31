@@ -294,7 +294,8 @@ function combat(self)
                                  ["Arms"]          = warrior_arms },
                                 
             ["Priest"]       = { ["Shadow"]        = priest_shadow,
-                                 ["Holy"]          = priest_holy }
+                                 ["Holy"]          = priest_holy,
+								 ["Discipline"]	   = priest_disc },
         }
 	end
 	
