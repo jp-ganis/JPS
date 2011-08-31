@@ -2,7 +2,7 @@
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 jps = {}
-jps.Version = "0.9.9b"
+jps.Version = "1.0.0"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.2
 jps.Combat = false
