@@ -27,6 +27,7 @@ Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
 Rotations\mage_frost.lua
 Rotations\paladin_protadin.lua
+Rotations\paladin_holy.lua
 Rotations\paladin_ret.lua
 Rotations\priest_holy.lua
 Rotations\priest_shadow.lua
