@@ -41,7 +41,7 @@ Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
 Rotations\warlock_destro.lua
 Rotations\warrior_arms.lua
-Rotations\warriors_arms_pve.lua
+Rotations\warrior_arms_pve.lua
 Rotations\warrior_arms_pvp.lua
 Rotations\warrior_fury.lua
 Rotations\warrior_prot.lua
