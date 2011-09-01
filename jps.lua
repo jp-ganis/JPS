@@ -3,6 +3,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.0.0"
+jps.Revision = "r216"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
@@ -210,6 +211,8 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "pvp" then
 		jps.PvP = not jps.PvP
 		write("PvP mode is now set to",tostring(jps.PvP))
+	elseif msg == "version" or msg == "revision" or msg == "v" then
+		write("You have JPS revision",tostring(jps.Revision))
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
