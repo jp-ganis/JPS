@@ -171,6 +171,15 @@ function jps.shouldKick(unit)
 	return false
 end
 
+function jps.mana(unit,message)
+	if unit == nil then unit = "player" end
+	if message == "abs" or message == "absolute" then
+		return UnitMana(unit)
+	else
+		return UnitMana(unit)/UnitManaMax(unit)
+	end
+end
+
 function jps.hp(unit,message)
 	if unit == nil then unit = "player" end
 	if message == "abs" or message == "absolute" then
