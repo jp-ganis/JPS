@@ -3,7 +3,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.0.0"
-jps.Revision = "r216"
+jps.Revision = "r217"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
@@ -107,12 +107,12 @@ function combatEventHandler(self, event, ...)
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
 		local unit = ...
 		if UnitIsFriend("player",unit) then
-			local delta = 0;
-			local hpInc = UnitGetIncomingHeals(unit) / UnitHealthMax(unit)
-			local hp = jps.hp(unit) + hpInc
+			local delta = 0
+			local hp = jps.hpInc(unit)
+
 			if jps.RaidStatus[unit] then
-				delta = jps.RaidStatus[unit]["hp"] - hp
-			end
+				delta = jps.RaidStatus[unit]["hp"] - hp end
+
 			jps.RaidStatus[unit] = { ["hp"] = hp, ["hpabs"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["delta"] = delta }
 		end 
 
@@ -166,10 +166,13 @@ function jps.detectSpec()
 	jps.Class = UnitClass("player")
 	if jps.Class then
 		local id = GetPrimaryTalentTree()
-		local _,name,_,_,_,_,_,_ = GetTalentTabInfo( id )
-		if name then
-			jps.Spec = name
-			if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
+		if not id then write("JPS couldn't find your talent tree... One second please.") 
+		else
+			local _,name,_,_,_,_,_,_ = GetTalentTabInfo( id )
+			if name then
+				jps.Spec = name
+				if jps.Spec then write("Online for your",jps.Spec,jps.Class) end
+			end
 		end
 	end
 end

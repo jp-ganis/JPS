@@ -9,7 +9,7 @@ function paladin_holy(self)
 	if UnitExists("focus") then tank = "focus"
 	else tank = jps.findMeATank() end
 
-	if not UnitExists(tank) then tank == "player" end
+	if not UnitExists(tank) then tank = "player" end
 
 	-- Find a target to judge.
 	if UnitIsEnemy(me, "focustarget") then
@@ -38,7 +38,6 @@ function paladin_holy(self)
 		{ "divine protection",	jps.hp() < 0.15 and jps.UseCDs, me },
 		{ "hand of protection",	defaultHP() < 0.15 and jps.UseCDs, defaultTarget },
 		{ "holy radiance",		jps.MultiTarget and jps.UseCDs },
-		{ "light of dawn",		jps.MultiTarget and holyPower > 2 },
 	}
 
 
