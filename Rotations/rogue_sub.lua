@@ -2,7 +2,7 @@ function rogue_sub(self)
    local cp = GetComboPoints("player")
    local spell = nil
 
-   if jps.Interrupts and jps.should_kick("target") and cd("kick") == 0 then
+   if jps.Interrupts and jps.shouldKick("target") and cd("kick") == 0 then
       spell = "kick"
    elseif cd("premeditation") == 0 and ub("player","stealth") then
       spell = "premeditation"

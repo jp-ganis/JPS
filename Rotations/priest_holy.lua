@@ -68,7 +68,7 @@ function priest_holy(self)
 	local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
 	local focushealth_deficiency = UnitHealthMax("focus")-UnitHealth("focus")
 	
-	local stackSerendip = jps.get_buff_stacks("player","Serendipity")
+	local stackSerendip = jps.buffStacks("player","Serendipity")
 	local health_deficiency_TANK = 0
 	local health_pct_TANK = 1
 	

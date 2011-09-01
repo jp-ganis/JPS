@@ -6,8 +6,8 @@ local targetHealth = UnitHealth("target")/UnitHealthMax("target")
 local nEnrage = UnitBuff("player","Enrage")
 local nRage = UnitBuff("player","Berserker Rage")
 local nPower = UnitPower("Player",1) -- Rage est PowerType 1
-local stackSunder = jps.get_debuff_stacks("target","Sunder Armor")
-local stackThunder = jps.get_buff_stacks("player","Thunderstruck")
+local stackSunder = jps.debuffStacks("target","Sunder Armor")
+local stackThunder = jps.debuffStacks("player","Thunderstruck")
    
 if UnitCanAttack("player","target") then
 	if cd("Battle Shout")==0 and not ub("player","Battle Shout") and IsUsableSpell("Battle Shout") then
@@ -29,7 +29,7 @@ if UnitCanAttack("player","target") then
 	-- Taunt sometimes must be set manually
 	--elseif UnitThreatSituation("player")==2 and cd("Taunt")==0 and IsUsableSpell("Taunt") then
 	--	spell= "Taunt"
-   	elseif cd("Pummel")== 0 and IsSpellInRange("Pummel","target")==1 and IsUsableSpell("Pummel") and jps.should_kick("target") then 
+   	elseif cd("Pummel")== 0 and IsSpellInRange("Pummel","target")==1 and IsUsableSpell("Pummel") and jps.shouldKick("target") then 
       	spell="Pummel"
 	elseif (UnitCastingInfo("target") or UnitChannelInfo("target")) and cd("Spell Reflection")==0 and  IsUsableSpell("Spell Reflection") then
 		spell= "Spell Reflection"

@@ -5,16 +5,16 @@ function paladin_ret(self)
 	local myManaPercent = UnitMana("player")/UnitManaMax("player") * 100
 	local hPower = UnitPower("player","9")
 	local race = UnitRace("player")
-	local inqDuration = jps.buff_duration("player","Inquisition")
+	local inqDuration = jps.buffDuration("player","Inquisition")
 	local spell = nil
    
 	-- Interrupt, works equally well with "focus" instead of "target"
-	if jps.Interrupts and jps.should_kick("target") and cd("Rebuke") == 0 and myManaPercent >= 25 then
+	if jps.Interrupts and jps.shouldKick("target") and cd("Rebuke") == 0 and myManaPercent >= 25 then
 		return "Rebuke"
 	end
 
         -- Blood Elf Arcane Torrent
-        if jps.Interrupts and jps.should_kick("target") and cd("Arcane Torrent") == 0 and race == "Blood Elf" then
+        if jps.Interrupts and jps.shouldKick("target") and cd("Arcane Torrent") == 0 and race == "Blood Elf" then
 		return "Arcane Torrent"
 	end
  

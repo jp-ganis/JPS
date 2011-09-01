@@ -6,8 +6,8 @@ function druid_resto(self)
 		tank = "focus"
 		tank_hp = UnitHealth(tank)/UnitHealthMax(tank)
 		tank_focus = true
-		tank_bloom_count = jps.get_buff_stacks(tank,"lifebloom")
-		tank_bloom_duration = jps.buff_duration(tank,"lifebloom")
+		tank_bloom_count = jps.buffStacks(tank,"lifebloom")
+		tank_bloom_duration = jps.buffDuration(tank,"lifebloom")
 	end
 	local spell = nil
 

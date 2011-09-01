@@ -1,16 +1,16 @@
 function hunter_sv(self)
 	
 	local focus = UnitPower("player")
-	local sting_duration = jps.debuff_duration("target","Serpent Sting")
+	local sting_duration = jps.debuffDuration("target","Serpent Sting")
 	
-	if UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.check_timer("feign") == 0 then
-   		jps.create_timer("feign", "2")
+	if UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.checkTimer("feign") == 0 then
+   		jps.createTimer("feign", "2")
    		spell = "Feign Death"
 
-   	elseif jps.check_timer("feign") > 0 then
+   	elseif jps.checkTimer("feign") > 0 then
    		spell = nil
 
-   	elseif ub("player", "Feign Death") and jps.check_timer("feign") == 0 then
+   	elseif ub("player", "Feign Death") and jps.checkTimer("feign") == 0 then
    		CancelUnitBuff("player", "Feign Death")
    		spell = nil
 	
