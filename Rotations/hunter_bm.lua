@@ -32,7 +32,7 @@ function hunter_bm(self)
 		print("Aggro! Feign Death cast.")
 		jps.createTimer("feign", "2")
 		spell = "Feign Death"
-	elseif jps.check_timer("feign") > 0 then
+	elseif jps.checkTimer("feign") > 0 then
 		spell = nil
 	elseif ub("player", "Feign Death") and jps.checkTimer("feign") == 0 then
 		CancelUnitBuff("player", "Feign Death")
