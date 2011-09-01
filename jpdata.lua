@@ -255,7 +255,7 @@ function jps.lowestFriendly()
 	local lowestHP = UnitHealthMax("player")*100
 
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		local thisHP = jps.RaidStatus[unit]["hp"]
+		local thisHP = jps.hpInc(unit)
 		if thisHP < lowestHP then
 			if not UnitIsDeadOrGhost(unit) and UnitIsVisible(unit) and UnitInRange(unit) then
 				lowestHP = thisHP
