@@ -194,9 +194,9 @@ function jps.hpInc(unit,message)
 	local hpInc = UnitGetIncomingHeals(unit)
 	if not hpInc then hpInc = 0 end
 	if message == "abs" or message == "absolute" then
-		return UnitHealth(unit) + UnitGetIncomingHeals(unit)
+		return UnitHealth(unit) + hpInc
 	else
-		return UnitHealth(unit)/UnitHealthMax(unit) + UnitGetIncomingHeals(unit)/UnitHealthMax(unit)
+		return UnitHealth(unit)/UnitHealthMax(unit) + hpInc/UnitHealthMax(unit)
 	end
 end
 
@@ -287,7 +287,24 @@ function jps.findMeATank()
 	return "player"
 end
 
-	
+--[[local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
+local function GetSpellInfo(a)
+	return unpack(a)
+end]]--
+
+-- Ty to CDO for this code.
+hooksecurefunc("UseAction", function(...)
+	if jps.Enabled and select(3, ...) ~= nil then
+		local stype, id = GetActionInfo( select(1, ...) )
+		if stype == "spell" then
+			local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
+			if jps.NextCast ~= name then 
+				jps.NextCast = name
+				if jps.Combat then write("Set",name,"for next cast.") end
+			end
+		end
+	end
+end)
 
 -- BenPhelps' Timer Functions
 function jps.createTimer( name, duration )
