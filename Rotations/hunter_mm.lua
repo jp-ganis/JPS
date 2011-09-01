@@ -8,7 +8,7 @@ function hunter_mm(self)
 	local chim_ready,chim_timeleft,_ = GetSpellCooldown("Chimera Shot");
 
 	-- Interupting, Borrowed directly from feral cat
-	if jps.Interrupts and jps.should_kick("target") and cd("Silencing Shot") == 0 then
+	if jps.Interrupts and jps.shouldKick("target") and cd("Silencing Shot") == 0 then
 		print("Silencing Target")
 		return "Silencing Shot"
 
@@ -26,13 +26,13 @@ function hunter_mm(self)
 		jps.Opening = false
 		
 	-- Main rotation (Shift to launch trap in Multi Mob situations)
-	elseif UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.check_timer("feign") and GetNumPartyMembers() > 0 then
+	elseif UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.checkTimer("feign") and GetNumPartyMembers() > 0 then
 		print("Aggro! Feign Death cast.")
-		jps.create_timer("feign", "2")
+		jps.createTimer("feign", "2")
 		spell = "Feign Death"
-	elseif jps.check_timer("feign") > 0 then
+	elseif jps.checkTimer("feign") > 0 then
 		spell = nil
-	elseif ub("player", "Feign Death") and jps.check_timer("feign") == 0 then
+	elseif ub("player", "Feign Death") and jps.checkTimer("feign") == 0 then
 		CancelUnitBuff("player", "Feign Death")
 		spell = nil
 	elseif not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.5 and UnitHealth("pet") then
@@ -57,9 +57,9 @@ function hunter_mm(self)
 		spell = "Rapid Fire"
 	elseif jps.UseCDs and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
 		spell = "Lifeblood"
-	elseif jps.UseCDs and cd("Rapid Fire") > 0 and jps.get_cooldown("Rapid Fire") >= 120 and not ub("player","rapid fire") and cd("readiness") == 0 then
+	elseif jps.UseCDs and cd("Rapid Fire") > 0 and jps.cooldown("Rapid Fire") >= 120 and not ub("player","rapid fire") and cd("readiness") == 0 then
 		spell = "Readiness"
-	elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.9 and up("player") > 55 and jps.get_cooldown("Chimera Shot") > 4 then
+	elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.9 and up("player") > 55 and jps.cooldown("Chimera Shot") > 4 then
 		spell = "Aimed Shot"
 	elseif up("player") > 66 then
 		if ub("player","rapid fire") then

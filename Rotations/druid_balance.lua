@@ -10,17 +10,17 @@ function druid_balance(self)
 		return "regrowth"
 	end
 
-	local is_duration = jps.debuff_duration("target","insect swarm")
-	local mf_duration = jps.debuff_duration("target","moonfire")
-	local sf_duration = jps.debuff_duration("target","sunfire")
+	local is_duration = jps.debuffDuration("target","insect swarm")
+	local mf_duration = jps.debuffDuration("target","moonfire")
+	local sf_duration = jps.debuffDuration("target","sunfire")
 
 	local focus_dotting, focus_is, focus_mf, focus_sf
 	focus_dotting = false
 	if UnitExists("focus") then
 		focus_dotting = true
-		focus_is = jps.debuff_duration("focus","insect swarm")
-		focus_mf = jps.debuff_duration("focus","moonfire")
-		focus_sf = jps.debuff_duration("focus","sunfire")
+		focus_is = jps.debuffDuration("focus","insect swarm")
+		focus_mf = jps.debuffDuration("focus","moonfire")
+		focus_sf = jps.debuffDuration("focus","sunfire")
 	end
 
 	if cd("Force of Nature") == 0 and jps.UseCDs and ub("player","eclipse (solar)") then
@@ -29,7 +29,7 @@ function druid_balance(self)
 		CameraOrSelectOrMoveStop()
 		PetAttack("target")
 		spell = "force of nature"
-	elseif jps.buff_duration("player","shooting stars") < 2 and ub("player","shooting stars") then
+	elseif jps.buffDuration("player","shooting stars") < 2 and ub("player","shooting stars") then
 		spell = "starsurge"
 	elseif UnitMana("player")/UnitManaMax("player") < 0.5 and cd("innervate") == 0 then
 		spell = "innervate"

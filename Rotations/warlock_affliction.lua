@@ -3,17 +3,17 @@ function warlock_affliction(self)
 	local shards = UnitPower("player",7)
 	local spell = nil
 
-	local bod_duration = jps.debuff_duration("target","bane of doom")
-	local cpn_duration = jps.debuff_duration("target","corruption")
-	local ua_duration = jps.debuff_duration("target","unstable affliction")
+	local bod_duration = jps.debuffDuration("target","bane of doom")
+	local cpn_duration = jps.debuffDuration("target","corruption")
+	local ua_duration = jps.debuffDuration("target","unstable affliction")
 
 	-- focus dotting
 	local focus_dotting, focus_corruption, focus_ua, focus_bane
 	if UnitExists("focus") then
 		focus_dotting = true
-		focus_corruption = jps.debuff_duration("focus","corruption")
-		focus_ua = jps.debuff_duration("focus","unstable affliction")
-		focus_bane = jps.debuff_duration("focus","bane of agony")
+		focus_corruption = jps.debuffDuration("focus","corruption")
+		focus_ua = jps.debuffDuration("focus","unstable affliction")
+		focus_bane = jps.debuffDuration("focus","bane of agony")
 	end
 
 	if not ud("target","curse of the elements") then

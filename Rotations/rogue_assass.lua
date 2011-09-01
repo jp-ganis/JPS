@@ -1,7 +1,7 @@
 function rogue_assass(self)
 	local cp = GetComboPoints("player")
-	local rupture_duration = jps.debuff_duration("target","rupture")
-	local snd_duration = jps.buff_duration("player","slice and dice")
+	local rupture_duration = jps.debuffDuration("target","rupture")
+	local snd_duration = jps.buffDuration("player","slice and dice")
 	local execute_phase = UnitHealth("target")/UnitHealthMax("target") <= 0.35
 
 	local spell = nil

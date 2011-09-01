@@ -2,11 +2,11 @@ function shaman_elemental(self)
 	local spell = nil
 	local mana = UnitMana("player")/UnitManaMax("player")
 	local speed = GetUnitSpeed("player")	 
-	local lsCount = jps.get_buff_stacks("player","lightning shield")
-	local fsDuration = jps.debuff_duration("target","flame shock")
+	local lsCount = jps.buffStacks("player","lightning shield")
+	local fsDuration = jps.debuffDuration("target","flame shock")
 	local _, fireTotemName, _, _, _ = GetTotemInfo(1) 
 	 
-	if jps.Interrupts and cd("wind shear") == 0 and jps.should_kick("target") and mana > .4 then 
+	if jps.Interrupts and cd("wind shear") == 0 and jps.shouldKick("target") and mana > .4 then 
 		SpellStopCasting()
 		spell = "wind shear"
 	elseif jps.UseCDs and cd("blood fury") == 0 then

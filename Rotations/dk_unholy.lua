@@ -5,10 +5,10 @@ function dk_unholy(self)
 	local spell = nil
 	local power = UnitPower("player",6)
 	local HP = UnitHealth("player")/UnitHealthMax("player")
-	local FF_duration = jps.debuff_duration("target","Frost Fever")
-	local BP_duration = jps.debuff_duration("target","Blood Plague")
-	local SI_stacks = jps.get_buff_stacks("pet","Shadow Infusion")
-	local DT_pet = ub("pet", "Dark Transformation")
+	local FF_duration = jps.debuffDuration("target","Frost Fever")
+	local BP_duration = jps.debuffDuration("target","Blood Plague")
+	local SI_stacks = jps.buffStacks("pet","Shadow Infusion")
+	local DT_pet = jps.buff("dark transformation","pet")
 
 	--Interrupts--
 	if UnitIsEnemy("player", "target") and (UnitCastingInfo("target") or UnitChannelInfo("target")) and cd("mind freeze") == 0 and IsSpellInRange("mind freeze", "target") == 1 and power >= 20 then
@@ -47,8 +47,8 @@ function dk_unholy(self)
             spell = "Icy Touch"
 		elseif ub("player","Sudden Doom") then
 			spell="Death Coil"
-		elseif jps.check_timer("pest") == 0 and jps.MultiTarget then
-			jps.create_timer("pest", "15")
+		elseif jps.checkTimer("pest") == 0 and jps.MultiTarget then
+			jps.createTimer("pest", "15")
 		    spell = "Pestilence"
 	    elseif cd("Death and Decay") == 0 and ius("Death and Decay") then
 	        spell = "Death and Decay"

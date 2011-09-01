@@ -10,7 +10,7 @@ function warrior_fury(self)
 	local nEmul = UnitBuff("player","Incite")
 	local nTrance = UnitBuff("player","Battle Trance")
 	local nExec= UnitBuff("player","Executioner")
-	local stackExec = jps.get_buff_stacks("player","Executioner")
+	local stackExec = jps.buffStacks("player","Executioner")
 
 -- Rugissement de courage - augmentant leur Force et leur Agilité de 549
 -- Totem de force de la terre - augmente de 549 la Force et l'Agilité
@@ -30,7 +30,7 @@ if UnitCanAttack("player","target") then
 		spell= "Intercept"
 	elseif cd("Enraged Regeneration")==0 and playerHealth<0.60 and IsUsableSpell("Enraged Regeneration") and nEnrage then
 		spell= "Enraged Regeneration"
-	elseif cd("Pummel")==0 and IsSpellInRange("Pummel","target")==1 and IsUsableSpell("Pummel") and jps.should_kick("target") then
+	elseif cd("Pummel")==0 and IsSpellInRange("Pummel","target")==1 and IsUsableSpell("Pummel") and jps.shouldKick("target") then
 		spell= "Pummel"
 	elseif ub("player","Victorious") and IsUsableSpell("Victory Rush") then 
 		spell= "Victory Rush"
@@ -93,7 +93,7 @@ if UnitCanAttack("player","target") then
 		spell= "Bloodthirst"
 	elseif UnitThreatSituation("player")==0 and cd("Heroic Throw")==0 and IsUsableSpell("Heroic Throw") then 
 		spell= "Heroic Throw"
-	elseif (UnitHealth("target") > 500000) and (jps.get_debuff_stacks("target","Sunder Armor") < 3) and cd("Sunder Armor")==0 and IsUsableSpell("Sunder Armor") then
+	elseif (UnitHealth("target") > 500000) and (jps.debuffStacks("target","Sunder Armor") < 3) and cd("Sunder Armor")==0 and IsUsableSpell("Sunder Armor") then
 		spell= "Sunder Armor"
 	end
 else return end

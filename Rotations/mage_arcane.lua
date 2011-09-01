@@ -6,10 +6,10 @@ function mage_arcane(self)
 	local spell = nil
 	local hp = UnitHealth("player")/UnitHealthMax("player")
 	local mana = UnitMana("player")/UnitManaMax("player")
-	local magearmor = jps.buff_duration("player","mage armor")
-	local arcaneb = jps.buff_duration("player","arcane brilliance")	
-	local abCount = jps.get_debuff_stacks("player","arcane blast")
-	local abDuration = jps.debuff_duration("player","arcane blast")	
+	local magearmor = jps.buffDuration("player","mage armor")
+	local arcaneb = jps.buffDuration("player","arcane brilliance")	
+	local abCount = jps.debuffStacks("player","arcane blast")
+	local abDuration = jps.debuffDuration("player","arcane blast")	
 	local useManagem = "/use mana gem"
 	local engineering = "/use 10"
 
