@@ -191,6 +191,8 @@ end
 
 function jps.hpInc(unit,message)
 	if unit == nil then unit = "player" end
+	local hpInc = UnitGetIncomingHeals(unit)
+	if not hpInc then hpInc = 0 end
 	if message == "abs" or message == "absolute" then
 		return UnitHealth(unit) + UnitGetIncomingHeals(unit)
 	else
@@ -279,7 +281,7 @@ function jps.findMeATank()
 	if UnitExists("focus") then return "focus" end
 
 	for unit, _ in pairs(jps.RaidStatus) do
-		if jps.couldBetank(unit) then return unit end
+		if jps.couldBeTank( unit ) then return unit end
 	end
 
 	return "player"
