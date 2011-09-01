@@ -5,8 +5,8 @@ targetthreatduration = 0
 
 function druid_feral_bear(self)
 	local rage = UnitMana("player")
-	local lacCount = jps.get_debuff_stacks("target","lacerate")
-	local lac_duration = jps.debuff_duration("target","lacerate")
+	local lacCount = jps.debuffStacks("target","lacerate")
+	local lac_duration = jps.debuffDuration("target","lacerate")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 	local spell = nil
 
@@ -40,9 +40,9 @@ function druid_feral_bear(self)
 	end
 
 	-- Interrupt, works equally well with "focus" instead of "target"
-	if jps.Interrupts and jps.should_kick("target") and cd("Skull Bash") == 0 and rage >= 15 then
+	if jps.Interrupts and jps.shouldKick("target") and cd("Skull Bash") == 0 and rage >= 15 then
 		return "Skull Bash(Bear Form)"
-	elseif jps.Interrupts and jps.should_kick("target") and cd("Bash") == 0 and rage >= 10 then
+	elseif jps.Interrupts and jps.shouldKick("target") and cd("Bash") == 0 and rage >= 10 then
 		return "Bash"
 	end
 
