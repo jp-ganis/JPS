@@ -3,7 +3,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.0.0"
-jps.Revision = "r217"
+jps.Revision = "r220"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
@@ -188,7 +188,6 @@ function SlashCmdList.jps(cmd, editbox)
 	if msg == "disable" or msg == "d" then
 		jps.toggleEnabled(false)
 	elseif msg == "enable" or msg == "e" then
-		jps.NextCast = nil
 		jps.toggleEnabled(true)
 	elseif msg == "respec" then
 		jps.detectSpec()
@@ -328,12 +327,17 @@ function combat(self)
 	else jps.Casting = false
 	end
 	
-	-- Get spell from rotation.
+	-- Get spell from rotation
 	jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
 	
-	-- Check spell usability.
+	-- Check spell usability
 	if jps.ThisCast and not jps.Casting and cd(jps.ThisCast) == 0 then
-   		jps.Cast(jps.ThisCast)
+		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
+			jps.Cast(jps.NextCast)
+			jps.NextCast = nil
+		else
+			jps.Cast(jps.ThisCast)
+		end
    	end
 	
 	-- Hide Error

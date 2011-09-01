@@ -4,7 +4,7 @@ function shaman_enhancement(self)
    local mana = UnitMana("player")/UnitManaMax("player")
    local maelstrom_count = jps.get_buff_stacks("player","maelstrom weapon")
    
-   if jps.Interrupts("target") and cd("Wind Shear") == 0 and jps.should_kick("target") then 
+   if jps.Interrupts and cd("Wind Shear") == 0 and jps.should_kick("target") then 
       SpellStopCasting()
 			spell = "Wind Shear"
    elseif cd("Shamanistic Rage") == 0 and mana < 0.2 then 

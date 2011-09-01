@@ -6,10 +6,7 @@ function paladin_holy(self)
 	local me = "player"
 
 	-- Tank is focus.
-	if UnitExists("focus") then tank = "focus"
-	else tank = jps.findMeATank() end
-
-	if not UnitExists(tank) then tank = "player" end
+	tank = jps.findMeATank()
 
 	-- Find a target to judge.
 	if UnitIsEnemy(me, "focustarget") then
