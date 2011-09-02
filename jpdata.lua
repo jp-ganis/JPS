@@ -200,14 +200,6 @@ function jps.hpInc(unit,message)
 	end
 end
 
-function jps.targetHP(message)
-	if message == "abs" or message == "absolute" then
-		return UnitHealth("target")
-	else
-		return UnitHealth("target")/UnitHealthMax("target")
-	end
-end
-
 function jps.lowestInRaidStatus()
 	local lowestHP = 1
 	local lowestUnit = nil
