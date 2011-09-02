@@ -62,7 +62,6 @@ function write(...)
 	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...)));
 end
 
-
 function combatEventHandler(self, event, ...)
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
@@ -106,13 +105,12 @@ function combatEventHandler(self, event, ...)
 	-- RaidStatus Update
 	elseif event == "UNIT_HEALTH" and jps.Enabled then
 		local unit = ...
-		if UnitIsFriend("player",unit) then
+        if UnitIsFriend("player",unit) then
 			local delta = 0
 			local hp = jps.hpInc(unit)
 
 			if jps.RaidStatus[unit] then
 				delta = jps.RaidStatus[unit]["hp"] - hp end
-
 			jps.RaidStatus[unit] = { ["hp"] = hp, ["hpabs"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["delta"] = delta }
 		end 
 
@@ -335,7 +333,8 @@ function combat(self)
 		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
 			jps.Cast(jps.NextCast)
 			jps.NextCast = nil
-		else
+        else
+            if jps.Debug then print(jps.ThisCast," on ", jps.Target) end
 			jps.Cast(jps.ThisCast)
 		end
    	end
