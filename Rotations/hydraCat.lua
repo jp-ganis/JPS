@@ -7,7 +7,7 @@ function hydraCat(self)
 	local rakeDuration = jps.debuffDuration("rake")
 	local srDuration = jps.buffDuration("savage roar")
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
-	local executePhase = jps.targetHP <= 0.25
+	local executePhase = jps.hp("target") <= 0.25
 
 	local spellTable =
 	{
