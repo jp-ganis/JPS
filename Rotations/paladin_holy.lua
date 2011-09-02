@@ -21,6 +21,8 @@ function paladin_holy(self)
 
 	if UnitExists(tank) and jps.hpInc(tank) < 0.4 then defaultTarget = tank end
 	if jps.hpInc(me) < 0.2 then	defaultTarget = me end
+
+	local defaultHP = jps.hpInc(defaultTarget)
 	
 	local spellTable =
 	{
