@@ -183,7 +183,9 @@ function SlashCmdList.jps(cmd, editbox)
 		if jps.Enabled == false then msg = "e"
 		else msg = "d" end
 	end
-	if msg == "disable" or msg == "d" then
+	if msg == "config" then
+		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
+	elseif msg == "disable" or msg == "d" then
 		jps.toggleEnabled(false)
 	elseif msg == "enable" or msg == "e" then
 		jps.toggleEnabled(true)

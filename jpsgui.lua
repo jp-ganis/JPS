@@ -1,5 +1,4 @@
 -- Huge thanks to BenPhelps for these SO sexy buttons.
-
 jps.GUInormal = "Interface\\AddOns\\JPS\\media\\jps.tga"
 jps.GUIshadow = "Interface\\AddOns\\JPS\\media\\shadow.tga"
 jps.GUIborder = "Interface\\AddOns\\JPS\\media\\border.tga"
@@ -8,12 +7,12 @@ jps.GUIborder_combat = "Interface\\AddOns\\JPS\\media\\border_combat.tga"
 jps.GUIicon_cd = "Interface\\Icons\\Spell_Holy_BorrowedTime"
 jps.GUIicon_multi = "Interface\\Icons\\achievement_arena_5v5_3"
 
-BINDING_HEADER_JPS = "JPS Toggles";
+BINDING_HEADER_JPS = "JPS Toggles"
 BINDING_NAME_JPSTOGGLE = "Enabled/Disable"
-BINDING_NAME_JPSTOGGLEMULTI = "Multi Target";
+BINDING_NAME_JPSTOGGLEMULTI = "Multi Target"
 BINDING_NAME_JPSTOGGLECD = "CD Usage"
 
--- Create the frame that does all the work, pew pew..
+-- Create the frame that does all the work, pew pew...
 JPSFrame = CreateFrame("Frame", "JPSFrame")
 JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
@@ -29,7 +28,6 @@ jpsIcon:RegisterForDrag("LeftButton")
 jpsIcon:SetScript("OnDragStart", jpsIcon.StartMoving)
 jpsIcon:SetScript("OnDragStop", jpsIcon.StopMovingOrSizing)
 jpsIcon:SetPoint("CENTER")
-
 
 jpsIcon.texture = jpsIcon:CreateTexture("ARTWORK") -- create the spell icon texture
 jpsIcon.texture:SetPoint('TOPRIGHT', jpsIcon, -2, -2) -- inset it by 2px or pt or w/e the game uses
@@ -51,7 +49,6 @@ jpsIcon.shadow:SetTexture(jps.GUIshadow)  -- set the texture
 jpsIcon.shadow:SetVertexColor(0, 0, 0, 0.85)  -- color the texture black and set the alpha so its a bit more trans
 
 jpsIcon:SetScript("OnClick", function(self, button)
-	
 	if button == "LeftButton" then
 		jps.toggleEnabled()
 	elseif button == "RightButton" then
@@ -60,7 +57,6 @@ jpsIcon:SetScript("OnClick", function(self, button)
 		else
 			jps.toggleToggles()
 		end
-		
 	end
 end)
 
