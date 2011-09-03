@@ -11,7 +11,6 @@ jps.Class = nil
 jps.Spec = nil
 jps.Interrupts = true
 jps.PVPInterrupt = false
-jps.PvP = false
 jps.Debug = false
 jps.Defensive = false
 -- Utility
@@ -35,6 +34,10 @@ jps.MacroSpam = false
 jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
+
+-- Config.
+jpsName = UnitName("player")
+jpsRealm = GetCVar("realmName")
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
