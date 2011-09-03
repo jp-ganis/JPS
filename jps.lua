@@ -277,7 +277,7 @@ function combat(self)
                                  ["Retribution"]   = paladin_ret,
 								 ["Holy"]		   = paladin_holy },
             
-            ["Warlock"]      = { ["Affliction"]    = warlock_affl,
+            ["Warlock"]      = { ["Affliction"]    = warlock_affliction,
                                  ["Destruction"]   = warlock_destro,
                                  ["Demonology"]    = warlock_demo },
             
