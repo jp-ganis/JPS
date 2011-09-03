@@ -46,8 +46,8 @@ function paladin_holy(self)
 	
 	local spellTable =
 	{
-		{ "lay on hands",		defaultHP < 0.05 and jps.UseCDs, defaultTarget },
-		{ "hand of protection",	defaultHP < 0.15 and jps.UseCDs, defaultTarget },
+		{ "lay on hands",		defaultHP < 0.05 and jps.UseCDs, defaultTarget, true },
+		{ "hand of protection",	defaultHP < 0.15 and jps.UseCDs, defaultTarget, true },
         { "divine shield",	    jps.hp() < 0.30 and jps.UseCDs and not jps.buff("Forbearance", me), me }, --can be optimized by using on specific boss mechanics
         { "divine protection",	jps.hp() < 0.50 and jps.UseCDs, me },
         { "seal of insight",	"refresh" },
@@ -68,7 +68,7 @@ function paladin_holy(self)
 	}
 
 	local spell,target = parseSpellTable(spellTable)
-	jps.Target = target
+
 	return spell
 	
 end

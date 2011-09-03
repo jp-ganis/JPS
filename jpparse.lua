@@ -24,7 +24,7 @@ function parseMultiUnitTable( spellTable )
 	local spell = spellTable[1]
 	local unitFunction = spellTable[2]
 	local targets = spellTable[3]
-	local conditions = spellTable[4]
+	local stopCasting = spellTable[4]
 	local target = nil
 	local sirenTable = {}
 
@@ -69,6 +69,7 @@ function parseSpellTable( hydraTable )
 	for _, spellTable in pairs(hydraTable) do
 		local spell = spellTable[1]
 		local conditions = spellTable[2]
+        local stopCasting = spellTable[4]
 		local target = nil
 
 		-- Nested table
