@@ -42,10 +42,11 @@ function jps.Cast(spell)
 	if not jps.Casting then jps.LastCast = spell end
 	CastSpellByName(spell,jps.Target)
     jps.LastTarget = jps.Target
+    if jps.Debug then write(spell, jps.Target) end
 	jps.Target = nil
 	if jps.IconSpell ~= spell then
 		jps.set_jps_icon( spell )
-		if jps.Debug then write(spell, jps.Target) end
+
 	end
 end
 

@@ -350,8 +350,7 @@ function combat(self)
 			jps.Cast(jps.NextCast)
 			jps.NextCast = nil
         else
-            if jps.Debug then print(jps.ThisCast," on ", jps.Target) end
-			jps.Cast(jps.ThisCast)
+           jps.Cast(jps.ThisCast)
 		end
    	end
 	

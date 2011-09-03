@@ -89,7 +89,10 @@ function parseSpellTable( hydraTable )
 		-- Return spell if conditions are true and spell is castable.
 		if conditionsMatched( spell, conditions ) and ImReallySureICanCastThisShit( spell,target ) then
 
-			if stopCasting then SpellStopCasting() end
+			if stopCasting then
+              SpellStopCasting()
+              print("stopped spellcasting")
+             end
 			jps.Target = target
 			return spell,target
 
