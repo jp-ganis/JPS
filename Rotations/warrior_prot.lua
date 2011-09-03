@@ -6,8 +6,8 @@ local targetHealth = UnitHealth("target")/UnitHealthMax("target")
 local nEnrage = UnitBuff("player","Enrage")
 local nRage = UnitBuff("player","Berserker Rage")
 local nPower = UnitPower("Player",1) -- Rage est PowerType 1
-local stackSunder = jps.debuffStacks("target","Sunder Armor")
-local stackThunder = jps.debuffStacks("player","Thunderstruck")
+local stackSunder = jps.debuffStacks("Sunder Armor")
+local stackThunder = jps.buffStacks("Thunderstruck")
    
 if UnitCanAttack("player","target") then
 	if cd("Battle Shout")==0 and not ub("player","Battle Shout") and IsUsableSpell("Battle Shout") then

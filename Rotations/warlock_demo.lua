@@ -3,9 +3,9 @@ function warlock_demo(self)
 	local shards = UnitPower("player",7)
   	local spell = nil
 
-	local bod_duration = jps.debuffDuration("target","bane of doom")
-	local cpn_duration = jps.debuffDuration("target","corruption")
-	local imo_duration = jps.debuffDuration("target","immolate")
+	local bod_duration = jps.debuffDuration("bane of doom")
+	local cpn_duration = jps.debuffDuration("corruption")
+	local imo_duration = jps.debuffDuration("immolate")
 
 	if not ud("target","curse of the elements") then
 		spell = "curse of the elements"

@@ -1,7 +1,6 @@
 -- JPS Helper Functions
 --jpganis
 
-
 -- Lookup Tables
 -- Credit (and thanks!) to BenPhelps
 jps.Dispells = {

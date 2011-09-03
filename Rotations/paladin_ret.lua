@@ -5,7 +5,7 @@ function paladin_ret(self)
 	local myManaPercent = UnitMana("player")/UnitManaMax("player") * 100
 	local hPower = UnitPower("player","9")
 	local race = UnitRace("player")
-	local inqDuration = jps.buffDuration("player","Inquisition")
+	local inqDuration = jps.buffDuration("Inquisition")
 	local spell = nil
    
 	-- Interrupt, works equally well with "focus" instead of "target"
