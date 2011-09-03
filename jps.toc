@@ -8,6 +8,8 @@ jpparse.lua
 jpsgui.lua
 jpdata.lua
 
+jp_config.lua
+
 bindings.xml
 
 Rotations\dk_blood.lua
