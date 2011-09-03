@@ -39,11 +39,13 @@ jps.Dispells = {
 function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
-	CastSpellByName(spell,jps.Target)	
+	CastSpellByName(spell,jps.Target)
+    jps.LastTarget = jps.Target
+    if jps.Debug then write(spell, jps.Target) end
 	jps.Target = nil
 	if jps.IconSpell ~= spell then
 		jps.set_jps_icon( spell )
-		if jps.Debug then write(spell, jps.Target) end
+
 	end
 end
 
@@ -241,7 +243,7 @@ function jps.checkProfsAndRacials()
 
 end
 
--- Lowest HP in RaidStatus
+-- Lowest HP in RaidStatus, excluding Blacklisted players
 function jps.lowestFriendly()
 	local lowestUnit = nil
 	local lowestHP = UnitHealthMax("player")*100
@@ -249,7 +251,7 @@ function jps.lowestFriendly()
 	for unit, unitTable in pairs(jps.RaidStatus) do
 		local thisHP = jps.hpInc(unit)
 		if thisHP < lowestHP then
-			if not UnitIsDeadOrGhost(unit) and UnitIsVisible(unit) and UnitInRange(unit) then
+			if not UnitIsDeadOrGhost(unit) and UnitIsVisible(unit) and UnitInRange(unit) and not jps.PlayerIsBlacklisted(unit) then
 				lowestHP = thisHP
 				lowestUnit = unit
 			end
@@ -260,7 +262,7 @@ function jps.lowestFriendly()
 end
 
 
--- Find potential tank
+-- Find potential tank , excluding Blacklisted players
 function jps.couldBeTank( unit )
 	if UnitGroupRolesAssigned(unit) == "TANK" then return true
 	elseif jps.buff( "righteous fury",unit ) then return true
@@ -270,10 +272,10 @@ function jps.couldBeTank( unit )
 end
 
 function jps.findMeATank()
-	if UnitExists("focus") then return "focus" end
+	if UnitExists("focus") and not jps.PlayerIsBlacklisted("focus") then return "focus" end
 
 	for unit, _ in pairs(jps.RaidStatus) do
-		if jps.couldBeTank( unit ) then return unit end
+		if jps.couldBeTank( unit ) and not jps.PlayerIsBlacklisted(unit) then return unit end
 	end
 
 	return "player"
@@ -320,4 +322,48 @@ function jps.FindMeADispelTarget(dispeltypes)
      for unit, _ in pairs(jps.RaidStatus) do
 		if jps.canDispell( unit, dispeltypes ) then return unit end
 	end
+end
+
+
+--walkistalki Excluded player functions
+--These functions will exclude a target for a set time.
+
+
+function jps.UpdateHealerBlacklist(self)
+   if #jps.HealerBlacklist > 0 then
+	  for i = #jps.HealerBlacklist, 1, -1 do
+		 if GetTime() - jps.HealerBlacklist[i][2] > jps.BlacklistTimer then
+            if jps.Debug then print("Releasing ", jps.HealerBlacklist[i][1]) end
+			table.remove(jps.HealerBlacklist,i)
+		 end
+	  end
+   end
+end
+
+function jps.PlayerIsBlacklisted(unit)
+    local playername
+	if UnitExists(unit) and UnitIsPlayer(unit) then
+      playername = GetUnitName(unit)
+    end
+  for i = 1, #jps.HealerBlacklist do
+		if jps.HealerBlacklist[i][1] == playername then
+			return true
+		end
+	end
+	return false
+end
+
+function jps.BlacklistPlayer(unit)
+    local playername
+	if UnitExists(unit) and UnitIsPlayer(unit) then
+      playername = GetUnitName(unit)
+    end
+	if playername ~= nil then
+      local playerexclude = {}
+	  table.insert(playerexclude, playername)
+	  table.insert(playerexclude, GetTime())
+	  table.insert(jps.HealerBlacklist,playerexclude)
+      if jps.Debug then print("Blacklisting ", playername) end
+    end
+
 end

@@ -16,6 +16,7 @@ jps.Debug = false
 jps.Defensive = false
 -- Utility
 jps.Target = nil
+jps.LastTarget = nil
 jps.Casting = false
 jps.LastCast = nil
 jps.ThisCast = nil
@@ -35,6 +36,7 @@ jps.MacroSpam = false
 jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
+jps.BlacklistTimer = 2
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
@@ -56,6 +58,7 @@ combatFrame:RegisterEvent("INSPECT_READY")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 
 function write(...)
@@ -157,7 +160,18 @@ function combatEventHandler(self, event, ...)
 		jpsMultiTarget = jps.MultiTarget
 		jpsUseCDs = jps.UseCDs
 		jpsToggleDir = jps.ToggleDir
-	end
+
+    -- Combat Event Handler
+    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+        local eventtable =  {... }
+
+       --- Required For Healing Classes
+       -- Update out of sight players before selecting a spell -- used for healing classes
+       jps.UpdateHealerBlacklist()
+        if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
+          jps.BlacklistPlayer(jps.LastTarget)
+        end
+    end
 end
 
 function jps.detectSpec()
@@ -324,7 +338,9 @@ function combat(self)
 	elseif UnitChannelInfo("player") then jps.Casting = true
 	else jps.Casting = false
 	end
-	
+
+
+
 	-- Get spell from rotation
 	jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
 	
@@ -334,8 +350,7 @@ function combat(self)
 			jps.Cast(jps.NextCast)
 			jps.NextCast = nil
         else
-            if jps.Debug then print(jps.ThisCast," on ", jps.Target) end
-			jps.Cast(jps.ThisCast)
+           jps.Cast(jps.ThisCast)
 		end
    	end
 	
