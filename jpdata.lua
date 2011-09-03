@@ -19,6 +19,7 @@ jps.Dispells = {
 	
 	["Poison"] = {
 		"Viscous Poison", -- Lockmaw
+
 	},
 	
 	["Disease"] = {
@@ -159,7 +160,7 @@ end
 
 function jps.shouldKick(unit)
 	if unit == nil then unit = "target" end
-	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
+    local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
 	if target_spell and not unInterruptable then
@@ -314,4 +315,10 @@ function jps.checkTimer( name )
 		end
 	end
 	return 0
+end
+
+function jps.FindMeADispelTarget(dispeltypes)
+     for unit, _ in pairs(jps.RaidStatus) do
+		if jps.canDispell( unit, dispeltypes ) then return unit end
+	end
 end
