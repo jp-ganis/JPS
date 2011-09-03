@@ -3,11 +3,11 @@ function warlock_destro(self)
 	local shards = UnitPower("player",7);
 	local spell = nil;
 
-	local isf_duration = jps.buffDuration("player","improved soul fire");
-	local bod_duration = jps.debuffDuration("target","bane of doom");
-	local cpn_duration = jps.debuffDuration("target","corruption");
-	local isb_duration = jps.debuffDuration("target","shadow and flame");
-	local imo_duration = jps.debuffDuration("target","immolate");
+	local isf_duration = jps.buffDuration("improved soul fire");
+	local bod_duration = jps.debuffDuration("bane of doom");
+	local cpn_duration = jps.debuffDuration("corruption");
+	local isb_duration = jps.debuffDuration("shadow and flame");
+	local imo_duration = jps.debuffDuration("immolate");
 
 	if cd("demon soul") == 0 then 
 		spell = "demon soul";

@@ -2,8 +2,8 @@ function shaman_elemental(self)
 	local spell = nil
 	local mana = UnitMana("player")/UnitManaMax("player")
 	local speed = GetUnitSpeed("player")	 
-	local lsCount = jps.buffStacks("player","lightning shield")
-	local fsDuration = jps.debuffDuration("target","flame shock")
+	local lsCount = jps.buffStacks("lightning shield")
+	local fsDuration = jps.debuffDuration("flame shock")
 	local _, fireTotemName, _, _, _ = GetTotemInfo(1) 
 	 
 	if jps.Interrupts and cd("wind shear") == 0 and jps.shouldKick("target") and mana > .4 then 

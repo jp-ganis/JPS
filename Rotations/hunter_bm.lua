@@ -1,10 +1,10 @@
 function hunter_bm(self)
 	-- by Scribe (v1.32b)
 	local spell = nil
-	local sps_duration = jps.debuffDuration("target","serpent sting")
+	local sps_duration = jps.debuffDuration("serpent sting")
 	local focus = UnitMana("player")
 	local pet_focus = UnitMana("pet")
-	local pet_frenzy = jps.buffStacks("pet","Frenzy Effect")
+	local pet_frenzy = jps.buffStacks("Frenzy Effect","pet")
 	local pet_attacking = IsPetAttackActive()
 	local target_health_percent = UnitHealth("target")/UnitHealthMax("target") * 100
 	local pet_health_percent = UnitHealth("pet")/UnitHealthMax("pet") * 100

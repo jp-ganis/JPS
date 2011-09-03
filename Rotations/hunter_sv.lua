@@ -1,7 +1,7 @@
 function hunter_sv(self)
 	
 	local focus = UnitPower("player")
-	local sting_duration = jps.debuffDuration("target","Serpent Sting")
+	local sting_duration = jps.debuffDuration("Serpent Sting")
 	
 	if UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.checkTimer("feign") == 0 then
    		jps.createTimer("feign", "2")

@@ -5,9 +5,9 @@ function dk_unholy(self)
 	local spell = nil
 	local power = UnitPower("player",6)
 	local HP = UnitHealth("player")/UnitHealthMax("player")
-	local FF_duration = jps.debuffDuration("target","Frost Fever")
-	local BP_duration = jps.debuffDuration("target","Blood Plague")
-	local SI_stacks = jps.buffStacks("pet","Shadow Infusion")
+	local FF_duration = jps.debuffDuration("Frost Fever")
+	local BP_duration = jps.debuffDuration("Blood Plague")
+	local SI_stacks = jps.buffStacks("Shadow Infusion","pet")
 	local DT_pet = jps.buff("dark transformation","pet")
 
 	--Interrupts--
