@@ -41,18 +41,18 @@ subtitle:SetJustifyV("TOP")
 subtitle:SetText("Configuration options for JPS")
 
 -- <3 to JPS
--- Create a checkbox
+-- Create checkboxes
 local cmdfuncs = {}
-cmdfuncs["pvp"] = function () jps.PvP = not jps.PvP end
+cmdfuncs["pvp"] = jps.togglePvP()
 local buttonPositionY = -60;
 local buttonPositionX = 40;
 
-local t = {"pvp"}
-local bar_cmd_table={cmdfuncs["pvp"]}
-local t2 = {"toggle pvp"}
+local t = {"PvP"}
+local bar_cmd_table={cmdfuncs["PvP"]}
+local t2 = {"Toggle PvP mode."}
 
 for i,v in ipairs (t) do
-    local JPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JUKED_Button_"..v, jpsConfigFrame, "OptionsCheckButtonTemplate");
+    local JPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..v, jpsConfigFrame, "OptionsCheckButtonTemplate");
     JPS_IconOptions_CheckButton:SetPoint("TOPLEFT",buttonPositionX,buttonPositionY);
     getglobal(JPS_IconOptions_CheckButton:GetName().."Text"):SetText(t2[i]);
 
