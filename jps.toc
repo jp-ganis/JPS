@@ -12,8 +12,11 @@ lib\jpsgui.lua
 lib\jpconfig.lua
 lib\bindings.xml
 
-Rotations\dk_blood.lua
 Rotations\new_dk_blood.lua
+Rotations\new_dk_unholy.lua
+Rotations\new_druid_balance.lua
+
+Rotations\dk_blood.lua
 Rotations\dk_frost.lua
 Rotations\dk_unholy.lua
 Rotations\druid_balance.lua
