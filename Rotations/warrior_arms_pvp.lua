@@ -4,7 +4,7 @@ function warrior_arms_pvp(self)
 	local hamstringDuration = jps.debuffDuration("hamstring")
 	local lttsStacks = jps.buffStacks("slaughter")
 	local slaughterStacked = lttsStacks == 3
-	local executePhase = jps.targetHP() <= 0.2
+	local executePhase = jps.hp("target") <= 0.2
 	local targetClass = UnitClass("target")
 	local stance = GetShapeshiftForm()
 	local shouldDisarm = targetClass == "warrior" or targetClass == "rogue" or targetClass == "death knight"
