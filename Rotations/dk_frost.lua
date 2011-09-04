@@ -8,16 +8,18 @@ function dk_frost(self)
 		-- Kicks
 		{ "mind freeze",		jps.shouldKick() },
 		{ "mind freeze",		jps.shouldKick("focus"), "focus" },
+		{ "strangulate",		jps.shouldKick() and jps.UseCDs and jps.Strangulate and IsSpellInRange("strangulate","target")==0 and jps.LastCast ~= "mind freeze" },
+		{ "strangulate",		jps.shouldKick("focus") and jps.UseCDs and jps.Strangulate and IsSpellInRange("strangulate","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
 
-		-- Offence
-		{ "pillar of frost",	jps.useCDs },
-		{ jps.DPSRacial,		jps.useCDs },
+		-- Cooldowns
+		{ "pillar of frost",	jps.UseCDs and jps["Pillar of Frost"] },
+		{ jps.DPSRacial,		jps.UseCDs and jps["DPS Racial"]},
 
 		-- Defence
-		{ "raise dead",			jps.hp() <= 0.4 and rp >= 50 },
-		{ "death pact",			GetTotemTimeLeft(1) > 0 },
-		{ "icebound fortitude",	jps.hp() < 0.5 or (jps.debuff("deep freeze","player") or jps.debuff("kidney shot","player")) and jps.UseCDs },
-		{ "death strike",		jps.hp() < 0.6 },
+		{ "raise dead",			jps.UseCDs and jps["Raise Dead (DPS)"] },
+		{ "raise dead",			jps.hp() < 0.4 and rp >= 50 and jps.UseCDs and jps["Raise Dead (Sacrifice)"] },
+		{ "death pact",			GetTotemTimeLeft(1) > 0 and jps.hp() < 0.4 and jps["Raise Dead (Sacrifice)"] },
+		{ "icebound fortitude",	jps.hp() < 0.5 and jps.UseCDs and jps["Icebound Fortitude"] },
 
 		-- Horn of Winter
 		{ "horn of winter",		not jps.buff("horn of winter") },

@@ -99,32 +99,48 @@ end
 
 -- Get Class Cooldowns
 function jps.setClassCooldowns()
-	local cds = {}
+	local options = {}
+
+	-- Trolls n' Orcs
+	if jps.Race == "Troll" then
+		jps.DPSRacial = "berserking"
+	elseif jps.Race == "Orc" then
+		jps.DPSRacial = "blood fury"
+	end
+	if jps.DPSRacial then table.insert(options,"DPS Racial") end
+
+	-- Lifeblood
+	if GetSpellBookItemInfo("lifeblood") then
+		table.insert(options, "Lifeblood")
+	end
 
 	-- Shaman
 	if jps.Class == "Shaman" then
 		if jps.Spec == "Elemental" then
-			table.insert(cds,"Elementary Mastery")
+			table.insert(options,"Elementary Mastery")
 		end
 	-- DK
 	elseif jps.Class == "Death Knight" then
-		table.insert(cds,"Icebound Fortitude")
-		table.insert(cds,"Strangulate")
-		table.insert(cds,"Blood Tap")
-		table.insert(cds,"Empower Rune Weapon")
+		table.insert(options,"Icebound Fortitude")
+		table.insert(options,"Strangulate")
+		table.insert(options,"Blood Tap")
+		table.insert(options,"Empower Rune Weapon")
+		table.insert(options,"Save Blood Tap for Tap->Strangulate")
+		table.insert(options,"Raise Dead (DPS)")
+		table.insert(options,"Raise Dead (Sacrifice)")
 		if jps.Spec == "Frost" then
-			table.insert(cds,"Pillar of Frost")
+			table.insert(options,"Pillar of Frost")
 		end
 	end
 
 	-- Add spells
-	for i,spell in pairs(cds) do
+	for i,spell in pairs(options) do
 
-		table.insert(jps_saveVars, { spell,false })
+		table.insert(jps_saveVars, { spell,true })
 
 		if not jpsDB[jpsRealm][jpsName][spell] then
-			jpsDB[jpsRealm][jpsName][spell] = false
-			jps[spell] = false
+			jpsDB[jpsRealm][jpsName][spell] = true
+			jps[spell] = true
 		else
 			jps[spell] = jpsDB[jpsRealm][jpsName][spell]
 		end
