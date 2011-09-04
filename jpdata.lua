@@ -146,8 +146,9 @@ function jps.shouldKick(unit)
 	if target_spell == "Release Aberrations" then return false end
 
 	if target_spell and not unInterruptable then
-		if not jps.PvP then return true 
-		else return endTime-GetTime()*1000 < 333+jps.Lag end
+		return true
+		--if not jps.PvP then return true 
+		--else return endTime-GetTime()*1000 < 333+jps.Lag end
 
 	elseif chanelling and not notInterruptible then
 		return true

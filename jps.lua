@@ -140,10 +140,8 @@ function combatEventHandler(self, event, ...)
 
 	-- On Logout
 	elseif event == "PLAYER_LEAVING_WORLD" then
-		for _, varTable in pairs( jps_saveVars ) do
-			local varName = varTable[1]
-			jpsDB[jpsRealm][jpsName][varName] = jps[varName]
-		end
+		jps_SAVE_VARIABLES()
+
 	end
 end
 
@@ -199,7 +197,7 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.MacroSpam = not jps.MacroSpam
 		write("MacroSpam flag is now set to",tostring(jps.MacroSpam))
 	elseif msg == "pvp" then
-		jps.PvP = not jps.PvP
+		jps.togglePvP()
 		write("PvP mode is now set to",tostring(jps.PvP))
 	elseif msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS revision",tostring(jps.Revision))
