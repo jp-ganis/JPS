@@ -24,9 +24,9 @@ function jps_createConfigFrame()
 	local buttonPositionX = 40;
 
 	local t = {}
-	for _,v in pairs(jps_saveVars) do
-		if type(v[2]) == "boolean" then
-			table.insert(t,v[1])
+	for var,value in pairs(jpsDB[jpsRealm][jpsName]) do
+		if type(jpsDB[jpsRealm][jpsName][var]) == "boolean" then
+			table.insert(t,var)
 		end
 	end
 
@@ -38,12 +38,12 @@ function jps_createConfigFrame()
 		local function JPS_IconOptions_CheckButton_OnClick()
 			if v == "PvP" then jps.togglePvP()
 			else jps[v] = not jps[v] end
-			jps_SAVE_VARIABLES()
-			jps_LOAD_VARIABLES()
+			jps_SAVE_PROFILE()
+			jps_LOAD_PROFILE()
 		end  
 
 		local function JPS_IconOptions_CheckButton_OnShow()
-			jps_SAVE_VARIABLES()
+			jps_SAVE_PROFILE()
 			JPS_IconOptions_CheckButton:SetChecked(jpsDB[jpsRealm][jpsName][v]);
 		end  
 

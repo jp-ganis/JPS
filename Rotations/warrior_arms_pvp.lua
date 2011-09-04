@@ -9,9 +9,18 @@ function warrior_arms_pvp(self)
 	local stance = GetShapeshiftForm()
 	local shouldDisarm = targetClass == "warrior" or targetClass == "rogue" or targetClass == "death knight"
 
+	local roots = {"freeze","entangling roots","frost nova"}
+	local rooted = false
+	for _,root in pairs(roots) do 
+		if jps.debuff("player","root") then
+			rooted = true
+		end
+	end
+
 	local spellTable = 
 	{
 		{ "charge",					onCD },
+		{ "Bladestorm",				IsSpellInRange("mortal strike","target")==0 and rooted },
 		{ "hamstring",				hamstringDuration < 2 and not jps.buff("hand of freedom","target")},
 		{ "pummel",					jps.shouldKick() },
 		{ nil,						jps.buff("bladestorm") },
