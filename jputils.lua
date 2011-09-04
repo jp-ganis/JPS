@@ -17,17 +17,15 @@ function jps_VARIABLES_LOADED()
 		if ( not jpsDB[jpsRealm][jpsName][thisSaveVar] ) then
 			jpsDB[jpsRealm][jpsName][thisSaveVar] = thisDefaultSaveVar
 		end
+
 	end
 
-	jps_LOAD_VARIABLES()
-	jps.detectSpec()
-	jps.setClassCooldowns()
-	jps_createConfigFrame()
+	jps_LOAD_PROFILE()
 	jps_variablesLoaded = true
 end
 
--- LOAD_VARIABLES
-function jps_LOAD_VARIABLES()
+-- LOAD_PROFILE
+function jps_LOAD_PROFILE()
 	for saveVar,value in pairs( jpsDB[jpsRealm][jpsName] ) do
 		jps[saveVar] = value
 	end
@@ -41,10 +39,9 @@ function jps_LOAD_VARIABLES()
 	jps.resize( jps.IconSize )
 end
 
--- SAVE_VARIABLES
-function jps_SAVE_VARIABLES()
-	for _, varTable in pairs( jps_saveVars ) do
-		local varName = varTable[1]
+-- SAVE_PROFILE
+function jps_SAVE_PROFILE()
+	for varName, _ in pairs( jpsDB[jpsRealm][jpsName] ) do
 		jpsDB[jpsRealm][jpsName][varName] = jps[varName]
 	end
 end
@@ -56,39 +53,30 @@ function jps_getCombatFunction( class, spec )
 		["Druid"]        = { ["Feral Combat"]  = druid_feral,
 							 ["Balance"]       = druid_balance,
 							 ["Restoration"]   = druid_resto },
-
 		["Death Knight"] = { ["Unholy"]        = dk_unholy,
 							 ["Blood"]         = dk_blood,
 							 ["Frost"]         = dk_frost  },  
-
 		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
 							 ["Elemental"]     = shaman_elemental,
 							 ["Restoration"]   = shaman_resto_pvp },
-
 		["Paladin"]      = { ["Protection"]    = paladin_protadin,
 							 ["Retribution"]   = paladin_ret,
 							 ["Holy"]          = paladin_holy },
-
 		["Warlock"]      = { ["Affliction"]    = warlock_affliction,
 							 ["Destruction"]   = warlock_destro,
 							 ["Demonology"]    = warlock_demo },
-
 		["Hunter"]       = { ["Beast Mastery"] = hunter_bm,
 							 ["Marksmanship"]  = hunter_mm,
 							 ["Survival"]      = hunter_sv },
-
 		["Mage"]         = { ["Fire"]          = mage_fire,
 							 ["Arcane"]        = mage_arcane,
 							 ["Frost"]         = mage_frost },
-
 		["Rogue"]        = { ["Assassination"] = rogue_assass,
 							 ["Subtlety"] 	   = rogue_sub,
 							 ["Combat"] 	   = rogue_sub },
-
 		["Warrior"]      = { ["Fury"]          = warrior_fury,
 							 ["Protection"]    = warrior_prot,
 							 ["Arms"]          = warrior_arms },
-
 		["Priest"]       = { ["Shadow"]        = priest_shadow,
 							 ["Holy"]          = priest_holy,
 							 ["Discipline"]    = priest_disc },
@@ -130,18 +118,20 @@ function jps.setClassCooldowns()
 		if jps.Spec == "Frost" then
 			table.insert(options,"Pillar of Frost")
 		end
+	-- Warrior
+	elseif jps.Class == "Warrior" then
+		if jps.Spec == "Arms" then
+			table.insert(options,"Bladestorm")
+			table.insert(options,"Recklessness")
+		end
 	end
 
 	-- Add spells
 	for i,spell in pairs(options) do
-
-		table.insert(jps_saveVars, { spell,true })
-
-		if not jpsDB[jpsRealm][jpsName][spell] then
+		if jpsDB[jpsRealm][jpsName][spell] == nil then
+			table.insert(jps_saveVars, { spell,true })
 			jpsDB[jpsRealm][jpsName][spell] = true
 			jps[spell] = true
-		else
-			jps[spell] = jpsDB[jpsRealm][jpsName][spell]
 		end
 	end
 end

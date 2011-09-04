@@ -60,8 +60,8 @@ ud = UnitDebuff
 
 combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
+combatFrame:RegisterEvent("VARIABLES_LOADED")
 combatFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
-combatFrame:RegisterEvent("VARIABLES_LOADED");
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -80,9 +80,17 @@ end
 function combatEventHandler(self, event, ...)
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
+
+	elseif event == "INSPECT_READY" then
+		jps.detectSpec()
+		jps.setClassCooldowns()
+		if jps_variablesLoaded then
+			jps_createConfigFrame() end
 	
 	elseif event == "VARIABLES_LOADED" then
 		jps_VARIABLES_LOADED()
+		if jps.Spec then
+			jps_createConfigFrame() end
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		write("JPS' actions have been forbidden - either you haven't got Protected LUA enabled, or you're doing something really, really terrible.")
@@ -139,7 +147,7 @@ function combatEventHandler(self, event, ...)
 
 	-- On Logout
 	elseif event == "PLAYER_LEAVING_WORLD" then
-		jps_SAVE_VARIABLES()
+		jps_SAVE_PROFILE()
 
 	end
 end
@@ -159,6 +167,7 @@ function jps.detectSpec()
 		end
 	end
 	jps.Rotation = jps_getCombatFunction( jps.Class,jps.Spec )
+	jps_VARIABLES_LOADED()
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
@@ -167,8 +176,7 @@ function SlashCmdList.jps(cmd, editbox)
 	local msg, rest = cmd:match("^(%S*)%s*(.-)$");
 	if msg == "toggle" or msg == "t" then
 		if jps.Enabled == false then msg = "e"
-		else msg = "d" end
-	end
+		else msg = "d" end end
 	if msg == "config" then
 		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	elseif msg == "disable" or msg == "d" then
@@ -221,12 +229,7 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "pew" then
 		combat()
 	else
-		if jps.Enabled then
-			write("Enabled - Ready and Waiting.")
-		else 
-			write("Disabled - Waiting on Standby.")
-		end
-		write("Use /jps help for help.")
+		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	end
 end
 
@@ -234,10 +237,9 @@ function JPS_OnUpdate(self,elapsed)
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
 
-		if not jps.Class then jps.detectSpec() end
-
 		if jps.MacroSpam and not jps.Casting then
 			RunMacro(jps.Macro)
+			self.TimeSinceLastUpdate = 0
 
 		elseif jps.Combat and jps.Enabled then
 			if not IsMounted() then combat() end
@@ -250,7 +252,7 @@ end
 function combat(self) 
 	-- Check for the Rotation
 	if not jps.Rotation then
-		write("Sorry! The rotation file for your",jps.Spec,jps.Class.."seems to be corrupted. Please send Jp (iLulz) a bug report, and make sure you have \"Display LUA Errors\" enabled, you'll find this option by going to the WoW Interface Menu (by pressing Escape) and going to Help -> Display LUA Errors. Thank you!")
+		write("Sorry! The rotation file for your",jps.Spec,jps.Class.." seems to be corrupted. Please send Jp (iLulz) a bug report, and make sure you have \"Display LUA Errors\" enabled, you'll find this option by going to the WoW Interface Menu (by pressing Escape) and going to Help -> Display LUA Errors. Thank you!")
 		jps.Enabled = false
 		return
 	end

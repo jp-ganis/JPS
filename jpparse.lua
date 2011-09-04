@@ -16,6 +16,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if not UnitIsVisible(unit) then return false end
 	if not IsSpellKnown(spellID) then return false end
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
+	if jps[spell] ~= nil and jps[spell] == false then return false end
 	
 	return true
 end
