@@ -3,12 +3,13 @@
 -- Universal
 jps = {}
 jps.Version = "1.1.0"
-jps.Revision = "r236"
+jps.Revision = "r244"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
+jps.Race = nil
 jps.Rotation = nil
 jps.Interrupts = true
 jps.Debug = false
@@ -26,6 +27,7 @@ jps.Timers = {}
 jps.DPSRacial = nil
 jps.DefRacial = nil
 jps.Lifeblood = nil
+jps.EngiGloves = nil
 -- Class Specific
 jps.Opening = true
 -- Misc.
@@ -143,6 +145,7 @@ function combatEventHandler(self, event, ...)
 end
 
 function jps.detectSpec()
+	jps.Race = UnitRace("player")
 	jps.Class = UnitClass("player")
 	if jps.Class then
 		local id = GetPrimaryTalentTree()
