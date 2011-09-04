@@ -125,7 +125,6 @@ function jps.setClassCooldowns()
 		table.insert(options,"Strangulate")
 		table.insert(options,"Blood Tap")
 		table.insert(options,"Empower Rune Weapon")
-		table.insert(options,"Save Blood Tap for Tap->Strangulate")
 		table.insert(options,"Raise Dead (DPS)")
 		table.insert(options,"Raise Dead (Sacrifice)")
 		if jps.Spec == "Frost" then
