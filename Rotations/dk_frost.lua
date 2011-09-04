@@ -13,6 +13,7 @@ function dk_frost(self)
 
 		-- Cooldowns
 		{ "pillar of frost",	jps.UseCDs and jps["Pillar of Frost"] },
+		{ "empower rune weapon",jps.UseCDs and jps["Empower Rune Weapon"] },
 		{ jps.DPSRacial,		jps.UseCDs and jps["DPS Racial"]},
 
 		-- Defence
@@ -32,6 +33,7 @@ function dk_frost(self)
 		{ "plague strike",		not jps.debuff("blood plague") },
 		{ "obliterate",			"onCD" },
 		{ "frost strike",		"onCD" },
+		{ "blood tap",			"onCD" and jps["Blood Tap"] },
 		
 		-- Refresh it while we're here
 		{ "horn of winter",		true },
