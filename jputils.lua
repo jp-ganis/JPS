@@ -53,7 +53,7 @@ function jps_getCombatFunction( class, spec )
 		["Druid"]        = { ["Feral Combat"]  = druid_feral,
 							 ["Balance"]       = druid_balance,
 							 ["Restoration"]   = druid_resto },
-		["Death Knight"] = { ["Unholy"]        = dk_unholy,
+		["Death Knight"] = { ["Unholy"]        = new_dk_unholy,
 							 ["Blood"]         = new_dk_blood,
 							 ["Frost"]         = dk_frost  },  
 		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
@@ -122,6 +122,9 @@ function jps.setClassCooldowns()
 			table.insert(options,"Dancing Rune Weapon")
 			table.insert(options,"Vampiric Blood")
 			table.insert(options,"Rune Tap")
+		elseif jps.Spec == "Unholy" then
+			table.insert(options,"unholy frenzy")
+			table.insert(options,"summon gargoyle")
 		end
 	-- Druid
 	elseif jps.Class == "Druid" then
