@@ -14,6 +14,8 @@ lib\bindings.xml
 
 Rotations\new_dk_blood.lua
 Rotations\new_dk_unholy.lua
+Rotations\new_feral_bear.lua
+Rotations\new_feral_cat.lua
 Rotations\new_druid_balance.lua
 
 Rotations\dk_blood.lua
@@ -27,8 +29,6 @@ Rotations\druid_resto.lua
 Rotations\hunter_bm.lua
 Rotations\hunter_mm.lua
 Rotations\hunter_sv.lua
-Rotations\hydraCat.lua
-Rotations\hydraBear.lua
 Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
 Rotations\mage_frost.lua
