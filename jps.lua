@@ -81,9 +81,6 @@ function combatEventHandler(self, event, ...)
 	
 	elseif event == "VARIABLES_LOADED" then
 		jps_VARIABLES_LOADED()
-		
-	elseif event == "INSPECT_READY" then
-		jps.detectSpec()
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		write("JPS' actions have been forbidden - either you haven't got Protected LUA enabled, or you're doing something really, really terrible.")
