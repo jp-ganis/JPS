@@ -137,8 +137,9 @@ function jps.setClassCooldowns()
 	-- Warrior
 	elseif jps.Class == "Warrior" then
 		if jps.Spec == "Arms" then
-			table.insert(options,"Bladestorm")
-			table.insert(options,"Recklessness")
+			table.insert(options,"charge")
+			table.insert(options,"bladestorm")
+			table.insert(options,"recklessness")
 		end
 	end
 
