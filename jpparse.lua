@@ -7,12 +7,13 @@ function ImReallySureICanCastThisShit( spell, unit )
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
 
-	if nomana then return false end
-	if not usable then return false end
+	if not UnitExists(unit) then return false end
 	if UnitIsDead(unit) then return false end
 	if UnitIsDeadOrGhost(unit) then return false end
-	if not UnitIsVisible(unit) then return false end
+	if not usable then return false end
 	if jps.cooldown(spell) ~= 0	then return false end
+	if nomana then return false end
+	if not UnitIsVisible(unit) then return false end
 	if not IsSpellKnown(spellID) then return false end
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	
@@ -75,6 +76,16 @@ function parseSpellTable( hydraTable )
 		if spell == "nested" and conditions then
 			local newTable = spellTable[3]
 			spell,target = parseSpellTable( newTable )
+
+		-- Macro
+		elseif type(spell) == "table" and spell[1] == "macro" then
+			local macroText = spell[2]
+			local macroSpell = spell[3]
+			local macroTarget = spell[4]
+			if macroSpell then conditions = conditions and ImReallySureICanCastThisShit( macroSpell,macroTarget ) end
+			if macroTarget then TargetUnit(macroTarget) end
+			if conditions then RunMacroText(macroText); return
+			else conditions = false end
 
 		-- MultiTarget List
 		elseif type(conditions) == "function" then

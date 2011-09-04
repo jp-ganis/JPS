@@ -1,6 +1,5 @@
 -- VARIABLES_LOADED
 function jps_VARIABLES_LOADED()
-	-- initialise save database
 	if ( not jpsDB ) then
 		jpsDB = {}
 	end
@@ -11,7 +10,6 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName] = {}
 	end
 
-	-- initialise unseen variables
 	for i,saveVar in pairs( jps_saveVars ) do
 		local thisSaveVar = saveVar[1]
 		local thisDefaultSaveVar = saveVar[2]
@@ -21,15 +19,11 @@ function jps_VARIABLES_LOADED()
 		end
 	end
 
-	-- set to profile
 	jps_LOAD_VARIABLES()
-
-	-- create interface panel
+	jps.detectSpec()
+	jps.setClassCooldowns()
 	jps_createConfigFrame()
-
-	-- variables loaded!
 	jps_variablesLoaded = true
-
 end
 
 -- LOAD_VARIABLES
@@ -102,6 +96,41 @@ function jps_getCombatFunction( class, spec )
 	
 	return Rotations[class][spec]
 end
+
+-- Get Class Cooldowns
+function jps.setClassCooldowns()
+	local cds = {}
+
+	-- Shaman
+	if jps.Class == "Shaman" then
+		if jps.Spec == "Elemental" then
+			table.insert(cds,"Elementary Mastery")
+		end
+	-- DK
+	elseif jps.Class == "Death Knight" then
+		table.insert(cds,"Icebound Fortitude")
+		table.insert(cds,"Strangulate")
+		table.insert(cds,"Blood Tap")
+		table.insert(cds,"Empower Rune Weapon")
+		if jps.Spec == "Frost" then
+			table.insert(cds,"Pillar of Frost")
+		end
+	end
+
+	-- Add spells
+	for i,spell in pairs(cds) do
+
+		table.insert(jps_saveVars, { spell,false })
+
+		if not jpsDB[jpsRealm][jpsName][spell] then
+			jpsDB[jpsRealm][jpsName][spell] = false
+			jps[spell] = false
+		else
+			jps[spell] = jpsDB[jpsRealm][jpsName][spell]
+		end
+	end
+end
+
 
 -- Toggle PvP
 function jps.togglePvP( value )

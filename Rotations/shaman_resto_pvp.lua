@@ -49,6 +49,10 @@ function shaman_resto_pvp(self)
 	local defaultTarget = jps.lowestFriendly()
 	local defaultHP = jps.hpInc(defaultTarget)
 
+	-- NS Macro
+	local NSMacroText = "/cast Nature's Swiftness\n/cast Greater Healing Wave"
+	local NSMacro = { "macro", NSMacroText, "Greater Healing Wave", defaultTarget }
+
 	-- Priority Table
 	local spellTable = {
 			-- If I'm ghost-wolfing around I'm probably running around, so don't pop out to heal till I say.
@@ -62,8 +66,7 @@ function shaman_resto_pvp(self)
 			{ jps.defRacial,			jps.hp() < 0.6 or (jps.defRacial == "stoneform" and jps.debuff("rip","player")) },
 
 			-- Heal anyone really desperate.
-			{ "nature's swiftness",		defaultHP < 0.35, defaultTarget },
-			{ "greater healing wave",	defaultHP < 0.35 and jps.buff("nature's swiftness"), defaultTarget },
+			{ NSMacro,					defaultHP < 0.35 and jps.cd("nature's swiftness") == 0 },
 
 			-- Earth shield (I manually put it on other people)
 			{ "earth shield",			jps.hp() < 0.5 and not jps.buff("earth shield"), me },
