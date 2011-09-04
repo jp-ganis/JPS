@@ -94,7 +94,7 @@ function parseSpellTable( hydraTable )
 		end
 
 		-- If not already assigned, assign target now.
-		if not target then
+		if not target and type(spellTable[3]) == "string" then
 			target = spellTable[3] end
 
 		-- Return spell if conditions are true and spell is castable.

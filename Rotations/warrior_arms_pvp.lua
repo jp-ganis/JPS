@@ -20,8 +20,8 @@ function warrior_arms_pvp(self)
 	local spellTable = 
 	{
 		{ "charge",					onCD },
-		{ "Bladestorm",				IsSpellInRange("mortal strike","target")==0 and rooted },
-		{ "hamstring",				hamstringDuration < 2 and not jps.buff("hand of freedom","target")},
+		{ "bladestorm",				IsSpellInRange("mortal strike","target")==0 and rooted },
+		{ "hamstring",				hamstringDuration < 2 and not jps.buff("hand of freedom","target") },
 		{ "pummel",					jps.shouldKick() },
 		{ nil,						jps.buff("bladestorm") },
 		{ "battle shout",			not jps.buff("battle shout") },
@@ -33,7 +33,8 @@ function warrior_arms_pvp(self)
 				{ "throwdown",		jps.debuff("colossus smash") and slaughterStacked },
 				{ "recklessness",	jps.debuff("colossus smash") and slaughterStacked },
 				{ "deadly calm",	jps.debuff("colossus smash") and slaughterStacked and rage < 20 }, 
-				{ jps.DPSRacial,	jps.buff("recklessness") or jps.buff("deadly calm") },
+				{ jps.DPSRacial,	(jps.buff("recklessness") or jps.buff("deadly calm")) and jps["DPS Racial"]},
+				{ "Lifeblood",		jps.buff("recklessness") or jps.buff("deadly calm") },
 			}
 		},
 		-- Defensive Cooldowns
@@ -48,9 +49,9 @@ function warrior_arms_pvp(self)
 		{ "mortal strike",			onCD },
 		{ "overpower",				onCD },
 		{ "heroic strike",			rage > 70 or jps.buff("deadly calm") },
-		{ "slam",					onCD }, 
+		{ "slam",					rage > 35 }, 
 	}
 
-	return parseSpellTable(spellTable)
-
+	spell = parseSpellTable(spellTable)
+	return spell
 end
