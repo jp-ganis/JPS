@@ -19,6 +19,8 @@ function new_druid_balance(self)
 	local spellTable =
 	{
 		{ "force of nature", jps.UseCDs and jps.buff("eclipse (solar)") },
+		{ "solar beam", jps.shouldKick() },
+		{ "solar beam", jps.shouldKick("focus"), "focus" },
 		{ "starsurge", "onCD" },
 		{ "innervate", jps.mana() < 0.5, "player" },
 		{ "starfire", power <= -87 and (jps.LastCast == "wrath" or jps.LastCast == "starsurge") and not jps.buff("eclipse (lunar)") },
