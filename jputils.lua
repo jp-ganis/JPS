@@ -131,6 +131,8 @@ function jps.setClassCooldowns()
 		if jps.Spec == "Feral Combat" then
 			table.insert(options,"growl")
 			table.insert(options,"challenging roar")
+		elseif jps.Spec == "Balance" then
+			table.insert(options,"solar beam")
 		end
 	-- Warrior
 	elseif jps.Class == "Warrior" then
