@@ -3,7 +3,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.1.0"
-jps.Revision = "r253"
+jps.Revision = "r254"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false

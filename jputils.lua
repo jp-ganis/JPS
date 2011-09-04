@@ -51,7 +51,7 @@ function jps_getCombatFunction( class, spec )
 	local Rotations =
 	{ 
 		["Druid"]        = { ["Feral Combat"]  = druid_feral,
-							 ["Balance"]       = druid_balance,
+							 ["Balance"]       = new_druid_balance,
 							 ["Restoration"]   = druid_resto },
 		["Death Knight"] = { ["Unholy"]        = new_dk_unholy,
 							 ["Blood"]         = new_dk_blood,
