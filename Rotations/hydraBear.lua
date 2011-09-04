@@ -4,7 +4,6 @@ function hydraBear(self)
 	local myTargetThreatStatus = UnitThreatSituation("player","target")
 	if not myTargetThreatStatus then myTargetThreatStatus = 0 end
 	local myFocusThreatStatus = 0
-	local targetTargetTanking = ub("targettarget","bear form") or ub("targettarget","defensive stance") or ub("targettarget","blood presence") or ub("targettarget","righteous fury")
 
 	if UnitExists("focus") and UnitIsFriend("focus") then
 		myFocusThreatStatus = UnitThreatSituation("focus") end
@@ -30,7 +29,7 @@ function hydraBear(self)
 		-- Offense
 		{"berserk",					jps.UseCDs },
 		-- Taunts
-		{"growl",					myTargetThreatStatus < 2 and not targetTargetTanking },
+		{"growl",					myTargetThreatStatus < 2 and not jps.targetTargetTank() },
 		{"challenging roar",		myFocusThreatStatus > 1 },
 		-- Multi-Target
 		{"mangle(bear form)",		jps.buff("berserk") and jps.MultiTarget },
