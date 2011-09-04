@@ -8,8 +8,8 @@ function dk_frost(self)
 		-- Kicks
 		{ "mind freeze",		jps.shouldKick() },
 		{ "mind freeze",		jps.shouldKick("focus"), "focus" },
-		{ "Strangulate",		jps.shouldKick() and jps.UseCDs and IsSpellInRange("strangulate","target")==0 and jps.LastCast ~= "mind freeze" },
-		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("strangulate","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
+		{ "Strangulate",		jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze" },
+		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
 
 		-- Cooldowns
 		{ "Pillar of Frost",	jps.UseCDs and jps["Pillar of Frost"] },
