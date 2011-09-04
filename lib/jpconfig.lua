@@ -40,7 +40,7 @@ function jps_createConfigFrame()
 	for i,v in ipairs (t) do
 		local JPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..v, jpsConfigFrame, "OptionsCheckButtonTemplate");
 		JPS_IconOptions_CheckButton:SetPoint("TOPLEFT",buttonPositionX,buttonPositionY);
-		getglobal(JPS_IconOptions_CheckButton:GetName().."Text"):SetText("use "..v);
+		getglobal(JPS_IconOptions_CheckButton:GetName().."Text"):SetText(v);
 
 		local function JPS_IconOptions_CheckButton_OnClick()
 			if v == "PvP" then jps.togglePvP()
