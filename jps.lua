@@ -9,6 +9,7 @@ jps.UpdateInterval = 0.1
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
+jps.Rotation = nil
 jps.Interrupts = true
 jps.Debug = false
 -- Utility
@@ -67,7 +68,7 @@ combatFrame:RegisterEvent("INSPECT_READY")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-combatFrame:RegisterEvent("MACRO_ACTION_FORBIDDEN")
+combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 
 
 function write(...)
@@ -84,8 +85,9 @@ function combatEventHandler(self, event, ...)
 	elseif event == "INSPECT_READY" then
 		jps.detectSpec()
 	
-	elseif event == "MACRO_ACTION_FORBIDDEN" then
-		write("Some LUA action was forbidden - either you haven't got Protected LUA enabled, or you're doing something really, really terrible.")
+	elseif event == "ADDON_ACTION_FORBIDDEN" then
+		write("JPS' actions have been forbidden - either you haven't got Protected LUA enabled, or you're doing something really, really terrible.")
+		jps.Enabled = false
 		
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		jps.Combat = true
@@ -158,6 +160,7 @@ function jps.detectSpec()
 			end
 		end
 	end
+	jps.Rotation = jps_getCombatFunction( jps.Class,jps.Spec )
 end
 
 combatFrame:SetScript("OnEvent", combatEventHandler)
@@ -245,14 +248,8 @@ function JPS_OnUpdate(self,elapsed)
 end
 
 function combat(self) 
-	-- Loading check.
-	if not jps.Class then return end
-	
-	-- Get the rotation.
-	local rotFunction = jps_getCombatFunction( jps.Class, jps.Spec )
-
 	-- Check for the Rotation
-	if not rotFunction then
+	if not jps.Rotation then
 		write("Sorry! The rotation file for your",jps.Spec,jps.Class.."seems to be corrupted. Please send Jp (iLulz) a bug report, and make sure you have \"Display LUA Errors\" enabled, you'll find this option by going to the WoW Interface Menu (by pressing Escape) and going to Help -> Display LUA Errors. Thank you!")
 		jps.Enabled = false
 		return
@@ -272,7 +269,7 @@ function combat(self)
 	end
 	
 	-- Get spell from rotation
-	jps.ThisCast = jps.Rotations[jps.Class][jps.Spec]()
+	jps.ThisCast = jps.Rotation()
 	
 	-- Check spell usability
 	if jps.ThisCast and not jps.Casting and cd(jps.ThisCast) == 0 then
