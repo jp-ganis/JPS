@@ -23,10 +23,17 @@ function jps_createConfigFrame()
 	local buttonPositionY = -60;
 	local buttonPositionX = 40;
 
-	local t = {}
+	local t = {1,2,3,4,5,6}
 	for var,value in pairs(jpsDB[jpsRealm][jpsName]) do
 		if type(jpsDB[jpsRealm][jpsName][var]) == "boolean" then
-			table.insert(t,var)
+			if var == "Enabled" then t[1] = var
+			elseif var == "Interrupts" then t[2] = var
+			elseif var == "PvP" then t[3] = var
+			elseif var == "UseCDs" then t[4] = var
+			elseif var == "MultiTarget" then t[5] = var
+			elseif var == "ExtraButtons" then t[6] = var
+			else table.insert(t,var)
+			end
 		end
 	end
 
