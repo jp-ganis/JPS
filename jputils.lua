@@ -54,7 +54,7 @@ function jps_getCombatFunction( class, spec )
 							 ["Balance"]       = druid_balance,
 							 ["Restoration"]   = druid_resto },
 		["Death Knight"] = { ["Unholy"]        = dk_unholy,
-							 ["Blood"]         = dk_blood,
+							 ["Blood"]         = new_dk_blood,
 							 ["Frost"]         = dk_frost  },  
 		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
 							 ["Elemental"]     = shaman_elemental,
@@ -115,8 +115,19 @@ function jps.setClassCooldowns()
 		table.insert(options,"Empower Rune Weapon")
 		table.insert(options,"Raise Dead (DPS)")
 		table.insert(options,"Raise Dead (Sacrifice)")
+		table.insert(options,"Death Grip")
 		if jps.Spec == "Frost" then
 			table.insert(options,"Pillar of Frost")
+		elseif jps.Spec == "Blood" then
+			table.insert(options,"Dancing Rune Weapon")
+			table.insert(options,"Vampiric Blood")
+			table.insert(options,"Rune Tap")
+		end
+	-- Druid
+	elseif jps.Class == "Druid" then
+		if jps.Spec == "Feral Combat" then
+			table.insert(options,"growl")
+			table.insert(options,"challenging roar")
 		end
 	-- Warrior
 	elseif jps.Class == "Warrior" then

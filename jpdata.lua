@@ -245,6 +245,22 @@ function jps.lowestFriendly()
 	return lowestUnit
 end
 
+function jps.targetTargetTank()
+	if jps.buff("bear form","targettarget") then return true end
+	if jps.buff("blood presence","targettarget") then return true end
+	if jps.buff("righteous fury","targettarget") then return true end
+	
+	local _,_,_,_,_,_,_,caster,_,_ = UnitDebuff(unit,"Sunder Armor")
+	if caster ~= nil then
+		if UnitName("targettarget") == caster then return true end end
+	
+	return false
+end
+
+function jps.groundClick()
+	CameraOrSelectOrMoveStart()
+	CameraOrSelectOrMoveStop()
+end
 
 -- Find potential tank
 function jps.couldBeTank( unit )
