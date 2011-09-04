@@ -234,6 +234,8 @@ function JPS_OnUpdate(self,elapsed)
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
 
+		if not jps.Class then jps.detectSpec() end
+
 		if jps.MacroSpam and not jps.Casting then
 			RunMacro(jps.Macro)
 
