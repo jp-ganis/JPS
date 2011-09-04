@@ -144,13 +144,10 @@ function jps.shouldKick(unit)
     local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
-	endTime = endTime - GetTime()*1000
 
-	if jps.PvP and endTime < 500+jps.Lag then
-		return true
-
-	elseif target_spell and not unInterruptable then
-		return true
+	if target_spell and not unInterruptable then
+		if not jps.PvP then return true 
+		else return endTime-GetTime()*1000 < 333+jps.Lag end
 
 	elseif chanelling and not notInterruptible then
 		return true
