@@ -64,6 +64,8 @@ function jps.cooldown(spell)
 	if cd < 0 then return 0 end
 	return cd
 end
+-- Shorthand
+jps.cd = jps.cooldown
 
 function jps.petCooldown(index)
 	local start,duration,_ = GetPetActionCooldown(index)
@@ -137,36 +139,22 @@ function jps.buffStacks( spell, unit )
 	return count
 end
 
-function jps.shouldPvPKick(unit)
-	if unit == nil then unit = "target" end
-	local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
-  	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == "Release Aberrations" then return false end
-	if target_spell and not unInterruptable then
-		endTime = endTime - GetTime()*1000
-		if jps.PVPInterrupt == true then
-			if endTime < 500+jps.Lag then
-				return true
-			end 
-		else 
-			return true
-		end
-	elseif chanelling and not notInterruptible then
-		return true
-	end
-	return false
-end
-
 function jps.shouldKick(unit)
 	if unit == nil then unit = "target" end
     local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
-	if target_spell and not unInterruptable then
+	endTime = endTime - GetTime()*1000
+
+	if jps.PvP and endTime < 500+jps.Lag then
 		return true
-	end
-	if chanelling and not notInterruptible then
+
+	elseif target_spell and not unInterruptable then
 		return true
+
+	elseif chanelling and not notInterruptible then
+		return true
+
 	end 
 	return false
 end

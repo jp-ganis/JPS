@@ -13,7 +13,7 @@ function warrior_arms_pvp(self)
 	{
 		{ "charge",					onCD },
 		{ "hamstring",				hamstringDuration < 2 and not jps.buff("hand of freedom","target")},
-		{ "pummel",					jps.shouldPvPKick() },
+		{ "pummel",					jps.shouldKick() },
 		{ nil,						jps.buff("bladestorm") },
 		{ "battle shout",			not jps.buff("battle shout") },
 		{ "victory rush",			jps.buff("victorious") and (jps.hp() <= 0.75 or jps.buffDuration("victorious") < 3) },

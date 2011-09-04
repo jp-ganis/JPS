@@ -1,16 +1,16 @@
 ## Interface: 40200
 ## Title: |cffff8000Jp DPS AddOn
 ## Notes: Protect your LUA.
-## SavedVariablesPerCharacter: jpsUseCDs, jpsMultiTarget, jpsEnabled, jpsToggles, jpsIconSize
+## SavedVariables: jpsDB
 ## Dependencies:
 jps.lua
 jpparse.lua
-jpsgui.lua
 jpdata.lua
+jputils.lua
 
-jp_config.lua
-
-bindings.xml
+lib\jpsgui.lua
+lib\jpconfig.lua
+lib\bindings.xml
 
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
