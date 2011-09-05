@@ -3,7 +3,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.1.0"
-jps.Revision = "r260"
+jps.Revision = "r261"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
@@ -35,6 +35,7 @@ jps.MacroSpam = false
 jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
+jps.PlayerIsBlacklisted = function (unit) return false end
 -- Config.
 jps_variablesLoaded = false
 jpsName = UnitName("player")
