@@ -95,7 +95,6 @@ function combatEventHandler(self, event, ...)
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		write("JPS' actions have been forbidden - either you haven't got Protected LUA enabled, or you're doing something really, really terrible.")
-		jps.Enabled = false
 		
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		jps.Combat = true
