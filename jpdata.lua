@@ -250,7 +250,7 @@ function jps.targetTargetTank()
 	if jps.buff("blood presence","targettarget") then return true end
 	if jps.buff("righteous fury","targettarget") then return true end
 	
-	local _,_,_,_,_,_,_,caster,_,_ = UnitDebuff(unit,"Sunder Armor")
+	local _,_,_,_,_,_,_,caster,_,_ = UnitDebuff("target","Sunder Armor")
 	if caster ~= nil then
 		if UnitName("targettarget") == caster then return true end end
 	
