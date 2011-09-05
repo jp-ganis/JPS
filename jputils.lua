@@ -56,7 +56,7 @@ function jps_getCombatFunction( class, spec )
 		["Death Knight"] = { ["Unholy"]        = new_dk_unholy,
 							 ["Blood"]         = new_dk_blood,
 							 ["Frost"]         = dk_frost  },  
-		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
+		["Shaman"]       = { ["Enhancement"]   = new_shaman_enhancement,
 							 ["Elemental"]     = shaman_elemental,
 							 ["Restoration"]   = shaman_resto_pvp },
 		["Paladin"]      = { ["Protection"]    = paladin_protadin,
