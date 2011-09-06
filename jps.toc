@@ -17,6 +17,8 @@ Rotations\new_dk_unholy.lua
 Rotations\new_feral_bear.lua
 Rotations\new_feral_cat.lua
 Rotations\new_druid_balance.lua
+Rotations\new_shaman_enhancement.lua
+Rotations\shaman_enhancement_pvp.lua
 
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
@@ -51,4 +53,3 @@ Rotations\warrior_arms_pve.lua
 Rotations\warrior_arms_pvp.lua
 Rotations\warrior_fury.lua
 Rotations\warrior_prot.lua
-

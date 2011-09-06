@@ -3,7 +3,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.1.0"
-jps.Revision = "r265"
+jps.Revision = "r266"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
@@ -37,6 +37,7 @@ jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
 jps.PlayerIsBlacklisted = function (unit) return false end
 -- Config.
+jps.Configged = false
 jps_variablesLoaded = false
 jpsName = UnitName("player")
 jpsRealm = GetCVar("realmName")
@@ -85,7 +86,7 @@ function combatEventHandler(self, event, ...)
 	elseif event == "INSPECT_READY" then
 		jps.detectSpec()
 		jps.setClassCooldowns()
-		if jps_variablesLoaded then
+		if jps_variablesLoaded and not jps.Configged then
 			jps_createConfigFrame() end
 	
 	elseif event == "VARIABLES_LOADED" then

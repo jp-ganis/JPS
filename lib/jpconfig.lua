@@ -63,5 +63,6 @@ function jps_createConfigFrame()
 
 	-- Hide at load
 	InterfaceOptions_AddCategory(jpsConfigFrame)
+	jps.Configged = true
 	jpsConfigFrame:Hide()
 end
