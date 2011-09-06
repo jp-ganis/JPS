@@ -56,7 +56,7 @@ function jps_getCombatFunction( class, spec )
 		["Death Knight"] = { ["Unholy"]        = new_dk_unholy,
 							 ["Blood"]         = new_dk_blood,
 							 ["Frost"]         = dk_frost  },  
-		["Shaman"]       = { ["Enhancement"]   = new_shaman_enhancement,
+		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
 							 ["Elemental"]     = shaman_elemental,
 							 ["Restoration"]   = shaman_resto_pvp },
 		["Paladin"]      = { ["Protection"]    = paladin_protadin,
@@ -106,6 +106,9 @@ function jps.setClassCooldowns()
 	if jps.Class == "Shaman" then
 		if jps.Spec == "Elemental" then
 			table.insert(options,"Elementary Mastery")
+		elseif jps.Spec == "Enhancement" then
+			table.insert(options,"shamanistic rage")
+			table.insert(options,"feral spirit")
 		end
 	-- DK
 	elseif jps.Class == "Death Knight" then
