@@ -73,7 +73,7 @@ function jps_getCombatFunction( class, spec )
 							 ["Frost"]         = mage_frost },
 		["Rogue"]        = { ["Assassination"] = rogue_assass,
 							 ["Subtlety"] 	   = rogue_sub,
-							 ["Combat"] 	   = rogue_sub },
+							 ["Combat"] 	   = rogue_combat },
 		["Warrior"]      = { ["Fury"]          = warrior_fury,
 							 ["Protection"]    = warrior_prot,
 							 ["Arms"]          = warrior_arms },
