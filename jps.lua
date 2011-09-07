@@ -136,7 +136,7 @@ function combatEventHandler(self, event, ...)
         if UnitIsFriend("player",unit) then
 			local delta = 0
 			local hp = jps.hpInc(unit)
-
+            unit = UnitName(unit)  -- to avoid that party1, focus and target are added  all refering to the same player
 			if jps.RaidStatus[unit] then
 				delta = jps.RaidStatus[unit]["hp"] - hp end
 			jps.RaidStatus[unit] = { ["hp"] = hp, ["hpabs"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["delta"] = delta }
