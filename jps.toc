@@ -40,6 +40,9 @@ Rotations\paladin_ret.lua
 Rotations\priest_holy.lua
 Rotations\priest_disc.lua
 Rotations\priest_shadow.lua
+Rotations\rogue_combat.lua
+Rotations\rogue_combat_pve.lua
+Rotations\rogue_combat_pvp.lua
 Rotations\rogue_assass.lua
 Rotations\rogue_sub.lua
 Rotations\shaman_elemental.lua
