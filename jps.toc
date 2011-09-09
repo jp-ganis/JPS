@@ -7,6 +7,7 @@ jps.lua
 jpparse.lua
 jpdata.lua
 jputils.lua
+jphealing.lua
 
 lib\jpsgui.lua
 lib\jpconfig.lua
