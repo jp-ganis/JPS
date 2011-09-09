@@ -53,7 +53,7 @@ jps.MacroSpam = false
 jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
-jps.PlayerIsBlacklisted = function (unit) return false end
+
 -- Config.
 jps.Configged = false
 jps_variablesLoaded = false
@@ -93,6 +93,7 @@ combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
+combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 
 function write(...)
@@ -175,7 +176,17 @@ function combatEventHandler(self, event, ...)
 	elseif event == "PLAYER_LEAVING_WORLD" then
 		jps_SAVE_PROFILE()
 
-	end
+	-- Combat Event Handler
+    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+        local eventtable =  {... }
+
+       --- Required For Healing Classes
+       -- Update out of sight players before selecting a spell -- used for healing classes
+       jps.UpdateHealerBlacklist()
+        if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
+          jps.BlacklistPlayer(jps.LastTarget)
+        end
+    end
 end
 
 function jps.detectSpec()
