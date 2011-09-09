@@ -29,6 +29,8 @@ jps.Race = nil
 jps.Rotation = nil
 jps.Interrupts = true
 jps.Debug = false
+jps.MoveToTarget = false
+jps.FaceTarget = false
 -- Utility
 jps.Target = nil
 jps.Casting = false
@@ -59,6 +61,8 @@ jpsName = UnitName("player")
 jpsRealm = GetCVar("realmName")
 jps_saveVars = {
 	{ "Enabled", true },
+	{ "MoveToTarget", false },
+	{ "FaceTarget", false },
 	{ "Interrupts", true },
 	{ "UseCDs", false },
 	{ "PvP", false },
@@ -143,7 +147,12 @@ function combatEventHandler(self, event, ...)
 		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
 			jps.Cast("mangle(cat form)")
 		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
-			jps.Cast("mutilate")
+			if jps.Spec == "Assassination" then jps.Cast("mutilate")
+			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
+		elseif (jps.FaceTarget or jps.MoveToTarget) and (jps.Error == "You are facing the wrong way!" or jps.Error == "Target needs to be in front of you.") then
+			InteractUnit("target")
+		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
+			InteractUnit("target")
 		end
 
 	-- RaidStatus Update
