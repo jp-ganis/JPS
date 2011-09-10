@@ -56,7 +56,8 @@ jps.Dispells = {
 function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
-	CastSpellByName(spell,jps.Target)	
+	CastSpellByName(spell,jps.Target)
+    jps.LastTarget = jps.Target
 	jps.Target = nil
 	if jps.IconSpell ~= spell then
 		jps.set_jps_icon( spell )
