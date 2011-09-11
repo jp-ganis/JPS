@@ -35,6 +35,8 @@ function hunter_mm(self)
 	elseif ub("player", "Feign Death") and jps.checkTimer("feign") == 0 then
 		CancelUnitBuff("player", "Feign Death")
 		spell = nil
+	elseif UnitIsDead("pet") then
+		spell = "Revive Pet"
 	elseif not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.5 and UnitHealth("pet") then
 		spell = "Mend Pet"
 	elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
