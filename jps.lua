@@ -62,7 +62,7 @@ jpsRealm = GetCVar("realmName")
 jps_saveVars = {
 	{ "Enabled", true },
 	{ "MoveToTarget", false },
-	{ "FaceTarget", false },
+	{ "FaceTarget", true },
 	{ "Interrupts", true },
 	{ "UseCDs", false },
 	{ "PvP", false },
