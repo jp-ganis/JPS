@@ -33,6 +33,7 @@ jps.MoveToTarget = false
 jps.FaceTarget = false
 -- Utility
 jps.Target = nil
+jps.LastTarget = nil
 jps.Casting = false
 jps.LastCast = nil
 jps.ThisCast = nil
@@ -53,6 +54,7 @@ jps.MacroSpam = false
 jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
+jps.BlacklistTimer = 2
 
 -- Config.
 jps.Configged = false
