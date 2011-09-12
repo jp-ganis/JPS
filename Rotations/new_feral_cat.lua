@@ -17,6 +17,7 @@ function hydraCat(self)
 		{jps.DPSRacial,			jps.LastCast == "berserk" },
 		{"tiger's fury", 		IsSpellInRange("shred","target") and ((energy <= 35 and not jps.buff("clearcasting")) or energy <= 26) },
 		{"skull bash(cat form)",jps.shouldKick() and jps.Interrupts },
+		{"swipe",				jps.MultiTarget },
 		{"faerie fire (feral)", not jps.debuff("faerie fire") and (energy < 15 or not IsSpellInRange("shred","target")) },
 		{"ravage", 				jps.buff("stampede") and (jps.buffDuration("stampede") < 2 or jps.buff("tiger's fury")) },
 		{"mangle(cat form)", 	mangleDuration < 1 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },

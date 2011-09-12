@@ -19,7 +19,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.1.0"
-jps.Revision = "r268"
+jps.Revision = "r279"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.1
 jps.Combat = false
@@ -118,7 +118,9 @@ function combatEventHandler(self, event, ...)
 			jps_createConfigFrame() end
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
-		write("JPS' actions have been forbidden - either you haven't got Protected LUA enabled, or you're doing something really, really terrible.")
+		jpsIcon.texture:SetTexture(jps.GUInoplua)
+		jpsIcon.border:SetTexture(jps.GUIborder_combat)
+		write("Protected Lua action blocked.")
 		
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		jps.Combat = true
