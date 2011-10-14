@@ -300,8 +300,8 @@ function jps.findMeATank()
 end
 
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
-local function GetSpellIfno(a)
-	return unpack(a)
+local function GetSpellInfo(a)
+	return unpack(spellcache[a])
 end
 
 -- Ty to CDO for this code.
