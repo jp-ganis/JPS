@@ -6,30 +6,64 @@ function hydraCat(self)
 	local ripDuration = jps.debuffDuration("rip")
 	local rakeDuration = jps.debuffDuration("rake")
 	local srDuration = jps.buffDuration("savage roar")
+	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
 	local executePhase = jps.hp("target") <= 0.25
+	local t11 = "strength of the panther"
+	local gcdLocked = jps.cooldown("shred") > 0
+	local energyPerSec = 10
+	local clearcasting = jps.buff("clearcasting")
+	local berserking = jps.buff("berserk")
+	local tf_up = jps.buff("tiger's fury")
 
 	local spellTable =
 	{
 		{ nil,					not jps.buff("cat form") },
-
-		{"berserk", 			tfCD > 25 and energy > 80 and jps.UseCDs },
+		--
+		{"tiger's fury", 		IsSpellInRange("shred","target") and energy <= 35 and not clearcasting and not gcdLocked },
+		--
+		{"berserk", 			jps.UseCDs and jps.buff("tiger's fury") },
 		{jps.DPSRacial,			jps.LastCast == "berserk" },
-		{"tiger's fury", 		IsSpellInRange("shred","target") and ((energy <= 35 and not jps.buff("clearcasting")) or energy <= 26) },
+		--
 		{"skull bash(cat form)",jps.shouldKick() and jps.Interrupts },
 		{"swipe",				jps.MultiTarget },
-		{"faerie fire (feral)", not jps.debuff("faerie fire") and (energy < 15 or not IsSpellInRange("shred","target")) },
-		{"ravage", 				jps.buff("stampede") and (jps.buffDuration("stampede") < 2 or jps.buff("tiger's fury")) },
-		{"mangle(cat form)", 	mangleDuration < 1 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
-		{"ferocious bite", 		executePhase and (cp == 5 or ripDuration < 2) and ripDuration > 0 },
-		{"rip", 				cp == 5 and ripDuration < 2 },
-		{"rake", 				(jps.buff("tiger's fury") and rakeDuration < 8.5) or (rakeDuration < 3) },
+		--
+		{nil,					gcdLocked },
+		--
+		{"mangle(cat form)",	jps.buff(t11) and jps.buffDuration(t11) < 4 },
+		--
+		{"faerie fire (feral)", not jps.debuff("faerie fire") and not jps.debuffStacks("sunder armor")==3 and not jps.debuff("expose armor") },
+		--
+		{"mangle(cat form)", 	mangleDuration < 2 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
+		--
+		{"ravage", 				jps.buff("stampede") and jps.buffDuration("stampede") < 2 },
+		--
+		{"ferocious bite", 		executePhase and cp == 5 and ripDuration > 0 },
+		{"ferocious bite", 		executePhase and cp > 0 and ripDuration <= 2.1 },
+		--
+		-- MANGLE/SHRED FOR GLYPH OF BLOODLETTING :(
+		--
+		{"rip", 				cp == 5 and ripDuration < 2 and (berserking or ripDuration+2 <= tfCD) },
+		--
+		{"ferocious bite",		berserking and cp == 5 and ripDuration > 5 and srDuration > 3 },
+		--
+		{"rake", 				jps.buff("tiger's fury") and rakeDuration < 9 },
+		{"rake", 				rakeDuration < 3 and (berserking or rakeDuration-0.8 <= tfCD or energy >= 71) },
+		--
 		{"shred",				jps.buff("clearcasting") },
-		{"savage roar", 		cp > 4 and ripDuration > 12 and srDuration < 12 },
-		{"savage roar", 		cp > 0 and ripDuration > 12 and abs(srDuration-ripDuration) <= 3 },
-		{"savage roar", 		cp > 0 and srDuration < 2 and ripDuration >= 8 },
-		{"ravage", 				jps.buff("stampede") and cp < 5 and ripDuration == 0 },
-		{"shred", 				jps.buff("berserk") or energy > 80 or tfCD <= 3 or ripDuration == 0 or srDuration == 0 or cp < 5 },
+		--
+		{"savage roar",			cp > 0 and srDuration < 1 },
+		--
+		{"ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
+		--
+		{"ravage", 				jps.buff("stampede") and not clearcasting and energy <= 100-energyPerSec },
+		--
+		{"mangle(cat form)",	jps.buff(t11) and jps.buffStacks(t11) < 3 },
+		--
+		{"shred", 				berserking or tfUp },
+		{"shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
+		{"shred",				tfCD <= 3 },
+		{"shred",				energy >= 100 - energyPerSec },
 	}
 
 	return parseSpellTable(spellTable)
