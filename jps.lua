@@ -21,7 +21,7 @@ jps = {}
 jps.Version = "1.1.0"
 jps.Revision = "r279"
 jps.RaidStatus = {}
-jps.UpdateInterval = 0.1
+jps.UpdateInterval = 0.05
 jps.Combat = false
 jps.Class = nil
 jps.Spec = nil
@@ -149,8 +149,9 @@ function combatEventHandler(self, event, ...)
 	-- UI Error checking - for LoS and Shred-fails.
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
 		jps.Error = ...
-		if jps.Error == "You must be behind your target." and jps.ThisCast == "shred" then
+		if jps.Error == "You must be behind your target." and jps.Class == "Druid" then
 			jps.Cast("mangle(cat form)")
+			jps.Error = nil
 		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
 			if jps.Spec == "Assassination" then jps.Cast("mutilate")
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
@@ -300,6 +301,7 @@ function combat(self)
 
 	-- Lag
 	_,_,jps.Lag = GetNetStats()
+	jps.Lag = 30
 	jps.Lag = jps.Lag/100
 	
 	-- Movement
