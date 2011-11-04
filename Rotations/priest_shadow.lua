@@ -96,5 +96,4 @@ Sombre évangélisme - Dark Evangelism
 Archange - Archangel
 Fouet mental - Mind Flay
 Ombre surpuissante - Empowered Shadow
-Orbe d'ombre - Shadow Orb
 ]]
