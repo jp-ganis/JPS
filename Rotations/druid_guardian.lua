@@ -1,4 +1,4 @@
-function hydraBear(self)
+function druid_guardian(self)
 	--jpganis
 	-- Threat-Vars
 	local myTargetThreatStatus = UnitThreatSituation("player","target")
