@@ -270,8 +270,10 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
 		combat()
-	else
+	elseif msg == nil then
 		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
+	else
+		write("Command not recognised :( type /jps help for more info!")
 	end
 end
 

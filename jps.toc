@@ -13,12 +13,8 @@ lib\jpsgui.lua
 lib\jpconfig.lua
 lib\bindings.xml
 
-Rotations\new_dk_blood.lua
-Rotations\new_dk_unholy.lua
 Rotations\new_feral_bear.lua
 Rotations\new_feral_cat.lua
-Rotations\new_druid_balance.lua
-Rotations\new_shaman_enhancement.lua
 Rotations\shaman_enhancement_pvp.lua
 
 Rotations\dk_blood.lua
