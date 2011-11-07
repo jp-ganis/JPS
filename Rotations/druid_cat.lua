@@ -1,4 +1,4 @@
-function hydraCat(self)
+function druid_cat(self)
 	--jpganis
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
