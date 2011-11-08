@@ -16,15 +16,13 @@ function druid_balance(self)
 		focusSF = jps.debuffDuration("sunfire","focus")
 	end
 
-	local quintessenceCD = jps.itemCooldown("fiery quintessence")
-
 	local spellTable =
 	{
 		{ "force of nature",	jps.UseCDs and jps.buff("eclipse (solar)") },
 		{ "solar beam", 		jps.shouldKick() },
 		{ "solar beam", 		jps.shouldKick("focus"), "focus" },
 		{ "innervate", 			jps.mana() < 0.5, "player" },
-		{ {"macro","/use Fiery Quintessence"},  quintessenceCD == 0 },
+		{ {"item","Fiery Quintessence"},  "onCD" },
 		{ "starsurge", 			"onCD" },
 		{ "starfire", 			power <= -87 and (jps.LastCast == "wrath" or jps.LastCast == "starsurge") and not jps.buff("eclipse (lunar)") },
 		{ "starfall", 			"onCD" },
