@@ -22,7 +22,7 @@ function druid_balance(self)
 		{ "solar beam", 		jps.shouldKick() },
 		{ "solar beam", 		jps.shouldKick("focus"), "focus" },
 		{ "innervate", 			jps.mana() < 0.5, "player" },
-		{ {"item","Fiery Quintessence"},  "onCD" },
+		--{ {"item","Fiery Quintessence"},  "onCD" },
 		{ "starsurge", 			"onCD" },
 		{ "starfire", 			power <= -87 and (jps.LastCast == "wrath" or jps.LastCast == "starsurge") and not jps.buff("eclipse (lunar)") },
 		{ "starfall", 			"onCD" },

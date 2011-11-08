@@ -105,14 +105,6 @@ function parseSpellTable( hydraTable )
 			if conditions then RunMacroText(macroText); return
 			else conditions = false end
 
-		-- Item
-		elseif type(spell) == "table" and spell[1] == "item" then
-			local item = spell[2]
-			local usable = jps.itemCooldown(item)==0
-			if conditions == "onCD" then conditions = usable 
-			else conditions = conditions and usable end
-			if conditions then RunMacroText("/use "..item) end 
-
 		-- MultiTarget List
 		elseif type(conditions) == "function" then
 			spell,target = parseMultiUnitTable( spellTable )
