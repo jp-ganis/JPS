@@ -1,4 +1,4 @@
-function new_druid_balance(self)
+function druid_balance(self)
 	local power = UnitPower("player",SPELL_POWER_ECLIPSE)
 	local eclipse = GetEclipseDirection()
 	if eclipse == "none" then eclipse = "sun" end
