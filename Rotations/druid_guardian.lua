@@ -1,5 +1,5 @@
 function druid_guardian(self)
-	--jpganis
+	--attempted by jpganis, fixed by Attip!
 	-- Threat-Vars
 	local myTargetThreatStatus = UnitThreatSituation("player","target")
 	if not myTargetThreatStatus then myTargetThreatStatus = 0 end
@@ -12,6 +12,7 @@ function druid_guardian(self)
 	local rage = UnitMana("player")
 	local lacCount = jps.debuffStacks("lacerate")
 	local lacDuration = jps.debuffDuration("lacerate")
+	local demoDuration = jps.debuffDuration("demoralizing roar")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 	local onCD = "onCD"
 
@@ -20,14 +21,16 @@ function druid_guardian(self)
 	{
 		{nil,						not jps.buff("bear form") },
 		{"skull bash(bear form)",	jps.Interrupts and jps.shouldKick() },
-		{"bash",					jps.Interrupts and jps.shouldKick() },
-		{"maul",					rage > 40 },
+		-- {"bash",					jps.Interrupts and jps.shouldKick() },
+		{"maul",					rage > 60 },
 		-- Defense
-		{"barkskin",				hp < 75 },
-		{"survival instincts",		hp < 40 },
-		{"frenzied regeneration",	hp < 25 },
+		{"barkskin",				hp < 75 and jps.UseCDs},
+		{"survival instincts",		hp < 40 and jps.UseCDs},
+		{"frenzied regeneration",	hp < 25 and jps.UseCDs},
+		{"demoralizing roar",		not jps.debuff("demoralizing roar") or demoDuration < 3},
+		{"enrage",			rage <= 80},
 		-- Offense
-		{"berserk",					jps.UseCDs },
+		{"berserk",					jps.UseCDs and jps.debuff("demoralizing roar") and jps.debuff("faerie fire")},
 		-- Taunts
 		{"growl",					myTargetThreatStatus < 2 and not jps.targetTargetTank() },
 		{"challenging roar",		myFocusThreatStatus > 1 },
@@ -36,11 +39,12 @@ function druid_guardian(self)
 		{"swipe(bear form)",		jps.MultiTarget },
 		{"thrash",					jps.MultiTarget },
 		-- Single Target
-		{"mangle(bear form)",		rage >= 20 or ub("player","berserk") },
+		{"mangle(bear form)",		onCD or ub("player","berserk") },
+		{"faerie fire (feral)",		not jps.debuff("faerie fire") },
+		{"thrash",					rage >= 25 },
 		{"pulverize",				lacCount == 3 },
 		{"lacerate",				lacCount < 3 or lacDuration < 1 },
 		{"faerie fire (feral)",		onCD },
-		{"demoralizing roar",		not jps.debuff("demoralizing roar") },
 	}
 
 
