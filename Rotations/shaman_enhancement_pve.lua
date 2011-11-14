@@ -1,4 +1,4 @@
-function new_shaman_enhancement(self)
+function shaman_enhancement(self)
 	local maelstromStacks = jps.buffStacks("maelstrom weapon")
 
 	local spellTable =
