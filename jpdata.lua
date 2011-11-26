@@ -86,6 +86,13 @@ end
 -- Shorthand
 jps.cd = jps.cooldown
 
+function jps.itemCooldown(item)
+	local start,duration,_ = GetItemCooldown(item)
+	local cd = start+duration-GetTime()-jps.Lag
+	if cd < 0 then return 0 end
+	return cd
+end
+
 function jps.petCooldown(index)
 	local start,duration,_ = GetPetActionCooldown(index)
 	local cd = start+duration-GetTime()-jps.Lag
