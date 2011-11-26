@@ -1,5 +1,6 @@
+--Ty to MEW Feral Sim
+--jpganis
 function druid_cat(self)
-	--jpganis
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
 	local tfCD = jps.cooldown("tiger's fury")

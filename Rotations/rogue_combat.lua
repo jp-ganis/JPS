@@ -1,3 +1,5 @@
+--jpganis
+--Ty to SIMCRAFT for this rotation
 function rogue_combat(self)
 	local cp = GetComboPoints("player")
 	local rupture_duration = jps.debuffDuration("rupture")
