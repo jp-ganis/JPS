@@ -158,6 +158,10 @@ function jps.buffStacks( spell, unit )
 	return count
 end
 
+function jps.bloodlusting()
+	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
+end
+
 function jps.shouldKick(unit)
 	if unit == nil then unit = "target" end
     local target_spell, _, _, _, _, endTime, _, _, unInterruptable = UnitCastingInfo(unit)
