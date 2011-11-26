@@ -12,6 +12,7 @@ function mage_frost(self)
 		{ "frostfire bolt", jps.buff("brain freeze") },
 		{ "ice lance", jps.buffStacks("fingers of frost") > 1 },
 		{ "ice lance", jps.buff("fingers of frost") and jps.petCooldown("5") < 1.5 },
+		{ {"macro","/cast freeze\n/run jps.groundClick()"}, jps.petCooldown("5")==0 },
 		{ "frostbolt" },
 		{ "ice lance", jps.Moving },
 	}
