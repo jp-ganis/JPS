@@ -1,4 +1,5 @@
 --jpganis
+--Ty to SIMCRAFT for this rotation
 function dk_frost(self)
 	local rp = UnitPower("player")
 	local dr1 = select(3,GetRuneCooldown(1))

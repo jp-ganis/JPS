@@ -1,5 +1,6 @@
+-- jpganis
+--Ty to SIMCRAFT for this rotation
 function new_dk_unholy(self)
-	-- jpganis, converted from kylextag's
 	local power = UnitPower("player",6)
 	local ffDuration = jps.debuffDuration("frost fever")
 	local bpDuration = jps.debuffDuration("blood plague")
