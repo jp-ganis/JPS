@@ -1,21 +1,20 @@
+--jpganis + SIMCRAFT
+-- no pet freeze on simcraft, is this right? (??)
 function mage_frost(self)
-	local spell = nil
+	local spellTable =
+	{
+		{ "evocation", jps.mana() < 0.4 and (jps.buff("icy veins") or jps.bloodlusting()) },
+		{ "cold snap", jps.cd("deep freeze") > 15 and jps.cd("flame orb") > 30 and jps.cd("icy veins") > 30 },
+		{ "flame orb", not jps.debuff("frostfire orb") },
+		{ "mirror image" },
+		{ "icy veins", not jps.buff("icy veins") and not jps.bloodlusting() },
+		{ "deep freeze", jps.buff("fingers of frost") },
+		{ "frostfire bolt", jps.buff("brain freeze") },
+		{ "ice lance", jps.buffStacks("fingers of frost") > 1 },
+		{ "ice lance", jps.buff("fingers of frost") and jps.petCooldown("5") < 1.5 },
+		{ "frostbolt" },
+		{ "ice lance", jps.Moving },
+	}
 
-	if jps.cd("flame orb") == 0 then
-		spell = "flame orb"
-	elseif jps.cd("deep freeze") == 0 and ub("player","fingers of frost") then
-		spell = "deep freeze"
-	elseif ub("player","fingers of frost") and ub("player","brain freeze") then
-		spell = "frostfire bolt"
-	elseif jps.petCooldown("5") == 0 then
-		CastPetAction("5")
-		CameraOrSelectOrMoveStart()
-		CameraOrSelectOrMoveStop()
-	else
-		spell = "frostbolt"
-	end
-
-	return parseSpellTable(spelltable)
-	
-	--return spell
+	return parseSpellTable(spellTable)
 end
