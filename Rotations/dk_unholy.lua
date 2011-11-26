@@ -1,5 +1,5 @@
 -- jpganis
---Ty to SIMCRAFT for this rotation
+-- Ty to SIMCRAFT for this rotation
 function new_dk_unholy(self)
 	local power = UnitPower("player",6)
 	local ffDuration = jps.debuffDuration("frost fever")

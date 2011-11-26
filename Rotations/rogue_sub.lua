@@ -1,5 +1,5 @@
 --jpganis
---Ty to SIMCRAFT for this rotation
+-- Ty to SIMCRAFT for this rotation
 function rogue_sub(self)
    local cp = GetComboPoints("player")
    local energy = UnitMana("player")

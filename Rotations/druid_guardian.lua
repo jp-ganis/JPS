@@ -1,6 +1,6 @@
 function druid_guardian(self)
 	--attempted by jpganis, fixed by Attip!
-	--simcraft
+	-- simcraft
 	-- Threat-Vars
 	local myTargetThreatStatus = UnitThreatSituation("player","target")
 	if not myTargetThreatStatus then myTargetThreatStatus = 0 end
