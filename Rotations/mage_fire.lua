@@ -9,8 +9,8 @@ function mage_fire(self)
 		{ "living bomb", not jps.debuff("living bomb") },
 		{ "pyroblast", jps.buff("hot streak") },
 		{ "flame orb" },
+		{ "scorch", jps.Moving },
 		{ "fireball" },
-		{ "scorch" },
 	}
 
 	return parseSpellTable(spellTable)
