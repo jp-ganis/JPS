@@ -54,7 +54,7 @@ function dk_frost(self)
 
 	if spell == "death and decay" then
 		jps.Cast( spell )
-		jps.GroundClick()
+		jps.groundClick()
 		spell = nil
 	end
 
