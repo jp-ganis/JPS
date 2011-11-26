@@ -1,57 +1,34 @@
+--jpganis + SIMCRAFT
 function mage_arcane(self)
-	-- By Trixo v2.1
-	-- /jps cds enables Arcane power and Mirror image
-        -- /jps multi enables flame orb
-	local r = RunMacroText
-	local spell = nil
-	local hp = UnitHealth("player")/UnitHealthMax("player")
-	local mana = UnitMana("player")/UnitManaMax("player")
-	local magearmor = jps.buffDuration("mage armor")
-	local arcaneb = jps.buffDuration("arcane brilliance")	
-	local abCount = jps.debuffStacks("arcane blast")
-	local abDuration = jps.debuffDuration("arcane blast")	
-	local useManagem = "/use mana gem"
-	local engineering = "/use 10"
+	local max_mana_unbuffed = 80974
+	local stacks = jps.debuffStacks("arcane blast","player")
+	local dpsPhase = jps.buff("improved mana gem") and dpmPhase
+	local dpmPhase = jps.cd("evocation") <= 20 and dpsPhase and jps.mana() < 0.22
+	local manaGemCharges = GetItemCount("mana gem",0,1)
+	local burnThisShitUp = jps.cd("evocation")<=20 or jps.buff("improved mana gem") or jps.itemCooldown(36799)<5
+	burnThisShitUp = burnThisShitUp and jps.mana() >= 0.22
+	
+	local spellTable =
+	{
+		{ "evocation", (UnitManaMax("player") > max_mana_unbuffed and jps.mana() <= 0.4) or jps.mana() <= 0.35 },
+		{ "flame orb" },
+		{{ "macro","/cast mana gem" }, stacks > 3 and jps.itemCooldown(36799)==0 and manaGemCharges > 0},
+		{ "arcane power", jps.buff("improved mana gem") },
+		{ "mirror image", jps.buff("arcane power") },
+		{ "presence of mind" },
+		{ "conjure mana gem", jps.buff("presence of mind") and manaGemCharges==0 },
+		{ "conjure mana gem", manaGemCharges==0 },
+		{ "arcane blast", dpsPhase or burnThisShitUp },
+		{ "arcane blast", jps.debuffDuration("arcane blast","player")<0.8 and stacks==4 },
+		{ "arcane missiles", jps.mana() < 0.92 and jps.buff("arcane missiles!") },
+		{ "arcane barrage", jps.mana() < 0.87 and stacks==2 },
+		{ "arcane barrage", jps.mana() < 0.9 and stacks==3 },
+		{ "arcane barrage", jps.mana() < 0.92 and stacks==4 },
+		{ "arcane blast" },
+		{ "arcane barrage" },
+		{ "fire blast" },
+		{ "ice lance" },
+	}
 
-	if UnitChannelInfo("player") then
-		return nil
-	end
-		
-	if cd("flame orb") == 0 and jps.Multitarget then
-		spell = "flame orb"		
--- Enable next two lines if you're a Herbalist	
-        -- elseif cd("lifeblood") == 0 and UnitHealthMax("target") > 1000000 and UnitHealth("target") > 500000 then
-        	-- spell = "lifeblood"	
--- Enable next two lines if you're a Engineer
-        -- elseif GetItemCooldown("65141") == 0 then
-         	-- r(engineering)		
--- Enable next two lines if you're a troll(race)	
-	-- elseif cd("berserking") == 0 and ub("player","arcane power") then
-		-- spell = "berserking"			
-	elseif cd("arcane power") == 0 and UnitHealthMax("target") > 1000000 and UnitHealth("target") > 500000 and jps.UseCDs then
-		spell = "arcane power"
-	elseif cd("mirror image") == 0 and UnitHealthMax("target") > 2000000 and UnitHealth("target") > 1000000 and jps.UseCDs then
-		spell = "mirror image"			 		
-	elseif magearmor < 60 then
-		spell = "mage armor"
-	elseif arcaneb < 60 then
-		spell = "arcane brilliance"	
-	elseif GetItemCount("Mana gem") == 1 and GetItemCooldown(36799) == 0 and mana < 0.7 then
-		r(useManagem)	
-	elseif hp < 1 and cd("mage ward") == 0 then
-		spell = "mage ward"			
-	elseif abDuration < 2 and ud("player","arcane blast") and not jps.Casting then
-		spell = "arcane barrage" 					 	
-	elseif cd("evocation") == 0 and mana < 0.3 and not jps.Moving then
-		spell = "evocation"	
-	elseif ub("player","arcane missile!") and mana < 0.5 then
-		spell = "arcane missiles"
-	elseif abCount == 4 and	 mana < 0.8 and ub("player","arcane missiles!") then
-		spell = "arcane missiles"
-	elseif jps.Moving and cd("arcane barrage") == 0 then
-		spell = "arcane barrage"		
-	else
-		spell = "arcane blast"
-	end
-	return spell
+	return parseSpellTable(spellTable)
 end
