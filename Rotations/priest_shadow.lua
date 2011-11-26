@@ -1,5 +1,5 @@
 --jpganis
---Ty to SIMCRAFT for this rotation
+-- Ty to SIMCRAFT for this rotation
 function priest_shadow(self)
 	local swpDuration = jps.debuffDuration("shadow word: pain")
 	local plagueDuration = jps.debuffDuration("devouring plague")
