@@ -1,3 +1,5 @@
+--jpganis
+--simcrafty
 function druid_balance(self)
 	local power = UnitPower("player",SPELL_POWER_ECLIPSE)
 	local eclipse = GetEclipseDirection()
