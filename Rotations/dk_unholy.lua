@@ -13,12 +13,12 @@ function new_dk_unholy(self)
 	local fr2 = select(3,GetRuneCooldown(4))
 	local ur1 = select(3,GetRuneCooldown(5))
 	local ur2 = select(3,GetRuneCooldown(6))
-	local 1dr = dr1 or dr2
-	local 2dr = dr1 and dr2
-	local 1fr = fr1 or fr2
-	local 2fr = fr1 and fr2
-	local 1ur = ur1 or ur2
-	local 2ur = ur1 and ur2
+	local one_dr = dr1 or dr2
+	local two_dr = dr1 and dr2
+	local one_fr = fr1 or fr2
+	local two_fr = fr1 and fr2
+	local one_ur = ur1 or ur2
+	local two_ur = ur1 and ur2
 
 	local spellTable =
 	{
@@ -34,9 +34,9 @@ function new_dk_unholy(self)
 		{ "plague strike", bpDuration < 2 },
 		{ "dark transformation", "onCD" },
 		{ "summon gargoyle",	jps.buff("unholy frenzy") },
-		{ "death and decay", 2ur and rp < 110 },
-		{ "scourge strike", 2ur and rp < 110 },
-		{ "festering strike", 2dr and 2fr and rp < 110 },
+		{ "death and decay", two_ur and rp < 110 },
+		{ "scourge strike", two_ur and rp < 110 },
+		{ "festering strike", two_dr and two_fr and rp < 110 },
 		{ "blood boil", jps.MultiTarget },
 		{ "death coil", rp > 90 },
 		{ "death coil", jps.buff("sudden doom") },
