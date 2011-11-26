@@ -1,5 +1,6 @@
 function new_dk_blood(self)
 	-- jpganis, converted from Kiwi's
+	-- not SIMCRAFT, but SIMCRAFT status
 	local power = UnitPower("player",6)
 	local targetThreatStatus = UnitThreatSituation("player","target")
 	if not targetThreatStatus then targetThreatStatus = 0 end
