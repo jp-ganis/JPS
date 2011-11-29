@@ -232,6 +232,10 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "suppress" then
 		write("Printing output now set to ",not jps.BlankCheck)
 		jps.BlankCheck = not jps.BlankCheck
+	elseif msg == "hide" then
+		jpsIcon:Hide()
+	elseif msg == "show" then
+		jpsIcon:Show()
 	elseif msg == "fishing" then
 		jps.Fishing = not jps.Fishing
 		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
