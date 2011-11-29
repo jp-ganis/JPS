@@ -1,4 +1,5 @@
 function paladin_holy(self)
+	--healer
 	local holyPower = UnitPower("player",9)
 	
 	local tank = nil
