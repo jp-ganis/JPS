@@ -1,4 +1,5 @@
 function druid_resto(self)
+	--healer
 	local my_mana = UnitMana("player")/UnitManaMax("player")
 	local my_hp = UnitHealth("player")/UnitHealthMax("player")
 	local tank, tank_hp, tank_focus, tank_bloom_count,tank_bloom_duration
