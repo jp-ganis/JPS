@@ -90,6 +90,9 @@ function parseSpellTable( hydraTable )
 		local conditions = spellTable[2]
 		local target = nil
 
+		-- conditions default to oncd
+		if conditions == nil then conditions = true end
+
 		-- Nested table
 		if spell == "nested" and conditions then
 			local newTable = spellTable[3]
