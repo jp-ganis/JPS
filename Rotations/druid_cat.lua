@@ -53,7 +53,7 @@ function druid_cat(self)
 		--
 		{"shred",				jps.buff("clearcasting") },
 		--
-		{"savage roar",			cp > 0 and srDuration < 1 },
+		{"savage roar",			cp > 0 and srDuration < 1 and ripDuration > 6 },
 		--
 		{"ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
 		--
