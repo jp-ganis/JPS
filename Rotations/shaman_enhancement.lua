@@ -1,19 +1,23 @@
 function shaman_enhancement(self)
+	--jpganis +simcraft
 	local maelstromStacks = jps.buffStacks("maelstrom weapon")
+	local shockCD = jps.cd("earth shock")
 
 	local spellTable =
 	{
 		{ "wind shear", jps.shouldKick() },
 		{ "wind shear", jps.shouldKick("focus"), "focus" },
-		{ "shamanistic rage", jps.mana() < 0.2 },
 		{ "searing totem", GetTotemTimeLeft(1) < 2 },
-		{ "lava lash", "onCD" },
-		{ "flame shock", jps.buff("unleash flame") },
-		{ "lightning bolt", maelstromStacks == 5 },
-		{ "unleash elements", "onCD" },
-		{ "stormstrike", "onCD" },
-		{ "earth shock", "onCD" },
-		{ "feral spirit", "onCD" },
+		{ "stormstrike" },
+		{ "lava lash" },
+		{ "lightning bolt", maelstromStacks > 4 },
+		{ "unleash elements" },
+		{ "lava burst", shockCD < 2 and jps.debuffDuration("flame shock") > 2.5 and jps.buffDuration("unleash flame") > 2.5 },
+		{ "earth shock" },
+		{ "feral spirit" },
+		{ "earth elemental totem" }, 
+		{ "spiritwalker's grace", jps.Moving },
+		{ "lightning bolt", maelstromStacks > 1 },
 	}
 
 	return parseSpellTable( spellTable )
