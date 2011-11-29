@@ -1,4 +1,5 @@
 function rogue_assass(self)
+	--jpganis+simcraft
 	local cp = GetComboPoints("player")
 	local rupture_duration = jps.debuffDuration("rupture")
 	local snd_duration = jps.buffDuration("slice and dice")
