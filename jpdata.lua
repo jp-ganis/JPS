@@ -86,6 +86,13 @@ end
 -- Shorthand
 jps.cd = jps.cooldown
 
+function jps.itemCooldown(item)
+	local start,duration,_ = GetItemCooldown(item)
+	local cd = start+duration-GetTime()-jps.Lag
+	if cd < 0 then return 0 end
+	return cd
+end
+
 function jps.petCooldown(index)
 	local start,duration,_ = GetPetActionCooldown(index)
 	local cd = start+duration-GetTime()-jps.Lag
@@ -156,6 +163,10 @@ function jps.buffStacks( spell, unit )
 	local _, _, _, count, _, _, _, _, _ = UnitBuff(unit,spell)
 	if count == nil then count = 0 end
 	return count
+end
+
+function jps.bloodlusting()
+	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
 end
 
 function jps.shouldKick(unit)
