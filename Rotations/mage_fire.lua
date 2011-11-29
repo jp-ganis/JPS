@@ -1,5 +1,6 @@
 function mage_fire(self)
 	--jpganis + SIMCRAFT
+	--easiest rotation in game :P
 
 	local spellTable = 
 	{
