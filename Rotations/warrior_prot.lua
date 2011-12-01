@@ -1,3 +1,4 @@
+--tank
 function warrior_prot(self)
 
 local spell = nil

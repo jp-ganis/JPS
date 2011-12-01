@@ -18,8 +18,8 @@
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 jps = {}
-jps.Version = "1.1.0"
-jps.Revision = "r290"
+jps.Version = "1.2.0"
+jps.Revision = "r333"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.05
 jps.Combat = false
@@ -55,6 +55,7 @@ jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
 jps.BlacklistTimer = 2
+jps.BlankCheque = false
 
 -- Config.
 jps.Configged = false
@@ -99,6 +100,7 @@ combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 
 function write(...)
+	if jps.BlankCheque then return end
 	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...)));
 end
 
@@ -156,9 +158,10 @@ function combatEventHandler(self, event, ...)
 			if jps.Spec == "Assassination" then jps.Cast("mutilate")
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
 		elseif (jps.FaceTarget or jps.MoveToTarget) and (jps.Error == "You are facing the wrong way!" or jps.Error == "Target needs to be in front of you.") then
-			InteractUnit("target")
+			jps.faceTarget()
+			write("TROLL")
 		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
-			InteractUnit("target")
+			jps.moveToTarget()
 		end
 
 	-- RaidStatus Update
@@ -227,6 +230,13 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.gui_toggleEnabled(true)
 	elseif msg == "respec" then
 		jps.detectSpec()
+	elseif msg == "suppress" then
+		write("Printing output now set to ",not jps.BlankCheck)
+		jps.BlankCheck = not jps.BlankCheck
+	elseif msg == "hide" then
+		jpsIcon:Hide()
+	elseif msg == "show" then
+		jpsIcon:Show()
 	elseif msg == "fishing" then
 		jps.Fishing = not jps.Fishing
 		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
@@ -270,10 +280,8 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
 		combat()
-	elseif msg == nil then
-		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	else
-		write("Command not recognised :( type /jps help for more info!")
+		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	end
 end
 
@@ -324,7 +332,7 @@ function combat(self)
 			jps.Cast(jps.NextCast)
 			jps.NextCast = nil
         else
-            if jps.Debug then print(jps.ThisCast," on ", jps.Target) end
+            if jps.Debug then write(jps.ThisCast," on ", jps.Target) end
 			jps.Cast(jps.ThisCast)
 		end
    	end

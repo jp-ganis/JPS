@@ -1,4 +1,5 @@
 function priest_disc(self)
+	--healer
    local tank = jps.findMeATank()
    local me = "player"
    local defaultTarget = jps.lowestFriendly()
