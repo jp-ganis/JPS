@@ -1,11 +1,11 @@
 function hunter_mm(self)
 	-- Marksmanship Hunter by Chiffon with additions by Scribe
+	--jpganis
+	--SIMCRAFT
 	------------------------------------------
 	local up = UnitPower
 	local r = RunMacroText;
 	local spell = nil
-	local raf_ready,raf_timeleft,_ = GetSpellCooldown("Rapid Fire");
-	local chim_ready,chim_timeleft,_ = GetSpellCooldown("Chimera Shot");
 
 	-- Interupting, Borrowed directly from feral cat
 	if jps.Interrupts and jps.shouldKick("target") and cd("Silencing Shot") == 0 then
@@ -37,44 +37,27 @@ function hunter_mm(self)
 		spell = nil
 	elseif UnitIsDead("pet") then
 		spell = "Revive Pet"
-	elseif not ub("pet","Mend Pet") and UnitHealth("pet")/UnitHealthMax("pet") <= 0.5 and UnitHealth("pet") then
-		spell = "Mend Pet"
-	elseif GetUnitSpeed("player") == 0 and not ub("player", "Aspect of the Hawk") then
-		spell = "Aspect of the Hawk"
-	elseif IsShiftKeyDown() and jps.MultiTarget and not ub("player", "Trap Launcher") and cd("Explosive Trap") then
-		spell = "Trap Launcher"
-	elseif IsShiftKeyDown() and jps.MultiTarget and ub("player", "Trap Launcher") and cd("Explosive Trap") then
-		CameraOrSelectOrMoveStart()
-		CameraOrSelectOrMoveStop()
-		spell = "Explosive Trap"
-	elseif jps.MultiTarget and up("player") > 40 then
-		spell = "Multi-Shot"
-	elseif UnitHealth("target")/UnitHealthMax("target") <= 0.2 and cd("Kill Shot") == 0 then
-		spell = "Kill Shot"
-	elseif not jps.MultiTarget and not UnitDebuff("target", "Serpent Sting",nil,"PLAYER") and up("player") > 25 and UnitHealth("target") > 50000 then 
-		spell = "Serpent Sting"
-	elseif cd("Chimera Shot") == 0 and up("player") >= 44 then
-		spell = "Chimera Shot"
-	elseif jps.UseCDs and cd("Rapid Fire") == 0 and not ub("player","rapid fire") then
-		spell = "Rapid Fire"
-	elseif jps.UseCDs and cd("Lifeblood") == 0 and not ub("player","Lifeblood") then
-		spell = "Lifeblood"
-	elseif jps.UseCDs and cd("Rapid Fire") > 0 and jps.cooldown("Rapid Fire") >= 120 and not ub("player","rapid fire") and cd("readiness") == 0 then
-		spell = "Readiness"
-	elseif GetUnitSpeed("player") == 0 and UnitHealth("target")/UnitHealthMax("target") > 0.9 and up("player") > 55 and jps.cooldown("Chimera Shot") > 4 then
-		spell = "Aimed Shot"
-	elseif up("player") > 66 then
-		if ub("player","rapid fire") then
-			spell = "Aimed Shot"
-		else 
-			spell = "Arcane Shot"
-		end
-	elseif ub("player", "Fire!") then 
-		spell = "Aimed Shot"
-	elseif GetUnitSpeed("player") > 0 and not ub("player", "Aspect of the Fox") then
-		spell = "Aspect of the Fox"
+	
+	--SIMCRAFT
 	else
-		spell = "Steady Shot" 
+		local spellTable = 
+		{
+			{ "aspect of the hawk", not jps.buff("aspect of the hawk") and not jps.Moving },
+			{ "aspect of the fox", not jps.buff("aspect of the fox") and jps.Moving },
+			{ jps.DPSRacial, jps.UseCDs },
+			{ "multi-shot", jps.MultiTarget },
+			{ "serpent sting", not jps.debuff("serpent sting") and jps.hp("target") <= 0.9 },
+			{ "chimera shot", jps.hp("target") <= 0.9 },
+			{ "rapid fire", not jps.buff("bloodlust") and not jps.buff("heroism") and not jps.buff("time warp") },
+			{ "readiness", jps.cd("rapid fire") > 0 and not jps.buff("rapid fire") },
+			{ "kill shot", "onCD" },
+			{ "aimed shot", jps.buffStacks("ready, set, aim...")==5 },
+			{ "aimed shot", jps.cd("chimera shot") > 5 or focus >= 80 or jps.buff("rapid fire") },
+			{ "aimed shot", jps.hp("target") >= 0.9 or jps.buff("bloodlust") },
+			{ "aimed shot", jps.buff("heroism") or jps.buff("time warp") },
+			{ "steady shot", "onCD" },
+		}
+		return parseSpellTable(spellTable)
 	end
 	
 	return spell

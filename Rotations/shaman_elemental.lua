@@ -1,5 +1,6 @@
 function shaman_elemental(self)
 	-- jpganis basics, thorshammer for all the good stuff :D
+	-- thanks to thorshammer no need for simcraft!
    local spell = nil
    local lsStacks = jps.buffStacks("lightning shield")
    local mana = UnitMana("player")/UnitManaMax("player")

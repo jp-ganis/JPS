@@ -1,4 +1,4 @@
--- contains the average value of non critical healing spells
+--healer
 
 healtable = {}
 

@@ -1,5 +1,24 @@
 function shaman_enhancement(self)
-	if jps.PvP then return shaman_enhancement_pvp()
-	else return shaman_enhancement_pve()
-	end
+	--jpganis +simcraft
+	local maelstromStacks = jps.buffStacks("maelstrom weapon")
+	local shockCD = jps.cd("earth shock")
+
+	local spellTable =
+	{
+		{ "wind shear", jps.shouldKick() },
+		{ "wind shear", jps.shouldKick("focus"), "focus" },
+		{ "searing totem", GetTotemTimeLeft(1) < 2 },
+		{ "stormstrike" },
+		{ "lava lash" },
+		{ "lightning bolt", maelstromStacks > 4 },
+		{ "unleash elements" },
+		{ "lava burst", shockCD < 2 and jps.debuffDuration("flame shock") > 2.5 and jps.buffDuration("unleash flame") > 2.5 },
+		{ "earth shock" },
+		{ "feral spirit" },
+		{ "earth elemental totem" }, 
+		{ "spiritwalker's grace", jps.Moving },
+		{ "lightning bolt", maelstromStacks > 1 },
+	}
+
+	return parseSpellTable( spellTable )
 end

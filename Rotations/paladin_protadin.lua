@@ -1,3 +1,5 @@
+--tank
+
 focusshouldbesaved = false
 focusthreatduration = 0
 targetshouldbetaunted = false
