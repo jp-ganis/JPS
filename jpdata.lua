@@ -287,9 +287,18 @@ function jps.targetTargetTank()
 	return false
 end
 
+--PLua 
 function jps.groundClick()
 	CameraOrSelectOrMoveStart()
 	CameraOrSelectOrMoveStop()
+end
+
+function jps.faceTarget()
+	InteractUnit("target")
+end
+
+function jps.moveToTarget()
+	InteractUnit("target")
 end
 
 -- Find potential tank
