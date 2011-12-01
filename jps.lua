@@ -158,9 +158,10 @@ function combatEventHandler(self, event, ...)
 			if jps.Spec == "Assassination" then jps.Cast("mutilate")
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
 		elseif (jps.FaceTarget or jps.MoveToTarget) and (jps.Error == "You are facing the wrong way!" or jps.Error == "Target needs to be in front of you.") then
-			InteractUnit("target")
+			jps.faceTarget()
+			write("TROLL")
 		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
-			InteractUnit("target")
+			jps.moveToTarget()
 		end
 
 	-- RaidStatus Update
@@ -279,10 +280,8 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
 		combat()
-	elseif msg == nil then
-		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	else
-		write("Command not recognised :( type /jps help for more info!")
+		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	end
 end
 
