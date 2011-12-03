@@ -159,7 +159,6 @@ function combatEventHandler(self, event, ...)
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
 		elseif (jps.FaceTarget or jps.MoveToTarget) and (jps.Error == "You are facing the wrong way!" or jps.Error == "Target needs to be in front of you.") then
 			jps.faceTarget()
-			write("TROLL")
 		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
 			jps.moveToTarget()
 		end

@@ -37,7 +37,7 @@ function druid_cat(self)
 		--
 		{"mangle(cat form)", 	mangleDuration < 2 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
 		--
-		{"ravage", 				jps.buff("stampede") and jps.buffDuration("stampede") < 2 },
+		{"ravage!", 				jps.buff("stampede") and jps.buffDuration("stampede") < 2 },
 		--
 		{"ferocious bite", 		executePhase and cp == 5 and ripDuration > 0 },
 		{"ferocious bite", 		executePhase and cp > 0 and ripDuration <= 2.1 },
@@ -57,7 +57,7 @@ function druid_cat(self)
 		--
 		{"ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
 		--
-		{"ravage", 				jps.buff("stampede") and not clearcasting and energy <= 100-energyPerSec },
+		{"ravage!", 				jps.buff("stampede") and not clearcasting and energy <= 100-energyPerSec },
 		--
 		{"mangle(cat form)",	jps.buff(t11) and jps.buffStacks(t11) < 3 },
 		--
