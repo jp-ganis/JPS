@@ -25,16 +25,15 @@ function jps_VARIABLES_LOADED()
 	end
 	if ( not jpsDB[jpsRealm][jpsName] ) then
 		jpsDB[jpsRealm][jpsName] = {}
-	end
-
-	for i,saveVar in pairs( jps_saveVars ) do
-		local thisSaveVar = saveVar[1]
-		local thisDefaultSaveVar = saveVar[2]
-
-		if ( not jpsDB[jpsRealm][jpsName][thisSaveVar] ) then
-			jpsDB[jpsRealm][jpsName][thisSaveVar] = thisDefaultSaveVar
-		end
-
+		--defaults
+		jpsDB[jpsRealm][jpsName][Enabled] = true
+		jpsDB[jpsRealm][jpsName][MoveToTarget] = false
+		jpsDB[jpsRealm][jpsName][FaceTarget] = false
+		jpsDB[jpsRealm][jpsName][Interrupts] = true
+		jpsDB[jpsRealm][jpsName][UseCDs] = false
+		jpsDB[jpsRealm][jpsName][PvP] = false
+		jpsDB[jpsRealm][jpsName][MultiTarget] = false
+		jpsDB[jpsRealm][jpsName][ExtraButtons] = false
 	end
 
 	jps_LOAD_PROFILE()
@@ -51,7 +50,6 @@ function jps_LOAD_PROFILE()
 	jps.gui_toggleCDs( jps.UseCDs )
 	jps.gui_toggleMulti( jps.MultiTarget )
 	jps.gui_toggleToggles( jps.ExtraButtons )
-	jps.gui_setToggleDir( "right" )
 	jps.togglePvP( jps.PvP )
 	jps.resize( jps.IconSize )
 end
