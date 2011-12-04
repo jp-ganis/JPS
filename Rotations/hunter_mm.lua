@@ -6,6 +6,7 @@ function hunter_mm(self)
 	local up = UnitPower
 	local r = RunMacroText;
 	local spell = nil
+	local focus = UnitPower("player")
 
 	-- Interupting, Borrowed directly from feral cat
 	if jps.Interrupts and jps.shouldKick("target") and cd("Silencing Shot") == 0 then
