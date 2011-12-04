@@ -3,6 +3,7 @@ function rogue_assass(self)
 	local cp = GetComboPoints("player")
 	local rupture_duration = jps.debuffDuration("rupture")
 	local snd_duration = jps.buffDuration("slice and dice")
+	local energy = UnitMana("player")
 
 	local spellTable =
 	{
