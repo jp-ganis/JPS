@@ -62,18 +62,6 @@ jps.Configged = false
 jps_variablesLoaded = false
 jpsName = UnitName("player")
 jpsRealm = GetCVar("realmName")
-jps_saveVars = {
-	{ "Enabled", true },
-	{ "MoveToTarget", false },
-	{ "FaceTarget", true },
-	{ "Interrupts", true },
-	{ "UseCDs", false },
-	{ "PvP", false },
-	{ "MultiTarget", false },
-	{ "ExtraButtons", true },
-	{ "ButtonGrowthDir", "right" },
-	{ "IconSize", 36 },
-}
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
