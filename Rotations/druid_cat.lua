@@ -28,7 +28,7 @@ function druid_cat(self)
 		--
 		{nil,					gcdLocked },
 		--
-		{"faerie fire (feral)", not jps.debuff("faerie fire") and not jps.debuffStacks("sunder armor")==3 and not jps.debuff("expose armor") },
+		{"faerie fire (feral)", not jps.debuff("faerie fire") and jps.debuffStacks("sunder armor")~=3 },
 		--
 		{"mangle(cat form)", 	mangleDuration < 2 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
 		--
