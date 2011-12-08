@@ -50,8 +50,9 @@ function jps_LOAD_PROFILE()
 	jps.gui_toggleCDs( jps.UseCDs )
 	jps.gui_toggleMulti( jps.MultiTarget )
 	jps.gui_toggleToggles( jps.ExtraButtons )
+	jps.gui_setToggleDir( "right" )
 	jps.togglePvP( jps.PvP )
-	jps.resize( jps.IconSize )
+	jps.resize( 36 )
 end
 
 -- SAVE_PROFILE
@@ -164,7 +165,6 @@ function jps.setClassCooldowns()
 	-- Add spells
 	for i,spell in pairs(options) do
 		if jpsDB[jpsRealm][jpsName][spell] == nil then
-			table.insert(jps_saveVars, { spell,true })
 			jpsDB[jpsRealm][jpsName][spell] = true
 			jps[spell] = true
 		end

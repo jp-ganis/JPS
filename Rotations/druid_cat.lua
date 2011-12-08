@@ -10,7 +10,6 @@ function druid_cat(self)
 	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
 	local executePhase = jps.hp("target") <= 0.25
-	local t11 = "strength of the panther"
 	local gcdLocked = jps.cooldown("shred") > 0
 	local energyPerSec = 10
 	local clearcasting = jps.buff("clearcasting")
@@ -19,8 +18,6 @@ function druid_cat(self)
 
 	local spellTable =
 	{
-		{ nil,					not jps.buff("cat form") },
-		--
 		{"tiger's fury", 		IsSpellInRange("shred","target") and energy <= 35 and not clearcasting and not gcdLocked },
 		--
 		{"berserk", 			jps.UseCDs and jps.buff("tiger's fury") },
@@ -31,13 +28,11 @@ function druid_cat(self)
 		--
 		{nil,					gcdLocked },
 		--
-		{"mangle(cat form)",	jps.buff(t11) and jps.buffDuration(t11) < 4 },
-		--
 		{"faerie fire (feral)", not jps.debuff("faerie fire") and not jps.debuffStacks("sunder armor")==3 and not jps.debuff("expose armor") },
 		--
 		{"mangle(cat form)", 	mangleDuration < 2 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
 		--
-		{"ravage!", 				jps.buff("stampede") and jps.buffDuration("stampede") < 2 },
+		{"ravage", 				jps.buff("stampede") and jps.buffDuration("stampede") < 2 },
 		--
 		{"ferocious bite", 		executePhase and cp == 5 and ripDuration > 0 },
 		{"ferocious bite", 		executePhase and cp > 0 and ripDuration <= 2.1 },
@@ -57,9 +52,7 @@ function druid_cat(self)
 		--
 		{"ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
 		--
-		{"ravage!", 				jps.buff("stampede") and not clearcasting and energy <= 100-energyPerSec },
-		--
-		{"mangle(cat form)",	jps.buff(t11) and jps.buffStacks(t11) < 3 },
+		{"ravage", 				jps.buff("stampede") and not clearcasting and energy <= 100-energyPerSec },
 		--
 		{"shred", 				berserking or tfUp },
 		{"shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
