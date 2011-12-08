@@ -18,7 +18,9 @@ function druid_cat(self)
 
 	local spellTable =
 	{
-		{"tiger's fury", 		IsSpellInRange("shred","target") and energy <= 35 and not clearcasting and not gcdLocked },
+		{nil,					IsSpellInRange("shred","target")==0 },
+		--
+		{"tiger's fury", 		IsSpellInRange("shred","target") and energy <= 35 and not clearcasting and gcdLocked },
 		--
 		{"berserk", 			jps.UseCDs and jps.buff("tiger's fury") },
 		{jps.DPSRacial,			jps.LastCast == "berserk" },
@@ -26,13 +28,13 @@ function druid_cat(self)
 		{"skull bash(cat form)",jps.shouldKick() and jps.Interrupts },
 		{"swipe",				jps.MultiTarget },
 		--
-		{nil,					gcdLocked or (IsSpellInRange("shred","target")==0) },
+		{nil,					gcdLocked or IsSpellInRange("shred","target") == 0 },
 		--
 		{"faerie fire (feral)", not jps.debuff("faerie fire") and jps.debuffStacks("sunder armor")~=3 },
 		--
 		{"mangle(cat form)", 	mangleDuration < 2 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
 		--
-		{"ravage", 				jps.buff("stampede") and jps.buffDuration("stampede") < 2 },
+		{"ravage", 				jps.buff("stampede") and (jps.buffDuration("stampede") < 4) },
 		--
 		{"ferocious bite", 		executePhase and cp == 5 and ripDuration > 0 },
 		{"ferocious bite", 		executePhase and cp > 0 and ripDuration <= 2.1 },
@@ -50,7 +52,7 @@ function druid_cat(self)
 		--
 		{"ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
 		--
-		{"ravage", 				jps.buff("stampede") and not clearcasting and energy <= 100-energyPerSec },
+		{"ravage", 				jps.buff("stampede") and not clearcasting and (energy <= 100-energyPerSec) },
 		--
 		{"shred", 				berserking or tfUp },
 		{"shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
