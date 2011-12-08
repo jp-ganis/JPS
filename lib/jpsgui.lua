@@ -8,11 +8,13 @@ jps.GUIborder_active = "Interface\\AddOns\\JPS\\media\\border_on.tga"
 jps.GUIborder_combat = "Interface\\AddOns\\JPS\\media\\border_combat.tga"
 jps.GUIicon_cd = "Interface\\Icons\\Spell_Holy_BorrowedTime"
 jps.GUIicon_multi = "Interface\\Icons\\achievement_arena_5v5_3"
+jps.IconSize = 36
 
 BINDING_HEADER_JPS = "JPS Toggles"
 BINDING_NAME_JPSTOGGLE = "Enabled/Disable"
 BINDING_NAME_JPSTOGGLEMULTI = "Multi Target"
 BINDING_NAME_JPSTOGGLECD = "CD Usage"
+
 
 -- Create the frame that does all the work, pew pew...
 JPSFrame = CreateFrame("Frame", "JPSFrame")
