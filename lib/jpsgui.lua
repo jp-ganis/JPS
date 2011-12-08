@@ -9,6 +9,7 @@ jps.GUIborder_combat = "Interface\\AddOns\\JPS\\media\\border_combat.tga"
 jps.GUIicon_cd = "Interface\\Icons\\Spell_Holy_BorrowedTime"
 jps.GUIicon_multi = "Interface\\Icons\\achievement_arena_5v5_3"
 jps.IconSize = 36
+jps.ButtonGrowthDir = "right"
 
 BINDING_HEADER_JPS = "JPS Toggles"
 BINDING_NAME_JPSTOGGLE = "Enabled/Disable"
@@ -195,10 +196,10 @@ function jps.gui_toggleCDs( value )
 	end
 	if jps.UseCDs then
 		ToggleCDs.border:SetTexture(jps.GUIborder)
-		write (" Cooldown Usage Disabled.")
+		write ("Cooldown Usage Disabled.")
 	else
 		ToggleCDs.border:SetTexture(jps.GUIborder_active)
-		write (" Cooldown Usage Enabled.")
+		write ("Cooldown Usage Enabled.")
 	end
 	jps.UseCDs = not jps.UseCDs
 	return

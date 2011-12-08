@@ -24,16 +24,17 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm] = {}
 	end
 	if ( not jpsDB[jpsRealm][jpsName] ) then
+		write("Initializing new character names")
 		jpsDB[jpsRealm][jpsName] = {}
 		--defaults
-		jpsDB[jpsRealm][jpsName][Enabled] = true
-		jpsDB[jpsRealm][jpsName][MoveToTarget] = false
-		jpsDB[jpsRealm][jpsName][FaceTarget] = false
-		jpsDB[jpsRealm][jpsName][Interrupts] = true
-		jpsDB[jpsRealm][jpsName][UseCDs] = false
-		jpsDB[jpsRealm][jpsName][PvP] = false
-		jpsDB[jpsRealm][jpsName][MultiTarget] = false
-		jpsDB[jpsRealm][jpsName][ExtraButtons] = false
+		jpsDB[jpsRealm][jpsName].Enabled = true
+		jpsDB[jpsRealm][jpsName].MoveToTarget = false
+		jpsDB[jpsRealm][jpsName].FaceTarget = false
+		jpsDB[jpsRealm][jpsName].Interrupts = true
+		jpsDB[jpsRealm][jpsName].UseCDs = false
+		jpsDB[jpsRealm][jpsName].PvP = false
+		jpsDB[jpsRealm][jpsName].MultiTarget = false
+		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 	end
 
 	jps_LOAD_PROFILE()
