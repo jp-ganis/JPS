@@ -19,7 +19,7 @@
 -- Universal
 jps = {}
 jps.Version = "1.2.0"
-jps.Revision = "r340"
+jps.Revision = "r348"
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.05
 jps.Combat = false
@@ -55,7 +55,7 @@ jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
 jps.BlacklistTimer = 2
-jps.BlankCheque = false
+jps.BlankCheck = false
 
 -- Config.
 jps.Configged = false
@@ -88,7 +88,7 @@ combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 
 function write(...)
-	if jps.BlankCheque then return end
+	if jps.BlankCheck then return end
 	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...)));
 end
 
@@ -218,7 +218,7 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "respec" then
 		jps.detectSpec()
 	elseif msg == "suppress" then
-		write("Printing output now set to ",not jps.BlankCheck)
+		write("Printing output now set to",not jps.BlankCheck)
 		jps.BlankCheck = not jps.BlankCheck
 	elseif msg == "hide" then
 		jpsIcon:Hide()
@@ -290,6 +290,7 @@ end
 
 function combat(self) 
 	-- Check for the Rotation
+	if not jps.Class then return end
 	if not jps.Rotation then
 		write("Sorry! The rotation file for your",jps.Spec,jps.Class.." seems to be corrupted. Please send Jp (iLulz) a bug report, and make sure you have \"Display LUA Errors\" enabled, you'll find this option by going to the WoW Interface Menu (by pressing Escape) and going to Help -> Display LUA Errors. Thank you!")
 		jps.Enabled = false

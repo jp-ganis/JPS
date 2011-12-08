@@ -26,7 +26,7 @@ function druid_cat(self)
 		{"skull bash(cat form)",jps.shouldKick() and jps.Interrupts },
 		{"swipe",				jps.MultiTarget },
 		--
-		{nil,					gcdLocked },
+		{nil,					gcdLocked or (IsSpellInRange("shred","target")==0) },
 		--
 		{"faerie fire (feral)", not jps.debuff("faerie fire") and jps.debuffStacks("sunder armor")~=3 },
 		--
@@ -36,8 +36,6 @@ function druid_cat(self)
 		--
 		{"ferocious bite", 		executePhase and cp == 5 and ripDuration > 0 },
 		{"ferocious bite", 		executePhase and cp > 0 and ripDuration <= 2.1 },
-		--
-		-- MANGLE/SHRED FOR GLYPH OF BLOODLETTING :(
 		--
 		{"rip", 				cp == 5 and ripDuration < 2 and (berserking or ripDuration+2 <= tfCD) },
 		--
