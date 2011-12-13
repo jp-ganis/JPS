@@ -77,7 +77,11 @@ function druid_cat_pvp(self)
 
 	if CCd then RunMacroText("/use 13") end
 	if rooted then return parseSpellTable({{"dash"},{"stampeding roar(cat form)"}}) end
-	if not jps.buff("bear form") and jps.hp() < 0.5 then return "bear form" end
+	--bear form at low hp
+	if not jps.buff("bear form") and jps.hp() < 0.5 then 
+		RunMacroText("/cancelform")
+		return "bear form"
+	end
 
 	return dpsSpell
 end
