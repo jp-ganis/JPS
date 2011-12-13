@@ -71,11 +71,13 @@ end
 
 function druid_cat_pvp(self)
 	local dpsSpell = druid_cat_pve()
+	if jps.buff("bear form") then dpsSpell = druid_guardian() end
 	local CCd = not HasFullControl()
 	local rooted = jps.debuff("frost nova","player") or jps.debuff("entangling roots","player") or jps.debuff("freeze","player")
 
 	if CCd then RunMacroText("/use 13") end
 	if rooted then return parseSpellTable({{"dash"},{"stampeding roar(cat form)"}}) end
+	if not jps.buff("bear form") and jps.hp() < 0.5 then return "bear form" end
 
 	return dpsSpell
 end
