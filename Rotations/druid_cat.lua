@@ -1,6 +1,11 @@
 --Ty to MEW Feral Sim
 -- jpganis
 function druid_cat(self)
+	if not jps.PvP then return druid_cat_pve()
+	else return druid_cat_pvp() end
+end
+
+function druid_cat_pve(self)
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
 	local tfCD = jps.cooldown("tiger's fury")
@@ -20,7 +25,7 @@ function druid_cat(self)
 	{
 		{ nil,					IsSpellInRange("shred","target") == 0 },
 		--
-		{ "tiger's fury", 		IsSpellInRange("shred","target") and energy <= 35 and not clearcasting and gcdLocked },
+		{ "tiger's fury", 		energy <= 35 and not clearcasting and gcdLocked },
 		{{"macro","/use 14"},	jps.itemCooldown(77113) == 0 and jps.buff("tiger's fury") and jps.UseCDs },
 		--
 		{ "berserk", 			jps.UseCDs and jps.buff("tiger's fury") },
@@ -62,4 +67,15 @@ function druid_cat(self)
 	}
 
 	return parseSpellTable(spellTable)
+end
+
+function druid_cat_pvp(self)
+	local dpsSpell = druid_cat_pve()
+	local CCd = not HasFullControl()
+	local rooted = jps.debuff("frost nova","player") or jps.debuff("entangling roots","player") or jps.debuff("freeze","player")
+
+	if CCd then RunMacroText("/use 13") end
+	if rooted then return parseSpellTable({{"dash"},{"stampeding roar(cat form)"}}) end
+
+	return dpsSpell
 end
