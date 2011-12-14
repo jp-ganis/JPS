@@ -97,8 +97,10 @@ function combatEventHandler(self, event, ...)
 		NotifyInspect("player")
 
 	elseif event == "INSPECT_READY" then
-		jps.detectSpec()
-		jps.setClassCooldowns()
+		if not jps.Spec then 
+			jps.detectSpec()
+			jps.setClassCooldowns()
+		end
 		if jps_variablesLoaded and not jps.Configged then
 			jps_createConfigFrame() end
 	

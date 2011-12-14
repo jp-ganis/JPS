@@ -38,6 +38,37 @@ function ImReallySureICanCastThisShit( spell, unit )
 	return true
 end
 
+-- canCast debug mode
+function jpd( spell, unit )
+	if unit == nil then unit = "target" end
+	write(spell)
+	local _, spellID = GetSpellBookItemInfo(spell)
+	local usable, nomana = IsUsableSpell(spell)
+
+	write("Unit Exists")
+	if not UnitExists(unit) then return false end
+	write("Unit Not Dead")
+	if UnitIsDead(unit) then return false end
+	write("Unit not dead/ghost")
+	if UnitIsDeadOrGhost(unit) then return false end
+	write("IsUsableSpell()")
+	if not usable then return false end
+	write("Spell NOT on cd")
+	if jps.cooldown(spell) ~= 0	then return false end
+	write("Not oom")
+	if nomana then return false end
+	write("unit visible")
+	if not UnitIsVisible(unit) then return false end
+	write("spell known")
+	if not IsSpellKnown(spellID) then return false end
+	write("spell in range")
+	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
+	write("jps lookup")
+	if jps[spell] ~= nil and jps[spell] == false then return false end
+	
+	return true
+end
+
 -- multiUnitTable
 function parseMultiUnitTable( spellTable )
 	local spell = spellTable[1]

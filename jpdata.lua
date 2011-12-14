@@ -112,6 +112,12 @@ function jps.debuff( spell, unit )
 	return false
 end
 
+function jps.myDebuff( spell, unit )
+	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitDebuff(unit,spell)
+	if caster~="player" then return false end
+	return jps.debuff( spell, unit )
+end
+
 function jps.buffDuration( spell, unit)
 	if unit == nil then unit = "player" end
 	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitBuff(unit,spell)
@@ -167,6 +173,14 @@ end
 
 function jps.bloodlusting()
 	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
+end
+
+function jps.castTimeLeft(unit)
+	if unit == nil then
+		unit = "player" end
+	local _,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
+	if endTime == nil then return 0 end
+	return (endTime-GetTime()*1000)/1000
 end
 
 function jps.shouldKick(unit)

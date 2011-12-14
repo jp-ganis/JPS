@@ -20,14 +20,14 @@ function druid_guardian(self)
 	-- Moves
 	local spellTable =
 	{
-		{nil,						not jps.buff("bear form") },
+		{nil,						IsSpellInRange("lacerate","target") ~= 1 },
 		{"skull bash(bear form)",	jps.Interrupts and jps.shouldKick() },
 		-- {"bash",					jps.Interrupts and jps.shouldKick() },
 		{"maul",					rage > 60 },
 		-- Defense
 		{"barkskin",				hp < 75 and jps.UseCDs},
 		{"survival instincts",		hp < 40 and jps.UseCDs},
-		{"frenzied regeneration",	hp < 25 and jps.UseCDs},
+		{"frenzied regeneration",	hp < 15 and jps.UseCDs},
 		{"demoralizing roar",		not jps.debuff("demoralizing roar") or demoDuration < 3},
 		{"enrage",			rage <= 80},
 		-- Offense
