@@ -8,6 +8,8 @@ function priest_shadow(self)
 	
 	local spellTable = 
 	{
+		{ "shadow word death", jps.Moving };
+		{ "devouring plague", jps.Moving and jps.mana() > 0.1 },
 		{ "mind sear",			jps.MultiTarget },
 		{ "mind blast",			"onCD" },
 		{ jps.DPSRacial,		"onCD" },
