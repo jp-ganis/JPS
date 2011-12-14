@@ -1,9 +1,115 @@
 -- jpganis
 -- simcrafty
+-- thanks to balance power tracker for making this SO much better
 function druid_balance(self)
+	if BalancePowerTracker_SharedInfo == nil then return druid_balanace_fail()
+	else return druid_balance_bpt() end
+end
+
+--bpt
+function druid_balance_bpt(self)
+	-- bpt virtual trackers
+	local bptTable = BalancePowerTracker_SharedInfo
+	local vEnergy = bptTable.virtualEnergy
+	local vDirection = bptTable.virtualDirection
+	local vEclipse = bptTable.virtualEclipse
+
+	if vDirection == "none" then vDirection = "sun" end
+
+	-- Insect Swarm and Moonfire /fastest/ tick times.
+	local isTick = 1.3
+	local mfTick = 1.3
+
+	-- Eclipse Buffs
+	local sEclipse = jps.buff("eclipse (solar)") or vEclipse == "S"
+	local lEclipse = jps.buff("eclipse (lunar)") or vEclipse == "L"
+
+	-- Mushrooms
+	local m1, _, _, _, _ = GetTotemInfo(1)
+	local m2, _, _, _, _ = GetTotemInfo(2)
+	local m3, _, _, _, _ = GetTotemInfo(3)
+	
+	-- Dot Durations
+	local isDuration = jps.debuffDuration("insect swarm") - jps.castTimeLeft()
+	local mfDuration = jps.debuffDuration("moonfire") - jps.castTimeLeft()
+	local sfDuration = jps.debuffDuration("sunfire") - jps.castTimeLeft()
+	
+	-- Focus dots
+	local focusDotting, focusIS, focusMF, focusSF
+	if UnitExists("focus") then focusDotting = true
+	else focusDotting = false end
+
+	if focusDotting then
+		focusIS = jps.debuffDuration("insect swarm","focus")
+		focusMF = jps.debuffDuration("moonfire","focus")
+		focusSF = jps.debuffDuration("sunfire","focus")
+	end
+
+	local spellTable =
+	{
+		-- Opening
+		{ "wild mushroom: detonate", m1 and m2 and m3 },
+		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
+		{ "moonfire", jps.Opening },
+		-- Insta-Starsurge when we flip eclipse so we don't waste NG.
+		{ "starsurge", jps.buff("shooting stars") and vEclipse ~= false },
+		-- Insect Swarm
+		{ "insect swarm", sEclipse and isDuration < isTick },
+		{ "insect swarm", sEclipse and vEnergy < 15 and isDuration < 10 },
+		{ "insect swarm", lEclipse and isDuration < isTick },
+		-- Moonfire
+		{ "moonfire", sEclipse and sfDuration < mfTick and mfDuration < mfTick },
+		{ "moonfire", sEclipse and sfDuration < 7 and vEnergy < 15 },
+		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration < mfTick },
+		{ "moonfire", lEclipse and mfDuration < 10 and vEnergy >= -20 },
+		-- Focus dots
+		{ "nested", focusDotting,
+			{
+				{ "moonfire", lEclipse and focusMF < mfTick, "focus" },
+				{ "moonfire", sEclipse and focusMF < mfTick and focusSF < mfTick, "focus" },
+				{ "insect swarm", (sEclipse or jps.buff("nature's grace")) and focusIS < isTick, "focus" },
+			}
+		},
+		-- Moving
+		{ "typhoon", jps.Moving },
+		{ "starfall", lEclipse },
+		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
+		-- Main rotation
+		{ "starsurge", vDirection == "moon" and vEnergy > -85},
+		{ "starsurge", vDirection == "sun" and vEnergy < 85 },
+		{ "starsurge", lEclipse and jps.buff("shooting stars") },
+		{ "innervate", jps.mana() < 0.5 },
+		{ "force of nature", jps.UseCDs },
+		{ "wrath", vDirection == "moon" },
+		{ "starfire", vDirection == "sun" },
+	}
+
+	spell = parseSpellTable( spellTable )
+
+	if isDuration > 0 and (mfDuration > 0 or sfDuration > 0) then jps.Opening = false end
+
+	if spell == "force of nature" or spell == "wild mushroom" then
+		jps.groundClick()
+	--	Petattack("target")
+	end
+
+	return spell
+end
+
+function druid_balance_fail(self)
 	local power = UnitPower("player",SPELL_POWER_ECLIPSE)
 	local eclipse = GetEclipseDirection()
 	if eclipse == "none" then eclipse = "sun" end
+
+	local isTick = 1.2
+	local mfTick = 1.2
+
+	local sEclipse = jps.buff("eclipse (solar)")
+	local lEclipse = jps.buff("eclipse (lunar)")
+
+	local m1, _, _, _, _ = GetTotemInfo(1)
+	local m2, _, _, _, _ = GetTotemInfo(2)
+	local m3, _, _, _, _ = GetTotemInfo(3)
 	
 	local isDuration = jps.debuffDuration("insect swarm")
 	local mfDuration = jps.debuffDuration("moonfire")
@@ -20,33 +126,47 @@ function druid_balance(self)
 
 	local spellTable =
 	{
-		{ "force of nature",	jps.UseCDs and jps.buff("eclipse (solar)") },
-		{ "solar beam", 		jps.shouldKick() },
-		{ "solar beam", 		jps.shouldKick("focus"), "focus" },
-		{ "innervate", 			jps.mana() < 0.5, "player" },
-		--{ {"item","Fiery Quintessence"},  "onCD" },
-		{ "starsurge", 			"onCD" },
-		{ "starfire", 			power <= -87 and (jps.LastCast == "wrath" or jps.LastCast == "starsurge") and not jps.buff("eclipse (lunar)") },
-		{ "starfall", 			"onCD" },
-		{ "wrath", 				power >= 80 and (jps.LastCast == "starfire" or jps.LastCast == "starsurge") and not jps.buff("eclipse (solar)") },
-		{ "wrath", 				power <= -87 and not jps.buff("eclipse (lunar)") },
-		{ "starfire", 			power >= 80 and not jps.buff("eclipse (solar)") },
-		{ "insect swarm", 		isDuration < 1 },
-		{ "moonfire", 			mfDuration < 1 and sfDuration < 1 },
-		{ "moonfire", 			mfDuration < 3 and sfDuration < 3  and jps.buff("eclipse (lunar)") },
-		{ "insect swarm", 		isDuration < 3 and jps.buff("eclipse (solar)") },
-		{ "insect swarm", 		focusDotting and focusIS < 1, "focus" },
-		{ "insect swarm", 		focusDotting and focusIS < 3 and jps.buff("eclipse (solar)"), "focus" },
-		{ "moonfire", 			focusDotting and focusMF < 1 and focusSF < 1, "focus" },
-		{ "moonfire", 			focusDotting and focusMF < 3 and focusSF < 3  and jps.buff("eclipse (lunar)"), "focus" },
-		{ "moonfire", 			jps.Moving },
-		{ "wrath", 				eclipse == "moon" },
-		{ "starfire", 			eclipse == "sun" },
+		{ "wild mushroom: detonate", m1 and m2 and m3 },
+		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
+		{ "moonfire", jps.Opening },
+		-- Insect Swarm
+		{ "insect swarm", sEclipse and isDuration < isTick },
+		{ "insect swarm", sEclipse and power < 15 and isDuration < 10 },
+		{ "inesct swarm", lEclipse and isDuration < isTick },
+		-- Moonfire
+		{ "moonfire", sEclipse and sfDuration < mfTick and mfDuration == 0 },
+		{ "moonfire", sEclipse and sfDuration < 7 and power < 15 },
+		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration == 0 },
+		{ "moonfire", lEclipse and mfDuration < 10 and power >= -20 },
+		--
+		{ "wild mushroom: detonate", (m1 or m2 or m3) and sEclipse },
+		{ "typhoon", jps.Moving },
+		{ "starfall", lEclipse },
+		{ "moonfire", sEclipse and ((sfDuration < mfTick and mfDuration == 0) or (power < 15 and sfDuration < 7)) and jps.LastCast ~= "moonfire" },
+		{ "moonfire", lEclipse and ((mfDuration < mfTick and sfDuration == 0) or (power > -20 and mfDuration < 7)) and jps.LastCast ~= "moonfire" },
+		--moving
+		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
+		{ "moonfire", jps.Moving },
+		{ "sunfire", jps.Moving },
+		--
+		{ "starsurge", eclipse == "moon" and power > -80 },
+		{ "starsurge", lEclipse and jps.buff("shooting stars") },
+		{ "innervate", jps.mana() < 0.5 },
+		{ "force of nature", jps.UseCDs },
+		{ "starfire", eclipse == "sun" and power < 75 },
+		{ "starfire", jps.LastCast == "wrath" and eclipse == "moon" and power < -84 },
+		{ "wrath", eclipse == "moon" and power >= -84 },
+		{ "wrath", jps.LastCast == "starfire" and eclipse == "sun" and power >= 75 },
+		{ "starfire", eclipse == "sun" },
+		{ "wrath", eclipse == "moon" },
+		{ "starfire" },
 	}
 
 	spell = parseSpellTable( spellTable )
 
-	if spell == "force of nature" then
+	if isDuration > 0 and (mfDuration > 0 or sfDuration > 0) then jps.Opening = false end
+
+	if spell == "force of nature" or spell == "wild mushroom" then
 		jps.groundClick()
 	--	Petattack("target")
 	end

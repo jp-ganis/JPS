@@ -14,7 +14,7 @@ function druid_cat_pve(self)
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
-	local executePhase = jps.hp("target") <= 0.25
+	local executePhase = jps.hp("target") <= 0.6
 	local gcdLocked = jps.cooldown("shred") > 0
 	local energyPerSec = 10
 	local clearcasting = jps.buff("clearcasting")
@@ -60,7 +60,7 @@ function druid_cat_pve(self)
 		--
 		{ {"macro","/cast ravage"}, 				jps.buff("stampede") and not clearcasting and (energy <= 100-energyPerSec) },
 		--
-		{ "shred", 				berserking or tfUp },
+		{ "shred", 				berserking or jps.buff("tiger's fury") },
 		{ "shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
 		{ "shred",				tfCD <= 3 },
 		{ "shred",				energy >= 100 - energyPerSec },
