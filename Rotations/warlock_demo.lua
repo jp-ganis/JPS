@@ -1,40 +1,29 @@
+--huge thanks to latitude!
 function warlock_demo(self)
-	local mana = UnitMana("player")/UnitManaMax("player")
-	local shards = UnitPower("player",7)
-  	local spell = nil
+   local mana = UnitMana("player")/UnitManaMax("player")
+   local shards = UnitPower("player",7)
 
-	local bod_duration = jps.debuffDuration("bane of doom")
-	local cpn_duration = jps.debuffDuration("corruption")
-	local imo_duration = jps.debuffDuration("immolate")
+   local bod_duration = jps.debuffDuration("bane of doom")
+   local cpn_duration = jps.debuffDuration("corruption")
+   local imo_duration = jps.debuffDuration("immolate")
 
-	if not ud("target","curse of the elements") then
-		spell = "curse of the elements"
-	elseif cd("soulburn") == 0 and shards > 1 then
-		spell = "soulburn"
-	elseif cd("lifeblood") == 0 then
-		spell = "lifeblood"
-	elseif cd("metamorphosis") == 0 and jps.UseCDs then
-		spell = "metamorphosis"
-	elseif cpn_duration < 2 then
-		spell = "corruption" 
-	elseif ub("player","decimation") or ub("player","soulburn") then
-		spell = "soul fire"
-	elseif bod_duration < 2 then
-		spell = "bane of doom"
-	elseif GetUnitSpeed("player") > 0 then
-		spell = "fel flame"
-	elseif imo_duration < 2 and jps.LastCast ~= "immolate" then
-		spell = "immolate"
-	elseif cd("hand of gul'dan") == 0 then
-		spell = "hand of gul'dan"
-	elseif mana < 0.3 then
-	  	spell = "life tap"
-	elseif ub("player","molten core") then
-	  	spell = "incinerate"
-	else
-	  	spell = "incinerate"
-	end
+   local spellTable =
+   {
+      { "demon soul" },
+	  { {"macro","/use 10"}, jps.glovesCooldown() == 0 },
+      { "metamorphosis" },
+      { "shadowflame"},
+      { "immolate", imo_duration < 2 and jps.LastCast ~= "immolate"},
+      { "hand of gul'dan", jps.cd("hand of gul'dan") == 0 },
+      { "corruption", cpn_duration < 3 },
+      { "bane of doom", bod_duration == 0 or jps.buff("foul gift")},
+      { "fel flame", jps.Moving },
+      { "incinerate", jps.buff("molten core")},
+      { "soul fire", jps.buff("decimation")},
+      { "incinerate" },
+   }
+   
+   
+   return parseSpellTable(spellTable)
+end
 
-	return spell
-	
-end	
