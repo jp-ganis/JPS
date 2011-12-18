@@ -18,7 +18,7 @@ function rogue_sub(self)
 		{"ambush",			cp <= 4 },
 		{"preparation",		jps.cd("vanish") > 60 },
 		{"slice and dice",	jps.buffDuration("Slice and dice") < 3 and cp == 5 },
-		{"rupture",			cp == 5 and not jps.debuff("rupture") },
+		{"rupture",			cp == 5 and not jps.myDebuff("rupture") },
 		{"recuperate",		cp == 5 and jps.buffDuration("recuperate") < 3 },
 		{"eviscerate",		cp == 5 and jps.debuffDuration("rupture") > 1 },
 		{"hemorrhage",		cp < 4 and energy > 40 and jps.debuffDuration("hemorrhage") < 4 },

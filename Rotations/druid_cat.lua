@@ -16,7 +16,7 @@ function druid_cat_pve(self)
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
 	local executePhase = jps.hp("target") <= 0.6
 	local gcdLocked = jps.cooldown("shred") > 0
-	local energyPerSec = 10
+	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
 	local tf_up = jps.buff("tiger's fury")
@@ -24,6 +24,10 @@ function druid_cat_pve(self)
 	local spellTable =
 	{
 		{ nil,					IsSpellInRange("shred","target") == 0 },
+		-- 
+		{ "mangle(cat form)",	jps.Opening and cp == 0 },
+		{ "savage roar",		jps.Opening and cp > 0 and srDuration == 0 },
+		{ "tiger's fury", 		jps.Opening and srDuration > 0 },
 		--
 		{ "tiger's fury", 		energy <= 35 and not clearcasting and gcdLocked },
 		{{"macro","/use 14"},	jps.itemCooldown(77113) == 0 and jps.buff("tiger's fury") and jps.UseCDs },
@@ -38,7 +42,7 @@ function druid_cat_pve(self)
 		--
 		{ "faerie fire (feral)", not jps.debuff("faerie fire") and jps.debuffStacks("sunder armor")~=3 },
 		--
-		{ "mangle(cat form)", 	mangleDuration < 2 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
+		{ "mangle(cat form)", 	mangleDuration < 3 and not jps.debuff("trauma") and not jps.debuff("hemorrhage") },
 		--
 		{ {"macro","/cast ravage"}, 				jps.buff("stampede") and jps.buffDuration("stampede") < 4 },
 		--
@@ -58,13 +62,15 @@ function druid_cat_pve(self)
 		--
 		{ "ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
 		--
-		{ {"macro","/cast ravage"}, 				jps.buff("stampede") and not clearcasting and (energy <= 100-energyPerSec) },
+		{ {"macro","/cast ravage"}, 				jps.buff("stampede") and not clearcasting and (energy <= 100-energyPerSec*2) },
 		--
 		{ "shred", 				berserking or jps.buff("tiger's fury") },
 		{ "shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
 		{ "shred",				tfCD <= 3 },
 		{ "shred",				energy >= 100 - energyPerSec },
 	}
+
+	if jps.buff("tiger's fury") then jps.Opening = false end
 
 	return parseSpellTable(spellTable)
 end

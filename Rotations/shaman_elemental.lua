@@ -3,7 +3,6 @@ function shaman_elemental(self)
 	-- thanks to thorshammer no need for simcraft!
    local spell = nil
    local lsStacks = jps.buffStacks("lightning shield")
-   local mana = UnitMana("player")/UnitManaMax("player")
    local focus = "focus"
    local me = "player"
    local mh, _, _, oh, _, _, _, _, _ =GetWeaponEnchantInfo()
@@ -54,14 +53,14 @@ function shaman_elemental(self)
       -- Basic Priority Spells
       { "elemental mastery",   "onCD" },
       { "flame shock", jps.debuffDuration("flame shock") < 2 },
-      { r(engineering), "onCD" },
-      { "lava burst",   "onCD" },
+      { r(engineering), jps.glovesCooldown() == 0 },
+      { "lava burst" },
       { "earth shock", lsStacks == 9 },
       { "earth shock", lsStacks > 7 and jps.debuffDuration("flame shock") > 5 },
       { "spiritwalker's grace", jps.Moving },
       { "chain lightning", jps.MultiTarget },
-      { "thunderstorm", mana < .6 and jps.UseCDs },
-      { "lightning bolt", "onCD" },
+      { "thunderstorm", jps.mana() < .6 and jps.UseCDs },
+      { "lightning bolt" },
    }
 
    return parseSpellTable( spellTable )
