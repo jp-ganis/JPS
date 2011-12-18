@@ -48,7 +48,7 @@ function druid_balance_bpt(self)
 	local spellTable =
 	{
 		-- Opening
-		{ "wild mushroom: detonate", m1 and m2 and m3 },
+		--{ "wild mushroom: detonate", m1 and m2 and m3 },
 		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
 		{ "moonfire", jps.Opening },
 		-- Insta-Starsurge when we flip eclipse so we don't waste NG.
@@ -63,6 +63,7 @@ function druid_balance_bpt(self)
 		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration < mfTick },
 		{ "moonfire", lEclipse and mfDuration < 10 and vEnergy >= -20 },
 		-- Focus dots
+		--[[
 		{ "nested", focusDotting,
 			{
 				{ "moonfire", lEclipse and focusMF < mfTick, "focus" },
@@ -70,10 +71,11 @@ function druid_balance_bpt(self)
 				{ "insect swarm", (sEclipse or jps.buff("nature's grace")) and focusIS < isTick, "focus" },
 			}
 		},
+		]]--
 		-- Moving
-		{ "typhoon", jps.Moving },
-		{ "starfall", lEclipse },
-		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
+		--{ "typhoon", jps.Moving },
+		--{ "starfall", lEclipse },
+		--{ "starsurge", jps.Moving and jps.buff("shooting stars") },
 		-- Main rotation
 		{ "starsurge", vDirection == "moon" and vEnergy > -85},
 		{ "starsurge", vDirection == "sun" and vEnergy < 85 },
