@@ -153,18 +153,6 @@ function combatEventHandler(self, event, ...)
 			jps.moveToTarget()
 		end
 
-	-- RaidStatus Update
-	elseif event == "UNIT_HEALTH" and jps.Enabled then
-		local unit = ...
-        if UnitIsFriend("player",unit) then
-			local delta = 0
-			local hp = jps.hpInc(unit)
-            unit = UnitName(unit)  -- to avoid that party1, focus and target are added  all refering to the same player
-			if jps.RaidStatus[unit] then
-				delta = jps.RaidStatus[unit]["hp"] - hp end
-			jps.RaidStatus[unit] = { ["hp"] = hp, ["hpabs"] = UnitHealth(unit), ["hpmax"] = UnitHealthMax(unit), ["delta"] = delta }
-		end 
-
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
 		jps.detectSpec()
