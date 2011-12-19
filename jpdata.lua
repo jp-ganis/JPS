@@ -121,6 +121,7 @@ function jps.debuff( spell, unit )
 end
 
 function jps.myDebuff( spell, unit )
+	if unit == nil then unit = "target" end
 	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitDebuff(unit,spell)
 	if caster~="player" then return false end
 	return jps.debuff( spell, unit )
