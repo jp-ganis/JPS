@@ -62,12 +62,12 @@ function druid_cat_pve(self)
 		--
 		{ "ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
 		--
-		{ {"macro","/cast ravage"}, 				jps.buff("stampede") and not clearcasting and (energy <= 100-energyPerSec*2) },
+		{ {"macro","/cast ravage"}, 				jps.buff("stampede") and not clearcasting and (energy <= 100-(energyPerSec*2)) },
 		--
 		{ "shred", 				berserking or jps.buff("tiger's fury") },
 		{ "shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
 		{ "shred",				tfCD <= 3 },
-		{ "shred",				energy >= 100 - energyPerSec },
+		{ "shred",				energy >= 100 - (energyPerSec*2) },
 	}
 
 	if jps.buff("tiger's fury") then jps.Opening = false end
