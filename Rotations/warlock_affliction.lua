@@ -1,4 +1,5 @@
 function warlock_affliction(self)
+	--simcrafted
 	local mana = UnitMana("player")/UnitManaMax("player")
 	local shards = UnitPower("player",7)
 	local spell = nil
@@ -16,11 +17,15 @@ function warlock_affliction(self)
 		focus_bane = jps.debuffDuration("bane of agony","focus")
 	end
 
+	local cpnTick = 2
+	local uaTick = 2	
+	local uaCast = 1.5
+
 	local spellTable =
 	{
 		{ "demon soul" },
-		{ "corruption", cpn_duration < 3 },
-		{ "unstable affliction", ua_duration < 4.5 },
+		{ "corruption", cpn_duration < cpnTick },
+		{ "unstable affliction", ua_duration < (uaTick+uaCast) },
 		{ "bane of doom", bod_duration == 0 },
 		{ "haunt" },
 		{ "summon doomguard" },
@@ -32,7 +37,7 @@ function warlock_affliction(self)
 		{ "shadow bolt" },
 		{ "life tap", jps.Moving and jps.mana() < 0.8 and jps.mana() < jps.hp("target") },
 		{ "fel flame", jps.Moving },
-		{ "life tap" },
+		{ "life tap", jps.mana() <= 0.6 },
 	}
 
 	return parseSpellTable(spellTable)
