@@ -1,4 +1,5 @@
 --huge thanks to latitude!
+--as good as simcraft :)
 function warlock_demo(self)
    local mana = UnitMana("player")/UnitManaMax("player")
    local shards = UnitPower("player",7)
@@ -16,7 +17,7 @@ function warlock_demo(self)
       { "immolate", imo_duration < 2 and jps.LastCast ~= "immolate"},
       { "hand of gul'dan", jps.cd("hand of gul'dan") == 0 },
       { "corruption", cpn_duration < 3 },
-      { "bane of doom", bod_duration == 0 or jps.buff("foul gift")},
+      { "bane of doom", bod_duration == 0 },
       { "fel flame", jps.Moving },
       { "incinerate", jps.buff("molten core")},
       { "soul fire", jps.buff("decimation")},
