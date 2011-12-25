@@ -127,7 +127,7 @@ function jps.myDebuff( spell, unit )
 	return jps.debuff( spell, unit )
 end
 
-function jps.buffDuration( spell, unit)
+function jps.buffDuration( spell, unit )
 	if unit == nil then unit = "player" end
 	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitBuff(unit,spell)
 	if caster ~= "player" then return 0 end
