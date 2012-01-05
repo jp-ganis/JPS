@@ -1,25 +1,7 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-]]--
--- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 jps = {}
 jps.Version = "1.2.0"
-jps.Revision = "r348"
+jps.Revision = "r349" -- This build is based off of r333
 jps.RaidStatus = {}
 jps.UpdateInterval = 0.05
 jps.Combat = false
@@ -55,13 +37,25 @@ jps.Fishing = false
 jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
 jps.BlacklistTimer = 2
-jps.BlankCheck = false
+jps.BlankCheque = false
 
 -- Config.
 jps.Configged = false
 jps_variablesLoaded = false
 jpsName = UnitName("player")
 jpsRealm = GetCVar("realmName")
+jps_saveVars = {
+	{ "Enabled", true },
+	{ "MoveToTarget", false },
+	{ "FaceTarget", true },
+	{ "Interrupts", true },
+	{ "UseCDs", false },
+	{ "PvP", false },
+	{ "MultiTarget", false },
+	{ "ExtraButtons", true },
+	{ "ButtonGrowthDir", "right" },
+	{ "IconSize", 36 },
+}
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
@@ -83,12 +77,23 @@ combatFrame:RegisterEvent("INSPECT_READY")
 combatFrame:RegisterEvent("UNIT_HEALTH")
 combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+combatFrame:RegisterEvent("ADDON_LOADED")
+combatFrame:RegisterEvent("PLAYER_LOGOUT")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
+combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
+combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
+-- Table
+jps.Timers = {}
+jps.HealerBlacklist = {}
+jps.GroupStatus = {}
+jps.TT = {}
+jps.RaidStatus = {}
 
 function write(...)
-	if jps.BlankCheck then return end
+	if jps.BlankCheque then return end
 	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...)));
 end
 
@@ -97,10 +102,8 @@ function combatEventHandler(self, event, ...)
 		NotifyInspect("player")
 
 	elseif event == "INSPECT_READY" then
-		if not jps.Spec then 
-			jps.detectSpec()
-			jps.setClassCooldowns()
-		end
+		jps.detectSpec()
+		jps.setClassCooldowns()
 		if jps_variablesLoaded and not jps.Configged then
 			jps_createConfigFrame() end
 	
@@ -108,6 +111,13 @@ function combatEventHandler(self, event, ...)
 		jps_VARIABLES_LOADED()
 		if jps.Spec then
 			jps_createConfigFrame() end
+
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		jps.Combat = false
+		jps.gui_toggleCombat(false)
+		table.wipe(jps.RaidStatus) -- Clear the table
+        table.wipe(jps.GroupStatus) -- Clear the table
+        collectgarbage("collect")
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		jpsIcon.texture:SetTexture(jps.GUInoplua)
@@ -125,6 +135,14 @@ function combatEventHandler(self, event, ...)
 		jps.Opening = true
 		jps.RaidStatus = {}
 		collectgarbage("collect")
+	
+	elseif event == "PLAYER_CONTROL_LOST" then
+    	jps.Combat = false
+    	jps.gui_toggleCombat(false)
+
+    elseif event == "PLAYER_CONTROL_GAINED" then
+    	jps.Combat = true
+    	jps.gui_toggleCombat(true)
 
 	-- Fishes
 	elseif event == "BAG_UPDATE" and jps.Fishing then
@@ -147,11 +165,32 @@ function combatEventHandler(self, event, ...)
 		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
 			if jps.Spec == "Assassination" then jps.Cast("mutilate")
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
-		elseif (jps.FaceTarget or jps.MoveToTarget) and (jps.Error == "You are facing the wrong way!" or jps.Error == "Target needs to be in front of you.") then
-			jps.faceTarget()
-		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
-			jps.moveToTarget()
+	--	elseif (jps.FaceTarget or jps.MoveToTarget) and (jps.Error == "You are facing the wrong way!" or jps.Error == "Target needs to be in front of you.") then
+	--		InteractUnit("target")
+	--	elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
+	--		InteractUnit("target")
 		end
+
+	-- RaidStatus Update
+    elseif event == "UNIT_HEALTH" and jps.Enabled then
+    	jps.UpdateHealerBlacklist()
+ 
+        local unit = ...
+        --if jps.canHeal(unit) then jps.SortGroupStatus() end
+        if jps.canHeal(unit) and jps.Enabled then Combat() end 
+	
+		if jps.canHeal(unit) then
+			local unitSubGroup = jps.findSubGroupUnit(unit)
+			local hp = jps.hpInc(unit)
+        	unit = select(1,UnitName(unit)) -- to avoid that party1, focus and target are added all refering to the same player
+        	
+			jps.RaidStatus[unit] = { 	
+				["name"] = unit,
+				["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
+				["hpct"] = hp,
+				["subgroup"] = unitSubGroup
+			}
+      	end
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -167,10 +206,10 @@ function combatEventHandler(self, event, ...)
 
        --- Required For Healing Classes
        -- Update out of sight players before selecting a spell -- used for healing classes
-       jps.UpdateHealerBlacklist()
-        if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
-          jps.BlacklistPlayer(jps.LastTarget)
-        end
+       --jps.UpdateHealerBlacklist()
+       --if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
+       --   jps.BlacklistPlayer(jps.LastTarget)
+       -- end
     end
 end
 
@@ -208,7 +247,7 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "respec" then
 		jps.detectSpec()
 	elseif msg == "suppress" then
-		write("Printing output now set to",not jps.BlankCheck)
+		write("Printing output now set to ",not jps.BlankCheck)
 		jps.BlankCheck = not jps.BlankCheck
 	elseif msg == "hide" then
 		jpsIcon:Hide()
@@ -257,8 +296,10 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
 		combat()
-	else
+	elseif msg == nil then
 		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
+	else
+		write("Command not recognised :( type /jps help for more info!")
 	end
 end
 
@@ -278,9 +319,28 @@ function JPS_OnUpdate(self,elapsed)
 	end
 end
 
+
+local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
+local function GetSpellInfo(a)
+	return unpack(spellcache[a])
+end
+
+-- get spell from UseAction
+hooksecurefunc("UseAction", function(...)
+if jps.Enabled and select(3, ...) ~= nil then
+	local stype, id = GetActionInfo( select(1, ...) )
+	if stype == "spell" then
+		local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
+		if jps.NextCast ~= name then 
+			jps.NextCast = name
+			if jps.Combat then write("Set",name,"for next cast.") end
+		end
+	end
+end
+end)
+
 function combat(self) 
 	-- Check for the Rotation
-	if not jps.Class then return end
 	if not jps.Rotation then
 		write("Sorry! The rotation file for your",jps.Spec,jps.Class.." seems to be corrupted. Please send Jp (iLulz) a bug report, and make sure you have \"Display LUA Errors\" enabled, you'll find this option by going to the WoW Interface Menu (by pressing Escape) and going to Help -> Display LUA Errors. Thank you!")
 		jps.Enabled = false
