@@ -85,6 +85,7 @@ combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 
 function write(...)
@@ -119,7 +120,7 @@ function combatEventHandler(self, event, ...)
 		jps.gui_toggleCombat(true)
 		if jps.Enabled then combat() end
 
-	elseif event == "PLAYER_REGEN_ENABLED" then
+	elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_ENTERING_WORLD" then
 		jps.gui_toggleCombat(false)
 		jps.Combat = false
 		jps.Opening = true
@@ -152,6 +153,26 @@ function combatEventHandler(self, event, ...)
 		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
 			jps.moveToTarget()
 		end
+
+	-- RaidStatus Update
+    elseif event == "UNIT_HEALTH" and jps.Enabled then
+    	jps.UpdateHealerBlacklist()
+ 
+        local unit = ...
+        if jps.canHeal(unit) and jps.Enabled then combat() end 
+	
+		if jps.canHeal(unit) then
+			local unitSubGroup = jps.findSubGroupUnit(unit)
+			local hp = jps.hpInc(unit)
+        	unit = select(1,UnitName(unit)) -- to avoid that party1, focus and target are added all refering to the same player
+        	
+			jps.RaidStatus[unit] = { 	
+				["name"] = unit,
+				["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
+				["hpct"] = hp,
+				["subgroup"] = unitSubGroup
+			}
+      	end
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -263,6 +284,7 @@ function SlashCmdList.jps(cmd, editbox)
 end
 
 function JPS_OnUpdate(self,elapsed)
+	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
 
@@ -271,9 +293,7 @@ function JPS_OnUpdate(self,elapsed)
 			self.TimeSinceLastUpdate = 0
 
 		elseif jps.Combat and jps.Enabled then
-			if not IsMounted() then combat() end
 			self.TimeSinceLastUpdate = 0
-
 		end
 	end
 end
@@ -287,6 +307,14 @@ function combat(self)
 		return
 	end
 
+	-- Check Table RaidStatus
+	jps.SortGroupStatus()
+    	if IsControlKeyDown() then
+        	for k,v in pairs(jps.RaidStatus) do 
+			print("|cffa335ee",v.name,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
+		end
+	end
+
 	-- Lag
 	_,_,jps.Lag = GetNetStats()
 	jps.Lag = 30
@@ -296,10 +324,12 @@ function combat(self)
 	jps.Moving = GetUnitSpeed("player") > 0
 
 	-- Casting
-	if UnitCastingInfo("player") then jps.Casting = true
-	elseif UnitChannelInfo("player") then jps.Casting = true
+	if UnitCastingInfo("player") or UnitChannelInfo("player") then jps.Casting = true
 	else jps.Casting = false
 	end
+	
+	-- STOP spam Combat
+	if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff("Boisson", "player") or jps.buff("Drink", "player") then return end
 	
 	-- Get spell from rotation
 	jps.ThisCast = jps.Rotation()
