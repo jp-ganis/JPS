@@ -41,5 +41,160 @@ function jps.BlacklistPlayer(unit)
 
 end
 
+--------------------------
+-- Healing functions
+--------------------------
 
----More to come...
+function jps.canHeal(unit)
+	if not unit then unit = "target" end
+
+	if UnitExists(unit)~=1 then return false end
+	if UnitIsVisible(unit)~=1 then return false end
+	if UnitIsPlayer(unit)~=1 then return false end
+	if UnitIsFriend("player",unit)~=1 then return false end
+	if not UnitInRange(unit) then return false end
+	if UnitIsDeadOrGhost(unit)==1 then return false end
+	
+	return true
+end
+
+-- Lowest percentage in RaidStatus
+function jps.lowestInRaidStatus() 
+	local lowestUnit = "player"
+	local lowestHP = 1
+	for unit, unitTable in pairs(jps.RaidStatus) do
+	--local thisHP = UnitHealth(unit) / UnitHealthMax(unit)
+		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
+			lowestHP = unitTable["hpct"] -- thisHP
+			lowestUnit = unit
+		end
+	end
+	return lowestUnit
+end
+
+-- Lowest HP in RaidStatus
+function jps.lowestFriendlyRaidStatus()
+	local lowestUnit = "player"
+	local lowestHP = 0
+	for unit, unitTable in pairs(jps.RaidStatus) do
+	--local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
+		if jps.canHeal(unit) and unitTable["hp"] > lowestHP then -- if thisHP > lowestHP 
+			lowestHP = unitTable["hp"] -- thisHP
+			lowestUnit = unit
+		end
+	end
+	return lowestUnit
+end
+
+-- TABLE FOCUS --
+function jps.HealingFocus()
+	local PriestHeal_Target_TANK = nil
+	local Tanktable = {}
+	table.insert(Tanktable,"player")
+	if UnitExists("focus") and UnitIsFriend("player","focus") then table.insert(Tanktable,"focus") end
+	if UnitExists("target") and UnitIsFriend("player","target") then table.insert(Tanktable,"target") end
+	local lowestHP = 1
+	for i,j in ipairs(Tanktable) do
+		local thisHP = UnitHealth(j) / UnitHealthMax(j)
+		if IsControlKeyDown() then print(i,j,thisHP) end
+		if UnitExists(j) and thisHP <= lowestHP then 
+				lowestHP = thisHP
+				PriestHeal_Target_TANK = j
+		end
+	end
+return PriestHeal_Target_TANK
+end
+
+---------------------------
+-- GROUP Functions in RAID
+---------------------------
+
+-- find the subgroup of an unit in RaidStatus --
+function jps.findSubGroupUnit(unit)
+if GetNumRaidMembers()==0 then return 0 end
+local groupUnit = 0
+local raidIndex = UnitInRaid(unit) + 0.1 
+-- UnitInRaid("unit") returns 0 for raid1, 12 for raid13
+-- 0-4 > grp1
+-- 5-9 > grp2
+-- 10-14 > grp3
+-- 15-19 > grp4
+-- 20-24 > grp5
+	
+	if raidIndex == nil then groupUnit = 0 -- Pet return nil with UnitInRaid
+	else groupUnit = math.ceil(raidIndex / 5) -- math.floor(0.5) > 0 math.ceil(0.5) > 1
+	end      
+return groupUnit
+end	
+
+-- counts the number of party members having a significant health pct loss --
+function jps.countInRaidStatus(low_health_def)
+	local units_needing_heals = 0
+			for unit, unitTable in pairs(jps.RaidStatus) do 
+				if jps.canHeal(unit) and unitTable["hpct"] < low_health_def then
+				units_needing_heals = units_needing_heals + 1
+				end
+			end	
+	return units_needing_heals
+end
+	
+-- find the subgroup to heal with POH in RaidStatus --
+function jps.findSubGroupToHeal(low_health_def)
+if GetNumRaidMembers()==0 then return 0 end
+
+	local gr1 = 0
+	local gr2 = 0
+	local gr3 = 0
+	local gr4 = 0
+	local gr5 = 0
+	local gr6 = 0
+	local gr7 = 0
+	local gr8 = 0
+
+	for unit,hp_table in pairs(jps.RaidStatus) do
+		--local thisHP = UnitHealth(unit) / UnitHealthMax(unit)
+        if jps.canHeal(unit) and hp_table["hpct"] < low_health_def then
+            if  hp_table["subgroup"] == 1 then gr1= gr1+1
+            elseif  hp_table["subgroup"] == 2 then gr2= gr2+1
+            elseif  hp_table["subgroup"] == 3 then gr3= gr3+1
+            elseif  hp_table["subgroup"] == 4 then gr4= gr4+1
+            elseif  hp_table["subgroup"] == 5 then gr5= gr5+1
+            elseif  hp_table["subgroup"] == 6 then gr6= gr6+1
+            elseif  hp_table["subgroup"] == 7 then gr7= gr7+1
+            elseif  hp_table["subgroup"] == 8 then gr8= gr8+1
+            end
+         end
+	end
+	
+	local groupToHeal = 0
+	local groupVal = 2 -- Heal >= 3 joueurs
+	local groupTable = { gr1, gr2, gr3, gr4, gr5, gr6, gr7, gr8 }
+
+	for i=1,#groupTable  do
+		--print(i,"|cffff8000"..groupTable[i])
+		if groupTable[i] > groupVal then -- Heal >= 3 joueurs
+		groupVal = groupTable[i]
+		groupToHeal = i
+		--print(groupToHeal,"gr",groupVal)
+		end
+	end
+--for i, j in pairs(groupTable) do
+--	print(i,"|cffffffff"..j,"|cffff8000"..groupTable[i])
+--end
+return groupToHeal
+end
+
+-- find the Target for POH in Raid
+function findMePOH_Target (pctLOSS)
+local findSubGroup = jps.findSubGroupToHeal(pctLOSS)
+local POH_Target = nil
+	if findSubGroup > 0 then
+		for unit,hp_table in pairs(jps.RaidStatus) do	
+			if hp_table["subgroup"] == findsubgroup and (hp_table["hpct"] < pctLOSS) and jps.canCast("Prière de soins",unit) then
+				POH_Target = unit
+				spell = "Prière de soins"
+			break end
+		end
+	end
+return POH_Target
+end
