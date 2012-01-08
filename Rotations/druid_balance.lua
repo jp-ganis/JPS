@@ -2,7 +2,7 @@
 -- simcrafty
 -- thanks to balance power tracker for making this SO much better
 function druid_balance(self)
-	if BalancePowerTracker_SharedInfo == nil then return druid_balanace_fail()
+	if BalancePowerTracker_SharedInfo == nil then return druid_balance_fail()
 	else return druid_balance_bpt() end
 end
 
@@ -74,8 +74,8 @@ function druid_balance_bpt(self)
 		]]--
 		-- Moving
 		--{ "typhoon", jps.Moving },
-		--{ "starfall", lEclipse },
-		--{ "starsurge", jps.Moving and jps.buff("shooting stars") },
+		{ "starfall", lEclipse },
+		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
 		-- Main rotation
 		{ "starsurge", vDirection == "moon" and vEnergy > -85},
 		{ "starsurge", vDirection == "sun" and vEnergy < 85 },
