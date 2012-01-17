@@ -174,6 +174,8 @@ function combatEventHandler(self, event, ...)
     end
 end
 
+local L = MyLocalizationTable
+
 function jps.detectSpec()
 	jps.Race = UnitRace("player")
 	jps.Class = UnitClass("player")
@@ -188,7 +190,10 @@ function jps.detectSpec()
 			end
 		end
 	end
-	jps.Rotation = jps_getCombatFunction( jps.Class,jps.Spec )
+	local class = L[jps.Class]
+	local spec = L[jps.Spec]
+	jps.Rotation = jps_getCombatFunction( class,spec )
+	-- jps.Rotation = jps_getCombatFunction( jps.Class,jps.Spec )
 	jps_VARIABLES_LOADED()
 end
 
