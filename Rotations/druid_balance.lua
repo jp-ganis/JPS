@@ -1,5 +1,6 @@
 -- jpganis
 -- simcrafty
+--TODO: add tab-dotting everything.
 -- thanks to balance power tracker for making this SO much better
 function druid_balance(self)
 	if BalancePowerTracker_SharedInfo == nil then return druid_balance_fail()
@@ -52,7 +53,7 @@ function druid_balance_bpt(self)
 		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
 		{ "moonfire", jps.Opening },
 		-- Insta-Starsurge when we flip eclipse so we don't waste NG.
-		{ "starsurge", jps.buff("shooting stars") and vEclipse ~= false },
+		{ "starsurge", jps.buff("shooting stars") and vEclipse ~= true },
 		-- Insect Swarm
 		{ "insect swarm", sEclipse and isDuration < isTick },
 		{ "insect swarm", sEclipse and vEnergy < 15 and isDuration < 10 },
@@ -62,24 +63,16 @@ function druid_balance_bpt(self)
 		{ "moonfire", sEclipse and sfDuration < 7 and vEnergy < 15 },
 		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration < mfTick },
 		{ "moonfire", lEclipse and mfDuration < 10 and vEnergy >= -20 },
-		-- Focus dots
-		--[[
-		{ "nested", focusDotting,
-			{
-				{ "moonfire", lEclipse and focusMF < mfTick, "focus" },
-				{ "moonfire", sEclipse and focusMF < mfTick and focusSF < mfTick, "focus" },
-				{ "insect swarm", (sEclipse or jps.buff("nature's grace")) and focusIS < isTick, "focus" },
-			}
-		},
-		]]--
 		-- Moving
 		--{ "typhoon", jps.Moving },
 		{ "starfall", lEclipse },
 		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
+		{ "insect swarm", jps.Moving and isDuration < isTick },
+		{ "moonfire", jps.Moving },
 		-- Main rotation
-		{ "starsurge", vDirection == "moon" and vEnergy > -85},
-		{ "starsurge", vDirection == "sun" and vEnergy < 85 },
-		{ "starsurge", lEclipse and jps.buff("shooting stars") },
+		{ "starsurge", vDirection == "moon" and vEnergy > -85 and vEclipse ~= true },
+		{ "starsurge", vDirection == "sun" and vEnergy < 85 and vEclipse ~= true },
+		{ "starsurge", lEclipse and jps.buff("shooting stars") and vEclipse ~= true },
 		{ "innervate", jps.mana() < 0.5 },
 		{ "force of nature", jps.UseCDs },
 		{ "wrath", vDirection == "moon" },
