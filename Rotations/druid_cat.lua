@@ -14,12 +14,15 @@ function druid_cat_pve(self)
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
-	local executePhase = jps.hp("target") <= 0.6
+	local executePhase = jps.hp("target") <= 0.6 --ADD TALENT DETECTION
 	local gcdLocked = jps.cooldown("shred") > 0
 	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
 	local tf_up = jps.buff("tiger's fury")
+
+	local pseudoMangle = jps.debuff("hemorrhage") or jps.debuff("trauma") or jps.debuff("tendon rip") or jps.debuff("gore") or jps.debuff("stampede")
+	if pseudoMangle then mangleDuration = 5 end
 
 	local spellTable =
 	{
