@@ -8,6 +8,7 @@ function shaman_enhancement(self)
 		{ "wind shear", jps.shouldKick() },
 		{ "wind shear", jps.shouldKick("focus"), "focus" },
 		{ "searing totem", GetTotemTimeLeft(1) < 2 },
+		{ "lightning shield", not jps.buff("lightning shield") },
 		{ "stormstrike" },
 		{ "lava lash" },
 		{ "lightning bolt", maelstromStacks > 4 },
