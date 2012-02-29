@@ -1,6 +1,6 @@
 --jpganis + SIMCRAFT
 function mage_arcane(self)
-	local max_mana_unbuffed = 80974
+	local max_mana_unbuffed = 95000
 	local stacks = jps.debuffStacks("arcane blast","player")
 	local dpsPhase = jps.buff("improved mana gem") and dpmPhase
 	local dpmPhase = jps.cd("evocation") <= 20 and dpsPhase and jps.mana() < 0.22
