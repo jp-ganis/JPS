@@ -1,88 +1,50 @@
 function druid_resto(self)
 	--healer
-	local my_mana = UnitMana("player")/UnitManaMax("player")
-	local my_hp = UnitHealth("player")/UnitHealthMax("player")
-	local tank, tank_hp, tank_focus, tank_bloom_count,tank_bloom_duration
-	if UnitExists("focus") and UnitInRange("focus") and UnitIsDeadOrGhost("focus")~=1 then
-		tank = "focus"
-		tank_hp = UnitHealth(tank)/UnitHealthMax(tank)
-		tank_focus = true
-		tank_bloom_count = jps.buffStacks(tank,"lifebloom")
-		tank_bloom_duration = jps.buffDuration(tank,"lifebloom")
-	end
-	local spell = nil
+	local tank = nil
+	local me = "player"
 
-	if ub("player","nature's swiftness") then tank_focus = false end
+	-- Tank is focus.
+	tank = jps.findMeATank()
 
-	if my_mana < 0.5 and cd("innervate") == 0 then
-		spell = "innervate"
-		jps.Target = "player"
-	elseif my_hp < 0.7 and cd("barkskin") == 0 then
-		spell = "barkskin"
-	-- tank healing
-	elseif tank_focus and tank_bloom_count < 3 then
-		spell = "lifebloom"
-		jps.Target = tank
-	elseif tank_focus and tank_bloom_count == 3 and tank_bloom_duration < 3 and tank_hp > 60 then
-		spell = "lifebloom"
-		jps.Target = tank
-	elseif IsShiftKeyDown() and cd("wild growth") == 0 then
-		spell = "wild growth"
-	else
-		-- Check for critical (sub-40) raid-members.
-		spell = nil
-		for unit,hp_table in pairs(jps.RaidStatus) do
-			if spell ~= nil then break end
-			if UnitExists(unit) and UnitInRange(unit) and UnitIsDeadOrGhost(unit)~=1 then
-				jps.Target = unit
-				local pct = hp_table["hp"]/hp_table["hpmax"]*100
-				if (IsSpellInRange("lifebloom",unit) or unit=="player") and pct < 40 then
-					if cd("Nature's Swiftness") == 0 then
-						spell = "Nature's Swiftness"
-					elseif ub("player","nature's swiftness") then
-						spell = "Healing Touch"
-					elseif (ub(unit,"rejuvenation") or ub(unit,"regrowth")) and cd("swiftmend") == 0 then
-						spell = "swiftmend"
-					elseif not ub(unit, "regrowth") and jps.LastCast ~= "regrowth" then
-						spell = "regrowth"
-					else
-						spell = "healing touch"
-					end
-					print(UnitName(unit).." critical - casting "..spell..".")
-					return spell
-				end
-			end
-		end
-		-- Non-critical updates, this may take some time...
-		spell = nil
-		for unit,hp_table in pairs(jps.RaidStatus) do
-			if UnitExists(unit) and UnitInRange(unit) and UnitIsDeadOrGhost(unit)~=1 then
-				local pct = hp_table["hp"]/hp_table["hpmax"]*100
-				if IsSpellInRange("lifebloom",unit) or unit=="player" then
-					if spell ~= nil then break end
-					jps.Target = unit
-					if pct < 80 and (ub(unit,"rejuvenation") or ub(unit,"regrowth")) and cd("swiftmend") == 0 then
-						spell = "swiftmend"
-					-- Dispels
-					elseif ud(unit,"static disruption") then
-						spell = "remove corruption"
-					elseif ud(unit,"Consuming Darkness") then
-						spell = "remove corruption"
-					-- HoTs
-					elseif pct < 65 and not ub(unit, "regrowth") and jps.LastCast ~= "regrowth" then
-						spell = "regrowth"
-					elseif pct < 95 and not ub(unit,"rejuvenation") then
-						spell = "rejuvenation"
-					-- Heals
-					elseif pct < 55 then
-						spell = "healing touch"
-					elseif pct < 75 then
-						spell = "nourish"
-					end
-				end
-			end
-		end
-	end
+    -- Check if we should cleanse
+    local cleanseTarget = nil
+    local hasSacredCleansingTalent = 0
+    _,_,_,_,hasSacredCleansingTalent = 1 -- GetTalentInfo(1,14) JPTODO: find the resto talent
+    if hasSacredCleansingTalent == 1 then
+      cleanseTarget = jps.FindMeADispelTarget({"Poison"},{"Curse"},{"Magic"})
+    else
+      cleanseTarget = jps.FindMeADispelTarget({"Poison"},{"Curse"})
+    end
+
+	--Default to healing lowest partymember
+	local defaultTarget = jps.lowestFriendly()
+
+	--Check that the tank isn't going critical, and that I'm not about to die
+    if UnitExists(tank) and jps.hpInc(tank) <= 0.5 then defaultTarget = tank end
+	if jps.hpInc(me) < 0.2 then	defaultTarget = me end
+
+	--Get the health of our decided target
+	local defaultHP = jps.hpInc(defaultTarget)
+
+	--JPTODO tranquility detection
 	
+	local spellTable =
+	{
+        { "barkskin",			jps.hp() < 0.50 },
+		{ "tree of life",		defaultHP < 0.45 and not jps.buff("tree of life") },
+        { "remove corruption",	cleanseTarget~=nil, cleanseTarget },
+        { "wild growth",		jps.MultiTarget and defaultHP < 0.85 },
+		{ "regrowth",			defaultHP < 0.55 or jps.buff("clearcasting"), defaultTarget },
+        { "rejuvenation",		defaultHP < 0.85 and not jps.buff("rejuvenation",defaultTarget), defaultTarget },
+		{ "swiftmend",			defaultHP < 0.75, defaultTarget },
+		{ "nourish",			defaultHP < 0.8, defaultTarget },
+        { "lifebloom",			jps.buffDuration("lifebloom",tank) < 3 or jps.buffStacks("lifebloom",tank) < 3, tank },
+        { "rejuvenation",		jps.buffDuration("rejuvenation",tank) < 3, tank },
+		{ "nourish",			jps.hpInc(tank) < 0.9, tank },
+	}
+
+	local spell,target = parseSpellTable(spellTable)
+	jps.Target = target
 	return spell
+	
 end
