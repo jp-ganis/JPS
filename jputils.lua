@@ -181,3 +181,14 @@ function jps.togglePvP( value )
 	if jps.PvP then jpsIcon.texture:SetTexture(jps.GUIpvp)
 	else jpsIcon.texture:SetTexture(jps.GUInormal) end
 end
+
+--PLua Test
+function jps.PLuaTest()
+	jps.groundClick()
+	if jps.PLuaFlag == true then
+		write("PLua commands not available, deactivating JPS.")
+		jpsIcon.texture:SetTexture(jps.GUInoplua)
+		jpsIcon.border:SetTexture(jps.GUIborder_combat)
+		jps.PLuaFlag = false
+	end
+end
