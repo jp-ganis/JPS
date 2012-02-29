@@ -113,8 +113,6 @@ function combatEventHandler(self, event, ...)
 			jps_createConfigFrame() end
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
-		jpsIcon.texture:SetTexture(jps.GUInoplua)
-		jpsIcon.border:SetTexture(jps.GUIborder_combat)
 		jps.PLuaFlag = true
 		
 	elseif event == "PLAYER_REGEN_DISABLED" then
