@@ -22,7 +22,8 @@ function druid_cat_pve(self)
 	local tf_up = jps.buff("tiger's fury")
 
 	local pseudoMangle = jps.debuff("hemorrhage") or jps.debuff("trauma") or jps.debuff("tendon rip") or jps.debuff("gore") or jps.debuff("stampede")
-	if pseudoMangle then mangleDuration = 5 end
+
+	if pseudoMangle==true then mangleDuration = 5 end
 
 	local spellTable =
 	{
@@ -33,7 +34,6 @@ function druid_cat_pve(self)
 		{ "tiger's fury", 		jps.Opening and srDuration > 0 },
 		--
 		{ "tiger's fury", 		energy <= 35 and not clearcasting and gcdLocked },
-		{{"macro","/use 14"},	jps.itemCooldown(77113) == 0 and jps.buff("tiger's fury") and jps.UseCDs },
 		--
 		{ "berserk", 			jps.UseCDs and jps.buff("tiger's fury") },
 		{ jps.DPSRacial,			jps.LastCast == "berserk" },
