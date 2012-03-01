@@ -20,6 +20,12 @@
 
 -- canCast
 function ImReallySureICanCastThisShit( spell, unit )
+	spell:lower()
+
+	--debug mode
+	if jps.Debug then return jpd( spell, unit ) end
+	
+	--
 	if unit == nil then unit = "target" end
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
@@ -33,7 +39,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if not UnitIsVisible(unit) then return false end
 	if not IsSpellKnown(spellID) then return false end
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
-	if jps[spell] ~= nil and jps[spell] == false then return false end
+	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
 	
 	return true
 end
@@ -41,7 +47,7 @@ end
 -- canCast debug mode
 function jpd( spell, unit )
 	if unit == nil then unit = "target" end
-	write(spell)
+	write(spell.." @ "..unit)
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
 
