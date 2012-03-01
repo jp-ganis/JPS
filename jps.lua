@@ -290,8 +290,7 @@ function combat(self)
 	end
 
 	-- Lag
-	_,_,jps.Lag = GetNetStats()
-	jps.Lag = 30
+	jps.Lag = select(3,GetNetStats())
 	jps.Lag = jps.Lag/100
 	
 	-- Movement
