@@ -154,6 +154,28 @@ function combatEventHandler(self, event, ...)
 		end
 
 		jps.Error = nil
+		
+-- RaidStatus Update
+    elseif event == "UNIT_HEALTH" and jps.Enabled then
+    	jps.UpdateHealerBlacklist()
+ 	-- table.wipe(jps.RaidStatus)
+ 		
+        local unit = ...
+        if jps.canHeal(unit) and jps.Enabled then Combat() end 
+		if jps.canHeal(unit) and jps.hpInc(unit,"absolute") < UnitHealthMax(unit) then
+			local unitSubGroup = jps.findSubGroupUnit(unit)
+			hp = jps.hpInc(unit)
+			unit = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
+			
+			jps.RaidStatus[unit] = { 	
+				["name"] = unit,
+				["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
+				["hpct"] =hp,
+				["subgroup"] = unitSubGroup
+			}
+			
+      	end
+
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
