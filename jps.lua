@@ -93,6 +93,8 @@ function write(...)
 end
 
 function combatEventHandler(self, event, ...)
+	if jps.Enabled == false then return end
+
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
 
@@ -136,7 +138,7 @@ function combatEventHandler(self, event, ...)
 				DeleteCursorItem()
 			  end 
 			end 
-		  end 
+		end 
 
 	-- UI Error checking - for LoS and Shred-fails.
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
