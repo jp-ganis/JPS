@@ -29,6 +29,7 @@ jps.Race = nil
 jps.Rotation = nil
 jps.Interrupts = true
 jps.Debug = false
+jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = false
 -- Utility
@@ -112,9 +113,7 @@ function combatEventHandler(self, event, ...)
 			jps_createConfigFrame() end
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
-		jpsIcon.texture:SetTexture(jps.GUInoplua)
-		jpsIcon.border:SetTexture(jps.GUIborder_combat)
-		write("Protected Lua action blocked.")
+		jps.PLuaFlag = true
 		
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		jps.Combat = true
@@ -145,7 +144,6 @@ function combatEventHandler(self, event, ...)
 		jps.Error = ...
 		if jps.Error == "You must be behind your target." and jps.Class == "Druid" then
 			jps.Cast("mangle(cat form)")
-			jps.Error = nil
 		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
 			if jps.Spec == "Assassination" then jps.Cast("mutilate")
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
@@ -154,6 +152,8 @@ function combatEventHandler(self, event, ...)
 		elseif (jps.Error == "Out of range." or jps.Error == "You are too far away!") and jps.MoveToTarget then
 			jps.moveToTarget()
 		end
+
+		jps.Error = nil
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -290,8 +290,7 @@ function combat(self)
 	end
 
 	-- Lag
-	_,_,jps.Lag = GetNetStats()
-	jps.Lag = 30
+	jps.Lag = select(3,GetNetStats())
 	jps.Lag = jps.Lag/100
 	
 	-- Movement
