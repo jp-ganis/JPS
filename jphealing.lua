@@ -86,3 +86,31 @@ function jps.countInRaidStatus(low_health_def)
 			end	
 	return units_needing_heals
 end
+
+-- Lowest HP in RaidStatus
+function jps.lowestFriendly()
+	local lowestUnit = "player"
+	local lowestHP = 0
+	for unit, unitTable in pairs(jps.GroupStatus) do
+	--local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
+		if jps.canHeal(unit) and unitTable["hp"] > lowestHP then -- if thisHP > lowestHP 
+			lowestHP = unitTable["hp"] -- thisHP
+			lowestUnit = unit
+		end
+	end
+	return lowestUnit
+end
+
+-- Lowest percentage in RaidStatus
+function jps.lowestInRaidStatus() 
+	local lowestUnit = "player"
+	local lowestHP = 1
+	for unit, unitTable in pairs(jps.GroupStatus) do
+	--local thisHP = UnitHealth(unit) / UnitHealthMax(unit)
+		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
+			lowestHP = unitTable["hpct"] -- thisHP
+			lowestUnit = unit
+		end
+	end
+	return lowestUnit
+end
