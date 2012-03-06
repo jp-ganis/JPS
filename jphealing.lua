@@ -42,4 +42,47 @@ function jps.BlacklistPlayer(unit)
 end
 
 
----More to come...
+---------------------------
+-- GROUP Functions in RAID
+---------------------------
+
+function jps.canHeal(unit)
+	if not unit then unit = "target" end
+	if UnitExists(unit)~=1 then return false end
+	if UnitIsVisible(unit)~=1 then return false end
+	if UnitIsPlayer(unit)~=1 then return false end
+	if UnitIsFriend("player",unit)~=1 then return false end
+	if not UnitInRange(unit) then return false end
+	if UnitIsDeadOrGhost(unit)==1 then return false end
+	
+	return true
+end
+
+-- find the subgroup of an unit in RaidStatus --
+function jps.findSubGroupUnit(unit)
+if GetNumRaidMembers()==0 then return 0 end
+local groupUnit = 0
+local raidIndex = UnitInRaid(unit) + 0.1 
+-- UnitInRaid("unit") returns 0 for raid1, 12 for raid13
+-- 0-4 > grp1
+-- 5-9 > grp2
+-- 10-14 > grp3
+-- 15-19 > grp4
+-- 20-24 > grp5
+	
+	if raidIndex == nil then groupUnit = 0 -- Pet return nil with UnitInRaid
+	else groupUnit = math.ceil(raidIndex / 5) -- math.floor(0.5) > 0 math.ceil(0.5) > 1
+	end      
+return groupUnit
+end	
+
+-- counts the number of party members having a significant health pct loss --
+function jps.countInRaidStatus(low_health_def)
+	local units_needing_heals = 0
+			for unit, unitTable in pairs(jps.RaidStatus) do 
+				if jps.canHeal(unit) and unitTable["hpct"] < low_health_def then
+				units_needing_heals = units_needing_heals + 1
+				end
+			end	
+	return units_needing_heals
+end
