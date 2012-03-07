@@ -203,7 +203,7 @@ function jps.shouldKick(unit)
 		--if not jps.PvP then return true 
 		--else return endTime-GetTime()*1000 < 333+jps.Lag end
 
-	elseif chanelling and not notInterruptible then
+	elseif channelling and not notInterruptible then
 		return true
 
 	end 
@@ -235,23 +235,9 @@ function jps.hpInc(unit,message)
 	if message == "abs" or message == "absolute" then
 		return UnitHealth(unit) + hpInc
 	else
-		return UnitHealth(unit)/UnitHealthMax(unit) + hpInc/UnitHealthMax(unit)
+		return (UnitHealth(unit) + hpInc)/UnitHealthMax(unit)
 	end
 end
-
-function jps.lowestInRaidStatus()
-	local lowestHP = 1
-	local lowestUnit = nil
-	for name, details in pairs(jps.RaidStatus) do
-		if details["hp"] < lowestHP then
-			lowestHP = details["hp"]
-			lowestUnit = name
-		end
-	end
-
-	return lowestUnit
-end
-
 
 -- Racial/Profession CDs Check
 function jps.checkProfsAndRacials()
@@ -278,24 +264,6 @@ function jps.checkProfsAndRacials()
 
 	return usables
 
-end
-
--- Lowest HP in RaidStatus
-function jps.lowestFriendly()
-	local lowestUnit = nil
-	local lowestHP = UnitHealthMax("player")*100
-
-	for unit, unitTable in pairs(jps.RaidStatus) do
-		local thisHP = jps.hpInc(unit)
-		if thisHP < lowestHP then
-			if not UnitIsDeadOrGhost(unit) and UnitIsVisible(unit) and UnitInRange(unit) then
-				lowestHP = thisHP
-				lowestUnit = unit
-			end
-		end
-	end
-
-	return lowestUnit
 end
 
 function jps.targetTargetTank()
