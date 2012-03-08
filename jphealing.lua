@@ -91,7 +91,7 @@ end
 function jps.lowestFriendly()
 	local lowestUnit = "player"
 	local lowestHP = 0
-	for unit, unitTable in pairs(jps.GroupStatus) do
+	for unit, unitTable in pairs(jps.RaidStatus) do
 	--local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
 		if jps.canHeal(unit) and unitTable["hp"] > lowestHP then -- if thisHP > lowestHP 
 			lowestHP = unitTable["hp"] -- thisHP
@@ -105,7 +105,7 @@ end
 function jps.lowestInRaidStatus() 
 	local lowestUnit = "player"
 	local lowestHP = 1
-	for unit, unitTable in pairs(jps.GroupStatus) do
+	for unit, unitTable in pairs(jps.RaidStatus) do
 	--local thisHP = UnitHealth(unit) / UnitHealthMax(unit)
 		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
 			lowestHP = unitTable["hpct"] -- thisHP
