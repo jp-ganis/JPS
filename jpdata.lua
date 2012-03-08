@@ -52,6 +52,48 @@ jps.Dispells = {
 	}	
 }
 
+function jps.FindMeADispelTarget(dispeltypes)
+     for unit, _ in pairs(jps.RaidStatus) do
+		if jps.canDispell( unit, dispeltypes ) then return unit end
+	end
+end
+
+--------------------------
+-- Dispell Functions LOOP
+--------------------------
+
+function jps.MagicDispell(unit) 
+	if not unit then unit = "player" end
+	local auraName, icon, count, debuffType, expirationTime, castBy
+	local i = 1
+	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, _ = UnitDebuff(unit, i)
+	if jps.canHeal(unit) then 
+		while auraName do
+			if debuffType=="Magic" then 
+			return true end
+			i = i + 1
+			auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, _ = UnitDebuff(unit, i)
+		end
+	end
+	return false
+end
+
+function jps.DiseaseDispell(unit) 
+	if not unit then unit = "player" end
+	local auraName, icon, count, debuffType, expirationTime, castBy
+	local i = 1
+	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, _ = UnitDebuff(unit, i)
+	if jps.canHeal(unit) then 
+		while auraName do
+			if debuffType=="Disease" then 
+			return true end
+			i = i + 1
+			auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, _ = UnitDebuff(unit, i)
+		end
+	end
+	return false
+end
+
 -- Functions
 function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
@@ -348,8 +390,3 @@ function jps.checkTimer( name )
 	return 0
 end
 
-function jps.FindMeADispelTarget(dispeltypes)
-     for unit, _ in pairs(jps.RaidStatus) do
-		if jps.canDispell( unit, dispeltypes ) then return unit end
-	end
-end
