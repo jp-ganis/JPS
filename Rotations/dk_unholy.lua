@@ -2,9 +2,10 @@
 -- Ty to SIMCRAFT for this rotation
 function new_dk_unholy(self)
 	-- INFO --
-	-- Shift-key to DnD
+	-- Shift-key to cast Death and Decay
 	-- Ctrl-key to heal ghoul pet with death coil
-	-- Set focus for dark simulacrum (duplicate spell) (this is optional, default is current target)
+	-- Alt-key + mouseover to combat ress another player (Raise Ally)
+	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
 
 	local rp = UnitPower("player") 
 
@@ -52,6 +53,8 @@ function new_dk_unholy(self)
 	
 	local spellTable =
 	{
+		-- raise ally, mouseover unit in party/raid frame + ctrl-key
+		{ "raise ally", 			IsAltKeyDown() and UnitIsDeadOrGhost("mouseover") and IsSpellInRange("rebirth", "mouseover"), "mouseover" }
 		-- death coil ghoul pet (heal)
 		{ "death coil",				IsControlKeyDown() ~= nil, "pet" },
 		-- unholy presence
@@ -60,7 +63,7 @@ function new_dk_unholy(self)
 		{ "dark simulacrum", 		castDarkSim, DarkSimTarget }, 					-- Duplicate spell
 		{ "dark simulacrum", 		jps.buff("dark simulacrum"), DarkSimTarget }, 	-- Cast the duplicated spell
 		-- Anti-Magic Shell used against Hagara abilities
-		{ "Anti-Magic Shell", 		jps.debuff("Watery Entrenchment","player") or jps.debuff("Ice Lance") }, 
+		{ "Anti-Magic Shell", 		jps.debuff("Watery Entrenchment","player") or jps.debuff("Ice Lance","player") }, 
 		-- interrupts
 		{ "mind freeze", 			jps.shouldKick() },
 		{ "strangulate", 			jps.shouldKick() and jps.LastCast ~= "mind freeze" },
