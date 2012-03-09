@@ -114,3 +114,57 @@ function jps.lowestInRaidStatus()
 	end
 	return lowestUnit
 end
+
+-- find the subgroup to heal with POH in RaidStatus --
+function jps.findSubGroupToHeal(low_health_def)
+if GetNumRaidMembers()==0 then return 0 end
+
+	local gr1 = 0
+	local gr2 = 0
+	local gr3 = 0
+	local gr4 = 0
+	local gr5 = 0
+	local gr6 = 0
+	local gr7 = 0
+	local gr8 = 0
+
+	for unit,hp_table in pairs(jps.RaidStatus) do
+		--local thisHP = UnitHealth(unit) / UnitHealthMax(unit)
+        if jps.canHeal(unit) and hp_table["hpct"] < low_health_def then
+            if  hp_table["subgroup"] == 1 then gr1= gr1+1
+            elseif  hp_table["subgroup"] == 2 then gr2= gr2+1
+            elseif  hp_table["subgroup"] == 3 then gr3= gr3+1
+            elseif  hp_table["subgroup"] == 4 then gr4= gr4+1
+            elseif  hp_table["subgroup"] == 5 then gr5= gr5+1
+            elseif  hp_table["subgroup"] == 6 then gr6= gr6+1
+            elseif  hp_table["subgroup"] == 7 then gr7= gr7+1
+            elseif  hp_table["subgroup"] == 8 then gr8= gr8+1
+            end
+         end
+	end
+	
+	local groupToHeal = 0
+	local groupVal = 2 -- Heal >= 3 joueurs
+	local groupTable = { gr1, gr2, gr3, gr4, gr5, gr6, gr7, gr8 }
+
+	for i=1,#groupTable  do
+		--print(i,"|cffff8000"..groupTable[i])
+		if groupTable[i] > groupVal then -- Heal >= 3 joueurs
+		groupVal = groupTable[i]
+		groupToHeal = i
+		--print(groupToHeal,"gr",groupVal)
+		end
+	end
+--for i, j in pairs(groupTable) do
+--	print(i,"|cffffffff"..j,"|cffff8000"..groupTable[i])
+--end
+
+local tt = nil
+for unit,hp_table in pairs(jps.RaidStatus) do	
+	if hp_table["subgroup"] == groupToHeal and (hp_table["hpct"] < low_health_def) then
+		tt = unit
+	break end
+end
+
+return groupToHeal, tt
+end
