@@ -99,12 +99,12 @@ function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
 	CastSpellByName(spell,jps.Target)
-    jps.LastTarget = jps.Target
-	jps.Target = nil
+	jps.LastTarget = jps.Target
 	if jps.IconSpell ~= spell then
 		jps.set_jps_icon( spell )
 		if jps.Debug then write(spell, jps.Target) end
 	end
+	jps.Target = nil
 end
 
 function jps.canDispell( unit, ... )
@@ -114,7 +114,6 @@ function jps.canDispell( unit, ... )
 				if ud( unit, spell ) then return true end
 			end
 		end
-	end
 	return false
 end
 
