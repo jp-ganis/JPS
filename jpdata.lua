@@ -16,7 +16,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 -- JPS Helper Functions
---jpganis
+-- jpganis
 
 -- Lookup Tables
 -- Credit (and thanks!) to BenPhelps
@@ -27,15 +27,13 @@ jps.Dispells = {
 		"Emberstrike", -- Erunak Stonespeaker
 		"Binding Shadows", -- Erudax
 		"Divine Reckoning", -- Temple Guardian Anhuur
-		"Static Cling", -- Asaad, noobs shouldn't get hit by this, but get real....
+		"Static Cling", -- Asaad
 		"Pain and Suffering", -- Baron Ashbury
-		"Cursed Veil" -- Baron Silverlaine
-		-- "Wither", -- Ammunae
+		"Cursed Veil", -- Baron Silverlaine
 	},
 	
 	["Poison"] = {
 		"Viscous Poison", -- Lockmaw
-
 	},
 	
 	["Disease"] = {
@@ -49,8 +47,27 @@ jps.Dispells = {
 	
 	["Enrage"] = { -- hunters pretty much
 		"Enrage", -- Generic Enrage, used all over the place
-	}	
+	},
+	["Deathwing"] 	= {
+		"Plasma incendiaire", -- Boss Debuff 
+		"Searing Plasma",
+	},
+	["Yor'sahj"] 	= {
+		"Corruption profonde", -- Boss Debuff 
+		"Deep Corruption",
+	},
 }
+
+function jps.canDispell( unit, ... )
+	for _, dtype in pairs(...) do
+		if jps.Dispells[dtype] ~= nil then
+			for _, spell in pairs(jps.Dispells[dtype]) do
+				if ud( unit, spell ) then return true end
+			end
+		end
+	end
+	return false
+end
 
 function jps.FindMeADispelTarget(dispeltypes)
      for unit, _ in pairs(jps.RaidStatus) do
@@ -94,7 +111,22 @@ function jps.DiseaseDispell(unit)
 	return false
 end
 
+function jps.DispelMagicTarget()
+	for unit,_ in pairs(jps.RaidStatus) do	 
+		if jps.MagicDispell(unit) then return unit end
+	end
+end 
+
+function jps.DispelDiseaseTarget()
+	for unit,_ in pairs(jps.RaidStatus) do	 
+		if jps.DiseaseDispell(unit) then return unit end
+	end
+end 
+
+--------------------------
 -- Functions
+--------------------------
+
 function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
@@ -105,16 +137,6 @@ function jps.Cast(spell)
 		if jps.Debug then write(spell, jps.Target) end
 	end
 	jps.Target = nil
-end
-
-function jps.canDispell( unit, ... )
-	for _, dtype in pairs(...) do
-		if jps.Dispells[dtype] ~= nil then
-			for _, spell in pairs(jps.Dispells[dtype]) do
-				if ud( unit, spell ) then return true end
-			end
-		end
-	return false
 end
 
 function jps.cooldown(spell)
