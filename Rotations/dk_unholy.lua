@@ -54,8 +54,8 @@ function new_dk_unholy(self)
 	
 	local spellTable =
 	{
-		-- raise ally, mouseover unit in party/raid frame + ctrl-key
-		{ "raise ally", 			IsAltKeyDown() and UnitIsDeadOrGhost("mouseover") and IsSpellInRange("rebirth", "mouseover"), "mouseover" }
+		-- raise ally, mouseover unit in party/raid frame or corpse + Alt-key
+		{ "raise ally", 			IsAltKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") and IsSpellInRange("rebirth", "mouseover"), "mouseover" }
 		-- death coil ghoul pet (heal)
 		{ "death coil",				IsControlKeyDown() ~= nil, "pet" },
 		-- unholy presence
