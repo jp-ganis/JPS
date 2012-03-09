@@ -30,17 +30,17 @@ function druid_resto(self)
 	
 	local spellTable =
 	{
-        { "barkskin",			jps.hp() < 0.50 },
+    { "barkskin",			jps.hp() < 0.50 },
 		{ "tree of life",		defaultHP < 0.45 and not jps.buff("tree of life") },
-        { "remove corruption",	cleanseTarget~=nil, cleanseTarget },
-        { "wild growth",		jps.MultiTarget and defaultHP < 0.85 },
+    { "remove corruption",	cleanseTarget~=nil, cleanseTarget },
+    { "wild growth",		jps.MultiTarget and defaultHP < 0.85 },
 		{ "regrowth",			defaultHP < 0.55 or jps.buff("clearcasting"), defaultTarget },
-        { "rejuvenation",		defaultHP < 0.85 and not jps.buff("rejuvenation",defaultTarget), defaultTarget },
+    { "rejuvenation",		defaultHP < 0.85 and not jps.buff("rejuvenation",defaultTarget), defaultTarget },
 		{ "swiftmend",			defaultHP < 0.75, defaultTarget },
 		{ "nourish",			defaultHP < 0.8, defaultTarget },
-        { "lifebloom",			jps.buffDuration("lifebloom",tank) < 3 or jps.buffStacks("lifebloom",tank) < 3, tank },
-        { "rejuvenation",		jps.buffDuration("rejuvenation",tank) < 3, tank },
-		{ "nourish",			jps.hpInc(tank) < 0.9, tank },
+    { "lifebloom",			jps.buffDuration("lifebloom",tank) < 3 or jps.buffStacks("lifebloom",tank) < 3, tank },
+    { "rejuvenation",		jps.buffDuration("rejuvenation",tank) < 3, tank },
+		{ "nourish",			jps.hpInc(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
 	}
 
 	local spell,target = parseSpellTable(spellTable)
