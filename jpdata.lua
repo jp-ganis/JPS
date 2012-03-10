@@ -18,8 +18,11 @@
 -- JPS Helper Functions
 -- jpganis
 
--- Lookup Tables
+-------------------------------------
+-- Lookup TABLES
 -- Credit (and thanks!) to BenPhelps
+-------------------------------------
+
 jps.Dispells = {
 	["Magic"] = {
 		"Static Disruption", -- Akil'zon
@@ -56,6 +59,23 @@ jps.Dispells = {
 		"Corruption profonde", -- Boss Debuff 
 		"Deep Corruption",
 	},
+}
+
+jps_DispellOffensive_Eng = {
+		"Innervate", -- Druide
+		"Power Word: Shield", -- Pretre
+		"Ghost Wolf", -- Shaman
+		"Power Word: Fortitude", -- Pretre
+		"Rejuvenation", -- Druide
+		"Regrowth", -- Druide
+		"Mark of the Wild", -- Druide
+		"Heroism", -- Shaman
+		"Bloodlust", -- Shaman
+		"Arcane Brilliance", -- Mage
+		"Ice Barrier", -- Mage
+		"Mage Armor", -- Mage
+		"Avenging Wrath", -- Paladin
+		"Divine Plea" -- Paladin
 }
 
 function jps.canDispell( unit, ... )
@@ -122,6 +142,19 @@ function jps.DispelDiseaseTarget()
 		if jps.DiseaseDispell(unit) then return unit end
 	end
 end 
+
+
+function jps.canDispellOffensive(unit)
+	if not unit then return false end
+	if UnitExists(unit)==1 and UnitIsEnemy("player",unit)==1 and UnitCanAttack("player", unit)==1 then
+		for i, j in ipairs(jps_DispellOffensive_Eng) do 
+			local offName,_,_,_,offType,_,_,_,_,_,_ = UnitBuff(unit,j)
+			if offName and offType=="Magic" then  
+			return true end
+		end
+	end
+	return false
+end
 
 --------------------------
 -- Functions
@@ -273,6 +306,10 @@ function jps.shouldKick(unit)
 	return false
 end
 
+------------------------------
+-- HEALTH Functions
+------------------------------
+
 function jps.mana(unit,message)
 	if unit == nil then unit = "player" end
 	if message == "abs" or message == "absolute" then
@@ -374,7 +411,10 @@ function jps.findMeATank()
 	return "player"
 end
 
+------------------------------
 -- BenPhelps' Timer Functions
+------------------------------
+
 function jps.createTimer( name, duration )
 	jps.Timers[name] = duration+GetTime()
 end
