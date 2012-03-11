@@ -336,7 +336,7 @@ function combat(self)
 	
 	-- Check Table RaidStatus
     	if IsControlKeyDown() then
-        for k,v in pairs(jps.RaidStatus) do 
+        	for k,v in pairs(jps.RaidStatus) do 
 			print("|cffa335ee",v.name,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
 		end
 	end
@@ -365,8 +365,8 @@ function combat(self)
 		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
 			jps.Cast(jps.NextCast)
 			jps.NextCast = nil
-        else
-            if jps.Debug then write(jps.ThisCast," on ", jps.Target) end
+        	else
+            		if jps.Debug then write("|cffa335ee",jps.ThisCast," on ",jps.Target) end
 			jps.Cast(jps.ThisCast)
 		end
    	end
