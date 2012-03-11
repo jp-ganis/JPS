@@ -23,7 +23,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	spell:lower()
 
 	--debug mode
-	if jps.Debug then return jpd( spell, unit ) end
+	if jps.Debug and IsControlKeyDown() then return jpd( spell, unit ) end
 	
 	--
 	if unit == nil then unit = "target" end
@@ -142,7 +142,7 @@ function parseSpellTable( hydraTable )
 			local macroTarget = spell[4]
 			if macroSpell then conditions = conditions and ImReallySureICanCastThisShit( macroSpell,macroTarget ) end
 			if macroTarget then TargetUnit(macroTarget) end
-			if conditions then RunMacroText(macroText); return
+			if conditions then RunMacroText(macroText) return
 			else conditions = false end
 
 		-- MultiTarget List
