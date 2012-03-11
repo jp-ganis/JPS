@@ -195,6 +195,10 @@ function combatEventHandler(self, event, ...)
         if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
           jps.BlacklistPlayer(jps.LastTarget)
         end
+        -- timer for shield for disc priest
+    	if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5]== GetUnitName("player") and eventtable[12]== 17 then -- eventtable[12] == spellID eventtable[13] == spellName "Power Word: Shield"
+    		jps.createTimer( "Shield", 12 )
+    	end
     end
 end
 
