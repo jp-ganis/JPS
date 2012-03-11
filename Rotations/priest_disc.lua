@@ -13,6 +13,12 @@ function priest_disc(self)
 ----------------------
 -- HELPER
 ----------------------
+--IsControlKeyDown(): debug print text
+--jps.Defensive: you heal only the Tank et yourself
+--jps.MultiTarget : dispelling
+--jps.Opening: Damage and offensive dispell
+--jps.UseCDs: group heal POH
+--jps.Interrupts : pain suppression
 
 local spell = nil
 local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
@@ -90,7 +96,7 @@ end
 -- DISPEL
 ---------------------
 
-local dispelOffensive_Target = false -- jps.canDispellOffensive(rangedTarget) -- return true/false
+local dispelOffensive_Target = jps.canDispellOffensive(rangedTarget) -- return true/false
 
 local dispelMagic_Me = jps.MagicDispell("player") -- return true/false
 local dispelMagic_TANK = jps.MagicDispell(PriestHeal_Target_TANK) -- return true/false
@@ -98,7 +104,7 @@ local dispelMagic_Target = jps.DispelMagicTarget() -- return unit
 
 local dispelDisease_Me = jps.DiseaseDispell("player") -- return true/false
 local dispelDisease_TANK = jps.DiseaseDispell(PriestHeal_Target_TANK) -- return true/false
-local dispelDisease_Target = jps.DispelDiseaseTarget() -- return true/false
+local dispelDisease_Target = jps.DispelDiseaseTarget() --- return unit
 
 local Plasma = jps.FindMeADispelTarget({"Deathwing"}) -- return unit
 local Corruption = jps.FindMeADispelTarget({"Yor'sahj"}) -- return unit
@@ -175,7 +181,7 @@ local spellTable =
     },
 -- Dispell
  	{"Mass Dispel", AltKey_IsDown, "player" },
- 	 {"nested", (health_pct > 0.60) and jps.MultiTarget,
+ 	{"nested", (health_pct > 0.60) and jps.MultiTarget,
         {
 			{"Dispel Magic", dispelOffensive_Target and UnitExists(rangedTarget)==1 and jps.MultiTarget, rangedTarget },
 			{"Dispel Magic", dispelMagic_Me and jps.MultiTarget, "player" },
@@ -197,7 +203,7 @@ local spellTable =
         },
     },
 -- Group Heal
-	{"Power Infusion", (health_pct < 0.40), "player"},
+	{ "Power Infusion", (health_pct < 0.40), "player"},
 	{ "Prayer of Mending", (health_pct < 0.60) and not ub(PriestHeal_Target,"Prayer of Mending") and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
 	{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target_TANK },
 	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
