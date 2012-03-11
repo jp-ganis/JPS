@@ -189,7 +189,7 @@ function combatEventHandler(self, event, ...)
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         local eventtable =  {... }
 
-       --- Required For Healing Classes
+       -- Required For Healing Classes
        -- Update out of sight players before selecting a spell -- used for healing classes
        jps.UpdateHealerBlacklist()
         if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
@@ -332,6 +332,13 @@ function combat(self)
 		write("Sorry! The rotation file for your",jps.Spec,jps.Class.." seems to be corrupted. Please send Jp (iLulz) a bug report, and make sure you have \"Display LUA Errors\" enabled, you'll find this option by going to the WoW Interface Menu (by pressing Escape) and going to Help -> Display LUA Errors. Thank you!")
 		jps.Enabled = false
 		return
+	end
+	
+	-- Check Table RaidStatus
+    	if IsControlKeyDown() then
+        for k,v in pairs(jps.RaidStatus) do 
+			print("|cffa335ee",v.name,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
+		end
 	end
 
 	-- Lag
