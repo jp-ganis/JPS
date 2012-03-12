@@ -54,6 +54,7 @@ function jps.canHeal(unit)
 	if UnitIsFriend("player",unit)~=1 then return false end
 	if not UnitInRange(unit) then return false end
 	if UnitIsDeadOrGhost(unit)==1 then return false end
+	if jps.PlayerIsBlacklisted(unit) then return false end
 	
 	return true
 end
