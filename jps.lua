@@ -27,6 +27,7 @@ jps.Class = nil
 jps.Spec = nil
 jps.Race = nil
 jps.Rotation = nil
+jps.PVPInterrupt = false
 jps.Interrupts = true
 jps.Debug = false
 jps.PLuaFlag = false
