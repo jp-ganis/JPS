@@ -86,6 +86,8 @@ combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
+combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
 
 
 function write(...)
@@ -126,6 +128,14 @@ function combatEventHandler(self, event, ...)
 		jps.Opening = true
 		jps.RaidStatus = {}
 		collectgarbage("collect")
+		
+	elseif event == "PLAYER_CONTROL_LOST" then
+    		jps.Combat = false
+    		jps.gui_toggleCombat(false)
+
+    	elseif event == "PLAYER_CONTROL_GAINED" then
+    		jps.Combat = true
+    		jps.gui_toggleCombat(true)
 
 	-- Fishes
 	elseif event == "BAG_UPDATE" and jps.Fishing then
