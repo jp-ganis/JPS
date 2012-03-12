@@ -140,7 +140,7 @@ function parseSpellTable( hydraTable )
 			local macroText = spell[2]
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
-			if macroSpell then conditions = conditions and ImReallySureICanCastThisShit( macroSpell,macroTarget ) end
+			if macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then conditions = conditions end
 			if macroTarget then TargetUnit(macroTarget) end
 			if conditions then RunMacroText(macroText) return
 			else conditions = false end
