@@ -109,7 +109,7 @@ function conditionsMatched( spell, conditions )
 		else return not jps.buff( spell ) end
 
 	-- onCD
-	elseif conditions == "onCD" or conditions == nil then
+	elseif conditions == "onCD" then
 		return true
 
 	-- otherwise
@@ -128,9 +128,6 @@ function parseSpellTable( hydraTable )
 		conditions = spellTable[2]
 		target = nil
 
-		-- conditions default to oncd
-		-- if conditions == nil then conditions = true end
-
 		-- Nested table
 		if spell == "nested" and conditions then
 			local newTable = spellTable[3]
@@ -141,13 +138,18 @@ function parseSpellTable( hydraTable )
 			local macroText = spell[2]
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
-			if conditionsMatched( macroSpell, conditions ) and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then 
 			-- if macroTarget then TargetUnit(macroTarget) end
+			-- if conditionsMatched( macroSpell, conditions ) and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then 
+			if conditions then
 			RunMacroText(macroText) return end
 
 		-- MultiTarget List
 		elseif type(conditions) == "function" then
 			spell,target = parseMultiUnitTable( spellTable )
+			
+		-- conditions default to oncd
+		elseif conditions == nil then 
+			conditions = true 
 		end
 
 		-- If not already assigned, assign target now.
