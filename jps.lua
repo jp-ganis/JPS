@@ -27,6 +27,7 @@ jps.Class = nil
 jps.Spec = nil
 jps.Race = nil
 jps.Rotation = nil
+jps.PVPInterrupt = false
 jps.Interrupts = true
 jps.Debug = false
 jps.PLuaFlag = false
@@ -86,6 +87,8 @@ combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
+combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
 
 
 function write(...)
@@ -126,6 +129,14 @@ function combatEventHandler(self, event, ...)
 		jps.Opening = true
 		jps.RaidStatus = {}
 		collectgarbage("collect")
+		
+	elseif event == "PLAYER_CONTROL_LOST" then
+    		jps.Combat = false
+    		jps.gui_toggleCombat(false)
+
+    	elseif event == "PLAYER_CONTROL_GAINED" then
+    		jps.Combat = true
+    		jps.gui_toggleCombat(true)
 
 	-- Fishes
 	elseif event == "BAG_UPDATE" and jps.Fishing then
@@ -189,7 +200,7 @@ function combatEventHandler(self, event, ...)
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         local eventtable =  {... }
 
-       --- Required For Healing Classes
+       -- Required For Healing Classes
        -- Update out of sight players before selecting a spell -- used for healing classes
        jps.UpdateHealerBlacklist()
         if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
@@ -333,6 +344,13 @@ function combat(self)
 		jps.Enabled = false
 		return
 	end
+	
+	-- Check Table RaidStatus
+    	if IsControlKeyDown() then
+        	for k,v in pairs(jps.RaidStatus) do 
+			print("|cffa335ee",v.name,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
+		end
+	end
 
 	-- Lag
 	jps.Lag = select(4,GetNetStats())
@@ -358,8 +376,8 @@ function combat(self)
 		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
 			jps.Cast(jps.NextCast)
 			jps.NextCast = nil
-        else
-            if jps.Debug then write(jps.ThisCast," on ", jps.Target) end
+        	else
+            		if jps.Debug then write("|cffa335ee",jps.ThisCast," on ",jps.Target) end
 			jps.Cast(jps.ThisCast)
 		end
    	end
