@@ -100,21 +100,26 @@ end
 -- conditionsMatched
 function conditionsMatched( spell, conditions )
 	-- nil
-	if not spell or not conditions then
+	if not spell then
 		return false
+	
+	-- nil
+	elseif conditions == "nil" then
+		return true
+
+	-- onCD
+	elseif conditions == "onCD" then
+		return true
 
 	-- refresh
 	elseif conditions == "refresh" then
 		if IsHarmfulSpell(spell) then return not jps.debuff( spell )
 		else return not jps.buff( spell ) end
 
-	-- onCD
-	elseif conditions == "onCD" or conditions == nil then
-		return true
-
 	-- otherwise
 	else
 		return conditions
+
 	end
 end
 	
