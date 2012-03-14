@@ -23,7 +23,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	spell:lower()
 
 	--debug mode
-	if jps.Debug then return jpd( spell, unit ) end
+	if jps.Debug and IsControlKeyDown() then return jpd( spell, unit ) end
 	
 	--
 	if unit == nil then unit = "target" end
@@ -109,26 +109,27 @@ function conditionsMatched( spell, conditions )
 		else return not jps.buff( spell ) end
 
 	-- onCD
-	elseif conditions == "onCD" then
+	elseif conditions == "onCD" or conditions == nil then
 		return true
 
 	-- otherwise
 	else
 		return conditions
-
 	end
 end
 	
 
 -- Pick a spell from a priority table.
 function parseSpellTable( hydraTable )
+	local spell,conditions,target = nil
+	
 	for _, spellTable in pairs(hydraTable) do
-		local spell = spellTable[1]
-		local conditions = spellTable[2]
-		local target = nil
+		spell = spellTable[1]
+		conditions = spellTable[2]
+		target = nil
 
 		-- conditions default to oncd
-		if conditions == nil then conditions = true end
+		-- if conditions == nil then conditions = true end
 
 		-- Nested table
 		if spell == "nested" and conditions then
@@ -140,10 +141,9 @@ function parseSpellTable( hydraTable )
 			local macroText = spell[2]
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
-			if macroSpell then conditions = conditions and ImReallySureICanCastThisShit( macroSpell,macroTarget ) end
-			if macroTarget then TargetUnit(macroTarget) end
-			if conditions then RunMacroText(macroText); return
-			else conditions = false end
+			if conditionsMatched( macroSpell, conditions ) and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then 
+			-- if macroTarget then TargetUnit(macroTarget) end
+			RunMacroText(macroText) return end
 
 		-- MultiTarget List
 		elseif type(conditions) == "function" then

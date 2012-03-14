@@ -13,6 +13,13 @@ function priest_disc(self)
 ----------------------
 -- HELPER
 ----------------------
+--IsControlKeyDown(): debug print text
+--jps.Defensive: Heal only the Tank et yourself
+--jps.MultiTarget : Dispelling
+--jps.PVPInterrupt: Damage and offensive dispell
+--jps.UseCDs: group heal "Prayer of Healing"
+--jps.Interrupts : "Pain Suppression"
+--AltKey_IsDown : "Mass Dispel"
 
 local spell = nil
 local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
@@ -90,7 +97,7 @@ end
 -- DISPEL
 ---------------------
 
-local dispelOffensive_Target = false -- jps.canDispellOffensive(rangedTarget) -- return true/false
+local dispelOffensive_Target = jps.canDispellOffensive(rangedTarget) -- return true/false
 
 local dispelMagic_Me = jps.MagicDispell("player") -- return true/false
 local dispelMagic_TANK = jps.MagicDispell(PriestHeal_Target_TANK) -- return true/false
@@ -98,7 +105,7 @@ local dispelMagic_Target = jps.DispelMagicTarget() -- return unit
 
 local dispelDisease_Me = jps.DiseaseDispell("player") -- return true/false
 local dispelDisease_TANK = jps.DiseaseDispell(PriestHeal_Target_TANK) -- return true/false
-local dispelDisease_Target = jps.DispelDiseaseTarget() -- return true/false
+local dispelDisease_Target = jps.DispelDiseaseTarget() -- return unit
 
 local Plasma = jps.FindMeADispelTarget({"Deathwing"}) -- return unit
 local Corruption = jps.FindMeADispelTarget({"Yor'sahj"}) -- return unit
@@ -128,9 +135,12 @@ end
 -- TRINKETS ------------
 ------------------------
 
--- kick Soins if LowHeath
 	local spellstop, _, _, _, _, endTime = UnitCastingInfo("player")
-	if spellstop == "Heal" and (endTime-GetTime()) > 1 and health_pct < 0.70 then SpellStopCasting() end 
+-- kick Spell Heal if LowHeath
+	if spellstop == "Heal" and (endTime-GetTime()) > 1 and health_pct < 0.70 then SpellStopCasting() end
+-- kick Spell if OverHeal
+	if (spellstop == "Flash Heal" or spellstop == "Greater Heal") and jps.hpInc(PriestHeal_Target) > 0.95 then SpellStopCasting() end  
+	
 
 -- Don't kick Casting
 	if UnitCastingInfo("player") or UnitChannelInfo("player") then return nil end
@@ -175,7 +185,7 @@ local spellTable =
     },
 -- Dispell
  	{"Mass Dispel", AltKey_IsDown, "player" },
- 	 {"nested", (health_pct > 0.60) and jps.MultiTarget,
+ 	{"nested", (health_pct > 0.60) and jps.MultiTarget,
         {
 			{"Dispel Magic", dispelOffensive_Target and UnitExists(rangedTarget)==1 and jps.MultiTarget, rangedTarget },
 			{"Dispel Magic", dispelMagic_Me and jps.MultiTarget, "player" },
@@ -187,7 +197,7 @@ local spellTable =
 	    },
     },
 -- Damage
-	{ "nested", jps.Opening and UnitExists(rangedTarget)==1,
+	{ "nested", jps.PVPInterrupt and UnitExists(rangedTarget)==1,
         {
             { "Shadow Word: Death", UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.25, rangedTarget },
             { "Dispel Magic", dispelOffensive_Target, rangedTarget },
@@ -197,7 +207,7 @@ local spellTable =
         },
     },
 -- Group Heal
-	{"Power Infusion", (health_pct < 0.40), "player"},
+	{ "Power Infusion", (health_pct < 0.40), "player"},
 	{ "Prayer of Mending", (health_pct < 0.60) and not ub(PriestHeal_Target,"Prayer of Mending") and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
 	{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target_TANK },
 	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
@@ -206,14 +216,14 @@ local spellTable =
 	{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (health_pct < 0.30) and (playerhealth_deficiency > 2*average_bindingheal) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target},
  	{ "nested", jps.UseCDs and (GetNumRaidMembers() > 0) and (findSubGroup > 0),
           {
-            { "Prière de soins", jps.canHeal(POH_Target), POH_Target},
-            { "Prière de soins", "onCD", "player"},
+            { "Prayer of Healing", jps.canHeal(POH_Target), POH_Target},
+            { "Prayer of Healing", "onCD", "player"},
           },
     },
    	{ "nested", jps.UseCDs and (GetNumRaidMembers()==0) and (POH_countInRaid > countInRaid),
           {
-            { "Prière de soins", jps.canHeal(PriestHeal_Target), PriestHeal_Target},
-            { "Prière de soins", "onCD", "player"},
+            { "Prayer of Healing", jps.canHeal(PriestHeal_Target), PriestHeal_Target},
+            { "Prayer of Healing", "onCD", "player"},
           },
     },
 -- Emergency player
@@ -261,6 +271,8 @@ local spellTable =
     { "Power Word: Shield", (health_pct < 0.60) and not ud(PriestHeal_Target,"Weakened Soul") and not ub(PriestHeal_Target,"Power Word: Shield"), PriestHeal_Target },
     { "Prayer of Mending", (health_pct < 0.60) and not ub(PriestHeal_Target,"Prayer of Mending"), PriestHeal_Target }, 
     { "Flash Heal", (health_pct < 0.60), PriestHeal_Target },
+-- Boss Debuff
+	{ "Greater Heal", UnitExists(Plasma)==1 , Plasma }, -- "Deathwing"
 -- Basic    
     { "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct < 0.80), PriestHeal_Target },
     { "nested", health_deficiency > (average_greater_heal + average_renew), 
