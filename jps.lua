@@ -166,13 +166,13 @@ function combatEventHandler(self, event, ...)
 
 		jps.Error = nil
 		
--- RaidStatus Update
+	-- RaidStatus Update
     elseif event == "UNIT_HEALTH" and jps.Enabled then
     	jps.UpdateHealerBlacklist()
  	-- table.wipe(jps.RaidStatus)
  		
         local unit = ...
-        if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end 
+        if jps.canHeal(unit) and jps.Enabled then combat() end -- and jps.Combat
 		if jps.canHeal(unit) and jps.hpInc(unit,"absolute") < UnitHealthMax(unit) then
 			local unitSubGroup = jps.findSubGroupUnit(unit)
 			hp = jps.hpInc(unit)
@@ -187,6 +187,13 @@ function combatEventHandler(self, event, ...)
 			
       	end
 
+  	-- TODO remove unit above a % Threshold (0,95) -- Need to be TESTED ingame if bugged return to if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end
+      	for k,v in pairs(jps.RaidStatus) do 
+      		if v["hpct"] > 0.95 then
+      			jps.RaidStatus[k]=nil
+      		end
+      	end
+      	collectgarbage("collect")
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -378,7 +385,7 @@ function combat(self)
 			jps.NextCast = nil
         	else
             		if jps.Debug then write("|cffa335ee",jps.ThisCast," on ",jps.Target) end
-			jps.Cast(jps.ThisCast)
+            		jps.Cast(jps.ThisCast)
 		end
    	end
 	
