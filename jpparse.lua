@@ -119,7 +119,6 @@ function conditionsMatched( spell, conditions )
 	-- otherwise
 	else
 		return conditions
-
 	end
 end
 	
@@ -133,9 +132,6 @@ function parseSpellTable( hydraTable )
 		conditions = spellTable[2]
 		target = nil
 
-		-- conditions default to oncd
-		-- if conditions == nil then conditions = true end
-
 		-- Nested table
 		if spell == "nested" and conditions then
 			local newTable = spellTable[3]
@@ -146,9 +142,12 @@ function parseSpellTable( hydraTable )
 			local macroText = spell[2]
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
-			if conditionsMatched( macroSpell, conditions ) and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then 
 			-- if macroTarget then TargetUnit(macroTarget) end
-			RunMacroText(macroText) return end
+			if macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then
+				conditions = conditionsMatched(  macroSpell, conditions )
+			end
+
+			if conditions then RunMacroText(macroText) return end
 
 		-- MultiTarget List
 		elseif type(conditions) == "function" then
