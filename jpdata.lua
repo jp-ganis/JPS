@@ -78,6 +78,22 @@ jps_DispellOffensive_Eng = {
 		"Divine Plea" -- Paladin
 }
 
+jps_StunDebuff = {
+		"Cyclone", 
+		"Cheap Shot", 
+		"Kidney Shot", 
+		"Bash", 
+		"Concussion Blow", 
+		"Blind", 
+		"Pounce", 
+		"Maim", 
+		"Fear", 
+		"Hammer of Justice", 
+		"Hex",
+		"Sap", 
+		"Psychic Scream", 
+}
+
 function jps.canDispell( unit, ... )
 	for _, dtype in pairs(...) do
 		if jps.Dispells[dtype] ~= nil then
@@ -93,6 +109,14 @@ function jps.FindMeADispelTarget(dispeltypes)
      for unit, _ in pairs(jps.RaidStatus) do
 		if jps.canDispell( unit, dispeltypes ) then return unit end
 	end
+end
+
+function jps.isStun()
+	for i, j in ipairs(jps_StunDebuff) do
+		local stunName = select(1,UnitDebuff("player",j))
+		if stunName then return true end
+	end
+	return false
 end
 
 --------------------------
