@@ -27,7 +27,7 @@ local playerhealth_pct = UnitHealth("player") / UnitHealthMax("player")
 
 local PriestHeal_Target = jps.lowestInRaidStatus() -- jps.HealingTarget()
 local health_deficiency = UnitHealthMax(PriestHeal_Target) - UnitHealth(PriestHeal_Target)
-local health_pct = UnitHealth(PriestHeal_Target) / UnitHealthMax(PriestHeal_Target)
+local health_pct = jps.hpInc(PriestHeal_Target)
 
 -- number of party members having a significant health pct loss
 local countInRaid = 2
@@ -71,7 +71,7 @@ else
 end
 
 local health_deficiency_TANK = UnitHealthMax(PriestHeal_Target_TANK) - UnitHealth(PriestHeal_Target_TANK)
-local health_pct_TANK = UnitHealth(PriestHeal_Target_TANK) / UnitHealthMax(PriestHeal_Target_TANK)
+local health_pct_TANK = jps.hpInc(PriestHeal_Target_TANK)
 local stackGrace_TANK = jps.buffStacks("Grace",PriestHeal_Target_TANK)
 
 local switchtoLowestTarget = false
@@ -138,10 +138,6 @@ end
 	local spellstop, _, _, _, _, endTime = UnitCastingInfo("player")
 -- kick Spell Heal if LowHeath
 	if spellstop == "Heal" and (endTime-GetTime()) > 1 and health_pct < 0.70 then SpellStopCasting() end
--- kick Spell if OverHeal
-	if (spellstop == "Flash Heal" or spellstop == "Greater Heal") and jps.hpInc(PriestHeal_Target) > 0.95 then SpellStopCasting() end  
-	
-
 -- Don't kick Casting
 	if UnitCastingInfo("player") or UnitChannelInfo("player") then return nil end
 
