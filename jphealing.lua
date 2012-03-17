@@ -15,7 +15,7 @@ end
 
 function jps.PlayerIsBlacklisted(unit)
     local playername
-	if UnitExists(unit) and UnitIsPlayer(unit) then
+	if UnitExists(unit)==1 then
       playername = GetUnitName(unit)
     end
   for i = 1, #jps.HealerBlacklist do
@@ -28,7 +28,7 @@ end
 
 function jps.BlacklistPlayer(unit)
     local playername
-	if UnitExists(unit) and UnitIsPlayer(unit) then
+	if UnitExists(unit)==1 then
       playername = GetUnitName(unit)
     end
 	if playername ~= nil then
@@ -36,7 +36,7 @@ function jps.BlacklistPlayer(unit)
 	  table.insert(playerexclude, playername)
 	  table.insert(playerexclude, GetTime())
 	  table.insert(jps.HealerBlacklist,playerexclude)
-      if jps.Debug then print("Blacklisting ", playername) end
+      if jps.Debug then print("|cffa335eeBlacklisting", playername) end
     end
 
 end
@@ -168,4 +168,57 @@ for unit,hp_table in pairs(jps.RaidStatus) do
 end
 
 return groupToHeal, tt
+end
+
+----------------------
+-- RAID TABLE HEALTH
+----------------------
+
+function jps.SortRaidStatus()
+
+
+	table.wipe(jps.RaidStatus)
+	-- table.wipe(jps.TT)
+	-- for k,v in pairs(jps.RaidStatus) do jps.RaidStatus[k]=nil end
+	-- collectgarbage("collect")
+	
+	local group_type, unit, subgroup 
+	
+	group_type="raid"
+	nps=1
+	npe=GetNumRaidMembers()
+	if npe==0 then
+	group_type="party"
+	nps=0
+	npe=GetNumPartyMembers()
+	end
+
+	for i=nps,npe do
+		if i==0 then
+		unit="player"
+		else
+		unit = group_type..i
+		end
+		
+		if GetNumRaidMembers() > 0 then subgroup = select(3,GetRaidRosterInfo(i)) else subgroup = 0 end
+		local hpInc = UnitGetIncomingHeals(unit)
+		if not hpInc then hpInc = 0 end
+		
+		if jps.canHeal(unit) and (UnitHealth(unit) + hpInc < UnitHealthMax(unit)) then
+			local hpct = jps.hpInc(unit) 
+			unit = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
+			
+			jps.RaidStatus[unit] = {
+				["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
+				["hpct"] = hpct,
+				["subgroup"] = subgroup
+			}
+			
+		end
+	end
+--[[	
+	local function sortMyTable(a,b) return jps.RaidStatus[a]["hp"] > jps.RaidStatus[b]["hp"] end 
+	for k,v in pairs(jps.RaidStatus) do table.insert(jps.TT, k) end
+	table.sort(jps.TT, sortMyTable)
+]]
 end
