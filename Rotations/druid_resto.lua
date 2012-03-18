@@ -41,6 +41,7 @@ function druid_resto(self)
     { "lifebloom",			jps.buffDuration("lifebloom",tank) < 3 or jps.buffStacks("lifebloom",tank) < 3, tank },
     { "rejuvenation",		jps.buffDuration("rejuvenation",tank) < 3, tank },
 		{ "nourish",			jps.hpInc(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
+		{ "innervate",		jps.mana() < 0.6 },
 	}
 
 	local spell,target = parseSpellTable(spellTable)
