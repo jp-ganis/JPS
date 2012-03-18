@@ -169,23 +169,20 @@ function combatEventHandler(self, event, ...)
 	-- RaidStatus Update
     elseif event == "UNIT_HEALTH" and jps.Enabled then
     	jps.UpdateHealerBlacklist()
- 	-- table.wipe(jps.RaidStatus)
- 		
-        local unit = ...
-        if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end -- and jps.Combat
-		if jps.canHeal(unit) and jps.hpInc(unit,"absolute") < UnitHealthMax(unit) then
-			local unitSubGroup = jps.findSubGroupUnit(unit)
-			hp = jps.hpInc(unit)
-			unit = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
-			
-			jps.RaidStatus[unit] = { 	
-				["name"] = unit,
-				["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
-				["hpct"] =hp,
-				["subgroup"] = unitSubGroup
-			}
-			
-      	end
+			local unit = ...
+			if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end -- and jps.Combat
+			if jps.canHeal(unit) and jps.hpInc(unit,"absolute") < UnitHealthMax(unit) then
+				local unitSubGroup = jps.findSubGroupUnit(unit)
+				hp = jps.hpInc(unit)
+				unit = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
+				
+				jps.RaidStatus[unit] = { 	
+					["name"] = unit,
+					["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
+					["hpct"] =hp,
+					["subgroup"] = unitSubGroup
+				}
+			end
 
   	-- TODO remove unit above a % Threshold (0,95) -- Need to be TESTED ingame if bugged return to if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end
       	for k,v in pairs(jps.RaidStatus) do 
@@ -209,7 +206,6 @@ function combatEventHandler(self, event, ...)
 
        -- Required For Healing Classes
        -- Update out of sight players before selecting a spell -- used for healing classes
-       jps.UpdateHealerBlacklist()
         if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
           jps.BlacklistPlayer(jps.LastTarget)
         end
@@ -353,9 +349,10 @@ function combat(self)
 	end
 	
 	-- Check Table RaidStatus
+	jps.SortRaidStatus()
     	if IsControlKeyDown() then
-        	for k,v in pairs(jps.RaidStatus) do 
-			print("|cffa335ee",v.name,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
+        for k,v in pairs(jps.RaidStatus) do 
+			print("|cffa335ee",k,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
 		end
 	end
 
@@ -367,8 +364,7 @@ function combat(self)
 	jps.Moving = GetUnitSpeed("player") > 0
 
 	-- Casting
-	if UnitCastingInfo("player") then jps.Casting = true
-	elseif UnitChannelInfo("player") then jps.Casting = true
+	if UnitCastingInfo("player") or UnitChannelInfo("player") then jps.Casting = true
 	else jps.Casting = false
 	end
 	
