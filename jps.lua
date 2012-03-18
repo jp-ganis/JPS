@@ -172,7 +172,7 @@ function combatEventHandler(self, event, ...)
  	-- table.wipe(jps.RaidStatus)
  		
         local unit = ...
-        if jps.canHeal(unit) and jps.Enabled then combat() end -- and jps.Combat
+        if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end -- and jps.Combat
 		if jps.canHeal(unit) and jps.hpInc(unit,"absolute") < UnitHealthMax(unit) then
 			local unitSubGroup = jps.findSubGroupUnit(unit)
 			hp = jps.hpInc(unit)
