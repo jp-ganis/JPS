@@ -332,7 +332,7 @@ function combat(self)
 	-- Check Table RaidStatus
 	jps.SortRaidStatus()
     	if IsControlKeyDown() then
-        for k,v in pairs(jps.RaidStatus) do 
+        	for k,v in pairs(jps.RaidStatus) do 
 			print("|cffa335ee",k,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
 		end
 	end
