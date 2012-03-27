@@ -30,7 +30,7 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].Enabled = true
 		jpsDB[jpsRealm][jpsName].MoveToTarget = false
 		jpsDB[jpsRealm][jpsName].FaceTarget = false
-		jpsDB[jpsRealm][jpsName].Interrupts = true
+		jpsDB[jpsRealm][jpsName].Interrupts = false
 		jpsDB[jpsRealm][jpsName].UseCDs = false
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].MultiTarget = false
@@ -50,6 +50,7 @@ function jps_LOAD_PROFILE()
 	jps.gui_toggleEnabled( jps.Enabled )
 	jps.gui_toggleCDs( jps.UseCDs )
 	jps.gui_toggleMulti( jps.MultiTarget )
+	jps.gui_toggleInt(jps.Interrupts)
 	jps.gui_toggleToggles( jps.ExtraButtons )
 	jps.gui_setToggleDir( "right" )
 	jps.togglePvP( jps.PvP )
@@ -97,7 +98,7 @@ function jps_getCombatFunction( class, spec )
 		["Priest"]       = { ["Shadow"]        = priest_shadow,
 							 ["Holy"]          = priest_holy,
 							 ["Discipline"]    = priest_disc },
-	} 
+	}
 	
 	return Rotations[class][spec]
 end
