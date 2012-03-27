@@ -8,6 +8,7 @@ jps.GUIborder_active = "Interface\\AddOns\\JPS\\media\\border_on.tga"
 jps.GUIborder_combat = "Interface\\AddOns\\JPS\\media\\border_combat.tga"
 jps.GUIicon_cd = "Interface\\Icons\\Spell_Holy_BorrowedTime"
 jps.GUIicon_multi = "Interface\\Icons\\achievement_arena_5v5_3"
+jps.GUIicon_int = "Interface\\Icons\\INV_Shield_05"
 jps.IconSize = 36
 jps.ButtonGrowthDir = "right"
 
@@ -118,9 +119,34 @@ ToggleMulti.shadow:SetTexture(jps.GUIshadow)
 ToggleMulti.shadow:SetVertexColor(0, 0, 0, 0.85)
 
 ToggleMulti:SetScript("OnClick", function(self, button)
-
 	jps.gui_toggleMulti()
+end)
 
+ToggleInt = CreateFrame("Button", "ToggleInt", jpsIcon)
+ToggleInt:RegisterForClicks("LeftButtonUp")
+ToggleInt:SetPoint("TOPRIGHT", jpsIcon, 120, 0)
+ToggleInt:SetHeight(36)
+ToggleInt:SetWidth(36)
+ToggleInt.texture = ToggleInt:CreateTexture()
+ToggleInt.texture:SetPoint('TOPRIGHT', ToggleInt, -3, -3)
+ToggleInt.texture:SetPoint('BOTTOMLEFT', ToggleInt, 3, 3)
+ToggleInt.texture:SetTexture(jps.GUIicon_int)
+ToggleInt.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93)
+ToggleInt.border = ToggleInt:CreateTexture(nil, "OVERLAY") -- create the
+ToggleInt.border:SetParent(ToggleInt) -- link it with the icon frame so 
+ToggleInt.border:SetPoint('TOPRIGHT', ToggleInt, 1, 1) -- outset the poi
+ToggleInt.border:SetPoint('BOTTOMLEFT', ToggleInt, -1, -1)
+ToggleInt.border:SetTexture(jps.GUIborder)
+
+ToggleInt.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
+ToggleInt.shadow:SetParent(ToggleInt)
+ToggleInt.shadow:SetPoint('TOPRIGHT', ToggleInt.border, 4.5, 4.5) 
+ToggleInt.shadow:SetPoint('BOTTOMLEFT', ToggleInt.border, -4.5, -4.5) 
+ToggleInt.shadow:SetTexture(jps.GUIshadow)
+ToggleInt.shadow:SetVertexColor(0, 0, 0, 0.85)
+
+ToggleInt:SetScript("OnClick", function(self, button)
+	jps.gui_toggleInt()
 end)
 
 function jps.resize( size )
@@ -133,6 +159,8 @@ function jps.resize( size )
 		ToggleCDs:SetHeight(jps.IconSize)
 		ToggleMulti:SetWidth(jps.IconSize)
 		ToggleMulti:SetHeight(jps.IconSize)
+		ToggleInt:SetWidth(jps.IconSize)
+		ToggleInt:SetHeight(jps.IconSize)
 		jps.gui_setToggleDir(jps.ButtonGrowthDir)
 	end
 end
@@ -140,23 +168,28 @@ end
 function jps.gui_setToggleDir( dir )
 	local paddingA = jps.IconSize + 4
 	local paddingB = jps.IconSize * 2 + 8
+	local paddingC = jps.IconSize * 3 + 12
 	local ButtonGrowthDir
 	if dir ~= nil then
 		if dir == "right" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, paddingB, 0)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, paddingA, 0)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, paddingC, 0)
 			ButtonGrowthDir = "right"
 		elseif dir == "left" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, -paddingB, 0)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, -paddingA, 0)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, -paddingC, 0)
 			ButtonGrowthDir = "left"
 		elseif dir == "up" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, paddingB)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, paddingA)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, 0, paddingC)
 			ButtonGrowthDir = "up"
 		elseif dir == "down" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, -paddingB)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, -paddingA)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, 0, -paddingC)
 			ButtonGrowthDir = "down"
 		end
 	else 
@@ -164,50 +197,32 @@ function jps.gui_setToggleDir( dir )
 		if dir == "right" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, paddingB, 0)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, paddingA, 0)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, paddingC, 0)
 			ButtonGrowthDir = "down"
 		elseif dir == "left" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, -paddingB, 0)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, -paddingA, 0)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, -paddingC, 0)
 			ButtonGrowthDir = "up"
 		elseif dir == "up" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, paddingB)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, paddingA)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, 0, paddingC)
 			ButtonGrowthDir = "right"
 		elseif dir == "down" then
 			ToggleMulti:SetPoint("TOPRIGHT", jpsIcon, 0, -paddingB)
 			ToggleCDs:SetPoint("TOPRIGHT", jpsIcon, 0, -paddingA)
+			ToggleInt:SetPoint("TOPRIGHT", jpsIcon, 0, -paddingC)
 			ButtonGrowthDir = "left"
 		end
 	end
-
 	jps.ButtonGrowthDir = ButtonGrowthDir
-	
-end
-
-function jps.gui_toggleCDs( value )
-	if value ~= nil then
-		jps.UseCDs = value
-		if value == true then
-			ToggleCDs.border:SetTexture(jps.GUIborder_active)
-		else
-			ToggleCDs.border:SetTexture(jps.GUIborder)
-		end
-		return
-	end
-	if jps.UseCDs then
-		ToggleCDs.border:SetTexture(jps.GUIborder)
-		write ("Cooldown Usage Disabled.")
-	else
-		ToggleCDs.border:SetTexture(jps.GUIborder_active)
-		write ("Cooldown Usage Enabled.")
-	end
-	jps.UseCDs = not jps.UseCDs
-	return
 end
 
 function jps.gui_toggleEnabled( value )
 	ToggleMulti:Show()
 	ToggleCDs:Show()
+	ToggleInt:Show()
 	jpsIcon:Show()
 	if value ~= nil then
 		jps.Enabled = value
@@ -250,6 +265,48 @@ function jps.gui_toggleMulti( value )
 	return
 end
 
+function jps.gui_toggleCDs( value )
+	if value ~= nil then
+		jps.UseCDs = value
+		if value == true then
+			ToggleCDs.border:SetTexture(jps.GUIborder_active)
+		else
+			ToggleCDs.border:SetTexture(jps.GUIborder)
+		end
+		return
+	end
+	if jps.UseCDs then
+		ToggleCDs.border:SetTexture(jps.GUIborder)
+		write ("Cooldown Usage Disabled.")
+	else
+		ToggleCDs.border:SetTexture(jps.GUIborder_active)
+		write ("Cooldown Usage Enabled.")
+	end
+	jps.UseCDs = not jps.UseCDs
+	return
+end
+
+function jps.gui_toggleInt( value )
+	if value ~= nil then
+		jps.Interrupts = value
+		if value == true then
+			ToggleInt.border:SetTexture(jps.GUIborder_active)
+		else
+			ToggleInt.border:SetTexture(jps.GUIborder)
+		end
+		return
+	end
+	if jps.Interrupts then
+		ToggleInt.border:SetTexture(jps.GUIborder)
+		write("Interrupts Disabled.")
+	else
+		ToggleInt.border:SetTexture(jps.GUIborder_active)
+		write("Interrupts Enabled.")
+	end
+	jps.Interrupts = not jps.Interrupts
+	return
+end
+
 function jps.gui_toggleCombat( status )
 	if status == true then
 		if not jps.Enabled then
@@ -278,9 +335,11 @@ function jps.gui_toggleToggles( value )
 		if value == true then
 			ToggleMulti:Show()
 			ToggleCDs:Show()
+			ToggleInt:Show()
 		else
 			ToggleMulti:Hide()
 			ToggleCDs:Hide()
+			ToggleInt:Hide()
 		end
 
 	else
@@ -289,9 +348,11 @@ function jps.gui_toggleToggles( value )
 		if jps.ExtraButtons then
 			ToggleMulti:Show()
 			ToggleCDs:Show()
+			ToggleInt:Show()
 		else
 			ToggleMulti:Hide()
 			ToggleCDs:Hide()
+			ToggleInt:Hide()
 		end
 	end
 end
