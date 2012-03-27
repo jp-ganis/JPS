@@ -251,8 +251,9 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.Interrupts = not jps.Interrupts
 		write("Interrupt use set to",tostring(jps.Interrupts))
 	elseif msg == "pint" then
-		jps.PVPInterrupt = not jps.PVPInterrupt
-		write("PVP Interrupt use set to",tostring(jps.PVPInterrupt))
+		jps.gui_toggleInt()
+		--jps.PVPInterrupt = not jps.PVPInterrupt
+		--write("PVP Interrupt use set to",tostring(jps.PVPInterrupt))
 	elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
 		jps.MacroSpam = not jps.MacroSpam
 		write("MacroSpam flag is now set to",tostring(jps.MacroSpam))
