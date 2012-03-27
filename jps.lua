@@ -51,6 +51,7 @@ jps.Lifeblood = nil
 jps.EngiGloves = nil
 -- Class Specific
 jps.Opening = true
+jps.Healing = false
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
@@ -134,7 +135,7 @@ function combatEventHandler(self, event, ...)
     		jps.Combat = false
     		jps.gui_toggleCombat(false)
 
-    	elseif event == "PLAYER_CONTROL_GAINED" then
+	elseif event == "PLAYER_CONTROL_GAINED" then
     		jps.Combat = true
     		jps.gui_toggleCombat(true)
 
@@ -170,8 +171,10 @@ function combatEventHandler(self, event, ...)
     elseif event == "UNIT_HEALTH" and jps.Enabled then
     	jps.UpdateHealerBlacklist()
  		
+    	if jps.Spec == "Restoration" or jps.Spec == "Holy" or jps.Spec == "Discipline" then jps.Healing = true end
+ 		
         local unit = ...
-        if jps.canHeal(unit) and jps.Enabled and jps.Combat then combat() end
+        if jps.canHeal(unit) and jps.Enabled and jps.Healing then combat() end -- and jps.Combat
 
 	-- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
@@ -191,7 +194,8 @@ function combatEventHandler(self, event, ...)
           jps.BlacklistPlayer(jps.LastTarget)
         end
         -- timer for shield for disc priest
-    	if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5]== GetUnitName("player") and eventtable[12]== 17 then -- eventtable[12] == spellID eventtable[13] == spellName "Power Word: Shield"
+        -- eventtable[12] == spellID eventtable[13] == spellName "Power Word: Shield"
+    	if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5]== GetUnitName("player") and eventtable[12]== 17 then
     		jps.createTimer( "Shield", 12 )
     	end
     end
@@ -269,6 +273,9 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "def" or msg == "defensive" then
 		jps.Defensive = not jps.Defensive
 		write("Defensive cooldown usage set to", tostring(jps.Defensive))
+	elseif msg == "heal" then
+		jps.Healing = not jps.Healing
+		write("Healing set to", tostring(jps.Healing))
 	elseif msg == "help" then
 		write("Slash Commands:")
 		write("/jps - Show enabled status.")
@@ -329,13 +336,8 @@ function combat(self)
 		return
 	end
 	
-	-- Check Table RaidStatus
-	jps.SortRaidStatus()
-    	if IsControlKeyDown() then
-        for k,v in pairs(jps.RaidStatus) do 
-			print("|cffa335ee",k,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
-		end
-	end
+	-- Table RaidStatus
+	if jps.Healing then jps.SortRaidStatus() end
 
 	-- Lag
 	jps.Lag = select(4,GetNetStats())
