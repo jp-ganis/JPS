@@ -252,12 +252,10 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "cds" then
 		jps.gui_toggleCDs()
 	elseif msg == "int" or msg == "interrupts" then
-		jps.Interrupts = not jps.Interrupts
-		write("Interrupt use set to",tostring(jps.Interrupts))
-	elseif msg == "pint" then
 		jps.gui_toggleInt()
-		--jps.PVPInterrupt = not jps.PVPInterrupt
-		--write("PVP Interrupt use set to",tostring(jps.PVPInterrupt))
+	elseif msg == "pint" then
+		jps.PVPInterrupt = not jps.PVPInterrupt
+		write("PVP Interrupt use set to",tostring(jps.PVPInterrupt))
 	elseif msg == "spam" or msg == "macrospam" or msg == "macro" then
 		jps.MacroSpam = not jps.MacroSpam
 		write("MacroSpam flag is now set to",tostring(jps.MacroSpam))
