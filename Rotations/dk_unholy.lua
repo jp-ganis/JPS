@@ -7,6 +7,7 @@ function new_dk_unholy(self)
 	-- Alt-key + mouseover to combat ress another player (Raise Ally) - You can mouseover the 
 	--   player corpse or player frame in the party/raid frame
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
+	-- Automatically raise ghoul if dead
 
 	local rp = UnitPower("player") 
 
@@ -54,6 +55,10 @@ function new_dk_unholy(self)
 	
 	local spellTable =
 	{
+		-- Moved DnD to the top so it will cast immediately
+		{ "death and decay",		IsShiftKeyDown() ~= nil },
+		-- Raise ghoul if dead
+		{ "Raise Dead",				UnitExists("pet") == nil },
 		-- raise ally, mouseover unit in party/raid frame or corpse + Alt-key
 		{ "raise ally", 			IsAltKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
 		-- death coil ghoul pet (heal)
@@ -76,7 +81,6 @@ function new_dk_unholy(self)
 		{ "plague strike", 			bpDuration < 2 },
 		{ "dark transformation", 	"onCD" }, 
 		{ "summon gargoyle",		jps.buff("unholy frenzy") },
-		{ "death and decay",		IsShiftKeyDown() ~= nil },
 		{ "scourge strike", 		two_ur and rp < 110 },
 		{ "festering strike", 		two_dr and two_fr and rp < 110 },
 		{ "blood boil", 			jps.MultiTarget },
