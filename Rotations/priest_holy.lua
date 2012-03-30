@@ -4,7 +4,7 @@ healtable = {}
 
 -- Updates the healtable
 function update_healtable(...)
-        local temparglist = {...}
+        local temparglist = {}
         if temparglist[5] == GetUnitName("player") and (temparglist[2] == "SPELL_HEAL" or temparglist[2] == "SPELL_PERIODIC_HEAL") and temparglist[15] == 0 then
           if healtable[temparglist[11]]== nil then
             healtable[temparglist[11]]= {["healtotal"]= temparglist[13],["healcount"]= 1,["averageheal"]= temparglist[13]}
@@ -12,9 +12,9 @@ function update_healtable(...)
             healtable[temparglist[11]]["healtotal"]= healtable[temparglist[11]]["healtotal"]+temparglist[13];
             healtable[temparglist[11]]["healcount"]= healtable[temparglist[11]]["healcount"]+1;
             healtable[temparglist[11]]["averageheal"]= healtable[temparglist[11]]["healtotal"]/healtable[temparglist[11]]["healcount"];
-          end;
+          end
 
-  --          print(temparglist[11],"  ",healtable[temparglist[11]]["healtotal"],"  ",healtable[temparglist[11]]["healcount"],"  ",healtable[temparglist[11]]["averageheal"])
+-- print(temparglist[11],"  ",healtable[temparglist[11]]["healtotal"],"  ",healtable[temparglist[11]]["healcount"],"  ",healtable[temparglist[11]]["averageheal"])
         end
 end
 
@@ -73,7 +73,7 @@ local stackSerendip = jps.buffStacks("Serendipity","player")
 	local unitsBelow30 = 0
 	for unit, unitTable in pairs(jps.RaidStatus) do
 		--Only check the relevant units
-		if not UnitIsDeadOrGhost(unit) and UnitIsVisible(unit) and UnitInRange(unit) and not jps.PlayerIsBlacklisted(unit) then
+		if jps.canHeal(unit) then
 			local thisHP = jps.hpInc(unit)
 			-- Number of people below x%
 			if thisHP < 0.3 then unitsBelow30 = unitsBelow30 + 1 end
@@ -82,111 +82,39 @@ local stackSerendip = jps.buffStacks("Serendipity","player")
 		end
 	end
 
--- Let's buff --
-   if not ub("player", "Inner Fire") then
-     priest_spell = "Inner Fire"
-     jps.Target = "player" 
+------------------------
+-- SPELL TABLE ---------
+------------------------
 
-   elseif not ub("player", "Power Word: Fortitude") then
-     priest_spell = "Power Word: Fortitude"
-     jps.Target = "player" 
-     
--- Chakra
-	elseif cd("Chakra")==0 and not ub("player","Chakra") and not ub("player","Chakra: Serenity") then
-		priest_spell = "Chakra"
-	elseif ub("player","Chakra") and not ub("player","Chakra: Serenity") then
-		if (health_deficiency < getaverage_heal("Flash Heal")) and IsSpellInRange("Heal",Priest_Target)==1 then
-		priest_spell = "Heal"
-		jps.Target = Priest_Target
-		elseif (health_deficiency > getaverage_heal("Flash Heal")) and IsSpellInRange("Heal",Priest_Target)==1 then
-		priest_spell = "Flash Heal"
-		jps.Target = Priest_Target
-		else
-		priest_spell = "Heal"
-		jps.Target = "player"
-		end
+local spellTable =
+{
+    { "Inner Fire", not ub("player", "Inner Fire") , "player" },
+    { "Power Word: Fortitude", not ub("player", "Power Word: Fortitude") , "player" },
+    { "Chakra", not ub("player","Chakra") and not ub("player","Chakra: Serenity"), "player" },
+    { "nested", ub("player","Chakra") and not ub("player","Chakra: Serenity") , "player" },
+        {
+            { "Heal", health_deficiency < getaverage_heal("Flash Heal"), Priest_Target },
+            { "Flash Heal", health_deficiency > getaverage_heal("Flash Heal"), Priest_Target },
+            { "Heal", "onCD", "player" },
+        },
+    { "Guardian Spirit", health_pct < 0.25 , Priest_Target }, --SpellStopCasting()
+    { "Desperate Prayer", UnitHealth("player")/UnitHealthMax("player") < 0.40 , "player" }, -- SpellStopCasting()
+    { "Fade", UnitThreatSituation("player")==3, "player" },
+    { "Renew", not ub(Priest_Target,"renew") and health_deficiency > (getaverage_heal("Renew") + getaverage_heal("Heal")), Priest_Target },
+    { "Prayer of Mending", not ub(Priest_Target,"Prayer of Mending"), Priest_Target },
+    { "Flash Heal", ub("player", "surge of light") and health_deficiency > getaverage_heal("Flash Heal"), Priest_Target },
+    { "Holy Word: Serenity", health_deficiency > (getaverage_heal("Renew") + getaverage_heal("Heal")), Priest_Target },
+    { "Flash Heal", health_pct < 0.50 and stackSerendip < 2, Priest_Target },
+    { "Greater Heal", health_pct < 0.70 and health_deficiency > (getaverage_heal("Greater Heal") + getaverage_heal("Renew")), Priest_Target },
+    { "Binding Heal", UnitIsUnit(Priest_Target, "player")~=1 and health_deficiency > (getaverage_heal("Binding Heal") + getaverage_heal("Renew")) and playerhealth_deficiency > (getaverage_heal("Binding Heal") + getaverage_heal("Renew")), Priest_Target },
+    { "Circle of Healing", unitsBelow70  > 3, Priest_Target },
+    { "Circle of Healing", unitsBelow70  > 3, "player" },
+    { "Prayer of Healing", unitsBelow50  > 3, "player" },
+    { "Prayer of Healing", unitsBelow50  > 3, Priest_Target },
+    { "Heal", health_deficiency > (getaverage_heal("Heal") + getaverage_heal("Renew")), Priest_Target }
+}
 
-   -- Guardian Spirit in case tank is very low on health, guardian spirit will never be cast on dps--
-   elseif (health_pct < 0.25) and jps.canCast("Guardian Spirit", Priest_Target) then
-      SpellStopCasting()
-      priest_spell = "Guardian Spirit"
-      jps.Target = Priest_Target 
-
-   -- Cast Desperate Prayer on self in case of trouble--
-   elseif cd("Desperate Prayer")==0 and UnitHealth("player")/UnitHealthMax("player") < 0.40 then
-      SpellStopCasting()
-      priest_spell = "Desperate Prayer"
-      jps.Target = "player" 
-		
-   -- cast fade in case you are being attacked
-   elseif UnitThreatSituation("player")==3 and cd("Fade")==0 then
-    	priest_spell = "Fade"
-		jps.Target = "player"
-		
-   -- Renew is top priority on targets who have moderate damage
-   elseif not ub(Priest_Target,"renew") and jps.canCast("Renew", Priest_Target) and health_deficiency > (getaverage_heal("Renew") + getaverage_heal("Heal")) then
-     	priest_spell = "Renew"
-		jps.Target = Priest_Target
-		
-	-- Prayer of mending on tank
-	elseif not ub(Priest_Target,"Prayer of Mending") and jps.canCast("Prayer of Mending",Priest_Target)==1 then
-		spell = "Prayer of Mending"
-		jps.Target = Priest_Target
-	
-   -- Instant cast flashheal for 0 mana in case surge of light and target is missing enough health to avoid overhealing--
-   elseif ub("player", "surge of light") and jps.canCast("Flash Heal", Priest_Target) and health_deficiency > getaverage_heal("Flash Heal") then
-      priest_spell = "Flash Heal"
-      jps.Target = Priest_Target
-      
-   -- Cast Holy Word: Serenity - CanCast does not work on this type of spell, so I take renew for IsSpellInRange
-   elseif cd(88684)==0 and IsUsableSpell(88684) and IsSpellInRange("Renew",Priest_Target)==1 and health_deficiency > (getaverage_heal("Renew") + getaverage_heal("Heal")) then
-      priest_spell = "Holy Word: Serenity"
-      jps.Target = Priest_Target
-      
-   -- Circle of healing in case at least 4 party members require healing --
-   elseif unitsBelow70  > 3 and cd("Circle of Healing")==0 and IsUsableSpell("Circle of Healing") then
-      	if jps.canCast("Circle of Healing",Priest_Target) then
-			spell = "Circle of Healing"
-			jps.Target = Priest_Target
-		else
-			spell = "Circle of Healing"
-			jps.Target = "player"
-		end
-
-   -- if at least 4 partymembers around you require at least 8k health, cast prayer of healing--
-   elseif unitsBelow50  > 3 and cd("Prayer of Healing")==0 and IsUsableSpell("Prayer of Healing") then
-		if jps.canCast("Prayer of Healing",Priest_Target) then
-			spell = "Prayer of Healing"
-			jps.Target = Priest_Target
-		else
-			spell = "Prayer of Healing"
-			jps.Target = "player"
-		end
-
-   -- cast flashheal if very high health loss and serendipitystacks < 2  --
-   elseif health_pct < 0.50 and stackSerendip < 2 and jps.canCast("Flash Heal", Priest_Target) then
-     priest_spell = "Flash Heal"
-     jps.Target = Priest_Target
-
-   -- main healing spell when high damage  --
-   elseif health_pct < 0.70 and jps.canCast("Greater Heal", Priest_Target)
-   and health_deficiency > (getaverage_heal("Greater Heal") + getaverage_heal("Renew")) then
-     priest_spell = "Greater Heal"
-     jps.Target = Priest_Target
-
-   elseif UnitIsUnit(Priest_Target, "player")~=1 and jps.canCast("Binding Heal", Priest_Target)
-   and health_deficiency > (getaverage_heal("Binding Heal") + getaverage_heal("Renew")) and playerhealth_deficiency > (getaverage_heal("Binding Heal") + getaverage_heal("Renew")) then
-      priest_spell = "Binding Heal"
-      jps.Target = Priest_Target
-
-   -- main heal spell --
-   elseif cd("Heal")==0 and jps.canCast("Heal", Priest_Target) and health_deficiency > (getaverage_heal("Heal") + getaverage_heal("Renew")) then
-     priest_spell = "Heal"
-     jps.Target = Priest_Target
-   end
-
-  return priest_spell
-
+	local spell,target = parseSpellTable(spellTable)
+	jps.Target = target
+	return spell
 end
-
-
