@@ -14,12 +14,12 @@ function priest_disc(self)
 -- HELPER
 ----------------------
 --IsControlKeyDown(): debug print text
---jps.Defensive: Heal only the Tank et yourself
---jps.MultiTarget : Dispelling
---jps.PVPInterrupt: Damage and offensive dispell
---jps.UseCDs: group heal "Prayer of Healing"
---jps.Interrupts : "Pain Suppression"
 --AltKey_IsDown : "Mass Dispel"
+--jps.Defensive: Heal only the Tank et yourself 	/jps def
+--jps.MultiTarget : Dispelling 						/jps multi
+--jps.PVPInterrupt: Damage and offensive dispell	/jps pint
+--jps.UseCDs: group heal "Prayer of Healing"		/jps cds
+--jps.Interrupts : "Pain Suppression"				/jps int
 
 local spell = nil
 local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
@@ -183,14 +183,14 @@ local spellTable =
  	{"Mass Dispel", AltKey_IsDown, "player" },
  	{"nested", (health_pct > 0.60) and jps.MultiTarget,
         {
-		{"Dispel Magic", dispelMagic_Me and jps.MultiTarget, "player" },
-		{"Cure Disease", dispelDisease_Me and jps.MultiTarget, "player" },
-		{"Dispel Magic", UnitExists(dispelMagic_Target)==1 and jps.MultiTarget, dispelMagic_Target },
-		{"Dispel Magic", dispelMagic_TANK and jps.MultiTarget, PriestHeal_Target_TANK },
-		{"Cure Disease", dispelDisease_TANK and jps.MultiTarget, PriestHeal_Target_TANK },
-		{"Cure Disease", dispelDisease_Target and jps.MultiTarget, PriestHeal_Target },
-	},
-    	},
+			{"Dispel Magic", dispelMagic_Me and jps.MultiTarget, "player" },
+			{"Cure Disease", dispelDisease_Me and jps.MultiTarget, "player" },
+			{"Dispel Magic", UnitExists(dispelMagic_Target)==1 and jps.MultiTarget, dispelMagic_Target },
+			{"Dispel Magic", dispelMagic_TANK and jps.MultiTarget, PriestHeal_Target_TANK },
+			{"Cure Disease", dispelDisease_TANK and jps.MultiTarget, PriestHeal_Target_TANK },
+			{"Cure Disease", dispelDisease_Target and jps.MultiTarget, PriestHeal_Target },
+		},
+    },
 -- Damage
 	{ "nested", jps.PVPInterrupt and UnitExists(rangedTarget)==1,
         {
@@ -225,7 +225,7 @@ local spellTable =
     	{"Desperate Prayer", select(2,GetSpellBookItemInfo("Desperate Prayer")) and (playerhealth_pct < 0.40), "player" },
     	{"Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (playerhealth_pct < 0.80), "player" },
     	{"nested", jps.Defensive and (playerhealth_pct < 0.60),
-        {
+        	{
             	{ "Pain Suppression", jps.Interrupts and (playerhealth_pct < 0.30), "player"},
             	{ "Flash Heal", jps.buff("Inner Focus","player"), "player"},
             	{ "Penance", "onCD" , "player"},
@@ -235,13 +235,13 @@ local spellTable =
             	{ "Prayer of Mending", not ub("player","Prayer of Mending") ,"player"},
             	{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (playerhealth_deficiency > 2*average_bindingheal), PriestHeal_Target},
             	{ "Flash Heal", "onCD", "player"},
-        },
+        	},
     	},
 -- Focus Heal
     	{"Power Word: Shield", UnitIsUnit(PriestHeal_Target_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not ud("focustargettarget","Weakened Soul") and not ub("focustargettarget","Power Word: Shield"), "focustargettarget"}, 
     	{"nested", not switchtoLowestTarget and jps.canHeal(PriestHeal_Target_TANK) and (not jps.PlayerIsBlacklisted(PriestHeal_Target_TANK)),
-        {
-        	{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30), PriestHeal_Target_TANK },
+        	{
+        		{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30), PriestHeal_Target_TANK },
             	{ "Penance", stackGrace_TANK < 3 and UnitAffectingCombat("player")==1, PriestHeal_Target_TANK }, 
             	{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency_TANK > (average_flashheal + average_renew) , PriestHeal_Target_TANK },
             	{ "Power Word: Shield", not ud(PriestHeal_Target_TANK,"Weakened Soul") and not ub(PriestHeal_Target_TANK,"Power Word: Shield"), PriestHeal_Target_TANK },
@@ -255,7 +255,7 @@ local spellTable =
             	{ "Binding Heal", UnitIsUnit(PriestHeal_Target,"player")~=1 and (playerhealth_deficiency > 2*average_bindingheal), PriestHeal_Target },
             	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct_TANK < 0.80), PriestHeal_Target_TANK },
             	{ "Heal", (health_pct_TANK < 1), PriestHeal_Target_TANK },
-        },
+        	},
     	},
 -- Emergency Target
     	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30) , PriestHeal_Target },
@@ -270,12 +270,12 @@ local spellTable =
 	{ "Greater Heal", UnitExists(Plasma)==1 , Plasma }, -- "Deathwing"
 -- Basic    
 	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct < 0.80), PriestHeal_Target },
-    	{ "nested", health_deficiency > (average_greater_heal + average_renew), 
-	{
-		{ "Greater Heal", ub(PriestHeal_Target,"Renew") and jps.buffDuration("Renew", PriestHeal_Target) < 3 , PriestHeal_Target },
-		{ "Greater Heal", not ub(PriestHeal_Target,"Renew") , PriestHeal_Target },
-		{ "Greater Heal", "onCD" , PriestHeal_Target },
-	}
+    { "nested", health_deficiency > (average_greater_heal + average_renew), 
+		{
+			{ "Greater Heal", ub(PriestHeal_Target,"Renew") and jps.buffDuration("Renew", PriestHeal_Target) < 3 , PriestHeal_Target },
+			{ "Greater Heal", not ub(PriestHeal_Target,"Renew") , PriestHeal_Target },
+			{ "Greater Heal", "onCD" , PriestHeal_Target },
+		}
 	},
 	{ "Renew", not ub(PriestHeal_Target,"Renew") and (health_deficiency > average_renew) , PriestHeal_Target },
 	{ "Renew", ub(PriestHeal_Target,"Power Word: Shield") and health_deficiency < (average_penitence + average_renew) and health_deficiency > average_heal and not ub(PriestHeal_Target,"Renew") , PriestHeal_Target },
