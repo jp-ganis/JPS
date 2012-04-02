@@ -1,6 +1,71 @@
---Blacklistplayer functions
---These functions will blacklist a target for a set time.
+------------------------------
+-- SPELLTABLE -- contains the average value of healing spells
+------------------------------
 
+-- Updates the healtable
+-- event[15] est amount si suffix is _DAMAGE or _HEAL
+-- event[14] spellSchool
+-- event[13] spellName  healtable[eventtable[13]]
+-- event[12] spellId
+function update_healtable(...)
+	local eventtable =  {...}
+    if healtable[eventtable[13]] == nil then
+        			healtable[eventtable[13]] = { 	["healname"]= eventtable[13],
+            								  		["healtotal"]= eventtable[15],
+            								  		["healcount"]= 1,
+            								  		["averageheal"]=eventtable[15]
+            									}
+    else
+        			healtable[eventtable[13]]["healtotal"] = healtable[eventtable[13]]["healtotal"] + eventtable[15]
+        			healtable[eventtable[13]]["healcount"] = healtable[eventtable[13]]["healcount"] + 1
+        			healtable[eventtable[13]]["averageheal"] = healtable[eventtable[13]]["healtotal"] / healtable[eventtable[13]]["healcount"]
+    end
+	--print(eventtable[13],"  ",healtable[eventtable[13]]["healtotal"],"  ",healtable[eventtable[13]]["healcount"],"  ",healtable[eventtable[13]]["averageheal"])
+end
+
+-- Resets the count of each healing spell to 1 makes sure that the average takes continuously into account changes in stats due to buffs etc
+function reset_healtable(self)
+  for k,v in pairs(healtable) do
+    healtable[k]["healtotal"]= healtable[k]["averageheal"]
+    healtable[k]["healcount"]= 1
+  end
+end
+
+-- Displays the different health values - mainly for tweaking/debugging
+function print_healtable(self)
+  for k,v in pairs(healtable) do
+    print(k,"|cffff8000", healtable[k]["healtotal"],"  ", healtable[k]["healcount"],"  ", healtable[k]["averageheal"])
+  end
+-- print("renew",getaverage_heal("Renew"))
+-- print("flash",getaverage_heal("Flash Heal"))
+end
+
+-- Returns the average heal value of given spell. 
+-- Needs to be extended for other classes, but takes into account Echo of Light (1+ GetMastery()* 0.0125) for holy priests
+function getaverage_heal(spellname)
+  local multiplier 
+
+  	if spellname == "Renew" then
+    	if GetRangedHaste() < 12.5 then
+     		multiplier = 4
+      	else 
+      		multiplier = 5
+    	end
+  	else
+  		multiplier = 1
+  	end
+
+  	if healtable[spellname] == nil then
+    	return 0
+  	else
+    	return (healtable[spellname]["averageheal"]) * (1+GetMastery()* 0.0125) * multiplier
+  	end
+  	
+end
+
+----------------------------
+--Blacklistplayer functions - These functions will blacklist a target for a set time.
+----------------------------
 
 function jps.UpdateHealerBlacklist(self)
    if #jps.HealerBlacklist > 0 then
@@ -176,7 +241,6 @@ end
 
 function jps.SortRaidStatus()
 
-
 	table.wipe(jps.RaidStatus)
 	-- table.wipe(jps.TT)
 	-- for k,v in pairs(jps.RaidStatus) do jps.RaidStatus[k]=nil end
@@ -209,6 +273,7 @@ function jps.SortRaidStatus()
 			unit = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
 			
 			jps.RaidStatus[unit] = {
+				["name"] = unit,
 				["hp"] = UnitHealthMax(unit) - UnitHealth(unit),
 				["hpct"] = hpct,
 				["subgroup"] = subgroup
@@ -216,9 +281,17 @@ function jps.SortRaidStatus()
 			
 		end
 	end
---[[	
-	local function sortMyTable(a,b) return jps.RaidStatus[a]["hp"] > jps.RaidStatus[b]["hp"] end 
-	for k,v in pairs(jps.RaidStatus) do table.insert(jps.TT, k) end
-	table.sort(jps.TT, sortMyTable)
-]]
+end
+
+-----------------------
+-- RAID TEST 
+-----------------------
+
+function jps_RaidTest()
+
+print("LowestFriendly: "..jps.lowestFriendly())
+	for k,v in pairs(jps.RaidStatus) do 
+		print("|cffa335ee",k,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
+		-- print("|cffa335ee",jps.RaidStatus[k].name,jps.RaidStatus[k]["hp"]," - ",jps.RaidStatus[k]["hpct"],"- subGroup: ",jps.RaidStatus[k].subgroup) -- color violet 
+	end
 end
