@@ -59,6 +59,7 @@ jps.Macro = "jpsMacro"
 jps.HealerBlacklist = {}
 jps.BlacklistTimer = 2
 jps.BlankCheck = false
+healtable = {}
 
 -- Config.
 jps.Configged = false
@@ -90,7 +91,7 @@ combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
 combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
-
+combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 function write(...)
 	if jps.BlankCheck then return end
@@ -102,6 +103,10 @@ function combatEventHandler(self, event, ...)
 
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
+		
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		jps.SortRaidStatus()
+		reset_healtable()
 
 	elseif event == "INSPECT_READY" then
 		if not jps.Spec then 
@@ -170,7 +175,6 @@ function combatEventHandler(self, event, ...)
 	-- RaidStatus Update
     elseif event == "UNIT_HEALTH" and jps.Enabled then
     	jps.UpdateHealerBlacklist()
- 		
     	if jps.Spec == "Restoration" or jps.Spec == "Holy" or jps.Spec == "Discipline" then jps.Healing = true end
  		
         local unit = ...
@@ -186,7 +190,7 @@ function combatEventHandler(self, event, ...)
 
 	-- Combat Event Handler
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        local eventtable =  {... }
+        local eventtable =  {...}
 
        -- Required For Healing Classes
        -- Update out of sight players before selecting a spell -- used for healing classes
@@ -198,6 +202,10 @@ function combatEventHandler(self, event, ...)
     	if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5]== GetUnitName("player") and eventtable[12]== 17 then
     		jps.createTimer( "Shield", 12 )
     	end
+    	-- HEALTABLE -- contains the average value of healing spells
+        if eventtable[5] == GetUnitName("player") and (eventtable[2] == "SPELL_HEAL" or eventtable[2] == "SPELL_PERIODIC_HEAL") then
+			update_healtable(...)
+        end
     end
 end
 
