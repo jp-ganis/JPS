@@ -26,8 +26,8 @@ end
 -- Resets the count of each healing spell to 1 makes sure that the average takes continuously into account changes in stats due to buffs etc
 function reset_healtable(self)
   for k,v in pairs(healtable) do
-    healtable[k]["healtotal"]= healtable[k]["averageheal"]
-    healtable[k]["healcount"]= 1
+    healtable[k]["healtotal"] = healtable[k]["averageheal"]
+    healtable[k]["healcount"] = 1
   end
 end
 
@@ -38,6 +38,7 @@ function print_healtable(self)
   end
 -- print("renew",getaverage_heal("Renew"))
 -- print("flash",getaverage_heal("Flash Heal"))
+-- print("penance",getaverage_heal("Penance"))
 end
 
 -- Returns the average heal value of given spell. 
@@ -242,10 +243,6 @@ end
 function jps.SortRaidStatus()
 
 	table.wipe(jps.RaidStatus)
-	-- table.wipe(jps.TT)
-	-- for k,v in pairs(jps.RaidStatus) do jps.RaidStatus[k]=nil end
-	-- collectgarbage("collect")
-	
 	local group_type, unit, subgroup 
 	
 	group_type="raid"
@@ -288,7 +285,6 @@ end
 -----------------------
 
 function jps_RaidTest()
-
 print("LowestFriendly: "..jps.lowestFriendly())
 	for k,v in pairs(jps.RaidStatus) do 
 		print("|cffa335ee",k,v["hp"]," - ",v["hpct"],"- subGroup: ",v.subgroup) -- color violet 
