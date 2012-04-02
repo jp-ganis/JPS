@@ -229,6 +229,61 @@ function jps.petCooldown(index)
 	return cd
 end
 
+--------------------------
+-- BUFF DEBUFF
+--------------------------
+-- name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(spellId or spellName or spellLink)
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitBuff
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitDebuff
+
+function jps_findBuffDebuff()
+	for i=1,40 do 
+		local ID = select(11,UnitBuff("player",i))
+		local Name= select(1,UnitBuff("player",i))
+		if ID then print("|cff1eff00Buff",i.."="..ID,"="..Name) end 
+	end
+
+	for i=1,40 do 
+		local ID = select(11,UnitDebuff("target",i))
+		local Name= select(1,UnitDebuff("target",i))
+		if ID then print("|cFFFF0000Debuff",i.."="..ID,"="..Name) end 
+	end
+end
+
+function jps.buffID( spellID, unit )
+	if unit == nil then unit = "player" end
+	local i = 1 
+	while( i <= 40 ) do
+		local ID = select(11, UnitBuff(unit, i) )
+		if ID == spellID then return true end
+	i = i + 1
+	end
+	return false
+end
+
+function jps.debuffID( spellID, unit )
+	if unit == nil then unit = "target" end
+	local i = 1 
+	while( i <= 40 ) do
+		local ID = select(11, UnitDebuff(unit, i) )
+		if ID == spellID then return true end
+	i = i + 1
+	end
+	return false
+end
+
+function jps.myDebuffID( spellID, unit )
+	if unit == nil then unit = "target" end
+	local i = 1 
+	while( i <= 40 ) do
+		local ID = select(11, UnitDebuff(unit, i) )
+		local caster = select(8, UnitDebuff(unit, i) )
+		if ID == spellID and caster == "player" then return true end
+	i = i + 1
+	end
+	return false
+end
+
 function jps.buff( spell, unit )
 	if unit == nil then unit = "player" end
 	if UnitBuff(unit, spell) then return true end
@@ -253,7 +308,7 @@ function jps.buffDuration( spell, unit )
 	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitBuff(unit,spell)
 	if caster ~= "player" then return 0 end
 	if expire == nil then return 0 end
-	duration = expire-GetTime()-jps.Lag
+	local duration = expire-GetTime()-jps.Lag
 	if duration < 0 then return 0 end
 	return duration
 end
@@ -262,26 +317,26 @@ function jps.notmyBuffDuration( spell, unit )
 	if unit == nil then unit = "target" end
 	local _,_,_,_,_,_,expire,_,_,_,_ = UnitBuff(unit,spell)
 	if expire == nil then return 0 end
-	duration = expire-GetTime()-jps.Lag
+	local duration = expire-GetTime()-jps.Lag
 	if duration < 0 then return 0 end
 	return duration
 end
 
 function jps.debuffDuration( spell, unit )
 	if unit == nil then unit = "target" end
-	local _,_,_,_,_,_,duration,caster,_,_ = UnitDebuff(unit,spell)
+	local _,_,_,_,_,_,expire,caster,_,_ = UnitDebuff(unit,spell)
 	if caster~="player" then return 0 end
-	if duration==nil then return 0 end
-	duration = duration-GetTime()-jps.Lag
+	if expire==nil then return 0 end
+	local duration = expire-GetTime()-jps.Lag
 	if duration < 0 then return 0 end
 	return duration
 end
 
 function jps.notmyDebuffDuration( spell, unit )
 	if unit == nil then unit = "target" end
-	local _,_,_,_,_,_,duration,_,caster,_,_ = UnitDebuff(unit,spell)
-	if duration==nil then return 0 end
-	duration = duration-GetTime()-jps.Lag
+	local _,_,_,_,_,_,expire,caster,_,_ = UnitDebuff(unit,spell)
+	if expire==nil then return 0 end
+	local duration = expire-GetTime()-jps.Lag
 	if duration < 0 then return 0 end
 	return duration
 end
@@ -306,8 +361,7 @@ function jps.bloodlusting()
 end
 
 function jps.castTimeLeft(unit)
-	if unit == nil then
-		unit = "player" end
+	if unit == nil then unit = "player" end
 	local _,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
 	if endTime == nil then return 0 end
 	return (endTime-GetTime()*1000)/1000
@@ -319,12 +373,12 @@ function jps.shouldKick(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == "Release Aberrations" then return false end
 
-	if target_spell and not unInterruptable then
+	if target_spell and unInterruptable == false then
 		return true
 		--if not jps.PvP then return true 
 		--else return endTime-GetTime()*1000 < 333+jps.Lag end
 
-	elseif channelling and not notInterruptible then
+	elseif channelling and notInterruptible == false then
 		return true
 
 	end 
