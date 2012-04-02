@@ -1,14 +1,13 @@
 
 function priest_holy(self)
 
-
 local priest_spell = nil
 local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
 local playerhealth_pct = UnitHealth("player") / UnitHealthMax("player")
 
 local Priest_Target = jps.lowestInRaidStatus() 
 local health_deficiency = UnitHealthMax(Priest_Target) - UnitHealth(Priest_Target)
-local health_pct = UnitHealth(Priest_Target) / UnitHealthMax(Priest_Target)
+local health_pct = jps.hpInc(Priest_Target)
 
 local stackSerendip = jps.buffStacks("Serendipity","player")
 
