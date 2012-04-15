@@ -232,9 +232,6 @@ end
 --------------------------
 -- BUFF DEBUFF
 --------------------------
--- name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(spellId or spellName or spellLink)
--- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitBuff
--- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitDebuff
 
 function jps_findBuffDebuff()
 	for i=1,40 do 
@@ -490,12 +487,35 @@ function jps.findMeATank()
 	return "player"
 end
 
+function jps_CalcThreat(unit)
+    local y
+        if UnitExists(unit.."target") and UnitIsEnemy(unit, unit.."target") then 
+            y = UnitThreatSituation(unit, unit.."target")
+        elseif UnitExists("playertarget") and UnitIsEnemy("player", "playertarget") then 
+            y = UnitThreatSituation(unit, "playertarget")
+        else
+            y = UnitThreatSituation(unit)
+        end
+        
+        if not y then y=0 end
+    return y
+end
+
+function jps.findMeAggroTank()
+	for unit, _ in pairs(jps.RaidStatus) do
+		if jps_CalcThreat(unit) == 3  then return unit end
+	end
+end
 ------------------------------
 -- BenPhelps' Timer Functions
 ------------------------------
+function jps.resetTimer( name )
+	jps.Timers[name] = nil
+end
 
 function jps.createTimer( name, duration )
-	jps.Timers[name] = duration+GetTime()
+	if duration == nil then duration = 3600 end -- 1 hour
+	jps.Timers[name] = duration + GetTime()
 end
 
 function jps.checkTimer( name )
