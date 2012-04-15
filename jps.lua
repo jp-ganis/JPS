@@ -191,20 +191,16 @@ function combatEventHandler(self, event, ...)
 	-- Combat Event Handler
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         local eventtable =  {...}
+    	EventHandler_player(...)
+        local eventtable =  {...}
 
-       -- Required For Healing Classes
-       -- Update out of sight players before selecting a spell -- used for healing classes
+       -- Update out of sight players before selecting a spell -- Required For Healing Classes
         if eventtable[2] == "SPELL_CAST_FAILED" and eventtable[5]== GetUnitName("player") and eventtable[15]== "Target not in line of sight" then
-          jps.BlacklistPlayer(jps.LastTarget)
+		jps.BlacklistPlayer(jps.LastTarget)
         end
-        -- timer for shield for disc priest
-        -- eventtable[12] == spellID eventtable[13] == spellName "Power Word: Shield"
-    	if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5]== GetUnitName("player") and eventtable[12]== 17 then
-    		jps.createTimer( "Shield", 12 )
-    	end
     	-- HEALTABLE -- contains the average value of healing spells
         if eventtable[5] == GetUnitName("player") and (eventtable[2] == "SPELL_HEAL" or eventtable[2] == "SPELL_PERIODIC_HEAL") then
-			update_healtable(...)
+		update_healtable(...)
         end
     end
 end
