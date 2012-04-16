@@ -190,7 +190,7 @@ function combatEventHandler(self, event, ...)
 
 	-- Combat Event Handler
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-        local eventtable =  {...}
+
     	EventHandler_player(...)
         local eventtable =  {...}
 
