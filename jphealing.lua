@@ -1,12 +1,97 @@
 ------------------------------
+-- EventHandler_priest_disc
+------------------------------
+
+-- eventtable[1] == timestamp the same format as the return value of the time() function
+-- eventtable[2] == event e.g. SPELL_CAST_SUCCESS , SPELL_CAST_FAILED , SPELL_HEAL ...
+-- eventtable[3] == hideCaster
+-- eventtable[4] == sourceGUID
+-- eventtable[5] == sourceName
+-- eventtable[6] == sourceFlags
+-- eventtable[7] == sourceFlags2
+-- eventtable[8] == destGUID
+-- eventtable[9] == destName
+-- eventtable[10] == destFlags
+-- eventtable[11] == destFlags2
+
+-- eventtable[12] == spellID 
+-- eventtable[13] == spellName
+-- eventtable[14] == spellSchool
+-- eventtable[15] == amount if suffix is _DAMAGE or _HEAL
+-- eventtable[15] == auraType if suffix is _AURA_APPLIED or _AURA_REMOVED e.g. BUFF , DEBUFF
+-- eventtable[15] == failedType if suffix is _CAST_FAILED e.g. "Target not in line of sight" "You must be behind your target." 
+-- eventtable[16] == overhealing if suffix is _HEAL
+-- eventtable[16] == overkill if suffix is _DAMAGE
+-- eventtable[17] == absorbed if suffix is _HEAL
+-- eventtable[17] == school if suffix is _DAMAGE
+-- eventtable[18] == critical  if suffix is _HEAL
+-- eventtable[18] == resisted  if suffix is _DAMAGE
+-- eventtable[19] == blocked  if suffix is _DAMAGE
+-- eventtable[20] == absorbed  if suffix is _DAMAGE
+-- eventtable[21] == critical (1 or nil)  if suffix is _DAMAGE
+
+function EventHandler_player(...)
+ 
+		local eventtable =  {...}
+		local timestamp, event_type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceFlags2,	destGUID, destName,	destFlags, destFlags2 = select(1,...)
+    	
+    	-- Timer shield for disc priest
+		if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5] == GetUnitName("player") and eventtable[12] == 17 then
+    		jps.createTimer( "Shield", 12 )
+    	end
+--    	if event_type == "SPELL_CAST_SUCCESS" and sourceName == GetUnitName("player") then 
+--    		local spellId, spellName, spellSchool = select(12, ...)
+--    		if spellId == 17 then jps.createTimer( "Shield_2", 12) end
+--    	end
+    	
+    	if eventtable[2] == "SPELL_HEAL" and eventtable[5] == GetUnitName("player") then
+    		--print("|cff1eff00Heal:",eventtable[12],"-",eventtable[13],"Amount:",eventtable[15],"Crit:",eventtable[18])  
+    	end
+    	if eventtable[2] == "SPELL_DAMAGE" and eventtable[5] == GetUnitName("player") then
+    		--print("|cff0070ddDmg:",eventtable[12],"-",eventtable[13],"Amount:",eventtable[15],"Crit:",eventtable[21])
+    	end
+    	
+--    	if event_type == "SPELL_HEAL" and sourceName == GetUnitName("player") then
+--    		local spellId, spellName, spellSchool, amount, overheal, absorbed, critical = select(12, ...)
+--    		print("|cff0070ddHeal",spellId,"-",spellName,"School",spellSchool,"Amount",amount) 
+--    	end
+    	
+--    	if event_type == "SPELL_DAMAGE" and sourceName == GetUnitName("player") then
+--    		local spellId, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical  = select(12, ...)
+--    		print("|cff1eff00Dmg",spellId,"-",spellName,"Targ",destName,"Amount",amount,"Crit",critical)
+--    	end
+    	
+    	if eventtable[2] == "SPELL_AURA_APPLIED" and eventtable[5] == GetUnitName("player") then
+    		--print("|cff1eff00aura:",eventtable[12],"-",eventtable[13],"type:",eventtable[14],"auratype:",eventtable[15])
+    		if eventtable[12]~=nil and eventtable[15] == "BUFF" then 
+    			local duration = select(6, UnitBuff("player", eventtable[13]))
+    			jps.createTimer(eventtable[12], duration)
+    		end
+    		if eventtable[12]~=nil and eventtable[15] == "DEBUFF" then 
+    			local duration = select(6, UnitDebuff("target", eventtable[13]))
+    			jps.createTimer(eventtable[12], duration)
+    		end
+    	end
+    	if eventtable[2] == "SPELL_AURA_REMOVED" and eventtable[5] == GetUnitName("player") then
+    		--print("|cFFFF0000aura:",eventtable[12],"-",eventtable[13],"type:",eventtable[14],"auratype:",eventtable[15])
+    		if eventtable[12]~=nil and eventtable[15] == "BUFF" then 
+    			jps.resetTimer(eventtable[12])
+    		end
+    		if eventtable[12]~=nil and eventtable[15] == "DEBUFF" then 
+    			jps.resetTimer(eventtable[12])
+    		end
+    	end
+    	
+    	-- You can create any timer you want with the spellID e.g. print("timer",jps.checkTimer( 12968 )) -- Rafale
+    	-- You can know the spellname with the spellID with local name = GetSpellInfo(12968) e.g. print("spellname",name)
+    	
+end
+
+
+------------------------------
 -- SPELLTABLE -- contains the average value of healing spells
 ------------------------------
 
--- Updates the healtable
--- event[15] est amount si suffix is _DAMAGE or _HEAL
--- event[14] spellSchool
--- event[13] spellName  healtable[eventtable[13]]
--- event[12] spellId
 function update_healtable(...)
 	local eventtable =  {...}
     if healtable[eventtable[13]] == nil then
