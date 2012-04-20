@@ -505,6 +505,7 @@ function jps.findMeAggroTank()
 	for unit, _ in pairs(jps.RaidStatus) do
 		if jps_CalcThreat(unit) == 3  then return unit end
 	end
+	return "player"
 end
 ------------------------------
 -- BenPhelps' Timer Functions
