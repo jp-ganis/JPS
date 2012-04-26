@@ -104,7 +104,7 @@ function conditionsMatched( spell, conditions )
 		return false
 	
 	-- nil
-	elseif conditions == "nil" then
+	elseif conditions == nil then
 		return true
 
 	-- onCD
