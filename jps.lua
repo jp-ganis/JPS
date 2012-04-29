@@ -29,6 +29,7 @@ jps.Race = nil
 jps.Rotation = nil
 jps.PVPInterrupt = false
 jps.Interrupts = true
+jps.Defensive = false
 jps.Debug = false
 jps.PLuaFlag = false
 jps.MoveToTarget = false
@@ -99,7 +100,7 @@ function write(...)
 end
 
 function combatEventHandler(self, event, ...)
-	if jps.Enabled == false then return end
+	-- if jps.Enabled == false then return end
 
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
@@ -339,11 +340,11 @@ function combat(self)
 		return
 	end
 	
-	-- Table RaidStatus
-	if jps.Healing then jps.SortRaidStatus() end
+	-- STOP spam Combat
+	if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff("Boisson", "player") or jps.buff("Drink", "player") then return end
 
-	-- Lag
-	jps.Lag = select(4,GetNetStats())
+	-- LagWorld
+	jps.Lag = select(4,GetNetStats()) -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
 	jps.Lag = jps.Lag/100
 	
 	-- Movement
@@ -354,20 +355,20 @@ function combat(self)
 	else jps.Casting = false
 	end
 	
-	-- STOP spam Combat
-	if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff("Boisson", "player") or jps.buff("Drink", "player") then return end
+	-- Table RaidStatus
+	if jps.Healing then jps.SortRaidStatus() end
 	
 	-- Get spell from rotation
 	jps.ThisCast = jps.Rotation()
-	
+
 	-- Check spell usability
-	if jps.ThisCast and not jps.Casting and cd(jps.ThisCast) == 0 then
+	if jps.ThisCast ~= nil and not jps.Casting then
 		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
-			jps.Cast(jps.NextCast)
-			jps.NextCast = nil
+				jps.Cast(jps.NextCast)
+				jps.NextCast = nil
         	else
-            		if jps.Debug then write("|cffa335ee",jps.ThisCast," on ",jps.Target) end
-            		jps.Cast(jps.ThisCast)
+            	if jps.Debug then write("|cffa335ee",jps.ThisCast," on ",jps.Target) end
+            	jps.Cast(jps.ThisCast)
 		end
    	end
 	
