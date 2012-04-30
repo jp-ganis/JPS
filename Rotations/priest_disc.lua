@@ -1,3 +1,21 @@
+function jps_deepcopy(object)
+    local lookup_table = {}
+    local function _copy(object)
+        if type(object) ~= "table" then
+            return object
+        elseif lookup_table[object] then
+            return lookup_table[object]
+        end
+        local new_table = {}
+        lookup_table[object] = new_table
+        for index, value in pairs(object) do
+            new_table[_copy(index)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(object))
+    end
+    return _copy(object)
+end
+
 function priest_disc(self)
 
 -- get average heal value from healtable
@@ -40,8 +58,6 @@ local div_Aegis = jps.buff("Divine Aegis", PriestHeal_Target)
 local AltKey_IsDown = false
 if IsAltKeyDown() then AltKey_IsDown = true end 
 
--- if jps.canHeal("focus") then FollowUnit("focus") end
-
 ----------------------------
 -- PriestHeal_Target_TANK
 ----------------------------
@@ -73,7 +89,7 @@ local health_pct_TANK = jps.hpInc(PriestHeal_Target_TANK) -- UnitHealth(PriestHe
 local stackGrace_TANK = jps.buffStacks("Grace",PriestHeal_Target_TANK)
 
 local switchtoLowestTarget = false
-if (health_pct < 0.60) or (health_pct_TANK > 0.90 and ub(PriestHeal_Target_TANK,"Renew")) or (health_pct_TANK > 0.90 and stackGrace_TANK > 2) then
+if (health_pct < 0.60) or (health_pct_TANK > 0.90 and jps.buff("Renew", PriestHeal_Target_TANK)) or (health_pct_TANK > 0.90 and stackGrace_TANK > 2) then
 	switchtoLowestTarget = true 
 end
 if jps.Defensive then switchtoLowestTarget = false end
@@ -83,11 +99,11 @@ if jps.Defensive then switchtoLowestTarget = false end
 ----------------------
 
 local rangedTarget = "target"
-if  UnitExists("target")==1 and UnitCanAttack("player", "target")== 1 and UnitIsDeadOrGhost("target")~=1 then
+if  UnitExists("target")==1 and UnitIsEnemy("player","target")==1 and UnitIsDeadOrGhost("target")~=1 then
 rangedTarget = "target"
-elseif UnitExists("focustarget")==1 and UnitCanAttack("player", "focustarget")== 1 and UnitIsDeadOrGhost("focustarget")~=1 then
+elseif UnitExists("focustarget")==1 and UnitIsEnemy("player","focustarget")==1 and UnitIsDeadOrGhost("focustarget")~=1 then
 rangedTarget = "focustarget"
-elseif UnitExists("targettarget")==1 and UnitCanAttack("player", "targettarget")==1 and UnitIsDeadOrGhost("targettarget")~=1 then
+elseif UnitExists("targettarget")==1 and UnitIsEnemy("player","targettarget")==1 and UnitIsDeadOrGhost("targettarget")~=1 then
 rangedTarget = "targettarget"
 end
 
@@ -95,6 +111,7 @@ end
 -- DISPEL
 ---------------------
 
+local stunMe = jps.isStun() -- return true/false
 local dispelOffensive_Target = jps.canDispellOffensive(rangedTarget) -- return true/false
 
 local dispelMagic_Me = jps.MagicDispell("player") -- return true/false
@@ -123,9 +140,11 @@ local timer = jps.checkTimer( "Shield" )
 if IsControlKeyDown() then
 print("|cff0070ddFocus","|cffffffff",PriestHeal_Target_TANK,"|cff0070ddTANK: ","|cffffffff",GetUnitName(PriestHeal_Target_TANK),"HP: ",health_deficiency_TANK,"H%: ",health_pct_TANK)
 print("|cff0070ddTarget: ","|cffffffff",PriestHeal_Target,"|cff0070ddNAME: ","|cffffffff",GetUnitName(PriestHeal_Target),"HP: ",health_deficiency,"H%: ",health_pct)
-print("|cff0070ddDispelMagic:","|cffffffff",dispelMagic_Target,"|cff0070ddDispelOffensive:","|cffffffff",dispelOffensive_Target,"|cff0070ddRangedTarget:","|cffffffff",rangedTarget)
-print("|cff0070ddCOH_Count:","|cffffffff",COH_countInRaid,"|cff0070ddPOH_Count:","|cffffffff",POH_countInRaid)
-print("|cff0070ddSubGroup:","|cffffffff",findSubGroup,"|cff0070ddPOHTarget:","|cffffffff",POH_Target)
+print("|cff0070ddDispelOffensive:","|cffffffff",dispelOffensive_Target,"|cff0070ddRangedTarget:","|cffffffff",rangedTarget)
+print("|cff0070ddDispelMagic:","|cffffffff",dispelMagic_Target,"|cff0070ddDispelDisease:","|cffffffff",dispelDisease_Target)
+print("|cff0070ddDispelTANK:","|cffffffff",dispelMagic_TANK,"|cff0070ddDiseaseTANK:","|cffffffff",dispelDisease_TANK)
+--print("|cff0070ddCOH_Count:","|cffffffff",COH_countInRaid,"|cff0070ddPOH_Count:","|cffffffff",POH_countInRaid)
+--print("|cff0070ddSubGroup:","|cffffffff",findSubGroup,"|cff0070ddPOHTarget:","|cffffffff",POH_Target)
 print("|cff0070ddSwitch:","|cffffffff",switchtoLowestTarget,"|cff0070ddTimer: ","|cffffffff",timer)
 end
 
@@ -153,132 +172,120 @@ end
 local spellTable =
 {
 -- Buff
-	--{{"macro","/cast Inner Fire"}, not ub("player","Inner Fire") and not ub("player","Inner Will"), "player" },
- 	{"Inner Fire", not ub("player","Inner Fire") and not ub("player","Inner Will"), "player" },
+	--{{"macro","/cast Inner Fire"}, not jps.buff("Inner Fire","player") and not jps.buff("Inner Will","player"), "player" },
+ 	{"Inner Fire", not jps.buff("Inner Fire","player") and not jps.buff("Inner Will","player"), "player" },
  	{"Fade", UnitIsPVP("player")~=1 and UnitThreatSituation("player")==3, "player" },
- 	{"Power Infusion", (playerhealth_pct < 0.50 or health_pct < 0.50), "player" },
  	{"Inner Focus", UnitAffectingCombat("player")==1 , "player" },
- 	{"Fear Ward", UnitIsPVP("player")==1 and not ub("player","Fear Ward"), "player" },
- 	{"Power Word: Shield", timer == 0 and not ud(PriestHeal_Target_TANK,"Weakened Soul") and not ub(PriestHeal_Target_TANK,"Power Word: Shield"), PriestHeal_Target_TANK },
+ 	{"Fear Ward", UnitIsPVP("player")==1 and not jps.buff("Fear Ward","player"), "player" },
+ 	{"Power Word: Shield", timer == 0 and not jps.debuff("Weakened Soul", PriestHeal_Target_TANK) and not jps.buff("Power Word: Shield", PriestHeal_Target_TANK), PriestHeal_Target_TANK },
+
 -- Moving
  	{"nested", (GetUnitSpeed("player") / 7) > 0,
         {
-            	{ "Pain Suppression", jps.Interrupts and (playerhealth_pct < 0.30), "player" },
-            	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30), PriestHeal_Target },
-            	{ "Desperate Prayer", (playerhealth_pct < 0.40) , "player" },
-            	{ "Power Word: Shield", (playerhealth_pct < 0.60) and not ub("player","Power Word: Shield") and not ud("player","Weakened Soul") , "player" },
-         	{ "Power Word: Shield", (health_pct < 0.60) and not ud(PriestHeal_Target,"Weakened Soul") and not ub(PriestHeal_Target,"Power Word: Shield") , PriestHeal_Target },
+            { "Pain Suppression", jps.Interrupts and (playerhealth_pct < 0.30), "player" },
+            { "Pain Suppression", jps.Interrupts and (health_pct < 0.30), PriestHeal_Target },
+            { "Desperate Prayer", (playerhealth_pct < 0.40) , "player" },
+            { "Power Word: Shield", (playerhealth_pct < 0.60) and not jps.buff("Power Word: Shield","player") and not jps.debuff("Weakened Soul","player") , "player" },
+         	{ "Power Word: Shield", (health_pct < 0.60) and not jps.debuff("Weakened Soul",PriestHeal_Target) and not jps.buff("Power Word: Shield",PriestHeal_Target) , PriestHeal_Target },
          	{ "Dispel Magic", jps.MultiTarget and UnitExists(dispelMagic_Target)==1 , dispelMagic_Target },
-         	{ "Renew", not ub("player","Renew") and (playerhealth_deficiency > average_renew), "player" },
-         	{ "Renew", not ub(PriestHeal_Target,"Renew") and (health_deficiency > average_renew), PriestHeal_Target },
-         	{ "Prayer of Mending", not ub("player","Prayer of Mending") and (playerhealth_pct < 0.60), "player" },
-         	{ "Prayer of Mending", not ub(PriestHeal_Target,"Prayer of Mending") and (health_pct < 0.60), PriestHeal_Target },
+         	{ "Renew", not jps.buff("Renew","player") and (playerhealth_deficiency > average_renew), "player" },
+         	{ "Renew", not jps.buff("Renew",PriestHeal_Target) and (health_deficiency > average_renew), PriestHeal_Target },
+         	{ "Prayer of Mending", not jps.buff("Prayer of Mending","player") and (playerhealth_pct < 0.60), "player" },
+         	{ "Prayer of Mending", not jps.buff("Prayer of Mending",PriestHeal_Target) and (health_pct < 0.60), PriestHeal_Target },
          	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (playerhealth_pct < 0.80) , "player" },
          	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct < 0.80) , PriestHeal_Target }, 	
         },
-    	},
+    },
 -- Dispell
  	{"Mass Dispel", AltKey_IsDown, "player" },
  	{"nested", (health_pct > 0.60) and jps.MultiTarget,
-        	{
-			{"Dispel Magic", dispelMagic_Me and jps.MultiTarget, "player" },
-			{"Cure Disease", dispelDisease_Me and jps.MultiTarget, "player" },
-			{"Dispel Magic", UnitExists(dispelMagic_Target)==1 and jps.MultiTarget, dispelMagic_Target },
-			{"Dispel Magic", dispelMagic_TANK and jps.MultiTarget, PriestHeal_Target_TANK },
-			{"Cure Disease", dispelDisease_TANK and jps.MultiTarget, PriestHeal_Target_TANK },
-			{"Cure Disease", dispelDisease_Target and jps.MultiTarget, PriestHeal_Target },
+        {
+			{"Dispel Magic", dispelMagic_Me, "player" },
+			{"Cure Disease", dispelDisease_Me, "player" },
+			{"Dispel Magic", dispelMagic_TANK, PriestHeal_Target_TANK },
+			{"Cure Disease", dispelDisease_TANK, PriestHeal_Target_TANK },
+			{"Dispel Magic", UnitExists(dispelMagic_Target)==1, dispelMagic_Target },
+			{"Cure Disease", UnitExists(dispelDisease_Target)==1, dispelDisease_Target },
 		},
-    	},
+    },
 -- Damage
 	{ "nested", jps.PVPInterrupt and UnitExists(rangedTarget)==1,
         {
         	{ "Dispel Magic", dispelOffensive_Target, rangedTarget },
-            	{ "Shadow Word: Death", UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.25, rangedTarget },
-            	{ "Holy Fire", "onCD", rangedTarget },
-            	{ "Penance", "onCD", rangedTarget },
-            	{ "Smite", "onCD", rangedTarget },
+            { "Shadow Word: Death", UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.25, rangedTarget },
+            { "Holy Fire", "onCD", rangedTarget },
+            { "Penance", "onCD", rangedTarget },
+            { "Smite", "onCD", rangedTarget },
         },
-   	 },
+    },
 -- Group Heal
 	{ "Power Infusion", (health_pct < 0.40), "player"},
-	{ "Prayer of Mending", (health_pct < 0.60) and not ub(PriestHeal_Target,"Prayer of Mending") and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
+	{ "Prayer of Mending", (health_pct < 0.60) and not jps.buff("Prayer of Mending",PriestHeal_Target) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
 	{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target_TANK },
 	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
 	{ "Penance", (health_pct_TANK < 0.40) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target_TANK },
 	{ "Penance", (health_pct < 0.40) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target },
 	{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (health_pct < 0.30) and (playerhealth_deficiency > average_flashheal) and (jps.LastCast=="Prayer of Healing"), PriestHeal_Target},
- 	{ "nested", jps.UseCDs and (GetNumRaidMembers() > 0) and (findSubGroup > 0),
-        {
-            	{ "Prayer of Healing", jps.canHeal(POH_Target), POH_Target},
-            	{ "Prayer of Healing", "onCD", "player"},
-        },
-   	},
-   	{ "nested", jps.UseCDs and (GetNumRaidMembers()==0) and (POH_countInRaid > countInRaid),
-        {
-            	{ "Prayer of Healing", jps.canHeal(PriestHeal_Target), PriestHeal_Target},
-            	{ "Prayer of Healing", "onCD", "player"},
-        },
-   	 },
+    { "Prayer of Healing", jps.UseCDs and (GetNumRaidMembers() > 0) and (findSubGroup > 0) and jps.canHeal(POH_Target), POH_Target},
+    { "Prayer of Healing", jps.UseCDs and (GetNumRaidMembers() > 0) and (findSubGroup > 0), "player"},
+	{ "Prayer of Healing", jps.UseCDs and (GetNumRaidMembers()==0) and (POH_countInRaid > countInRaid) and jps.canHeal(PriestHeal_Target), PriestHeal_Target},
+    { "Prayer of Healing", jps.UseCDs and (GetNumRaidMembers()==0) and (POH_countInRaid > countInRaid), "player"},
 -- Emergency player
-    	{"Desperate Prayer", select(2,GetSpellBookItemInfo("Desperate Prayer")) and (playerhealth_pct < 0.40), "player" },
-    	{"Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (playerhealth_pct < 0.80), "player" },
-    	{"nested", jps.Defensive and (playerhealth_pct < 0.60),
-        	{
-            	{ "Pain Suppression", jps.Interrupts and (playerhealth_pct < 0.30), "player"},
-            	{ "Flash Heal", jps.buff("Inner Focus","player"), "player"},
-            	{ "Penance", "onCD" , "player"},
-            	{ "Power Word: Shield", not ub("player","Power Word: Shield") and not ud("player","Weakened Soul"), "player"},
-            	{ "Greater Heal", borrowed, "player" },
-            	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (playerhealth_pct < 0.80) , "player" },
-            	{ "Prayer of Mending", not ub("player","Prayer of Mending") ,"player"},
-            	{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target},
-            	{ "Flash Heal", "onCD", "player"},
-        	},
-    	},
+	{"Desperate Prayer", select(2,GetSpellBookItemInfo("Desperate Prayer")) and (playerhealth_pct < 0.40), "player" },
+	{"Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (playerhealth_pct < 0.80), "player" },
+	{"nested", jps.Defensive and (playerhealth_pct < 0.60),
+		{
+			{ "Pain Suppression", jps.Interrupts and (playerhealth_pct < 0.30), "player"},
+			{ "Flash Heal", jps.buff("Inner Focus","player"), "player"},
+			{ "Penance", "onCD" , "player"},
+			{ "Power Word: Shield", not jps.buff("Power Word: Shield","player") and not jps.debuff("Weakened Soul","player"), "player"},
+			{ "Greater Heal", borrowed, "player" },
+			{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (playerhealth_pct < 0.80) , "player" },
+			{ "Prayer of Mending", not jps.buff("Prayer of Mending","player") ,"player"},
+			{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target},
+			{ "Flash Heal", "onCD", "player"},
+		},
+	},
 -- Focus Heal
-    	{"Power Word: Shield", UnitIsUnit(PriestHeal_Target_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not ud("focustargettarget","Weakened Soul") and not ub("focustargettarget","Power Word: Shield"), "focustargettarget"}, 
-    	{"nested", not switchtoLowestTarget and jps.canHeal(PriestHeal_Target_TANK) and (not jps.PlayerIsBlacklisted(PriestHeal_Target_TANK)),
-        	{
-        		{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30), PriestHeal_Target_TANK },
-            	{ "Penance", stackGrace_TANK < 3 and UnitAffectingCombat("player")==1, PriestHeal_Target_TANK }, 
-            	{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency_TANK > (average_flashheal + average_renew) , PriestHeal_Target_TANK },
-            	{ "Power Word: Shield", not ud(PriestHeal_Target_TANK,"Weakened Soul") and not ub(PriestHeal_Target_TANK,"Power Word: Shield"), PriestHeal_Target_TANK },
-            	{ "Penance", health_deficiency_TANK > (average_penitence + average_renew), PriestHeal_Target_TANK },
-            	{ "Greater Heal", borrowed and health_deficiency_TANK > (average_greater_heal + average_renew), PriestHeal_Target_TANK },
-            	{ "Prayer of Mending", not ub(PriestHeal_Target_TANK,"Prayer of Mending"), PriestHeal_Target_TANK },
-            	{ "Binding Heal", UnitIsUnit(PriestHeal_Target_TANK, "player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target_TANK },
-            	{ "Flash Heal", health_pct_TANK < 0.60 , PriestHeal_Target_TANK },
-            	{ "Greater Heal", health_deficiency_TANK > (average_greater_heal + average_renew), PriestHeal_Target_TANK },
-            	{ "Renew", not ub(PriestHeal_Target_TANK,"Renew"), PriestHeal_Target_TANK },
-            	{ "Binding Heal", UnitIsUnit(PriestHeal_Target,"player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target },
-            	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct_TANK < 0.80), PriestHeal_Target_TANK },
-            	{ "Heal", (health_pct_TANK < 1), PriestHeal_Target_TANK },
-        	},
-    	},
+	{"Power Word: Shield", UnitIsUnit(PriestHeal_Target_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff("Weakened Soul","focustargettarget") and not jps.buff("Power Word: Shield","focustargettarget"), "focustargettarget"}, 
+	{"nested", not switchtoLowestTarget and jps.canHeal(PriestHeal_Target_TANK) and (not jps.PlayerIsBlacklisted(PriestHeal_Target_TANK)),
+		{
+			{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30), PriestHeal_Target_TANK },
+			{ "Penance", stackGrace_TANK < 3 and UnitAffectingCombat("player")==1, PriestHeal_Target_TANK }, 
+			{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency_TANK > (average_flashheal + average_renew) , PriestHeal_Target_TANK },
+			{ "Power Word: Shield", not jps.debuff("Weakened Soul",PriestHeal_Target_TANK) and not jps.buff("Power Word: Shield",PriestHeal_Target_TANK), PriestHeal_Target_TANK },
+			{ "Penance", health_deficiency_TANK > (average_penitence + average_renew), PriestHeal_Target_TANK },
+			{ "Greater Heal", borrowed and health_deficiency_TANK > (average_greater_heal + average_renew), PriestHeal_Target_TANK },
+			{ "Prayer of Mending", not jps.buff("Prayer of Mending",PriestHeal_Target_TANK), PriestHeal_Target_TANK },
+			{ "Binding Heal", UnitIsUnit(PriestHeal_Target_TANK, "player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target_TANK },
+			{ "Flash Heal", health_pct_TANK < 0.60 , PriestHeal_Target_TANK },
+			{ "Greater Heal", health_deficiency_TANK > (average_greater_heal + average_renew), PriestHeal_Target_TANK },
+			{ "Renew", not jps.buff("Renew",PriestHeal_Target_TANK), PriestHeal_Target_TANK },
+			{ "Binding Heal", UnitIsUnit(PriestHeal_Target,"player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target },
+			{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct_TANK < 0.80), PriestHeal_Target_TANK },
+			{ "Heal", (health_pct_TANK < 1), PriestHeal_Target_TANK },
+		},
+	},
 -- Emergency Target
-    	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30) , PriestHeal_Target },
-    	{ "Penance", health_deficiency > (average_penitence + average_renew), PriestHeal_Target },
-    	{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency > (average_flashheal + average_renew) , PriestHeal_Target },
-    	{ "Greater Heal", borrowed and health_deficiency > (average_greater_heal + average_renew), PriestHeal_Target },
-    	{ "Binding Heal", UnitIsUnit(PriestHeal_Target,"player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target },
-    	{ "Power Word: Shield", (health_pct < 0.60) and not ud(PriestHeal_Target,"Weakened Soul") and not ub(PriestHeal_Target,"Power Word: Shield"), PriestHeal_Target },
-    	{ "Prayer of Mending", (health_pct < 0.60) and not ub(PriestHeal_Target,"Prayer of Mending"), PriestHeal_Target }, 
-    	{ "Flash Heal", (health_pct < 0.60), PriestHeal_Target },
+	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30), PriestHeal_Target },
+	{ "Penance", health_deficiency > (average_penitence + average_renew), PriestHeal_Target },
+	{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency > (average_flashheal + average_renew), PriestHeal_Target },
+	{ "Greater Heal", borrowed and health_deficiency > (average_greater_heal + average_renew), PriestHeal_Target },
+	{ "Binding Heal", UnitIsUnit(PriestHeal_Target,"player")~=1 and (playerhealth_deficiency > average_flashheal), PriestHeal_Target },
+	{ "Power Word: Shield", (health_pct < 0.60) and not jps.debuff("Weakened Soul",PriestHeal_Target) and not jps.buff("Power Word: Shield",PriestHeal_Target), PriestHeal_Target },
+	{ "Prayer of Mending", (health_pct < 0.60) and not jps.buff("Prayer of Mending",PriestHeal_Target), PriestHeal_Target }, 
+	{ "Flash Heal", (health_pct < 0.60), PriestHeal_Target },
 -- Boss Debuff
 	{ "Greater Heal", UnitExists(Plasma)==1 , Plasma }, -- "Deathwing"
 -- Basic    
 	{ "Gift of the Naaru", select(2,GetSpellBookItemInfo("Gift of the Naaru")) and (health_pct < 0.80), PriestHeal_Target },
-    	{ "nested", health_deficiency > (average_greater_heal + average_renew), 
-		{
-			{ "Greater Heal", ub(PriestHeal_Target,"Renew") and jps.buffDuration("Renew", PriestHeal_Target) < 3 , PriestHeal_Target },
-			{ "Greater Heal", not ub(PriestHeal_Target,"Renew") , PriestHeal_Target },
-			{ "Greater Heal", "onCD" , PriestHeal_Target },
-		}
-	},
-	{ "Renew", not ub(PriestHeal_Target,"Renew") and (health_deficiency > average_renew) , PriestHeal_Target },
-	{ "Renew", ub(PriestHeal_Target,"Power Word: Shield") and health_deficiency < (average_penitence + average_renew) and health_deficiency > average_heal and not ub(PriestHeal_Target,"Renew") , PriestHeal_Target },
-	{ "Heal", ub(PriestHeal_Target,"Renew") and jps.buffDuration("Renew", PriestHeal_Target) < 3 and health_deficiency > (average_heal + average_renew) , PriestHeal_Target },
-	{ "Heal", (health_deficiency > average_renew) , PriestHeal_Target },
+	{ "Greater Heal", health_deficiency > (average_greater_heal + average_renew) and jps.buff("Renew",PriestHeal_Target) and jps.buffDuration("Renew", PriestHeal_Target) < 3, PriestHeal_Target },
+	{ "Greater Heal", health_deficiency > (average_greater_heal + average_renew) and not jps.buff("Renew",PriestHeal_Target), PriestHeal_Target },
+	{ "Greater Heal", health_deficiency > (average_greater_heal + average_renew), PriestHeal_Target },
+	{ "Renew", not jps.buff("Renew",PriestHeal_Target) and (health_deficiency > average_renew) , PriestHeal_Target },
+	{ "Renew", jps.buff("Power Word: Shield",PriestHeal_Target) and health_deficiency < (average_penitence + average_renew) and health_deficiency > average_heal and not jps.buff("Renew",PriestHeal_Target), PriestHeal_Target },
+	{ "Heal", jps.buff("Renew",PriestHeal_Target) and jps.buffDuration("Renew", PriestHeal_Target) < 3 and health_deficiency > (average_heal + average_renew), PriestHeal_Target },
+	{ "Heal", (health_deficiency > average_renew), PriestHeal_Target },
 }
 
 	local spell,target = parseSpellTable(spellTable)
