@@ -16,10 +16,10 @@ function hunter_sv(self)
 		{ jps.DPSRacial, jps.UseCDs },
 		{ "serpent sting", not jps.debuff("serpent sting") },
 		{ "rapid fire", "onCD" },
-		{ "explosive shot", jps.debuffDuration("explosive shot") < .3 },
-		{ "black arrow", not jps.debuff("black arrow") },
-		{ "kill shot", "onCD" },
-		{ "arcane shot", focus >= 70 and not jps.buff("lock and load") },
+		{ "explosive shot", jps.debuffDuration("explosive shot") < 2 },
+		{ "black arrow" },
+		{ "kill shot" },
+		{ "arcane shot", focus >= 67 },
 		{ "cobra shot", "onCD"},
 	}
 
