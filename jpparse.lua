@@ -47,7 +47,7 @@ end
 -- canCast debug mode
 function jpd( spell, unit )
 	if unit == nil then unit = "target" end
-	write(spell.." @ "..unit)
+	write("|cffa335ee"..spell.." @ "..unit)
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
 
