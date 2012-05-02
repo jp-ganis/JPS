@@ -18,7 +18,7 @@ function hunter_sv(self)
 		{ "black arrow" },
 		{ "kill shot" },
 		{ "arcane shot", focus >= 67 },
-		{ "cobra shot", "onCD"},
+		{ "cobra shot" },
 	}
 
 	return parseSpellTable(spellTable)
