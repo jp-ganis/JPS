@@ -168,6 +168,10 @@ function druid_balance_fail(self)
 		jps.groundClick()
 	--	Petattack("target")
 	end
+
+	if spell == "starfall" and jps.glovesCooldown() == 0 then
+		RunMacroText("/use 10")
+	end
 	
 	return spell
 end
