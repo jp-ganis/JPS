@@ -53,6 +53,7 @@ function druid_balance_bpt(self)
 		{ "moonfire", jps.Opening and jps.debuff("insect swarm") }, -- try and fix double IS bug
 		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
 		-- Dodge Eclipse lag by casting one spell before dots/shooting star proc
+		{ "starfall", lEclipse or vEclipse == "L" },
 		{ "starsurge", vEclipse ~= false and not jps.buff("shooting stars") },
 		{ "wrath", vEclipse == "S" },
 		{ "starfire", vEclipse == "L" },
@@ -67,7 +68,6 @@ function druid_balance_bpt(self)
 		{ "moonfire", lEclipse and mfDuration < 10 and vEnergy >= -20 },
 		-- Moving
 		--{ "typhoon", jps.Moving },
-		{ "starfall", lEclipse },
 		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
 		{ "insect swarm", jps.Moving and isDuration < isTick },
 		{ "moonfire", jps.Moving },
