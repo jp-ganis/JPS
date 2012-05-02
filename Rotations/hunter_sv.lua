@@ -4,8 +4,6 @@ function hunter_sv(self)
 	local spell = nil
 	local sps_duration = jps.debuffDuration("serpent sting")
 	local focus = UnitMana("player")
-	local pet_focus = UnitMana("pet")
-	local pet_frenzy = jps.buffStacks("Frenzy Effect","pet")
 	local pet_attacking = IsPetAttackActive()
 
 	local spellTable = 
