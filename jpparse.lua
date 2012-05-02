@@ -51,27 +51,37 @@ function jpd( spell, unit )
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
 
-	write("Unit Exists")
-	if not UnitExists(unit) then return false end
-	write("Unit Not Dead")
-	if UnitIsDead(unit) then return false end
-	write("Unit not dead/ghost")
-	if UnitIsDeadOrGhost(unit) then return false end
-	write("IsUsableSpell()")
-	if not usable then return false end
-	write("Spell NOT on cd")
-	if jps.cooldown(spell) ~= 0	then return false end
-	write("Not oom")
-	if nomana then return false end
-	write("unit visible")
-	if not UnitIsVisible(unit) then return false end
-	write("spell known")
-	if not IsSpellKnown(spellID) then return false end
-	write("spell in range")
-	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
-	write("jps lookup")
-	if jps[spell] ~= nil and jps[spell] == false then return false end
-	
+	if not UnitExists(unit) then
+		write("Failed UnitExists test")
+		return false end
+	if UnitIsDead(unit) then
+		write("Failed UnitIsDead test")
+		return false end
+	if UnitIsDeadOrGhost(unit) then
+		write("Failed UnitIsDeadOrGhost test")
+		return false end
+	if not usable then
+		write("Failed IsUsableSpell test")
+		return false end
+	if jps.cooldown(spell) ~= 0 then
+		write("Failed Cooldown test")
+		return false end
+	if nomana  then
+		write("Failed Mana test")
+		return false end
+	if not UnitIsVisible(unit)  then
+		write("Failed Visible test")
+		return false end
+	if not IsSpellKnown(spellID)  then
+		write("Failed IsSpellKnown test")
+		return false end
+	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then
+		write("Failed Range test")
+		return false end
+	if jps[spell] ~= nil and jps[spell] == false then
+		write("Failed JPS Lookup test")
+		return false end
+	write("Passed all tests")
 	return true
 end
 
