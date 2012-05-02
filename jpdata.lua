@@ -456,8 +456,10 @@ end
 
 --PLua 
 function jps.groundClick()
+	RunMacroText("/console deselectOnClick 0")
 	CameraOrSelectOrMoveStart()
 	CameraOrSelectOrMoveStop()
+	RunMacroText("/console deselectOnClick 1")
 end
 
 function jps.faceTarget()
