@@ -4,8 +4,6 @@ function rogue_combat(self)
 	local cp = GetComboPoints("player")
 	local rupture_duration = jps.debuffDuration("rupture")
 	local snd_duration = jps.buffDuration("slice and dice")
-	local BFMacroText = "/cancelaura Blade Flurry"
-	local BFMacro = { "macro", BFMacroText, "Blade Flurry", defaultTarget }
 	local energy = UnitPower("player")
 	local bleeding = jps.debuff("hemorrhage") or jps.debuff("mangle") or jps.debuff("blood frenzy")
 
@@ -14,9 +12,6 @@ function rogue_combat(self)
 	{
 		{ nil,			ub("player","killing spree") },
 		{ "Kick",		jps.Interrupts and jps.shouldKick("target") and cd("kick") == 0 },
-		-- Blade Flurry
-		{ BFMacro,		ub("player","Blade Flurry") and not jps.MultiTarget },
-		{ "Blade Flurry",	jps.MultiTarget and not ub("player","Blade Flurry") },
 		-- SnD
 		{ "slice and dice",		cp > 0 and snd_duration < 2 },
 		-- CDs
