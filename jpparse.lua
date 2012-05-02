@@ -23,7 +23,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	spell:lower()
 
 	--debug mode
-	if jps.Debug and IsControlKeyDown() then return jpd( spell, unit ) end
+	if jps.Debug then return jpd( spell, unit ) end
 	
 	--
 	if unit == nil then unit = "target" end
