@@ -367,7 +367,6 @@ function combat(self)
 				jps.Cast(jps.NextCast)
 				jps.NextCast = nil
         	else
-            	if jps.Debug then write("|cffa335ee",jps.ThisCast," on ",jps.Target) end
             	jps.Cast(jps.ThisCast)
 		end
    	end
