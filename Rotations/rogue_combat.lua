@@ -13,14 +13,14 @@ function rogue_combat(self)
 		{ nil,			ub("player","killing spree") },
 		{ "Kick",		jps.Interrupts and jps.shouldKick("target") and cd("kick") == 0 },
 		-- SnD
-		{ "slice and dice",		cp > 0 and snd_duration < 2 },
+		{ "slice and dice",	cp > 0 and snd_duration < 2 },
 		-- CDs
-		{ "killing spree",		energy < 35 and snd_duration > 4 and not jps.buff("adrenaline rush") },
+		{ "killing spree",	energy < 35 and snd_duration > 4 and not jps.buff("adrenaline rush") },
 		{ "adrenaline rush",	energy < 35 },
 		-- SINGLE TARGET
-		{ "eviscerate",			cp == 5 and jps.buff("deep insight") },
-		{ "rupture",			bleeding and cp == 5 and rupture_duration <= 2 },
-		{ "eviscerate",			cp == 5 },
+		{ "eviscerate",		cp == 5 and jps.buff("deep insight") },
+		{ "rupture",		bleeding and cp == 5 and rupture_duration <= 2 },
+		{ "eviscerate",		cp == 5 },
 		{ "revealing strike",	cp == 4 },
 		{ "sinister strike",	cp < 4 },
 	}
