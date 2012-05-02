@@ -5,7 +5,7 @@ function warrior_arms(self)
 	local midGCD = jps.cd("hamstring") > 0
 
 	local spellTable = {
-		{ "berserker stance", not jps.buff("taste for blood") and rage < 75 and midGCD },
+		{ "berserker stance", jps.myDebuff("rend") and not jps.buff("taste for blood") and rage < 75 and midGCD },
 		{ "battle stance", (not jps.myDebuff("rend") or jps.buff("taste for blood")) and jps.cd("mortal strike") > 1 and midGCD },
 		{ "recklessness", jps.hp("target") <= 0.2 and midGCD },
 		{ "berserker rage", not jps.buff("deadly calm") and rage < 70 },
