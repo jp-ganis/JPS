@@ -13,7 +13,7 @@ function hunter_sv(self)
 		{ "aspect of the fox", not jps.buff("aspect of the fox") and jps.Moving },
 		{ jps.DPSRacial, jps.UseCDs },
 		{ "serpent sting", not jps.debuff("serpent sting") },
-		{ "rapid fire", "onCD" },
+		{ "rapid fire" },
 		{ "explosive shot", jps.debuffDuration("explosive shot") < 0.3 },
 		{ "black arrow" },
 		{ "kill shot" },
