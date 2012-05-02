@@ -19,7 +19,7 @@ function rogue_combat(self)
 		{ "adrenaline rush",	energy < 35 },
 		-- SINGLE TARGET
 		{ "eviscerate",			cp == 5 and jps.buff("deep insight") },
-		{ "rupture",			bleeding and cp == 5 and not rupture_duration <= 2 },
+		{ "rupture",			bleeding and cp == 5 and rupture_duration <= 2 },
 		{ "eviscerate",			cp == 5 },
 		{ "revealing strike",	cp == 4 },
 		{ "sinister strike",	cp < 4 },
