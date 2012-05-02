@@ -13,7 +13,7 @@ function druid_balance_bpt(self)
 	local bptTable = BalancePowerTracker_SharedInfo
 	local vEnergy = bptTable.virtualEnergy
 	local vDirection = bptTable.virtualDirection
-	local vEclipse = bptTable.virtualEclipse
+	local vEclipse = bptTable.virtualEclipse -- Returns S for Solar, L for Lunar, false for Neither
 
 	if vDirection == "none" then vDirection = "sun" end
 
@@ -22,8 +22,8 @@ function druid_balance_bpt(self)
 	local mfTick = 1.3
 
 	-- Eclipse Buffs
-	local sEclipse = jps.buff("eclipse (solar)") or vEclipse == "S"
-	local lEclipse = jps.buff("eclipse (lunar)") or vEclipse == "L"
+	local sEclipse = jps.buff("eclipse (solar)")
+	local lEclipse = jps.buff("eclipse (lunar)")
 
 	-- Mushrooms
 	local m1, _, _, _, _ = GetTotemInfo(1)
@@ -50,17 +50,19 @@ function druid_balance_bpt(self)
 	{
 		-- Opening
 		--{ "wild mushroom: detonate", m1 and m2 and m3 },
+		{ "moonfire", jps.Opening and jps.debuff("insect swarm") }, -- try and fix double IS bug
 		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
-		{ "moonfire", jps.Opening },
-		-- Insta-Starsurge when we flip eclipse so we don't waste NG.
-		{ "starsurge", jps.buff("shooting stars") and vEclipse ~= true },
+		-- Dodge Eclipse lag by casting one spell before dots/shooting star proc
+		{ "starsurge", vEclipse ~= false and not jps.buff("shooting stars") },
+		{ "wrath", vEclipse == "S" },
+		{ "starfire", vEclipse == "L" },
 		-- Insect Swarm
 		{ "insect swarm", sEclipse and isDuration < isTick },
 		{ "insect swarm", sEclipse and vEnergy < 15 and isDuration < 10 },
 		{ "insect swarm", lEclipse and isDuration < isTick },
 		-- Moonfire
 		{ "moonfire", sEclipse and sfDuration < mfTick and mfDuration < mfTick },
-		{ "moonfire", sEclipse and sfDuration < 7 and vEnergy < 15 },
+		{ "moonfire", sEclipse and sfDuration < 10 and vEnergy < 15 },
 		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration < mfTick },
 		{ "moonfire", lEclipse and mfDuration < 10 and vEnergy >= -20 },
 		-- Moving
@@ -69,12 +71,13 @@ function druid_balance_bpt(self)
 		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
 		{ "insect swarm", jps.Moving and isDuration < isTick },
 		{ "moonfire", jps.Moving },
-		-- Main rotation
-		{ "starsurge", vDirection == "moon" and vEnergy > -85 and vEclipse ~= true },
-		{ "starsurge", vDirection == "sun" and vEnergy < 85 and vEclipse ~= true },
-		{ "starsurge", lEclipse and jps.buff("shooting stars") and vEclipse ~= true },
+		-- Starsurge
+		{ "starsurge", vDirection == "moon" and vEnergy > -85 },
+		{ "starsurge", vDirection == "sun" and vEnergy < 85 },
+		-- Lolboomkincds
 		{ "innervate", jps.mana() < 0.5 },
 		{ "force of nature", jps.UseCDs },
+		-- Baseline
 		{ "wrath", vDirection == "moon" },
 		{ "starfire", vDirection == "sun" },
 	}
