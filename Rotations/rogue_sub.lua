@@ -5,7 +5,7 @@ function rogue_sub(self)
    local energy = UnitMana("player")
    local spell = nil
    if cp < 5 and ((jps.cd("shadow dance")==0 and energy < 85) or (jps.cd("vanish")==0) and energy < 60) then
-	   jps.write("Pooling energy")
+	   write("Pooling energy")
 	   return nil
    end
 
