@@ -152,11 +152,12 @@ function parseSpellTable( hydraTable )
 			local macroText = spell[2]
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
-			-- if macroTarget then TargetUnit(macroTarget) end
+			-- if macroTarget then TargetUnit(macroTarget) end -- TargetUnit is PROTECTED despite goblin active
 			if macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then
 				conditions = conditionsMatched(  macroSpell, conditions )
+			elseif conditions == nil then 
+				conditions = true
 			end
-
 			if conditions then RunMacroText(macroText) return end
 
 		-- MultiTarget List
