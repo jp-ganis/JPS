@@ -57,6 +57,10 @@ function druid_balance_bpt(self)
 		{ "starsurge", vEclipse ~= false and not jps.buff("shooting stars") },
 		{ "wrath", vEclipse == "S" },
 		{ "starfire", vEclipse == "L" },
+		-- If this is the last spell before we get out of Eclipse, and we have an Insta-SS
+		-- Abuse the Eclipse lag to get an extra eclipsed spell
+		{ "wrath", sEclipse and vEnergy < 0 and jps.buff("shooting stars") },
+		{ "starfire", lEclipse and vEnergy > 0 and jps.buff("shooting stars") },
 		-- Insect Swarm
 		{ "insect swarm", sEclipse and isDuration < isTick },
 		{ "insect swarm", sEclipse and vEnergy < 15 and isDuration < 10 },
