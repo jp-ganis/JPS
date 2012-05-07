@@ -14,6 +14,7 @@ function shaman_enhancement(self)
 		{ "lightning bolt", maelstromStacks > 4 },
 		{ "unleash elements" },
 		{ "lava burst", shockCD < 2 and jps.debuffDuration("flame shock") > 2.5 and jps.buffDuration("unleash flame") > 2.5 },
+		{ "flame shock", not jps.myDebuff("flame shock") or jps.buff("unleash flame") },
 		{ "earth shock" },
 		{ "feral spirit" },
 		{ "earth elemental totem" }, 
