@@ -180,6 +180,18 @@ function jps.canDispellOffensive(unit)
 	return false
 end
 
+function jps.MageSheepDuration(unit)
+	if unit==nil then return false end
+	local delay = 0
+	local Class, _ = UnitClass(unit)
+	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+	if Class== "Mage" and spell == "Polymorph" then -- 1.5 sec cast
+		delay = jps.castTimeLeft(unit) - 2*jps.Lag
+	end
+	if delay < 0 then return true end
+return false
+end
+	
 --------------------------
 -- Functions
 --------------------------
@@ -509,9 +521,11 @@ function jps.findMeAggroTank()
 	end
 	return "player"
 end
+
 ------------------------------
 -- BenPhelps' Timer Functions
 ------------------------------
+
 function jps.resetTimer( name )
 	jps.Timers[name] = nil
 end
