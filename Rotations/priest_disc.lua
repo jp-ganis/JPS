@@ -28,7 +28,7 @@ local average_POH = getaverage_heal("Prayer of Healing")
 --AltKey_IsDown : "Mass Dispel"
 --jps.Defensive: Heal only the Tank et yourself 	/jps def
 --jps.MultiTarget : Dispelling 						/jps multi
---jps.PVPInterrupt: Damage and offensive dispell	/jps pint
+--jps.PVPInterrupt: Damage							/jps pint
 --jps.UseCDs: group heal "Prayer of Healing"		/jps cds
 --jps.Interrupts : "Pain Suppression"				/jps int
 
@@ -43,7 +43,7 @@ local playerhealth_pct = UnitHealth("player") / UnitHealthMax("player")
 local countInRaid = 3
 local pctLOSS = 0.80
 local POH_countInRaid = jps.countInRaidStatus(pctLOSS) 
-local findSubGroup, POH_Target = jps.findSubGroupToHeal(pctLOSS) -- returns the subgroup and the target to heal with POH in RAID
+local POH_Target = jps.findSubGroupToHeal(pctLOSS) -- returns the target to heal with POH in RAID
 local borrowed = jps.buff("Borrowed Time", "player")
 
 ----------------------------
@@ -96,7 +96,7 @@ end
 -- DAMAGE
 ----------------------
 
-local rangedTarget = nil
+local rangedTarget = "target"
 if  UnitExists("target")==1 and UnitIsEnemy("player","target")==1 and UnitIsDeadOrGhost("target")~=1 then
 rangedTarget = "target"
 elseif UnitExists("focustarget")==1 and UnitIsEnemy("player","focustarget")==1 and UnitIsDeadOrGhost("focustarget")~=1 then
@@ -123,7 +123,7 @@ local dispelDisease_Target = jps.DispelDiseaseTarget() -- return unit
 
 local Plasma = jps.FindMeADispelTarget({"Deathwing"}) -- return unit
 local Corruption = jps.FindMeADispelTarget({"Yor'sahj"}) -- return unit
-if UnitExists(Corruption)==1 and jps.debuffStacks("Deep Corruption", Corruption) > 3 then jps.BlacklistPlayer(Corruption) end
+if UnitExists(Corruption)==1 and jps.debuffStacks("Deep Corruption", Corruption) > 4 then jps.BlacklistPlayer(Corruption) end
 
 ---------------------
 -- TIMER
@@ -134,15 +134,14 @@ local timerShield = jps.checkTimer( "Shield" )
 -------------------
 -- DEBUG
 -------------------
--- IsMouseButtonDown([button]) 1 or LeftButton - 2 or RightButton - 3 or MiddleButton or clickable scroll control
--- shiftDown = IsShiftKeyDown() ctrlDown  = IsControlKeyDown() altDown   = IsAltKeyDown()
+
 if IsControlKeyDown() then
 print("|cff0070ddFocus","|cffffffff",PriestHeal_Target_TANK,"|cff0070ddTANK: ","|cffffffff",GetUnitName(PriestHeal_Target_TANK),"HP: ",health_deficiency_TANK,"H%: ",health_pct_TANK)
 print("|cff0070ddTarget: ","|cffffffff",PriestHeal_Target,"|cff0070ddNAME: ","|cffffffff",GetUnitName(PriestHeal_Target),"HP: ",health_deficiency,"H%: ",health_pct)
 print("|cff0070ddDispelOffensive:","|cffffffff",dispelOffensive_Target,"|cff0070ddRangedTarget:","|cffffffff",rangedTarget)
 print("|cff0070ddDispelMagic:","|cffffffff",dispelMagic_Target,"|cff0070ddDispelDisease:","|cffffffff",dispelDisease_Target)
 print("|cff0070ddDispelTANK:","|cffffffff",dispelMagic_TANK,"|cff0070ddDiseaseTANK:","|cffffffff",dispelDisease_TANK)
-print("|cff0070ddSubGroup:","|cffffffff",findSubGroup,"|cff0070ddPOHTarget:","|cffffffff",POH_Target,"|cff0070ddPOH_Count:","|cffffffff",POH_countInRaid)
+print("|cff0070ddPOHTarget:","|cffffffff",POH_Target,"|cff0070ddPOH_Count:","|cffffffff",POH_countInRaid)
 print("|cff0070ddSwitch:","|cffffffff",switchtoLowestTarget,"|cff0070ddTimer: ","|cffffffff",timerShield)
 end
 
@@ -150,13 +149,18 @@ end
 -- TRINKETS ------------
 ------------------------
 
+-- Shadow Word: Death on Polymorph
+	if UnitExists(rangedTarget)==1 and UnitIsEnemy("player",rangedTarget)==1 and castDeath and jps.cooldown("Shadow Word: Death")==0 then 
+		SpellStopCasting()
+		jps.Target = rangedTarget
+		spell = "Shadow Word: Death"
+		print("castDeath",castDeath)
+	return spell end
 -- kick Spell Heal if LowHeath
 	local spellstop = UnitCastingInfo("player")
 	if spellstop == "Heal" and jps.castTimeLeft("player") > 1 and health_pct < 0.70 then
 		SpellStopCasting()
 	end
--- Don't kick Casting
-	if UnitCastingInfo("player") or UnitChannelInfo("player") then return nil end
 
 -- Trinket
 	if  IsEquippedItem("Foul Gift of the Demon Lord") and select(1,GetItemCooldown(72898))==0 and IsUsableItem("Foul Gift of the Demon Lord") and UnitAffectingCombat("player")==1 then 
@@ -187,7 +191,14 @@ local spellTable_moving =
 	{ "Renew", not jps.buff("Renew",PriestHeal_Target) and (health_deficiency > average_renew), PriestHeal_Target },
 	{ "Power Word: Shield", UnitIsPVP("player")==1 and not jps.buff("Power Word: Shield","player") and not jps.debuff("Weakened Soul","player"), "player" },
 	{ "Dispel Magic", jps.MultiTarget and dispelMagic_Me, "player" },
-	{ "Dispel Magic", jps.MultiTarget and UnitExists(dispelMagic_Target)==1 , dispelMagic_Target },
+	{ "Dispel Magic", jps.MultiTarget and UnitExists(dispelMagic_Target)==1, dispelMagic_Target },
+	-- Offensive dispell
+	{ "nested", UnitIsPVP("player")==1 and UnitExists(rangedTarget)==1 and UnitIsEnemy("player", rangedTarget)==1,
+		{
+			{"Shadow Word: Death", castDeath, rangedTarget }, 
+			{"Dispel Magic", dispelOffensive_Target, rangedTarget },
+		},
+	}
 }
 
 local spellTable_main =
@@ -196,11 +207,13 @@ local spellTable_main =
 	--{{"macro","/cast Inner Fire"}, not jps.buff("Inner Fire","player") and not jps.buff("Inner Will","player"), "player" },
  	{ "Inner Fire", not jps.buff("Inner Fire","player") and not jps.buff("Inner Will","player"), "player" },
  	{ "Fade", UnitIsPVP("player")~=1 and UnitThreatSituation("player")==3, "player" },
+ 	{ "Psychic Scream", UnitIsPVP("player")==1 and UnitAffectingCombat("player")==1 and UnitExists("target")==1 and UnitIsEnemy("player", "target")==1 and CheckInteractDistance("target", 3) == 1, "target" },
  	{ "Inner Focus", UnitAffectingCombat("player")==1 , "player" },
- 	{ "Power Infusion", (health_pct < 0.40), "player"},
- 	{ "Fear Ward", UnitIsPVP("player")==1 and not jps.buff("Fear Ward","player"), "player" },
+ 	{ "Power Infusion", UnitAffectingCombat("player")==1 and (health_pct < 0.40), "player"},
+ 	{ "Fear Ward", UnitIsPVP("player")==1 and (health_pct > 0.40) and not jps.buff("Fear Ward","player"), "player" },
  	{ "Power Word: Shield", timerShield == 0 and not jps.debuff("Weakened Soul", PriestHeal_Target_TANK) and not jps.buff("Power Word: Shield", PriestHeal_Target_TANK), PriestHeal_Target_TANK },
 	{ "Power Word: Shield", UnitIsUnit(PriestHeal_Target_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff("Weakened Soul","focustargettarget") and not jps.buff("Power Word: Shield","focustargettarget"), "focustargettarget"},
+	{ "Flash Heal", UnitIsPVP("player")==1 and jps.buff("Inner Focus","player") and (health_deficiency > average_flashheal), PriestHeal_Target },
 -- Dispell
  	{ "Mass Dispel", AltKey_IsDown, "player" },
  	{ "nested", (health_pct_TANK > 0.60) and jps.MultiTarget,
@@ -213,37 +226,25 @@ local spellTable_main =
 			{"Cure Disease", UnitExists(dispelDisease_Target)==1, dispelDisease_Target },
 		},
     },
--- Damage
-	{ "nested", UnitExists(rangedTarget)==1,
-        {
-        	{ "Shadow Word: Death", UnitIsPVP("player")==1 and castDeath, rangedTarget}, -- jps.PvP if you are in a PVP server
-        	{ "Dispel Magic", UnitIsPVP("player")==1 and (health_pct_TANK > 0.60) and dispelOffensive_Target, rangedTarget }, -- jps.PvP if you are in a PVP server
-            { "Shadow Word: Death", jps.PVPInterrupt and UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.25, rangedTarget },
-            { "Holy Fire", jps.PVPInterrupt, rangedTarget },
-            { "Penance", jps.PVPInterrupt, rangedTarget },
-            { "Smite", jps.PVPInterrupt, rangedTarget },
-        },
-    },
 -- Group Heal
     { "nested", jps.UseCDs and (POH_countInRaid > countInRaid) and (jps.LastCast=="Prayer of Healing"),
         {
         	{ "Power Infusion", (health_pct < 0.40), "player"},
-			{ "Prayer of Mending", (health_pct < 0.60) and not jps.buff("Prayer of Mending",PriestHeal_Target), PriestHeal_Target },
+			{ "Prayer of Mending", not jps.buff("Prayer of Mending",PriestHeal_Target), PriestHeal_Target },
 			{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30), PriestHeal_Target_TANK },
 			{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30), PriestHeal_Target },
 			{ "Penance", (health_pct_TANK < 0.40), PriestHeal_Target_TANK },
 			{ "Penance", (health_pct < 0.40), PriestHeal_Target },
-			{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (health_pct < 0.30) and (playerhealth_deficiency > average_flashheal), PriestHeal_Target},
+			{ "Binding Heal", UnitIsUnit(PriestHeal_Target, "player")~=1 and (health_pct < 0.40) and (playerhealth_deficiency > average_flashheal), PriestHeal_Target},
     		{ "Power Word: Shield", not jps.debuff("Weakened Soul",PriestHeal_Target_TANK) and not jps.buff("Power Word: Shield",PriestHeal_Target_TANK), PriestHeal_Target_TANK },
     		{ "Power Word: Shield", not borrowed and not jps.debuff("Weakened Soul",PriestHeal_Target) and not jps.buff("Power Word: Shield",PriestHeal_Target), PriestHeal_Target },
         },
     },
 	{ "nested", jps.UseCDs and (POH_countInRaid > countInRaid),
         {
-            { "Prayer of Healing", (findSubGroup > 0) and jps.canHeal(POH_Target), POH_Target}, -- Raid
-    		{ "Prayer of Healing", (findSubGroup > 0), "player"}, -- GetNumPartyMembers() > 0 -- Raid
-			{ "Prayer of Healing", (GetNumPartyMembers() > 0) and jps.canHeal(PriestHeal_Target), PriestHeal_Target}, -- Party
-    		{ "Prayer of Healing", (GetNumPartyMembers() > 0), "player"}, -- Party
+            { "Prayer of Healing", (GetNumRaidMembers() > 0) and jps.canHeal(POH_Target), POH_Target}, -- Raid
+			{ "Prayer of Healing", (GetNumRaidMembers()==0) and jps.canHeal(PriestHeal_Target), PriestHeal_Target}, -- Party
+    		{ "Prayer of Healing", (GetNumRaidMembers()==0), "player"}, -- Party
         },
     },
 -- Emergency player
@@ -261,6 +262,22 @@ local spellTable_main =
 			{ "Flash Heal", "onCD", "player"},
 		},
 	},
+-- Offensive dispell
+	{ "nested", UnitIsPVP("player")==1 and UnitExists(rangedTarget)==1 and UnitIsEnemy("player", rangedTarget)==1 and (health_pct_TANK > 0.60),
+		{
+			{"Shadow Word: Death", castDeath, rangedTarget }, 
+			{"Dispel Magic", dispelOffensive_Target, rangedTarget },
+		},
+	},
+-- Damage
+	{ "nested", UnitExists(rangedTarget)==1 and UnitIsEnemy("player", rangedTarget)==1 and (health_pct_TANK > 0.60) and jps.PVPInterrupt,
+        {
+            { "Shadow Word: Death", UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.25, rangedTarget },
+            { "Holy Fire", "onCD", rangedTarget },
+            { "Penance", "onCD", rangedTarget },
+            { "Smite", "onCD", rangedTarget },
+        },
+    },
 -- Boss Debuff
 	{ "Greater Heal", not switchtoLowestTarget and UnitExists(Plasma)==1, Plasma }, -- "Deathwing"
 -- Focus Heal
@@ -268,7 +285,7 @@ local spellTable_main =
 		{
 			{ "Pain Suppression", jps.Interrupts and (health_pct_TANK < 0.30), PriestHeal_Target_TANK },
 			{ "Penance", stackGrace_TANK < 3 and UnitAffectingCombat("player")==1, PriestHeal_Target_TANK }, 
-			{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency_TANK > (average_flashheal + average_renew) , PriestHeal_Target_TANK },
+			{ "Flash Heal", jps.buff("Inner Focus","player") and (health_deficiency_TANK > average_flashheal), PriestHeal_Target_TANK },
 			{ "Power Word: Shield", not jps.debuff("Weakened Soul",PriestHeal_Target_TANK) and not jps.buff("Power Word: Shield",PriestHeal_Target_TANK), PriestHeal_Target_TANK },
 			{ "Penance", health_deficiency_TANK > (average_penitence + average_renew), PriestHeal_Target_TANK },
 			{ "Greater Heal", borrowed and health_deficiency_TANK > (average_flashheal + average_renew), PriestHeal_Target_TANK },
@@ -284,7 +301,8 @@ local spellTable_main =
 -- Emergency Target
 	{ "Pain Suppression", jps.Interrupts and (health_pct < 0.30), PriestHeal_Target },
 	{ "Penance", health_deficiency > (average_penitence + average_renew), PriestHeal_Target },
-	{ "Flash Heal", jps.buff("Inner Focus","player") and health_deficiency > (average_flashheal + average_renew), PriestHeal_Target },
+	{ "Flash Heal", jps.buff("Inner Focus","player") and (health_deficiency > average_flashheal), PriestHeal_Target },
+	{ "Binding Heal", UnitIsUnit(PriestHeal_Target,"player")~=1 and (playerhealth_deficiency > average_flashheal) and (jps.LastCast~="Binding Heal"), PriestHeal_Target },
 	{ "Prayer of Mending", not jps.buff("Prayer of Mending",PriestHeal_Target), PriestHeal_Target },
 	{ "Power Word: Shield", (health_pct < 0.60) and not jps.debuff("Weakened Soul",PriestHeal_Target) and not jps.buff("Power Word: Shield",PriestHeal_Target), PriestHeal_Target },
 	{ "Greater Heal", borrowed and health_deficiency > (average_flashheal + average_renew), PriestHeal_Target },
@@ -301,7 +319,7 @@ local spellTable_main =
 }
 
 local target = nil
-if (GetUnitSpeed("player") / 7) > 0 then
+if jps.Moving then
 	spell, target = parseSpellTable(spellTable_moving)
 else
 	spell, target = parseSpellTable(spellTable_main)
@@ -310,34 +328,6 @@ end
 	jps.Target = target
 	return spell
 end
-
---[[
-function jps_deepcopy(object)
-    local lookup_table = {}
-    local function _copy(object)
-        if type(object) ~= "table" then
-            return object
-        elseif lookup_table[object] then
-            return lookup_table[object]
-        end
-        local new_table = {}
-        lookup_table[object] = new_table
-        for index, value in pairs(object) do
-            new_table[_copy(index)] = _copy(value)
-        end
-        return setmetatable(new_table, getmetatable(object))
-    end
-    return _copy(object)
-end
-
-local spellTable = {}
-if (GetUnitSpeed("player") / 7) > 0 then
-	spellTable = jps_deepcopy(spellTable_moving) 
-else
-	spellTable = jps_deepcopy(spellTable_main) 
-end 
-local spell,target = parseSpellTable(spellTable)
-]]
 
 -- Inner Focus - Focalisation intérieure
 -- Power Infusion - Infusion de puissance
@@ -372,4 +362,3 @@ local spell,target = parseSpellTable(spellTable)
 -- Holy Word: Serenity - Mot sacré : Sérénité SpellID 88684
 -- Power Word: Shield - Mot de pouvoir : Bouclier
 -- Borrowed Time - Sursis - votre prochain sort d'un bonus à la hâte des sorts après avoir lancé Mot de pouvoir : Bouclier. Dure 6 sec.
-
