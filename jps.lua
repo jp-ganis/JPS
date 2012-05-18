@@ -138,12 +138,12 @@ function combatEventHandler(self, event, ...)
 		collectgarbage("collect")
 		
 	elseif event == "PLAYER_CONTROL_LOST" then
-    		jps.Combat = false
-    		jps.gui_toggleCombat(false)
-
+		--print("PLAYER_CONTROL_LOST")
+		jps.createTimer("PLAYER_CONTROL_LOST")
+    		
 	elseif event == "PLAYER_CONTROL_GAINED" then
-    		jps.Combat = true
-    		jps.gui_toggleCombat(true)
+    		--print("PLAYER_CONTROL_GAINED")
+    		jps.resetTimer("PLAYER_CONTROL_LOST")
 
 	-- Fishes
 	elseif event == "BAG_UPDATE" and jps.Fishing then
