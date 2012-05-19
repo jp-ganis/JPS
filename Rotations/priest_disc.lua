@@ -93,6 +93,21 @@ elseif (health_pct < 0.60) and not jps.Defensive then -- Heal only Tank
 end
 
 ----------------------
+-- EVENTS
+----------------------
+
+--local frame = CreateFrame('Frame')
+--frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") -- "UNIT_COMBAT"
+--frame:SetScript("OnEvent",
+--  function(self, event, ...)
+--	local eventtable =  {...} 
+-- 	if eventtable[2] == "SPELL_HEAL" and eventtable[9] == PriestHeal_Target_TANK then
+-- 		print("|cff1eff00Heal:",eventtable[2],"-",eventtable[9],"Amount:",eventtable[13]) 
+-- 	end
+--  end
+--)
+
+----------------------
 -- DAMAGE
 ----------------------
 
@@ -110,7 +125,7 @@ end
 ---------------------
 
 local castDeath = jps.MageSheepDuration(rangedTarget) -- return true/false
-local stunMe = jps.isStun() -- return true/false
+local stunMe = jps.isStun() or jps.checkTimer("PLAYER_CONTROL_LOST")>0 -- return true/false
 local dispelOffensive_Target = jps.canDispellOffensive(rangedTarget) -- return true/false
 
 local dispelMagic_Me = jps.MagicDispell("player") -- return true/false
@@ -140,9 +155,10 @@ print("|cff0070ddFocus","|cffffffff",PriestHeal_Target_TANK,"|cff0070ddTANK: ","
 print("|cff0070ddTarget: ","|cffffffff",PriestHeal_Target,"|cff0070ddNAME: ","|cffffffff",GetUnitName(PriestHeal_Target),"HP: ",health_deficiency,"H%: ",health_pct)
 print("|cff0070ddDispelOffensive:","|cffffffff",dispelOffensive_Target,"|cff0070ddRangedTarget:","|cffffffff",rangedTarget)
 print("|cff0070ddDispelMagic:","|cffffffff",dispelMagic_Target,"|cff0070ddDispelDisease:","|cffffffff",dispelDisease_Target)
-print("|cff0070ddDispelTANK:","|cffffffff",dispelMagic_TANK,"|cff0070ddDiseaseTANK:","|cffffffff",dispelDisease_TANK)
+--print("|cff0070ddDispelTANK:","|cffffffff",dispelMagic_TANK,"|cff0070ddDiseaseTANK:","|cffffffff",dispelDisease_TANK)
 print("|cff0070ddPOHTarget:","|cffffffff",POH_Target,"|cff0070ddPOH_Count:","|cffffffff",POH_countInRaid)
 print("|cff0070ddSwitch:","|cffffffff",switchtoLowestTarget,"|cff0070ddTimer: ","|cffffffff",timerShield)
+print("|cff0070ddCONTROL_LOST:","|cffffffff",jps.checkTimer("PLAYER_CONTROL_LOST"),"|cff0070ddSTUN","|cffffffff",jps.isStun())
 end
 
 ------------------------
