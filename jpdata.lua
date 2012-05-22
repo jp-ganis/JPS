@@ -75,7 +75,7 @@ jps_DispellOffensive_Eng = {
 		"Ice Barrier", -- Mage
 		"Mage Armor", -- Mage
 		"Avenging Wrath", -- Paladin
-		"Divine Plea" -- Paladin
+		"Divine Plea", -- Paladin
 }
 
 jps_StunDebuff = {
@@ -91,7 +91,7 @@ jps_StunDebuff = {
 		"Hammer of Justice", 
 		"Hex",
 		"Sap", 
-		"Psychic Scream", 
+		"Psychic Scream",
 }
 
 function jps.canDispell( unit, ... )
@@ -113,8 +113,7 @@ end
 
 function jps.isStun()
 	for i, j in ipairs(jps_StunDebuff) do
-		local stunName = select(1,UnitDebuff("player",j))
-		if stunName then return true end
+		if UnitDebuff("player",j) then return true end
 	end
 	return false
 end
@@ -167,14 +166,18 @@ function jps.DispelDiseaseTarget()
 	end
 end 
 
-
 function jps.canDispellOffensive(unit)
-	if not unit then return false end
+if not unit then return false end
+local i = 1
+local auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, _ = UnitBuff(unit, i)
 	if UnitExists(unit)==1 and UnitIsEnemy("player",unit)==1 and UnitCanAttack("player", unit)==1 then
-		for i, j in ipairs(jps_DispellOffensive_Eng) do 
-			local offName,_,_,_,offType,_,_,_,_,_,_ = UnitBuff(unit,j)
-			if offName and offType=="Magic" then  
-			return true end
+		while auraName do
+			for k, j in ipairs(jps_DispellOffensive_Eng) do
+			   if auraName==j and debuffType=="Magic" then
+			   return true end
+			end
+		i = i + 1
+		auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, _ = UnitBuff(unit, i)
 		end
 	end
 	return false
@@ -517,7 +520,7 @@ function jps.resetTimer( name )
 end
 
 function jps.createTimer( name, duration )
-	if duration == nil then duration = 3600 end -- 1 hour
+	if duration == nil then duration = 60 end -- 1 min
 	jps.Timers[name] = duration + GetTime()
 end
 
