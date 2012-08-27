@@ -513,7 +513,7 @@ function jps.findMeAggroTank()
 	return "player"
 end
 ------------------------------
--- BenPhelps' Timer Functions
+-- Timer Functions
 ------------------------------
 function jps.resetTimer( name )
 	jps.Timers[name] = nil
