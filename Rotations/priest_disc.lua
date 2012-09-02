@@ -283,9 +283,9 @@ local spellTable_main =
     },
 	{ "nested", jps.UseCDs and (POH_countInRaid > countInRaid),
         {
-            { "Prayer of Healing", (GetNumRaidMembers() > 0) and jps.canHeal(POH_Target), POH_Target}, -- Raid
-			{ "Prayer of Healing", (GetNumRaidMembers()==0) and jps.canHeal(PriestHeal_Target), PriestHeal_Target}, -- Party
-    		{ "Prayer of Healing", (GetNumRaidMembers()==0), "player"}, -- Party
+            { "Prayer of Healing", (GetNumGroupMembers() > 0) and jps.canHeal(POH_Target), POH_Target}, -- Raid
+			{ "Prayer of Healing", (GetNumGroupMembers()==0) and jps.canHeal(PriestHeal_Target), PriestHeal_Target}, -- Party
+    		{ "Prayer of Healing", (GetNumGroupMembers()==0), "player"}, -- Party
         },
     },
 -- Emergency player
