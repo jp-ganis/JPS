@@ -14,7 +14,7 @@ function druid_cat_pve(self)
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local mangleDuration = jps.notmyDebuffDuration("mangle")
-	local executePhase = jps.hp("target") <= 0.6 --ADD TALENT DETECTION
+	local executePhase = jps.hp("target") <= 0.25 --ADD TALENT DETECTION
 	local gcdLocked = jps.cooldown("shred") > 0
 	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")

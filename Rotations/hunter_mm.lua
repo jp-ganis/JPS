@@ -14,7 +14,7 @@ function hunter_mm(self)
 		return "Silencing Shot"
 
 	-- Misdirecting to pet if not in a party
-	elseif GetNumPartyMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
+	elseif GetNumSubgroupMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
 		jps.Target = "pet"
 		spell = "Misdirection"
 		jps.Opening = false	
@@ -27,7 +27,7 @@ function hunter_mm(self)
 		jps.Opening = false
 		
 	-- Main rotation (Shift to launch trap in Multi Mob situations)
-	elseif UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.checkTimer("feign") and GetNumPartyMembers() > 0 then
+	elseif UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.checkTimer("feign") and GetNumSubgroupMembers() > 0 then
 		print("Aggro! Feign Death cast.")
 		jps.createTimer("feign", "2")
 		spell = "Feign Death"

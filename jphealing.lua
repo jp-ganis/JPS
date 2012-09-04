@@ -259,7 +259,7 @@ end
 
 -- find the subgroup of an unit in RaidStatus --
 function jps.findSubGroupUnit(unit)
-if GetNumRaidMembers()==0 then return 0 end
+if GetNumGroupMembers()==0 then return 0 end
 local groupUnit = 0
 local raidIndex = UnitInRaid(unit) + 0.1 
 -- UnitInRaid("unit") returns 0 for raid1, 12 for raid13
@@ -278,11 +278,11 @@ end
 -- find the target in subgroup to heal with POH in Raid
 function jps.findSubGroupToHeal(low_health_def)
 
--- GetNumRaidMembers() number of players in your raid group, including yourself or 0 if you are not in a raid group
+-- GetNumGroupMembers() number of players in your raid group, including yourself or 0 if you are not in a raid group
 -- GetNumPartyMembers() number of party members, excluding the player (0 to 4)
 -- While in a raid, you are also in a party. You might be the only person in your raidparty, so this function could still return 0
 
-if GetNumRaidMembers()==0 then return nil end
+if GetNumGroupMembers()==0 then return nil end
 if low_health_def == nil then low_health_def = 0.80 end
 	local gr1 = 0
 	local gr2 = 0
@@ -345,7 +345,7 @@ function jps.SortRaidStatus()
 	
 	group_type="raid"
 	nps=1
-	npe=GetNumRaidMembers()
+	npe=GetNumGroupMembers()
 	if npe==0 then
 	group_type="party"
 	nps=0
@@ -359,7 +359,7 @@ function jps.SortRaidStatus()
 		unit = group_type..i
 		end
 		
-		if GetNumRaidMembers() > 0 then subgroup = select(3,GetRaidRosterInfo(i)) else subgroup = 0 end
+		if GetNumGroupMembers() > 0 then subgroup = select(3,GetRaidRosterInfo(i)) else subgroup = 0 end
 		local hpInc = UnitGetIncomingHeals(unit)
 		if not hpInc then hpInc = 0 end
 		
