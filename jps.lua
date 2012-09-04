@@ -210,7 +210,7 @@ function jps.detectSpec()
 	jps.Race = UnitRace("player")
 	jps.Class = UnitClass("player")
 	if jps.Class then
-		local id = GetPrimaryTalentTree()
+		local id = GetSpecialization()
 		if not id then write("JPS couldn't find your talent tree... One second please.") 
 		else
 			local _,name,_,_,_,_,_,_ = GetSpecializationInfo( id )
