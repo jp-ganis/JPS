@@ -1,5 +1,5 @@
 --[[
-	 JPS - WoW Protected Lua DPS AddOn
+         JPS - WoW Protected Lua DPS AddOn
     Copyright (C) 2011 Jp Ganis
 
     This program is free software: you can redistribute it and/or modify
@@ -69,6 +69,7 @@ function jps_getCombatFunction( class, spec )
 	local Rotations =
 	{ 
 		["Druid"]        = { ["Feral Combat"]  = druid_feral,
+							 ["Guardian"]	   = druid_feral,
 							 ["Balance"]       = druid_balance,
 							 ["Restoration"]   = druid_resto },
 		["Death Knight"] = { ["Unholy"]        = new_dk_unholy,
