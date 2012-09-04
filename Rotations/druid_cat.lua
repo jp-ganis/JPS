@@ -9,7 +9,7 @@ function druid_cat(self)
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local executePhase = jps.hp("target") <= 0.25 --ADD TALENT DETECTION
-	local gcdLocked = jps.cooldown("shred") > 0
+	local gcdLocked = jps.cooldown("shred") == 0
 	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
@@ -31,7 +31,7 @@ function druid_cat(self)
 		{ nil,					gcdLocked },
 		--
 		{ "savage roar",		srDuration <= 1 or (srDuration <= 3 and cp > 0 and (cp < 5 or jps.buff("Dream of Cenarius"))) },
-		{ "faerie fire", jps.debuffStacks("weakened armor")~=3 },
+		{ "faerie fire", 		jps.debuffStacks("weakened armor")~=3 },
 		--
 		{ "ferocious bite",		executePhase and cp == 5 and ripDuration > 0 },
 		{ "ferocious bite",		executePhase and cp > 0 and ripDuration <= 2 and ripDuration > 0 },
