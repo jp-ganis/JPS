@@ -68,7 +68,7 @@ end
 function jps_getCombatFunction( class, spec )
 	local Rotations =
 	{ 
-		["Druid"]        = { ["Feral Combat"]  = druid_feral,
+		["Druid"]        = { ["Feral"]  = druid_feral,
 							 ["Guardian"]	   = druid_feral,
 							 ["Balance"]       = druid_balance,
 							 ["Restoration"]   = druid_resto },
@@ -150,7 +150,7 @@ function jps.setClassCooldowns()
 		end
 	-- Druid
 	elseif jps.Class == "Druid" then
-		if jps.Spec == "Feral Combat" then
+		if jps.Spec == "Feral" then
 			table.insert(options,"growl")
 			table.insert(options,"challenging roar")
 		elseif jps.Spec == "Balance" then

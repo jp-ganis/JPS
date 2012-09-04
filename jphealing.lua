@@ -279,7 +279,7 @@ end
 function jps.findSubGroupToHeal(low_health_def)
 
 -- GetNumGroupMembers() number of players in your raid group, including yourself or 0 if you are not in a raid group
--- GetNumPartyMembers() number of party members, excluding the player (0 to 4)
+-- GetNumSubgroupMembers() number of party members, excluding the player (0 to 4)
 -- While in a raid, you are also in a party. You might be the only person in your raidparty, so this function could still return 0
 
 if GetNumGroupMembers()==0 then return nil end
@@ -349,7 +349,7 @@ function jps.SortRaidStatus()
 	if npe==0 then
 	group_type="party"
 	nps=0
-	npe=GetNumPartyMembers()
+	npe=GetNumSubgroupMembers()
 	end
 
 	for i=nps,npe do
