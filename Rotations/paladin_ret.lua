@@ -1,26 +1,26 @@
 function paladin_ret(self)
-	--jpganis + SIMCRAFT
-	local hPower = UnitPower("player","9")
+--latitude
+   local hPower = UnitPower("player","9")
 
-	local spellTable =
-	{
-		{ "rebuke", jps.Interrupts and jps.shouldKick() },
-		{ "judgement", not jps.buff("judgements of the pure") },
-		{ "zealotry", jps.UseCDs },
-		{ "guardian of ancient kings", ((jps.buffDuration("zealotry") < 31 and jps.buff("zealotry")) or jps.cd("zealotry")>60) and jps.UseCDs },
-		{ "avenging wrath", jps.buffDuration("zealotry") < 21 and jps.buff("zealotry") and jps.UseCDs },
-		{ "inquisition", jps.buffDuration("inquisition") < 5 and (hPower == 3 or jps.buff("divine purpose")) },
-		{ "crusader strike", hPower < 3 },
-		{ "templar's verdict", jps.buff("divine purpose") },
-		{ "templar's verdict", hPower==3 },
-		{ "hammer of wrath" },
-		{ "exorcism", jps.buff("the art of war") },
-		{ "judgement" },
-		{ "holy wrath" },
-		{ "consecration", jps.mana("abs") > 17000 },
-		{ "divine plea" },
-	}
-	
+   local spellTable =
+   {
 
-	return parseSpellTable(spellTable)
+---- Mono -----
+      
+      
+      { "inquisition", jps.buffDuration("inquisition") < 5 },
+      { "avenging wrath", jps.UseCDs },
+      { "templar's verdict", hPower == 5 },
+      { "hammer of wrath", jps.buff("avenging wrath") or jps.hp("target") <= 0.20 },
+      { "exorcism" },
+      { "exorcism", jps.buff("the art of war") },
+      { "crusader strike", hPower < 3 },
+      { "judgment" },
+      { "templar's verdict", hPower == 3 },
+      
+      
+   }
+   
+
+   return parseSpellTable(spellTable)
 end
