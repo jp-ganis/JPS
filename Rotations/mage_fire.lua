@@ -1,6 +1,18 @@
 function mage_fire(self)
 
 	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
+	
+	local slot1ID,_,_ = GetInventorySlotInfo("Trinket0Slot")
+	local trinket1ID = GetInventoryItemID("player", slot1ID)
+	local trinket1Name, _, _, _, _, _, _, _ = GetItemInfo(trinket1ID)
+	local trinket1Use, _ = IsUsableItem(trinket1ID)
+	
+	local slot2ID,_,_ = GetInventorySlotInfo("Trinket1Slot")
+	local trinket2ID = GetInventoryItemID("player", slot2ID)
+	local trinket2Name, _, _, _, _, _, _, _ = GetItemInfo(trinket2ID)
+	local trinket2Use, _ = IsUsableItem(trinket2ID)
+	
+
 	local spellTable = 
 	{
 	   --interrupt
@@ -14,6 +26,8 @@ function mage_fire(self)
 		--aoe
 		{ "Dragon's Breath",  CheckInteractDistance("target", 3) == 1, "target" }, 
 		{ "Flamestrike",      jps.MultiTarget },
+		{{"macro","/use " ..trinket1Name}, GetItemCooldown(trinket1ID) == 0 and jps.UseCds and trinket1Use == 1},
+		{{"macro","/use " ..trinket2Name}, GetItemCooldown(trinket2ID) == 0 and jps.UseCds and trinket2Use == 1},
 		
 		--dots & opener
 		{ "Combustion",       jps.debuffDuration("Ignite") > 0 and jps.debuffDuration("Pyroblast") > 0  and jps.UseCDs, "target" },
