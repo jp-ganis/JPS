@@ -305,7 +305,8 @@ end
 
 function jps.buffDuration( spell, unit )
 	if unit == nil then unit = "player" end
-	local _,_,_,_,_,_,expire,caster,_,_,_ = UnitBuff(unit,spell)
+	local expire = select(7,UnitBuff(unit,spell))
+	local caster = select(8,UnitBuff(unit,spell))
 	if caster ~= "player" then return 0 end
 	if expire == nil then return 0 end
 	local duration = expire-GetTime()-jps.Lag
