@@ -161,7 +161,7 @@ function combatEventHandler(self, event, ...)
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then
 		jps.Error = ...
 		if jps.Error == "You must be behind your target." and jps.Class == "Druid" then
-			jps.Cast("mangle(cat form)")
+			jps.Cast("mangle")
 		elseif jps.Error == "You must be behind your target." and (jps.ThisCast == "backstab" or jps.ThisCast == "garrote") then
 			if jps.Spec == "Assassination" then jps.Cast("mutilate")
 			elseif jps.Spec == "Subtlety" then jps.Cast("hemorrhage") end
