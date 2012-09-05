@@ -324,7 +324,8 @@ end
 
 function jps.debuffDuration( spell, unit )
 	if unit == nil then unit = "target" end
-	local _,_,_,_,_,_,expire,caster,_,_ = UnitDebuff(unit,spell)
+	local expire = select(7,UnitDebuff(unit,spell))
+	local caster = select(8,UnitDebuff(unit,spell))
 	if caster~="player" then return 0 end
 	if expire==nil then return 0 end
 	local duration = expire-GetTime()-jps.Lag

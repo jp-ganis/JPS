@@ -2,18 +2,16 @@
 -- simcrafty
 --TODO: add tab-dotting everything.
 -- thanks to balance power tracker for making this SO much better
-function druid_balance(self)
-	if BalancePowerTracker_SharedInfo == nil then return druid_balance_fail()
-	else return druid_balance_bpt() end
-end
+--function druid_balance(self)
+--	if BalancePowerTracker_SharedInfo == nil then return druid_balance_fail()
+--	else return druid_balance_bpt() end
+--end
 
 --bpt
-function druid_balance_bpt(self)
+function druid_balance(self)
 	-- bpt virtual trackers
-	local bptTable = BalancePowerTracker_SharedInfo
-	local vEnergy = bptTable.virtualEnergy
-	local vDirection = bptTable.virtualDirection
-	local vEclipse = bptTable.virtualEclipse -- Returns S for Solar, L for Lunar, false for Neither
+	local tEnergy = UnitPower("player",SPELL_POWER_ECLIPSE)
+	local vDirection = GetEclipseDirection()
 
 	if vDirection == "none" then vDirection = "sun" end
 
@@ -25,13 +23,7 @@ function druid_balance_bpt(self)
 	local sEclipse = jps.buff("eclipse (solar)")
 	local lEclipse = jps.buff("eclipse (lunar)")
 
-	-- Mushrooms
-	local m1, _, _, _, _ = GetTotemInfo(1)
-	local m2, _, _, _, _ = GetTotemInfo(2)
-	local m3, _, _, _, _ = GetTotemInfo(3)
-	
 	-- Dot Durations
-	local isDuration = jps.debuffDuration("insect swarm") - jps.castTimeLeft()
 	local mfDuration = jps.debuffDuration("moonfire") - jps.castTimeLeft()
 	local sfDuration = jps.debuffDuration("sunfire") - jps.castTimeLeft()
 	
@@ -41,54 +33,33 @@ function druid_balance_bpt(self)
 	else focusDotting = false end
 
 	if focusDotting then
-		focusIS = jps.debuffDuration("insect swarm","focus")
 		focusMF = jps.debuffDuration("moonfire","focus")
 		focusSF = jps.debuffDuration("sunfire","focus")
 	end
 
 	local spellTable =
 	{
-		-- Opening
-		--{ "wild mushroom: detonate", m1 and m2 and m3 },
-		{ "moonfire", jps.Opening and jps.debuff("insect swarm") }, -- try and fix double IS bug
-		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
-		-- Dodge Eclipse lag by casting one spell before dots/shooting star proc
-		{ "starfall", lEclipse or vEclipse == "L" },
-		{ "starsurge", vEclipse ~= false and not jps.buff("shooting stars") },
-		{ "wrath", vEclipse == "S" },
-		{ "starfire", vEclipse == "L" },
-		-- If this is the last spell before we get out of Eclipse, and we have an Insta-SS
-		-- Abuse the Eclipse lag to get an extra eclipsed spell
-		{ "wrath", sEclipse and vEnergy < 0 and jps.buff("shooting stars") },
-		{ "starfire", lEclipse and vEnergy > 0 and jps.buff("shooting stars") },
-		-- Insect Swarm
-		{ "insect swarm", sEclipse and isDuration < isTick },
-		{ "insect swarm", sEclipse and vEnergy < 15 and isDuration < 10 },
-		{ "insect swarm", lEclipse and isDuration < isTick },
-		-- Moonfire
-		{ "moonfire", sEclipse and sfDuration < mfTick and mfDuration < mfTick },
-		{ "moonfire", sEclipse and sfDuration < 10 and vEnergy < 15 },
-		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration < mfTick },
-		{ "moonfire", lEclipse and mfDuration < 10 and vEnergy >= -20 },
-		-- Moving
-		--{ "typhoon", jps.Moving },
+		{ "starfall" },
+		{ "force of nature" },
+		{ "moonfire", jps.Moving and sfDuration == 0 },
+		{ "sunfire" , jps.Moving and mfDuration == 0 },
+		{ "moonfire", jps.Moving and lEclipse },
+		{ "sunfire", jps.Moving },
 		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
-		{ "insect swarm", jps.Moving and isDuration < isTick },
-		{ "moonfire", jps.Moving },
-		-- Starsurge
-		{ "starsurge", vDirection == "moon" and vEnergy > -85 },
-		{ "starsurge", vDirection == "sun" and vEnergy < 85 },
-		-- Lolboomkincds
-		{ "innervate", jps.mana() < 0.5 },
-		{ "force of nature", jps.UseCDs },
-		-- Baseline
-		{ "wrath", vDirection == "moon" },
+		{ "incarnation", sEclipse or lEclipse },
+		{ "celestial alignment", ((vDirection=="moon" and tEnergy <= 0) or (vDirection=="sun" and tEnergy >= 0)) and (not select(5,GetTalentInfo(11,"player")) or jps.buff("Incarnation: Chosen of Elune")) },
+		{ "wrath", tEnergy <= -70 and vDirection == "moon" },
+		{ "starfire", tEnergy >= 60 and vDirection == "sun" },
+		{ "moonfire", mfDuration == 0 and not jps.buff("celestial alignment") },
+		{ "sunfire", sfDuration == 0 and not jps.buff("celestial alignment") },
+		{ "starsurge" },
+		{ "starfire", jps.buff("celestial alignment") },
 		{ "starfire", vDirection == "sun" },
+		{ "wrath", vDirection == "moon" },
 	}
 
 	spell = parseSpellTable( spellTable )
 
-	if isDuration > 0 and (mfDuration > 0 or sfDuration > 0) then jps.Opening = false end
 
 	if spell == "force of nature" or spell == "wild mushroom" then
 		jps.groundClick()
@@ -109,11 +80,6 @@ function druid_balance_fail(self)
 	local sEclipse = jps.buff("eclipse (solar)")
 	local lEclipse = jps.buff("eclipse (lunar)")
 
-	local m1, _, _, _, _ = GetTotemInfo(1)
-	local m2, _, _, _, _ = GetTotemInfo(2)
-	local m3, _, _, _, _ = GetTotemInfo(3)
-	
-	local isDuration = jps.debuffDuration("insect swarm")
 	local mfDuration = jps.debuffDuration("moonfire")
 	local sfDuration = jps.debuffDuration("sunfire")
 	
@@ -121,27 +87,19 @@ function druid_balance_fail(self)
 	focusDotting = UnitExists("focus")
 
 	if focusDotting then
-		focusIS = jps.debuffDuration("insect swarm","focus")
 		focusMF = jps.debuffDuration("moonfire","focus")
 		focusSF = jps.debuffDuration("sunfire","focus")
 	end
 
 	local spellTable =
 	{
-		{ "wild mushroom: detonate", m1 and m2 and m3 },
-		{ "insect swarm", jps.Opening and not jps.debuff("insect swarm") },
 		{ "moonfire", jps.Opening },
-		-- Insect Swarm
-		{ "insect swarm", sEclipse and isDuration < isTick },
-		{ "insect swarm", sEclipse and power < 15 and isDuration < 10 },
-		{ "inesct swarm", lEclipse and isDuration < isTick },
 		-- Moonfire
 		{ "moonfire", sEclipse and sfDuration < mfTick and mfDuration == 0 },
 		{ "moonfire", sEclipse and sfDuration < 7 and power < 15 },
 		{ "moonfire", lEclipse and mfDuration < mfTick and sfDuration == 0 },
 		{ "moonfire", lEclipse and mfDuration < 10 and power >= -20 },
 		--
-		{ "wild mushroom: detonate", (m1 or m2 or m3) and sEclipse },
 		{ "typhoon", jps.Moving },
 		{ "starfall", lEclipse },
 		{ "moonfire", sEclipse and ((sfDuration < mfTick and mfDuration == 0) or (power < 15 and sfDuration < 7)) and jps.LastCast ~= "moonfire" },
@@ -166,7 +124,6 @@ function druid_balance_fail(self)
 
 	spell = parseSpellTable( spellTable )
 
-	if isDuration > 0 and (mfDuration > 0 or sfDuration > 0) then jps.Opening = false end
 
 	if spell == "force of nature" or spell == "wild mushroom" then
 		jps.groundClick()
