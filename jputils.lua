@@ -35,7 +35,13 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].MultiTarget = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
+		jpsDB[jpsRealm][jpsName].spellConfig = {}
+    else
+		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then
+		  jpsDB[jpsRealm][jpsName].spellConfig = {}
+		end 
 	end
+	
 
 	jps_LOAD_PROFILE()
 	jps_variablesLoaded = true

@@ -1,3 +1,15 @@
+--[[
+setRotationConfig: default config file for your rotation, ingame editable under interface->addons->jps->rotation
+]]--
+function setRotationConfig()
+    local spells = {
+        {"Frost Bomb",  0},
+        {"Fireball",    1},
+    }
+    return spells
+end
+
+
 function mage_fire(self)
 
 	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
@@ -26,13 +38,16 @@ function mage_fire(self)
 		--aoe
 		{ "Dragon's Breath",  CheckInteractDistance("target", 3) == 1, "target" }, 
 		{ "Flamestrike",      jps.MultiTarget },
-		{{"macro","/use " ..trinket1Name}, GetItemCooldown(trinket1ID) == 0 and jps.UseCds and trinket1Use == 1},
-		{{"macro","/use " ..trinket2Name}, GetItemCooldown(trinket2ID) == 0 and jps.UseCds and trinket2Use == 1},
 		
 		--dots & opener
 		{ "Combustion",       jps.debuffDuration("Ignite") > 0 and jps.debuffDuration("Pyroblast") > 0  and jps.UseCDs, "target" },
+		
+		--CDs
 		{ "Mirror Image",     jps.UseCDs },
 		{ jps.DPSRacial,    jps.UseCDs and jps["DPS Racial"]},
+		{{"macro","/use " ..trinket1Name}, GetItemCooldown(trinket1ID) == 0 and jps.UseCds and trinket1Use == 1},
+		{{"macro","/use " ..trinket2Name}, GetItemCooldown(trinket2ID) == 0 and jps.UseCds and trinket2Use == 1},
+
 		--{ "Living Bomb",    jps.debuffDuration("Living Bomb") == 0 , "target" },
 		{ "Frost Bomb",       jps.debuffDuration("Frost Bomb") == 0, "target" }, --depending on your talent tree
 		
