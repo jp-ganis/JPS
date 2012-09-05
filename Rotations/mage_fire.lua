@@ -23,76 +23,20 @@ function mage_fire(self)
 
 	local spellTable = 
 	{
-		{ "Counterspell", jps.Interrupts and jps.shouldKick("target"), "target" },
-		{ "Mana Shield", (UnitHealth("player") / UnitHealthMax("player") < 0.40) and CheckInteractDistance("target", 3) == 1 and not jps.buff("Mana Shield","player"), "player" },
-		{ "Molten Armor", not jps.buff("Molten Armor","player"), "player" },
-		{ "Frostfire Bolt", not nFrost and CheckInteractDistance("target", 4) ~= 1 , "target" }, -- > 28 yards
-		{ "Dragon's Breath", UnitHealth("target")/UnitHealthMax("target") > 0.20 and CheckInteractDistance("target", 3) == 1, "target" }, -- < 10 yards
-		{ "Fire Blast", jps.buff("Impact","player"), "target" },
-		{ "Fire Blast", CheckInteractDistance("target", 3) == 1, "target" },
-		{ "Scorch", not nMass, "target" },
-		{ "Combustion", nBombe and nEnflam and nPyro and jps.UseCDs, "target" },
-		{ "Mirror Image", jps.UseCDs },
-		{ "Living Bomb", not nBombe, "target" },
-		{ "Lifeblood", UnitHealth("target")/UnitHealthMax("target") > 0.50, "target" },
-		{ "Pyroblast", jps.buff("Hot Streak","player"), "target" },
-		{ "Flame Orb", "onCD", "target" },
-		{ "Scorch", jps.Moving, "target" },
-		{ "Fireball", "onCD", "target" },
+		{ "inferno blast", jps.Moving },
+		{ "ice lance", jps.Moving },
+		{ "evocation",	not jps.buff("invocation") and not jps.buff("alter time") },
+		{ "mana gem", 	jps.mana() < 0.84 and not jps.buff("alter time") },
+		{ "alter time",	not jps.buff("alter time") and jps.buff("pyroblast") and jps.buffDuration("invocation") > 6 },
+		{ "evocation", jps.mana() < 0.1 },
+		{ "pyroblast", jps.buff("pyroblast") },
+		{ "pyroblast", jps.buff("presence of mind") },
+		{ "inferno blast", jps.buff("heating up") and not jps.buff("pyroblast") },
+		{ "mirror image" },
+		{ "presence of mind" },
+		{ "nether tempest", not jps.debuff("nether tempest") },
+		{ "fireball" },
 	}
 
 	return parseSpellTable(spellTable)
 end
-
---Spells
-function mage_fire_spells()
-	local SpellUseTable =
-	{
-		"Scorch",
-		"Combustion",
-		"Mirror Image",
-		"Living Bomb",
-		"Pyroblast",
-		"Flame Orb",
-		"Fireball",
-		"Fire Blast",
-		"Frostfire Bolt",
-	}
-
-	return SpellsUsedTable
-end
-
---Config options
-function mage_fire_config()
-	--description
-	--jps.NameOfOption
-end
-
--- Scorch -- Brûlure
--- Critical mass -- Masse critique
--- Combustion -- Combustion
--- Living Bomb -- Bombe vivante
--- Ignite -- Enflammer
--- Pyroblast -- Explosion pyrotechnique
--- Hot Streak -- Chaleur continue
--- Flame orb -- Orbe enflammé
--- Fireball -- Boule de feu
--- Molten Armor -- Armure de la fournaise
--- Counterspell -- Contresort
--- Mana Shield -- Bouclier de mana
--- Frostfire Bolt -- Eclair de givrefeu
--- Dragon's Breath -- Souffle du dragon
--- Fire Blast -- Trait de feu
--- Flame Orb -- Orbe enflammé
--- Impact -- Impact
--- Lifeblood -- Sang-de-vie
--- Mirror Image -- Image miroir
-
--- Critical Mass 22959
--- Ignite 12654
--- Pyroblast! 92315
--- Pyroblast 11366
--- Living Bomb 44457
--- Impact 12355
--- Frosbolt 59638
--- Frostfire Bolt 44614
