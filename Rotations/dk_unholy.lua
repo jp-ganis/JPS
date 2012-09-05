@@ -55,43 +55,27 @@ function new_dk_unholy(self)
 	
 	local spellTable =
 	{
-		-- Moved DnD to the top so it will cast immediately
 		{ "death and decay",		IsShiftKeyDown() ~= nil },
-		-- Raise ghoul if dead
-		{ "Raise Dead",				UnitExists("pet") == nil },
-		-- raise ally, mouseover unit in party/raid frame or corpse + Alt-key
-		{ "raise ally", 			IsAltKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
-		-- death coil ghoul pet (heal)
-		{ "death coil",				IsControlKeyDown() ~= nil, "pet" },
-		-- unholy presence
-		{ "unholy presence", 		not jps.buff("unholy presence") },
-		-- dark simulacrum (duplicate spell)
-		{ "dark simulacrum", 		castDarkSim, DarkSimTarget }, 					-- Duplicate spell
-		{ "dark simulacrum", 		jps.buff("dark simulacrum"), DarkSimTarget }, 	-- Cast the duplicated spell
-		-- Anti-Magic Shell used against Hagara abilities
-		{ "Anti-Magic Shell", 		jps.debuff("Watery Entrenchment","player") or jps.debuff("Ice Lance","player") }, 
-		-- interrupts
-		{ "mind freeze", 			jps.shouldKick() },
-		{ "strangulate", 			jps.shouldKick() and jps.LastCast ~= "mind freeze" },
-		-- cooldowns
-		{ "unholy frenzy", 			jps.UseCDs and not jps.buff("bloodlust") and not jps.buff("heroism") and not jps.buff("time warp")},
-		-- mofes
-		{ "outbreak", 				ffDuration < 2 and bpDuration < 2 },
-		{ "icy touch", 				ffDuration < 2 },
-		{ "plague strike", 			bpDuration < 2 },
-		{ "dark transformation", 	"onCD" }, 
-		{ "summon gargoyle",		jps.buff("unholy frenzy") },
-		{ "scourge strike", 		two_ur and rp < 110 },
-		{ "festering strike", 		two_dr and two_fr and rp < 110 },
-		{ "blood boil", 			jps.MultiTarget },
-		{ "death coil", 			rp > 90 },
-		{ "death coil", 			jps.buff("sudden doom") },
-		{ "scourge strike", 		"onCD"},
-		{ "festering strike", 		"onCD"},
-		{ "death coil", 			"onCD" },
-		{ "blood tap", 				"onCD" },
-		{ "empower rune weapon", 	"onCD" },
-		{ "horn of winter", 		"onCD" },
+		{ "unholy frenzy" },
+		{ "outbreak",				ffDuration < 3 or bpDuration < 3 },
+		{ "soul reaper",			jps.hp("target") <= 0.35 },
+		{ "unholy blight",			ffDuration < 3 or bpDuration < 3 },
+		{ "icy touch",				ffDuration <= 0 },
+		{ "plague strike",			bpDuration <= 0 },
+		{ "plague leech",			jps.cd("outbreak") < 1 },
+		{ "summon gargoyle" },
+		{ "dark transformation" },
+		{ "empower rune weapon" },
+		{ "scourge strike",			two_ur and rp < 90 },
+		{ "festering strike",		two_dr and two_fr and rp < 90 },
+		{ "death coil",				rp > 90 },
+		{ "death coil",				jps.buff("sudden doom") },
+		{ "blood tap" },
+		{ "scourge strike" },
+		{ "festering strike" },
+		{ "death coil", 			jps.cd("summon gargoyle") > 8 },
+		{ "horn of winter" },
+		{ "empower rune weapon" },
 	}
 
 	local spell = parseSpellTable( spellTable ) 
