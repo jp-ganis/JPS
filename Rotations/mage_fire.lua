@@ -1,5 +1,5 @@
 function mage_fire(self)
-
+--pcmd
 	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
 	
 	local slot1ID,_,_ = GetInventorySlotInfo("Trinket0Slot")

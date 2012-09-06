@@ -39,13 +39,13 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if nomana then return false end
 	if not UnitIsVisible(unit) then return false end
 	--if not IsSpellKnown(spellID) then return false end
-	--bug in current WOW API
-			
+	-- WoW API bugged
+	
     if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == nil) then
        jpsDB[jpsRealm][jpsName].spellConfig[spellParam] = 1
     end
     if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == 0) then return false end
-    	
+	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
 	

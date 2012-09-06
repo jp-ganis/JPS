@@ -43,21 +43,32 @@ function hunter_mm(self)
 	else
 		local spellTable = 
 		{
-			{ "aspect of the hawk", not jps.buff("aspect of the hawk") and not jps.Moving },
-			{ "aspect of the fox", not jps.buff("aspect of the fox") and jps.Moving },
-			{ jps.DPSRacial, jps.UseCDs },
-			{ "multi-shot", jps.MultiTarget },
-			{ "serpent sting", not jps.debuff("serpent sting") and jps.hp("target") <= 0.9 },
-			{ "chimera shot", jps.hp("target") <= 0.9 },
-			{ "rapid fire", not jps.buff("bloodlust") and not jps.buff("heroism") and not jps.buff("time warp") },
-			{ "readiness", jps.cd("rapid fire") > 0 and not jps.buff("rapid fire") },
-			{ "kill shot", "onCD" },
-			{ "aimed shot", jps.buffStacks("ready, set, aim...")==5 },
-			{ "aimed shot", jps.cd("chimera shot") > 5 or focus >= 80 or jps.buff("rapid fire") },
-			{ "aimed shot", jps.hp("target") >= 0.9 or jps.buff("bloodlust") },
-			{ "aimed shot", jps.buff("heroism") or jps.buff("time warp") },
-			{ "steady shot", "onCD" },
+			{ "aspect of the hawk", 	not jps.Moving },
+			{ "aspect of the fox",		jps.Moving },
+			{ "explosive trap",			jps.MultiTarget },
+			{ "glaive toss" },
+			{ "powershot" },
+			{ "barrage" },
+			{ "blink strike" },
+			{ "lynx rush" },
+			{ "multi-shot",				jps.MultiTarget },
+			{ "steady shot", 			jps.MultiTarget },
+			{ "serpent sting",			not jps.debuff("Serpent Sting") and jps.hp("target") <= 0.9 },
+			{ "chimera shot",			jps.hp("target") <= 0.9 },
+			{ "dire beast" },
+			{ "rapid fire",				not jps.buff("rapid fire") },
+			{ "stampede" },
+			{ "readiness",				jps.buff("rapid fire") },
+			{ "kill shot" },
+			{ "aimed shot",				jps.buff("Fire!") },
+			{ "a murder of crows",		not jps.debuff("a murder of crows") },
+			{ "arcane shot",			jps.buff("thrill of the hunt") },
+			{ "aimed shot",				jps.hp("target") > 0.9 or jps.buff("rapid fire") or jps.bloodlusting() },
+			{ "arcane shot",			(focus >= 66 or jps.cd("chimera shot") >= 5) and (jps.hp("target") < 90 and not jps.buff("rapid fire") and not jps.bloodlusting()) },
+			{ "fervor",					focus <= 50 },
+			{ "steady shot" },
 		}
+
 		return parseSpellTable(spellTable)
 	end
 	

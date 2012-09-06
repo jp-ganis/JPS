@@ -1,5 +1,5 @@
 function dk_frost(self)
-	--sphoenix
+	--sphoenix/pcmd
 
    if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
 
@@ -53,7 +53,6 @@ local spellTable =
        { "Howling Blast",       jps.buff("freezing fog"), "target" },
        { "Obliterate",          "onCD" , "target" },
     
-
    }
 
    local spell,target = parseSpellTable(spellTable)
