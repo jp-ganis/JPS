@@ -16,6 +16,7 @@ function dk_unholy(self)
 
 	local ffDuration = jps.debuffDuration("frost fever")
 	local bpDuration = jps.debuffDuration("blood plague")
+	local bcStacks = jps.buffStacks("blood charge") --Blood Stacks
 	local siStacks = jps.buffStacks("shadow infusion","pet")
 	local superPet = jps.buff("dark transformation","pet")
 
@@ -85,7 +86,7 @@ function dk_unholy(self)
 		{ "festering strike",		two_dr and two_fr and rp < 90 },
 		{ "death coil",				rp > 90 },
 		{ "death coil",				jps.buff("sudden doom") },
---		{ "blood tap" }, -- Only use if you have got the talent, and for now SimCraft does not take this talent
+--		{ "blood tap" , 			bcStacks >= 5 }, -- Only use if you have got the talent, and for now SimCraft does not take this talent
 		{ "scourge strike" , 		"onCD" },
 		{ "festering strike" , 		"onCD" },
 		{ "death coil", 			jps.cd("summon gargoyle") > 8 },
