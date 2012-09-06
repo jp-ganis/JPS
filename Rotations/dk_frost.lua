@@ -41,6 +41,7 @@ local spellTable =
        { "Outbreak",            jps.MultiTarget and jps.cooldown("Unholy Blight") > 4 and jps.debuffDuration("Frost Fever") <= 2 and jps.debuffDuration("Blood Plague") <= 2 },
        { "Pestilence",          jps.LastCast ~= "Outbreak" },
        { "Howling Blast",       jps.MultiTarget },
+       {"Death and Decay"},     jps.MultiTarget },
        
     
     --Rotation--
@@ -56,7 +57,7 @@ local spellTable =
    }
 
    local spell,target = parseSpellTable(spellTable)
-   if spell == "death and decay" then
+   if spell == "Death and Decay" then
        jps.Cast( spell )
        jps.groundClick()
    end
