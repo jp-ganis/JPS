@@ -72,7 +72,7 @@ function jps_getCombatFunction( class, spec )
 							 ["Guardian"]	   = druid_guardian,
 							 ["Balance"]       = druid_balance,
 							 ["Restoration"]   = druid_resto },
-		["Death Knight"] = { ["Unholy"]        = new_dk_unholy,
+		["Death Knight"] = { ["Unholy"]        = dk_unholy,
 							 ["Blood"]         = new_dk_blood,
 							 ["Frost"]         = dk_frost  },  
 		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
