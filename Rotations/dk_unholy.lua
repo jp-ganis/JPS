@@ -1,6 +1,6 @@
 -- tropic (original by jpganis)
 -- Ty to SIMCRAFT for this rotation
-function new_dk_unholy(self)
+function dk_unholy(self)
 	-- INFO --
 	-- Shift-key to cast Death and Decay
 	-- Ctrl-key to heal ghoul pet with death coil
@@ -8,6 +8,9 @@ function new_dk_unholy(self)
 	--   player corpse or player frame in the party/raid frame
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
 	-- Automatically raise ghoul if dead
+	
+	-- Talents: Plague Leech and Runic Corruption
+	-- http://www.wowhead.com/talent#k1;|
 
 	local rp = UnitPower("player") 
 
@@ -59,39 +62,35 @@ function new_dk_unholy(self)
 		{ "death and decay",		IsShiftKeyDown() ~= nil },
 		-- Raise ghoul if dead
 		{ "Raise Dead",				UnitExists("pet") == nil },
-		-- raise ally, mouseover unit in party/raid frame or corpse + Alt-key
-		{ "raise ally", 			IsAltKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
-		-- death coil ghoul pet (heal)
-		{ "death coil",				IsControlKeyDown() ~= nil, "pet" },
-		-- unholy presence
+		-- Unholy presence
 		{ "unholy presence", 		not jps.buff("unholy presence") },
-		-- dark simulacrum (duplicate spell)
+		-- Dark simulacrum (duplicate spell)
 		{ "dark simulacrum", 		castDarkSim, DarkSimTarget }, 					-- Duplicate spell
 		{ "dark simulacrum", 		jps.buff("dark simulacrum"), DarkSimTarget }, 	-- Cast the duplicated spell
-		-- Anti-Magic Shell used against Hagara abilities
-		{ "Anti-Magic Shell", 		jps.debuff("Watery Entrenchment","player") or jps.debuff("Ice Lance","player") }, 
-		-- interrupts
+		-- Interrupts
 		{ "mind freeze", 			jps.shouldKick() },
 		{ "strangulate", 			jps.shouldKick() and jps.LastCast ~= "mind freeze" },
-		-- cooldowns
-		{ "unholy frenzy", 			jps.UseCDs and not jps.buff("bloodlust") and not jps.buff("heroism") and not jps.buff("time warp")},
-		-- mofes
-		{ "outbreak", 				ffDuration < 2 and bpDuration < 2 },
-		{ "icy touch", 				ffDuration < 2 },
-		{ "plague strike", 			bpDuration < 2 },
-		{ "dark transformation", 	"onCD" }, 
-		{ "summon gargoyle",		jps.buff("unholy frenzy") },
-		{ "scourge strike", 		two_ur and rp < 110 },
-		{ "festering strike", 		two_dr and two_fr and rp < 110 },
-		{ "blood boil", 			jps.MultiTarget },
-		{ "death coil", 			rp > 90 },
-		{ "death coil", 			jps.buff("sudden doom") },
-		{ "scourge strike", 		"onCD"},
-		{ "festering strike", 		"onCD"},
-		{ "death coil", 			"onCD" },
-		{ "blood tap", 				"onCD" },
-		{ "empower rune weapon", 	"onCD" },
-		{ "horn of winter", 		"onCD" },
+		-- Rotation
+		{ "unholy frenzy" , 		jps.UseCDs and not jps.buff("bloodlust") and not jps.buff("heroism") and not jps.buff("time warp") },
+		{ "outbreak",				ffDuration < 3 or bpDuration < 3 },
+		{ "soul reaper",			jps.hp("target") <= 0.35 }, 					-- Requires level 87
+		{ "unholy blight",			ffDuration < 3 or bpDuration < 3 },
+		{ "icy touch",				ffDuration <= 0 },
+		{ "plague strike",			bpDuration <= 0 },
+		{ "plague leech",			jps.cd("outbreak") < 1 },
+		{ "summon gargoyle" , 		jps.buff("unholy frenzy") },
+		{ "dark transformation" , 	"onCD" },
+		{ "empower rune weapon" , 	"onCD" },
+		{ "scourge strike",			two_ur and rp < 90 },
+		{ "festering strike",		two_dr and two_fr and rp < 90 },
+		{ "death coil",				rp > 90 },
+		{ "death coil",				jps.buff("sudden doom") },
+--		{ "blood tap" }, -- Only use if you have got the talent, and for now SimCraft does not take this talent
+		{ "scourge strike" , 		"onCD" },
+		{ "festering strike" , 		"onCD" },
+		{ "death coil", 			jps.cd("summon gargoyle") > 8 },
+		{ "horn of winter" , 		"onCD" },
+		{ "empower rune weapon" , 	"onCD" },
 	}
 
 	local spell = parseSpellTable( spellTable ) 
