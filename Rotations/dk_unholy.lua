@@ -1,6 +1,6 @@
 -- tropic (original by jpganis)
 -- Ty to SIMCRAFT for this rotation
-function new_dk_unholy(self)
+function dk_unholy(self)
 	-- INFO --
 	-- Shift-key to cast Death and Decay
 	-- Ctrl-key to heal ghoul pet with death coil
