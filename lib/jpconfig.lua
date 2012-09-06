@@ -15,6 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
+
+local rotationButtonPositionY = -90
+local rotationButtonPositionX = 40
+local jpsRotationFrame = nil
+	
 function jps_createConfigFrame()
 	jpsConfigFrame = CreateFrame("Frame", "jpsConfigFrame", UIParent)
 	local w = 256
@@ -113,8 +118,6 @@ function jps_createConfigFrame()
 	desc:SetJustifyV("TOP")
 	desc:SetText("Uncheck spells when you dont want to use them.")
 		
-	local rotationButtonPositionY = -90;
-	local rotationButtonPositionX = 40;	
 		
 	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig) do
 		local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellKey, jpsRotationFrame, "OptionsCheckButtonTemplate");
@@ -147,4 +150,31 @@ function jps_createConfigFrame()
 
 	InterfaceOptions_AddCategory(jpsRotationFrame)
 	jpsRotationFrame:Hide()
+end
+
+function addSpellCheckboxToFrame(spellName)
+    local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellName, jpsRotationFrame, "OptionsCheckButtonTemplate");
+    rotationJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
+    getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellName);
+    
+    local function rotationJPS_IconOptions_CheckButton_OnClick()
+        local spellStatus = nil
+        if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+            status = 0 
+        else 
+            status = 1 
+        end
+        setSpellStatus(spellName, status)
+    end  
+    
+    local function rotationJPS_IconOptions_CheckButton_OnShow()
+        rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellName);
+    end  
+    
+    rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+    rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
+    rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
+    
+    if i == 6 then rotationButtonPositionY = rotationButtonPositionY - 30 end
+    rotationButtonPositionY = rotationButtonPositionY - 30;
 end

@@ -56,6 +56,7 @@ end
 function getSpellStatus(spell)
     if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
        setSpellStatus(spell, 1)
+       addSpellCheckboxToFrame(spell)
        return 1
     else
        return jpsDB[jpsRealm][jpsName].spellConfig[spell]
