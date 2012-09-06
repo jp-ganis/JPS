@@ -20,6 +20,7 @@
 
 -- canCast
 function ImReallySureICanCastThisShit( spell, unit )
+    local spellParam = spell
 	spell:lower()
 
 	--debug mode
@@ -39,6 +40,12 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if not UnitIsVisible(unit) then return false end
 	--if not IsSpellKnown(spellID) then return false end
 	-- WoW API bugged
+	
+    if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == nil) then
+       jpsDB[jpsRealm][jpsName].spellConfig[spellParam] = 1
+    end
+    if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == 0) then return false end
+	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
 	
@@ -61,6 +68,9 @@ function jpd( spell, unit )
 	if UnitIsDeadOrGhost(unit) then
 		write("Failed UnitIsDeadOrGhost test")
 		return false end
+    if jpsDB[jpsRealm][jpsName].spellConfig[spell] == 0 then
+         write("spell is not actived")
+         return false end
 	if not usable then
 		write("Failed IsUsableSpell test")
 		return false end
@@ -75,8 +85,9 @@ function jpd( spell, unit )
 		return false end
 	--[[if not IsSpellKnown(spellID)  then
 		write("Failed IsSpellKnown test")
-		return false end]]--
-		-- wow api bug
+		return false end
+		]]--
+    ---Bug in current WOW API
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then
 		write("Failed Range test")
 		return false end
@@ -170,7 +181,7 @@ function parseSpellTable( hydraTable )
 		-- If not already assigned, assign target now.
 		if not target and type(spellTable[3]) == "string" then
 			target = spellTable[3] end
-
+	
 		-- Return spell if conditions are true and spell is castable.
 		if conditionsMatched( spell, conditions ) and ImReallySureICanCastThisShit( spell,target ) then
 
