@@ -1,4 +1,4 @@
-function shaman_enhancement(self
+function shaman_enhancement(self)
 	-- vipersnake
     --jpganis +simcraft
     local maelstromStacks = jps.buffStacks("maelstrom weapon")
