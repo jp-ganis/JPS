@@ -128,11 +128,11 @@ function jps_createConfigFrame()
             else 
                 status = 1 
             end
-            jpsDB[jpsRealm][jpsName].spellConfig[spellKey] = status
+            setSpellStatus(spellKey, status)
 		end  
 		
 		local function rotationJPS_IconOptions_CheckButton_OnShow()
-			rotationJPS_IconOptions_CheckButton:SetChecked(jpsDB[jpsRealm][jpsName].spellConfig[spellKey]);
+			rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellKey));
 		end  
 
 		

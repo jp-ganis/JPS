@@ -40,15 +40,26 @@ function ImReallySureICanCastThisShit( spell, unit )
 	--if not IsSpellKnown(spellID) then return false end
 	-- WoW API bugged
 	
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == nil) then
-       jpsDB[jpsRealm][jpsName].spellConfig[spellParam] = 1
-    end
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == 0) then return false end
+    if(getSpellStatus(spellParam) == 0) then return false end
 	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
 	
 	return true
+end
+
+-- spell Config Methods
+function setSpellStatus(spell, status)
+    jpsDB[jpsRealm][jpsName].spellConfig[spell] = status
+end
+
+function getSpellStatus(spell)
+    if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
+       setSpellStatus(spell, 1)
+       return 1
+    else
+       return jpsDB[jpsRealm][jpsName].spellConfig[spell]
+    end
 end
 
 -- canCast debug mode
