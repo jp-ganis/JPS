@@ -1,5 +1,7 @@
 --Ty to MEW Feral Sim
 -- jpganis
+
+-- NO LONGER USED
 function druid_cat(self)
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
