@@ -71,15 +71,16 @@ function dk_unholy(self)
 		-- Interrupts
 		{ "mind freeze", 			jps.shouldKick() },
 		{ "strangulate", 			jps.shouldKick() and jps.LastCast ~= "mind freeze" },
+		-- Cooldowns
+		{ "unholy frenzy" , 		jps.UseCDs },
+		{ "summon gargoyle" , 		jps.buff("unholy frenzy") },
 		-- Rotation
-		{ "unholy frenzy" , 		jps.UseCDs and not jps.buff("bloodlust") and not jps.buff("heroism") and not jps.buff("time warp") },
 		{ "outbreak",				ffDuration < 3 or bpDuration < 3 },
 		{ "soul reaper",			jps.hp("target") <= 0.35 }, 					-- Requires level 87
 		{ "unholy blight",			ffDuration < 3 or bpDuration < 3 },
 		{ "icy touch",				ffDuration <= 0 },
 		{ "plague strike",			bpDuration <= 0 },
 		{ "plague leech",			jps.cd("outbreak") < 1 },
-		{ "summon gargoyle" , 		jps.buff("unholy frenzy") },
 		{ "dark transformation" , 	"onCD" },
 		{ "empower rune weapon" , 	"onCD" },
 		{ "scourge strike",			two_ur and rp < 90 },
