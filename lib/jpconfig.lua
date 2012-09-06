@@ -42,7 +42,6 @@ function jps_createConfigFrame()
 	local t = {1,2,3,4,5,6,7,8}
 	for var,value in pairs(jpsDB[jpsRealm][jpsName]) do
 		if type(jpsDB[jpsRealm][jpsName][var]) == "boolean" then
-		  
 			if var == "Enabled" then t[1] = var
 			elseif var == "FaceTarget" then t[2] = var
 			elseif var == "MoveToTarget" then t[3] = var
@@ -56,17 +55,7 @@ function jps_createConfigFrame()
 		end
 	end
 	local rotationConfigExist = false
-	
-	if setRotationConfig  then
-	   rotationConfigExist = true
-	   for spellKey, spellVal in pairs(setRotationConfig()) do
-	       if jpsDB[jpsRealm][jpsName].spellConfig[spellVal[1]] == nil then
-	          jpsDB[jpsRealm][jpsName].spellConfig[spellVal[1]] =  spellVal[2]
-	       end
-	   end
-    end
 
-	
 	for i,v in ipairs (t) do
 		local JPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..v, jpsConfigFrame, "OptionsCheckButtonTemplate");
 		JPS_IconOptions_CheckButton:SetPoint("TOPLEFT",buttonPositionX,buttonPositionY);
@@ -127,35 +116,34 @@ function jps_createConfigFrame()
 	local rotationButtonPositionY = -90;
 	local rotationButtonPositionX = 40;	
 		
-	if rotationConfigExist == true then
-    	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig) do
-    		local JPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellKey, jpsRotationFrame, "OptionsCheckButtonTemplate");
-    		JPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
-    		getglobal(JPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellKey);
-    
-    		local function JPS_IconOptions_CheckButton_OnClick()
-                local spellStatus = nil
-                if(JPS_IconOptions_CheckButton:GetChecked() == nil) then 
-                    status = 0 
-                else 
-                    status = 1 
-                end
-                jpsDB[jpsRealm][jpsName].spellConfig[spellKey] = status
-    		end  
-    		
-    		local function JPS_IconOptions_CheckButton_OnShow()
-    			JPS_IconOptions_CheckButton:SetChecked(jpsDB[jpsRealm][jpsName].spellConfig[spellKey]);
-    		end  
-    
-    		
-    		
-    		JPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
-    		JPS_IconOptions_CheckButton:SetScript("OnClick", JPS_IconOptions_CheckButton_OnClick);
-    		JPS_IconOptions_CheckButton:SetScript("OnShow", JPS_IconOptions_CheckButton_OnShow);
-    		if i == 6 then rotationButtonPositionY = rotationButtonPositionY - 30 end
-    		rotationButtonPositionY = rotationButtonPositionY - 30;
-    	end
+	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig) do
+		local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellKey, jpsRotationFrame, "OptionsCheckButtonTemplate");
+		rotationJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
+		getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellKey);
+
+		local function rotationJPS_IconOptions_CheckButton_OnClick()
+            local spellStatus = nil
+            if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+                status = 0 
+            else 
+                status = 1 
+            end
+            jpsDB[jpsRealm][jpsName].spellConfig[spellKey] = status
+		end  
+		
+		local function rotationJPS_IconOptions_CheckButton_OnShow()
+			rotationJPS_IconOptions_CheckButton:SetChecked(jpsDB[jpsRealm][jpsName].spellConfig[spellKey]);
+		end  
+
+		
+		
+		rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+		rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
+		rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
+		if i == 6 then rotationButtonPositionY = rotationButtonPositionY - 30 end
+		rotationButtonPositionY = rotationButtonPositionY - 30;
 	end
+
 
 	InterfaceOptions_AddCategory(jpsRotationFrame)
 	jpsRotationFrame:Hide()

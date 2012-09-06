@@ -1,15 +1,3 @@
---[[
-setRotationConfig: default config file for your rotation, ingame editable under interface->addons->jps->rotation
-]]--
-function setRotationConfig()
-    local spells = {
-        {"Frost Bomb",  0},
-        {"Fireball",    1},
-    }
-    return spells
-end
-
-
 function mage_fire(self)
 
 	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
