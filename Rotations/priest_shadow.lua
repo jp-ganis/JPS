@@ -1,37 +1,23 @@
 --jpganis
--- Ty to SIMCRAFT for this rotation
+-- Ty to rer09!
 function priest_shadow(self)
-	local swpDuration = jps.debuffDuration("shadow word: pain")
-	local plagueDuration = jps.debuffDuration("devouring plague")
-	local vtDuration = jps.debuffDuration("vampiric touch")
-	local gcd = 1.5
-	
+   local swpDuration = jps.debuffDuration("shadow word: pain")
+   local plagueDuration = jps.debuffDuration("devouring plague")
+   local vtDuration = jps.debuffDuration("vampiric touch")
+   local sorbs = UnitPower("player",13)
+   
 
-	local spellTable =
-	{
-		-- Movement/trash
-		{ "shadow word death",	jps.Moving };
-		{ "devouring plague",	jps.Moving and jps.mana() > 0.1 },
-		{ "mind sear",			jps.MultiTarget },
+   local spellTable =
+   {
+      { "mind blast",                 jps.cooldown("mind blast") == 0 and sorbs < 3 },
+      { "vampiric touch",              not jps.debuff("vampiric touch") or vtDuration < 4 and jps.LastCast ~= "vampiric touch" },
+      { "shadow word: pain",      not jps.debuff("shadow word: pain") or swpDuration < 2 },
+      { "mind spike",                 jps.buff("surge of darkness") },
+      { "shadowfiend",              jps.cooldown("mindbender") == 0 },
+      { "devouring plague",              sorbs > 2 },
+      { "shadow word: death",      jps.hp("target") <= 0.25 },
+      { {"macro","/cast mind flay"},   jps.cooldown("mind flay") == 0 },
+   }
 
-		-- Highest priority
-		{ "vampiric touch",		vtDuration < gcd + 2.5 and jps.LastCast ~= "vampiric touch"},
-		{ "devouring plague",	plagueDuration < gcd + 1.0 },
-		{ "shadow word: pain",	swpDuration < gcd + .5 and jps.LastCast ~= "shadow word: pain"},
-		
-		-- Situational
-		{ "shadowfiend",		"onCD" },
-		{ "archangel",			jps.buffStacks("dark evangelism") >= 5 and vtDuration > 5 and
-								plagueDuration > 5 },
-		
-		-- Medium Priority
-		-- SW:D before mind-blast only if you have tier 13 2-piece
-		{ "shadow word: death",	jps.hp("target") <= 0.25 },
-		{ "mind blast",			"onCD" },
-
-		-- Filler
-		{ "mind flay",			"onCD" }
-	}
-
-	return parseSpellTable( spellTable )
+   return parseSpellTable( spellTable )
 end
