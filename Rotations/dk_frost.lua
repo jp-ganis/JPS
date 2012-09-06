@@ -1,5 +1,5 @@
 function dk_frost(self)
-	--sphoenix
+	--sphoenix/pcmd
 
    if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
 
@@ -36,10 +36,12 @@ local spellTable =
    { "raise dead",         jps.UseCDs and jps["Raise Dead (DPS)"] },
    
 --AoE--
-   { "Unholy Blight",      jps.MultiTarget jps.debuffDuration("Frost Fever") <= 2 and jps.debuffDuration("Blood Plague") <= 2 },
+   { "death and decay",	jps.MultiTarget },
+   { "Unholy Blight",      jps.MultiTarget and jps.debuffDuration("Frost Fever") <= 2 and jps.debuffDuration("Blood Plague") <= 2 },
    { "Outbreak",          jps.MultiTarget and jps.cooldown("Unholy Blight") > 4 and jps.debuffDuration("Frost Fever") <= 2 and jps.debuffDuration("Blood Plague") <= 2 },
    { "Pestilence",         jps.LastCast ~= "Outbreak" },
    { "Howling Blast",      jps.MultiTarget },
+   
 
 --Rotation--
    { "Outbreak",          jps.debuffDuration("Frost Fever") <= 2 and jps.debuffDuration("Blood Plague") <= 2, "target" },
