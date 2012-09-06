@@ -26,7 +26,7 @@ function jps_VARIABLES_LOADED()
 	if ( not jpsDB[jpsRealm][jpsName] ) then
 		write("Initializing new character names")
 		jpsDB[jpsRealm][jpsName] = {}
-		--defaults
+		
 		jpsDB[jpsRealm][jpsName].Enabled = true
 		jpsDB[jpsRealm][jpsName].MoveToTarget = false
 		jpsDB[jpsRealm][jpsName].FaceTarget = false
@@ -121,55 +121,6 @@ function jps.setClassCooldowns()
 		jps.DPSRacial = "blood fury"
 	end
 	if jps.DPSRacial then table.insert(options,"DPS Racial") end
-
-	-- Lifeblood
-	if GetSpellBookItemInfo("lifeblood") then
-		table.insert(options, "Lifeblood")
-	end
-
-	-- Shaman
-	if jps.Class == "Shaman" then
-		if jps.Spec == "Elemental" then
-			table.insert(options,"Elementary Mastery")
-		elseif jps.Spec == "Enhancement" then
-			table.insert(options,"shamanistic rage")
-			table.insert(options,"feral spirit")
-		end
-	-- DK
-	elseif jps.Class == "Death Knight" then
-		table.insert(options,"Icebound Fortitude")
-		table.insert(options,"Strangulate")
-		table.insert(options,"Blood Tap")
-		table.insert(options,"Empower Rune Weapon")
-		table.insert(options,"Raise Dead (DPS)")
-		table.insert(options,"Raise Dead (Sacrifice)")
-		table.insert(options,"Death Grip")
-		if jps.Spec == "Frost" then
-			table.insert(options,"Pillar of Frost")
-		elseif jps.Spec == "Blood" then
-			table.insert(options,"Dancing Rune Weapon")
-			table.insert(options,"Vampiric Blood")
-			table.insert(options,"Rune Tap")
-		elseif jps.Spec == "Unholy" then
-			table.insert(options,"unholy frenzy")
-			table.insert(options,"summon gargoyle")
-		end
-	-- Druid
-	elseif jps.Class == "Druid" then
-		if jps.Spec == "Feral" then
-			table.insert(options,"growl")
-			table.insert(options,"challenging roar")
-		elseif jps.Spec == "Balance" then
-			table.insert(options,"solar beam")
-		end
-	-- Warrior
-	elseif jps.Class == "Warrior" then
-		if jps.Spec == "Arms" then
-			table.insert(options,"charge")
-			table.insert(options,"bladestorm")
-			table.insert(options,"recklessness")
-		end
-	end
 
 	-- Add spells
 	for i,spell in pairs(options) do
