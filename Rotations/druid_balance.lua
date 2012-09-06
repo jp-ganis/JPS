@@ -4,10 +4,10 @@
 
 function druid_balance(self)
 	-- bpt virtual trackers
-	local tEnergy = UnitPower("player",SPELL_POWER_ECLIPSE)
-	local vDirection = GetEclipseDirection()
+	local Energy = UnitPower("player",SPELL_POWER_ECLIPSE)
+	local Direction = GetEclipseDirection()
 
-	if vDirection == "none" then vDirection = "sun" end
+	if Direction == "none" then Direction = "sun" end
 
 	-- Insect Swarm and Moonfire /fastest/ tick times.
 	local isTick = 1.3
@@ -35,21 +35,21 @@ function druid_balance(self)
 	{
 		{ "starfall" },
 		{ "force of nature" },
-		{ "moonfire", jps.Moving and sfDuration == 0 },
-		{ "sunfire" , jps.Moving and mfDuration == 0 },
-		{ "moonfire", jps.Moving and lEclipse },
 		{ "sunfire", jps.Moving },
 		{ "starsurge", jps.Moving and jps.buff("shooting stars") },
 		{ "incarnation", sEclipse or lEclipse },
-		{ "celestial alignment", ((vDirection=="moon" and tEnergy <= 0) or (vDirection=="sun" and tEnergy >= 0)) and (not select(5,GetTalentInfo(11,"player")) or jps.buff("Incarnation: Chosen of Elune")) },
-		{ "wrath", tEnergy <= -70 and vDirection == "moon" },
-		{ "starfire", tEnergy >= 60 and vDirection == "sun" },
+		{ "celestial alignment", ((Direction=="moon" and Energy <= 0) or (Direction=="sun" and Energy >= 0)) and (not select(5,GetTalentInfo(11,"player")) or jps.buff("Incarnation: Chosen of Elune")) },
+		{ "wrath", Energy <= -70 and Direction == "moon" },
+		{ "starfire", Energy >= 60 and Direction == "sun" },
 		{ "moonfire", mfDuration == 0 and not jps.buff("celestial alignment") },
 		{ "sunfire", sfDuration == 0 and not jps.buff("celestial alignment") },
 		{ "starsurge" },
 		{ "starfire", jps.buff("celestial alignment") },
-		{ "starfire", vDirection == "sun" },
-		{ "wrath", vDirection == "moon" },
+		{ "starfire", Direction == "sun" },
+		{ "wrath", Direction == "moon" },
+		{ "moonfire", jps.Moving and sfDuration == 0 },
+		{ "sunfire" , jps.Moving and mfDuration == 0 },
+		{ "moonfire", jps.Moving and lEclipse },
 	}
 
 	spell = parseSpellTable( spellTable )
