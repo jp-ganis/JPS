@@ -191,10 +191,7 @@ function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
 	
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
-	   jpsDB[jpsRealm][jpsName].spellConfig[spell] = 1
-	end
-	if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == 0) then return false end
+    if(getSpellStatus(spellParam) == 0) then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
