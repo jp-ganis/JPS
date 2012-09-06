@@ -20,6 +20,7 @@
 
 -- canCast
 function ImReallySureICanCastThisShit( spell, unit )
+    local spellParam = spell
 	spell:lower()
 
 	--debug mode
