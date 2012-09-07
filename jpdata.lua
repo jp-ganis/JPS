@@ -191,7 +191,7 @@ function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
 	
-    if(getSpellStatus(spellParam) == 0) then return false end
+    if(getSpellStatus(spell) == 0) then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
