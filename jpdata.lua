@@ -542,3 +542,18 @@ function jps.checkTimer( name )
 	return 0
 end
 
+
+function jps.useTrinket(id)
+    local idConvention = id -1
+    local slotName = "Trinket"..idConvention.."Slot"
+	local slotId,_,_ = GetInventorySlotInfo(slotName)
+	local trinketId = GetInventoryItemID("player", slotId)
+	local trinketName, _, _, _, _, _, _, _ = GetItemInfo(trinketId)
+	
+	if(GetItemCooldown(trinketId) == 0 and IsUsableItem(trinketId)) then 
+	   result = {"macro","/use "..trinketName}
+    else 
+	   result = false
+    end
+	return result
+end
