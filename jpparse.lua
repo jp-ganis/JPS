@@ -38,8 +38,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if jps.cooldown(spell) ~= 0	then return false end
 	if nomana then return false end
 	if not UnitIsVisible(unit) then return false end
-	--if not IsSpellKnown(spellID) then return false end
-	-- WoW API bugged
+	if not IsPlayerSpell(spellID) then return false end
 	
     if(getSpellStatus(spellParam) == 0) then return false end
 	
@@ -95,10 +94,9 @@ function jpd( spell, unit )
 	if not UnitIsVisible(unit)  then
 		write("Failed Visible test")
 		return false end
-	--[[if not IsSpellKnown(spellID)  then
-		write("Failed IsSpellKnown test")
-		return false end]]--
-		-- wow api bug
+	if not IsPlayerSpell(spellID)  then
+		write("Failed IsPlayerSpell test")
+		return false end
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then
 		write("Failed Range test")
 		return false end
