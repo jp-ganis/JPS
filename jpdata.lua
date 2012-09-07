@@ -550,10 +550,12 @@ function jps.useTrinket(id)
 	local trinketId = GetInventoryItemID("player", slotId)
 	local trinketName, _, _, _, _, _, _, _ = GetItemInfo(trinketId)
 	
-	if(GetItemCooldown(trinketId) == 0 and IsUsableItem(trinketId)) then 
-	   result = {"macro","/use "..trinketName}
+    local isUsable,_ = IsUsableItem(trinketId)
+    if(jps.itemCooldown(trinketId) == 0 and isUsable) then 
+          result = {"macro","/use "..trinketName}
     else 
-	   result = false
+          result = false
     end
-	return result
+
+    return result
 end
