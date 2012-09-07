@@ -6,23 +6,27 @@ function dk_frost(self)
 	local bp_dur = jps.debuffDuration("blood plague")
 	local wholeRuneCount = 0
 	
+	function sif(condition, doIt, notDo)
+    	if condition then return doIt else return notDo end
+    end
+
 	function getRunes()
 	   wholeRuneCount = 0
 	   local runes = {}
 	   local runeNames = {"dr","dr","fr","fr","ur","ur"}
-	   for i = 0, 6,1 do 
-	       local value = if select(3,GetRuneCooldown(i)) then 1 else 0 end
-	       wholeRuneCount = if value == 1 then wholeRuneCount+1 else wholeRuneCount end
-	       runes[runeNames[i]] = if runes[runeNames[i]] not nil then runes[runeNames[i]] + value else runes[runeNames[i]] end
+	   for i = 1, 6,1 do 
+	       local oldVal = runes[runeNames[i]] or 0
+	       wholeRuneCount = sif(sif((select(3,GetRuneCooldown(i)) == true),1,0) == 1,(wholeRuneCount+1), wholeRuneCount)
+	       runes[runeNames[i]] = (oldVal + sif((select(3,GetRuneCooldown(i)) == true),1,0))
 	   end
 	   return runes
 	end
 	
 	function canCastObliterate()
 	   local runes = getRunes()
-	   if runes["fr"] >= 1 and runes["ur"] >= 1 then return true end
-	   if runes["dr"] >= 1 and runes["ur"] >= 1 then return true end
-	   if runes["fr"] >= 1 and runes["dr"] >= 1 then return true end
+	   if (runes["fr"] >= 1 and runes["ur"] >= 1) then return true end
+	   if (runes["dr"] >= 1 and runes["ur"] >= 1) then return true end
+	   if (runes["fr"] >= 1 and runes["dr"] >= 1) then return true end
 	   return false
 	end
 
@@ -34,18 +38,23 @@ function dk_frost(self)
 		{ "Strangulate",		jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze" },
 		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
 
+		-- Buffs
+		{ "horn of winter",		"onCD" },
+
 		-- Cooldowns
 		{ "Pillar of Frost",	jps.UseCDs },
 		{ jps.DPSRacial,		jps.UseCDs and jps["DPS Racial"]},
 		{ "raise dead",			jps.UseCDs and jps["Raise Dead (DPS)"] },
-		{ "outbreak",			ff_dur <= 2 or bp_dur <= 2 },	
+		{ "outbreak",			ff_dur <= 2 or bp_dur <= 2 },
+		{jps.useTrinket(1),     jps.UseCDs},
+		{jps.useTrinket(2),     jps.UseCDs},
 		
 		-- AoE
 		{ "death and decay",	jps.MultiTarget and jps.cooldown("Death and Decas") == 0},
 		
 		-- Mofes
 		{ "howling blast",		ff_dur <= 2 },
-		{ "plague strike",		bp_dur <= 2 },
+		{ "plague strike",		bp_dur <= 2},
 		{ "obliterate",			canCastObliterate() },
 		{ "frost strike",		rp > 110 },
 		{ "howling blast",		jps.buff("Freezing Fog") },
@@ -54,10 +63,8 @@ function dk_frost(self)
 		{ "obliterate",			"onCD" },
 		{ "frost strike",		"onCD" },
 		{ "howling blast",		"onCD" },
-		{ "Empower Rune Weapon",jps.UseCDs and (wholeRuneCount  < 4 or (getRunes()["fr"] < 2 and getRunes()["ur"] < 2)) },
+		{ "Empower Rune Weapon", jps.UseCDs and (wholeRuneCount  < 4 or (getRunes()["fr"] < 2 and getRunes()["ur"] < 2)) },
 
-		-- Refresh it while we're here
-		{ "horn of winter",		"onCD" },
 	}
 
 	local spell = parseSpellTable( spellTable )
