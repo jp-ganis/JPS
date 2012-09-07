@@ -38,8 +38,8 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if jps.cooldown(spell) ~= 0	then return false end
 	if nomana then return false end
 	if not UnitIsVisible(unit) then return false end
-	if not IsPlayerSpell(spellID) then return false end
-	
+	--if not IsSpellKnown(spellID) then return false end  --still buggy in wow api (IsPlayerSpell doesnt worked)
+
     if(getSpellStatus(spellParam) == 0) then return false end
 	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
@@ -94,9 +94,11 @@ function jpd( spell, unit )
 	if not UnitIsVisible(unit)  then
 		write("Failed Visible test")
 		return false end
-	if not IsPlayerSpell(spellID)  then
-		write("Failed IsPlayerSpell test")
+	--[[if not IsSpellKnown(spellID)  then
+		write("Failed IsSpellKnown test")
 		return false end
+		still buggy in wow API , IsPlayerSpell doesnt worked
+    ]]--
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then
 		write("Failed Range test")
 		return false end
@@ -175,7 +177,7 @@ function parseSpellTable( hydraTable )
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
 			-- if macroTarget then TargetUnit(macroTarget) end -- TargetUnit is PROTECTED despite goblin active
-			if macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then
+			if (macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget )) then
 				conditions = conditionsMatched(  macroSpell, conditions )
 			elseif conditions == nil then 
 				conditions = true
