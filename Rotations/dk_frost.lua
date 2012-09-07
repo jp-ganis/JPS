@@ -2,20 +2,29 @@ function dk_frost(self)
    if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
 
 	local rp = UnitPower("player",1)
-	local dr1 = select(3,GetRuneCooldown(1))
-	local dr2 = select(3,GetRuneCooldown(2))
-	local fr1 = select(3,GetRuneCooldown(3))
-	local fr2 = select(3,GetRuneCooldown(4))
-	local ur1 = select(3,GetRuneCooldown(5))
-	local ur2 = select(3,GetRuneCooldown(6))
-	local one_dr = dr1 or dr2
-	local two_dr = dr1 and dr2
-	local one_fr = fr1 or fr2
-	local two_fr = fr1 and fr2
-	local one_ur = ur1 or ur2
-	local two_ur = ur1 and ur2
 	local ff_dur = jps.debuffDuration("frost fever")
 	local bp_dur = jps.debuffDuration("blood plague")
+	local wholeRuneCount = 0
+	
+	function getRunes()
+	   wholeRuneCount = 0
+	   local runes = {}
+	   local runeNames = {"dr","dr","fr","fr","ur","ur"}
+	   for i = 0, 6,1 do 
+	       local value = if select(3,GetRuneCooldown(i)) then 1 else 0 end
+	       wholeRuneCount = if value == 1 then wholeRuneCount+1 else wholeRuneCount end
+	       runes[runeNames[i]] = if runes[runeNames[i]] not nil then runes[runeNames[i]] + value else runes[runeNames[i]] end
+	   end
+	   return runes
+	end
+	
+	function canCastObliterate()
+	   local runes = getRunes()
+	   if runes["fr"] >= 1 and runes["ur"] >= 1 then return true end
+	   if runes["dr"] >= 1 and runes["ur"] >= 1 then return true end
+	   if runes["fr"] >= 1 and runes["dr"] >= 1 then return true end
+	   return false
+	end
 
 	local spellTable = 
 	{
@@ -37,16 +46,15 @@ function dk_frost(self)
 		-- Mofes
 		{ "howling blast",		ff_dur <= 2 },
 		{ "plague strike",		bp_dur <= 2 },
-		{ "obliterate",			one_dr and one_ur and one_fr },
-		{ "obliterate",			(two_dr and two_fr) or (two_dr and two_ur) or (two_fr and two_ur) },
+		{ "obliterate",			canCastObliterate() },
 		{ "frost strike",		rp > 110 },
 		{ "howling blast",		jps.buff("Freezing Fog") },
-		{ "obliterate",			two_dr or two_ur or two_fr },
+		{ "obliterate",			canCastObliterate() },
 		{ "frost strike",		rp > 100 },
 		{ "obliterate",			"onCD" },
 		{ "frost strike",		"onCD" },
 		{ "howling blast",		"onCD" },
-		{ "Empower Rune Weapon",jps.UseCDs and not (one_dr or one_fr or one_ur) },
+		{ "Empower Rune Weapon",jps.UseCDs and (wholeRuneCount  < 4 or (getRunes()["fr"] < 2 and getRunes()["ur"] < 2)) },
 
 		-- Refresh it while we're here
 		{ "horn of winter",		"onCD" },
