@@ -20,7 +20,6 @@
 
 -- canCast
 function ImReallySureICanCastThisShit( spell, unit )
-    local spellParam = spell
 	spell:lower()
 
 	--debug mode
@@ -40,7 +39,7 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if not UnitIsVisible(unit) then return false end
 	--if not IsSpellKnown(spellID) then return false end  --still buggy in wow api (IsPlayerSpell doesnt worked)
 
-    if(getSpellStatus(spellParam) == 0) then return false end
+    if(getSpellStatus(spell) == 0) then return false end
 	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
@@ -50,10 +49,12 @@ end
 
 -- spell Config Methods
 function setSpellStatus(spell, status)
+    spell:lower()
     jpsDB[jpsRealm][jpsName].spellConfig[spell] = status
 end
 
 function getSpellStatus(spell)
+    spell:lower()
     if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
        setSpellStatus(spell, 1)
        addSpellCheckboxToFrame(spell)
