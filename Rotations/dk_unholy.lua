@@ -33,17 +33,6 @@ function dk_unholy(self)
 	local one_ur = ur1 or ur2
 	local two_ur = ur1 and ur2
 	
-	-- Trinkets use
-	local slot1ID,_,_ = GetInventorySlotInfo("Trinket0Slot")
-	local trinket1ID = GetInventoryItemID("player", slot1ID)
-	local trinket1Name, _, _, _, _, _, _, _ = GetItemInfo(trinket1ID)
-	local trinket1Use, _ = IsUsableItem(trinket1ID)
-	
-	local slot2ID,_,_ = GetInventorySlotInfo("Trinket1Slot")
-	local trinket2ID = GetInventoryItemID("player", slot2ID)
-	local trinket2Name, _, _, _, _, _, _, _ = GetItemInfo(trinket2ID)
-	local trinket2Use, _ = IsUsableItem(trinket2ID)
-
 
 	-- Dark Simulacrum in raids and dungeons (+ misc. mainly PvP)
 	-- Hagara 			- Dragon Soul: 			Shattered Ice
@@ -86,8 +75,6 @@ function dk_unholy(self)
 		-- Cooldowns
 		{ "unholy frenzy" , 		jps.UseCDs },
 		{ "summon gargoyle" , 		jps.buff("unholy frenzy") },
-		{{"macro","/use " ..trinket1Name}, GetItemCooldown(trinket1ID) == 0 and jps.UseCds and trinket1Use == 1},
-		{{"macro","/use " ..trinket2Name}, GetItemCooldown(trinket2ID) == 0 and jps.UseCds and trinket2Use == 1},
 		-- Rotation
 		{ "outbreak",				ffDuration < 3 or bpDuration < 3 },
 		{ "soul reaper",			jps.hp("target") <= 0.35 }, 					-- Requires level 87
