@@ -41,7 +41,7 @@ function dk_frost(self)
 		{ "outbreak",			ff_dur <= 2 or bp_dur <= 2 },	
 		
 		-- AoE
-		{ "death and decay",	jps.MultiTarget },
+		{ "death and decay",	jps.MultiTarget and jps.cooldown("Death and Decas") == 0},
 		
 		-- Mofes
 		{ "howling blast",		ff_dur <= 2 },

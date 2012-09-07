@@ -1,17 +1,6 @@
 function mage_fire(self)
 --pcmd
 	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
-	
-	local slot1ID,_,_ = GetInventorySlotInfo("Trinket0Slot")
-	local trinket1ID = GetInventoryItemID("player", slot1ID)
-	local trinket1Name, _, _, _, _, _, _, _ = GetItemInfo(trinket1ID)
-	local trinket1Use, _ = IsUsableItem(trinket1ID)
-	
-	local slot2ID,_,_ = GetInventorySlotInfo("Trinket1Slot")
-	local trinket2ID = GetInventoryItemID("player", slot2ID)
-	local trinket2Name, _, _, _, _, _, _, _ = GetItemInfo(trinket2ID)
-	local trinket2Use, _ = IsUsableItem(trinket2ID)
-	
 
 	local spellTable = 
 	{
@@ -33,8 +22,8 @@ function mage_fire(self)
 		--CDs
 		{ "Mirror Image",     jps.UseCDs },
 		{ jps.DPSRacial,    jps.UseCDs and jps["DPS Racial"]},
-		{{"macro","/use " ..trinket1Name}, GetItemCooldown(trinket1ID) == 0 and jps.UseCds and trinket1Use == 1},
-		{{"macro","/use " ..trinket2Name}, GetItemCooldown(trinket2ID) == 0 and jps.UseCds and trinket2Use == 1},
+		{jps.useTrinket(1),     jps.UseCDs},
+		{jps.useTrinket(2),     jps.UseCDs},
 
 		--{ "Living Bomb",    jps.debuffDuration("Living Bomb") == 0 , "target" },
 		{ "Frost Bomb",       jps.debuffDuration("Frost Bomb") == 0, "target" }, --depending on your talent tree
