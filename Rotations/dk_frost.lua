@@ -17,16 +17,6 @@ function dk_frost(self)
 	local ff_dur = jps.debuffDuration("frost fever")
 	local bp_dur = jps.debuffDuration("blood plague")
 	
-	local slot1ID,_,_ = GetInventorySlotInfo("Trinket0Slot")
-	local trinket1ID = GetInventoryItemID("player", slot1ID)
-	local trinket1Name, _, _, _, _, _, _, _ = GetItemInfo(trinket1ID)
-	local trinket1Use, _ = IsUsableItem(trinket1ID)
-	
-	local slot2ID,_,_ = GetInventorySlotInfo("Trinket1Slot")
-	local trinket2ID = GetInventoryItemID("player", slot2ID)
-	local trinket2Name, _, _, _, _, _, _, _ = GetItemInfo(trinket2ID)
-	local trinket2Use, _ = IsUsableItem(trinket2ID)
-	
 	local spellTable = 
 	{
 		-- Kicks
@@ -44,9 +34,6 @@ function dk_frost(self)
 		{ "outbreak",			ff_dur <= 2 or bp_dur <= 2 },	
 		{ jps.DPSRacial,		jps.UseCDs and jps["DPS Racial"]},
 		{ "raise dead",			jps.UseCDs and jps["Raise Dead (DPS)"] },
-		{{"macro","/use " ..trinket1Name}, GetItemCooldown(trinket1ID) == 0 and jps.UseCds and trinket1Use == 1},
-		{{"macro","/use " ..trinket2Name}, GetItemCooldown(trinket2ID) == 0 and jps.UseCds and trinket2Use == 1},
-		
 		
 		-- AoE
 		{ "death and decay",	jps.MultiTarget },
