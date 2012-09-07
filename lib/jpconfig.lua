@@ -16,9 +16,9 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
-local rotationButtonPositionY = -90
-local rotationButtonPositionX = 40
-local jpsRotationFrame = nil
+local rotationButtonPositionY = -90;
+local rotationButtonPositionX = 40;
+local jpsRotationFrame = nil;
 	
 function jps_createConfigFrame()
 	jpsConfigFrame = CreateFrame("Frame", "jpsConfigFrame", UIParent)
@@ -168,7 +168,7 @@ function addSpellCheckboxToFrame(spellName)
     end  
     
     local function rotationJPS_IconOptions_CheckButton_OnShow()
-        rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellName);
+        rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellName));
     end  
     
     rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
