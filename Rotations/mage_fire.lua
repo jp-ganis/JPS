@@ -21,6 +21,8 @@ function mage_fire(self)
 		
 		--CDs
 		{ "Mirror Image",     jps.UseCDs },
+		{jps.useTrinket(1),     jps.UseCDs},
+		{jps.useTrinket(2),     jps.UseCDs},
 		{ jps.DPSRacial,    jps.UseCDs and jps["DPS Racial"]},
 
 		--{ "Living Bomb",    jps.debuffDuration("Living Bomb") == 0 , "target" },
