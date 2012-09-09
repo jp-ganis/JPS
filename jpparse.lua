@@ -64,6 +64,26 @@ function getSpellStatus(spell)
     end
 end
 
+function jps.addRotations(rotationTable)
+    
+    for key, spellTable in pairs(rotationTable) do
+        table.insert(jps.rotations, spellTable)    
+    end
+end
+
+function jps.getRotations() 
+    return jps.rotations
+end
+
+function jps.initRotations() 
+    if( not jps.rotationsInitialized ) then
+       jps.addRotations(jps.Rotation(self,"init"))
+       
+       jps.rotationsInitialized = true
+       jps.addRotationDropdown()
+    end
+end
+
 -- canCast debug mode
 function jpd( spell, unit )
 	if unit == nil then unit = "target" end
@@ -159,8 +179,14 @@ end
 	
 
 -- Pick a spell from a priority table.
-function parseSpellTable( hydraTable )
+function parseSpellTable( dataTable )
 	local spell,conditions,target = nil
+	if(dataTable[1]["name"] ~= nil) then
+	   hydraTable = dataTable[jps.useRotation]["rotation"]
+	   write(dataTable[jps.useRotation]["rotation"][1])
+	else 
+	   hydraTable = dataTable
+	end
 	
 	for _, spellTable in pairs(hydraTable) do
 		spell = spellTable[1]
