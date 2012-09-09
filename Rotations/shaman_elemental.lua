@@ -43,7 +43,16 @@ function shaman_elemental(self)
          not haveFireTotem },
       
       { "fire elemental totem",
-         not haveFireTotem and jps.UseCDs },
+         jps.UseCDs },
+
+      { "earth elemental totem",
+         jps.UseCDs and jps.bloodlusting() },
+
+      { "stormlash totem",
+         jps.UseCDs and jps.bloodlusting() },
+
+      { "blood fury",
+         jps.UseCDs },
 
       { "wind shear",
          jps.shouldKick() },
@@ -54,7 +63,8 @@ function shaman_elemental(self)
       { "flame shock",
          jps.buff("unleash flame") },
 
-      { "lava burst" },
+      { "lava burst",
+         jps.debuff("flame shock") },
 
       { "earth shock",
          lsStacks > 5 and jps.debuffDuration("flame shock") > 5 },
