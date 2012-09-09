@@ -1,7 +1,14 @@
 function shaman_elemental(self)
-	-- updated by vipersnake
-    -- jpganis basics, thorshammer for all the good stuff :D
-    -- thanks to thorshammer no need for simcraft!
+   -- Updated for MoP
+   -- Tier 1: Astral Shift
+   -- Tier 2: Windwalk Totem
+   -- Tier 3: Call of the Elements
+   -- Tier 4: Echo of the Elements
+   -- Tier 5: Healing Tide Totem
+   -- Major Glyphs: Flame Shock (required), Spiritwalker's Grace (recommended),
+   --    Telluric Currents (recommended)
+   -- Minor Glyphs: Thunderstorm (required)
+
    local spell = nil
    local lsStacks = jps.buffStacks("lightning shield")
    local focus = "focus"
@@ -39,7 +46,8 @@ function shaman_elemental(self)
       { "wind shear",   jps.shouldKick() },
 
      -- Basic Priority Spells
-      { "flame shock", jps.debuffDuration("flame shock") < 2 },
+      { "unleash elements", jps.debuffDuration("flame shock") < 2 },
+      { "flame shock", jps.buff("unleash flame") },
       { "lava burst" },
       { "earth shock", lsStacks > 5 and jps.debuffDuration("flame shock") > 5 },
       { "spiritwalker's grace", jps.Moving },
