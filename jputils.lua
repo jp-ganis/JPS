@@ -106,7 +106,6 @@ function jps_getCombatFunction( class, spec )
 							 ["Holy"]          = priest_holy,
 							 ["Discipline"]    = priest_disc },
 	}
-	
 	return Rotations[class][spec]
 end
 
@@ -150,4 +149,18 @@ function jps.PLuaTest()
 		jpsIcon.border:SetTexture(jps.GUIborder_combat)
 		jps.PLuaFlag = false
 	end
+end
+
+--If function like C / PHP ternary operator val = (condition) ? true : false
+function sif(condition, doIt, notDo)
+	if condition then return doIt else return notDo end
+end
+
+--get table length
+function count(data) 
+    local count = 0
+    for k,v in pairs(data) do 
+        count = count+1
+    end
+    return count
 end
