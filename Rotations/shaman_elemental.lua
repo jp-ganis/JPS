@@ -32,27 +32,42 @@ function shaman_elemental(self)
    -- Miscellaneous
    local feared = jps.debuff("fear","player") or jps.debuff("intimidating shout","player") or jps.debuff("howl of terror","player") or jps.debuff("psychic scream","player")
 
-   local spellTable =
-   {
-      -- Set Me Up.
-      { "lightning shield", not jps.buff("lightning shield")  },
-      { "Flametongue Weapon",         not mh},
+   local spellTable = {
+      { "lightning shield",
+         not jps.buff("lightning shield") },
 
-      -- Totems.
-      { "searing totem",      not haveFireTotem },
-      { "fire elemental totem",   jps.UseCDs },
+      { "Flametongue Weapon",
+         not mh},
 
-      -- Kick.
-      { "wind shear",   jps.shouldKick() },
+      { "searing totem",
+         not haveFireTotem },
+      
+      { "fire elemental totem",
+         not haveFireTotem and jps.UseCDs },
 
-     -- Basic Priority Spells
-      { "unleash elements", jps.debuffDuration("flame shock") < 2 },
-      { "flame shock", jps.buff("unleash flame") },
+      { "wind shear",
+         jps.shouldKick() },
+
+      { "unleash elements",
+         jps.debuffDuration("flame shock") < 2 },
+      
+      { "flame shock",
+         jps.buff("unleash flame") },
+
       { "lava burst" },
-      { "earth shock", lsStacks > 5 and jps.debuffDuration("flame shock") > 5 },
-      { "spiritwalker's grace", jps.Moving },
-      { "chain lightning", jps.MultiTarget },
-      { "thunderstorm", jps.mana() < .6 and jps.UseCDs },
+
+      { "earth shock",
+         lsStacks > 5 and jps.debuffDuration("flame shock") > 5 },
+      
+      { "spiritwalker's grace",
+         jps.Moving },
+      
+      { "chain lightning",
+         jps.MultiTarget },
+      
+      { "thunderstorm",
+         jps.mana() < .6 and jps.UseCDs },
+      
       { "lightning bolt" },
    }
 
