@@ -191,10 +191,7 @@ function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
 	
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
-	   jpsDB[jpsRealm][jpsName].spellConfig[spell] = 1
-	end
-	if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == 0) then return false end
+    if(getSpellStatus(spell) == 0) then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
@@ -545,3 +542,17 @@ function jps.checkTimer( name )
 	return 0
 end
 
+
+function jps.useTrinket(id)
+    local idConvention = id -1
+    local slotName = "Trinket"..idConvention.."Slot"
+	local slotId,_,_ = GetInventorySlotInfo(slotName)
+	local trinketId = GetInventoryItemID("player", slotId)
+	if(not trinketId) then return false end
+	
+    if(jps.itemCooldown(trinketId) > 0) then return false end
+	local isUsable,_ = GetItemSpell(trinketId)
+	if(not isUsable) then return false end
+	
+    return {"macro","/use "..slotId}
+end
