@@ -20,7 +20,6 @@
 
 -- canCast
 function ImReallySureICanCastThisShit( spell, unit )
-    local spellParam = spell
 	spell:lower()
 
 	--debug mode
@@ -38,18 +37,31 @@ function ImReallySureICanCastThisShit( spell, unit )
 	if jps.cooldown(spell) ~= 0	then return false end
 	if nomana then return false end
 	if not UnitIsVisible(unit) then return false end
-	--if not IsSpellKnown(spellID) then return false end
-	-- WoW API bugged
-	
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == nil) then
-       jpsDB[jpsRealm][jpsName].spellConfig[spellParam] = 1
-    end
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spellParam] == 0) then return false end
+	--if not IsSpellKnown(spellID) then return false end  --still buggy in wow api (IsPlayerSpell doesnt worked)
+
+    if(getSpellStatus(spell) == 0) then return false end
 	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
 	
 	return true
+end
+
+-- spell Config Methods
+function setSpellStatus(spell, status)
+    spell:lower()
+    jpsDB[jpsRealm][jpsName].spellConfig[spell] = status
+end
+
+function getSpellStatus(spell)
+    spell:lower()
+    if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
+       setSpellStatus(spell, 1)
+       addSpellCheckboxToFrame(spell)
+       return 1
+    else
+       return jpsDB[jpsRealm][jpsName].spellConfig[spell]
+    end
 end
 
 -- canCast debug mode
@@ -85,8 +97,9 @@ function jpd( spell, unit )
 		return false end
 	--[[if not IsSpellKnown(spellID)  then
 		write("Failed IsSpellKnown test")
-		return false end]]--
-		-- wow api bug
+		return false end
+		still buggy in wow API , IsPlayerSpell doesnt worked
+    ]]--
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then
 		write("Failed Range test")
 		return false end
@@ -165,7 +178,7 @@ function parseSpellTable( hydraTable )
 			local macroSpell = spell[3]
 			local macroTarget = spell[4]
 			-- if macroTarget then TargetUnit(macroTarget) end -- TargetUnit is PROTECTED despite goblin active
-			if macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget ) then
+			if (macroSpell and ImReallySureICanCastThisShit( macroSpell,macroTarget )) then
 				conditions = conditionsMatched(  macroSpell, conditions )
 			elseif conditions == nil then 
 				conditions = true
