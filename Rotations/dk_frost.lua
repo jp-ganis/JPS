@@ -30,6 +30,8 @@ function dk_frost(self)
 
 		-- Cooldowns
 		{ "Pillar of Frost",	jps.UseCDs },
+		{jps.useTrinket(1),     jps.UseCds },
+		{jps.useTrinket(2),     jps.UseCds },
 		{ "Unholy Blight",       jps.UseCds and (ff_dur <= 2 or bp_dur <= 2) and CheckInteractDistance("target",3) },  --only if skilled!!!!
 		{ "outbreak",			ff_dur <= 2 or bp_dur <= 2 },	
 		{ jps.DPSRacial,		jps.UseCDs and jps["DPS Racial"]},
@@ -38,7 +40,7 @@ function dk_frost(self)
 		-- AoE
 		{ "death and decay",	jps.MultiTarget },
 		{"Pestilence",          jps.MultiTarget and (ff_dur > 10 and bp_dur > 10)},
-		
+
 		-- Mofes
 		{ "howling blast",		ff_dur <= 2 },
 		{ "plague strike",		bp_dur <= 2 },
@@ -52,7 +54,7 @@ function dk_frost(self)
 		{ "frost strike",		"onCD" },
 		{ "howling blast",		"onCD" },
 		{ "Empower Rune Weapon",jps.UseCDs and not (one_dr or one_fr or one_ur) },
-		
+
 	}
 
 	local spell = parseSpellTable( spellTable )
