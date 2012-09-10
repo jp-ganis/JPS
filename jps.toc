@@ -49,6 +49,7 @@ Rotations\rogue_sub.lua
 
 Rotations\shaman_elemental.lua
 Rotations\shaman_enhancement.lua
+Rotations\shaman_resto.lua
 Rotations\shaman_enhancement_pve.lua
 Rotations\shaman_enhancement_pvp.lua
 Rotations\shaman_resto_pvp.lua

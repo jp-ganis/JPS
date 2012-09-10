@@ -83,7 +83,7 @@ function jps_getCombatFunction( class, spec )
 							 ["Frost"]         = dk_frost  },  
 		["Shaman"]       = { ["Enhancement"]   = shaman_enhancement,
 							 ["Elemental"]     = shaman_elemental,
-							 ["Restoration"]   = shaman_resto_pvp },
+							 ["Restoration"]   = shaman_resto },
 		["Paladin"]      = { ["Protection"]    = paladin_protadin,
 							 ["Retribution"]   = paladin_ret,
 							 ["Holy"]          = paladin_holy },
