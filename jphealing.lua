@@ -346,7 +346,7 @@ function jps.SortRaidStatus()
 	group_type="raid"
 	nps=1
 	npe=GetNumGroupMembers()
-	if npe==0 then
+	if npe<=5 then
 	group_type="party"
 	nps=0
 	npe=GetNumSubgroupMembers()
@@ -363,7 +363,9 @@ function jps.SortRaidStatus()
 		local hpInc = UnitGetIncomingHeals(unit)
 		if not hpInc then hpInc = 0 end
 		
-		if jps.canHeal(unit) and (UnitHealth(unit) + hpInc < UnitHealthMax(unit)) then
+		--why not return all units in the group?
+		--the problem is that we may want to do other things 
+		if jps.canHeal(unit) then -- and (UnitHealth(unit) + hpInc < UnitHealthMax(unit)) then
 			local hpct = jps.hpInc(unit) 
 			unit = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
 			
