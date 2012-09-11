@@ -18,16 +18,20 @@ if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then re
 --Rage Dump w/ various situational implementations
     { "Heroic Strike",   (((jps.buff("player", "Colossus Smash") and nPower >= 40) or (jps.buff("Deadly Calm") and nPower >= 30)) and targetHealth >= 20 ) or nPower >=75 , "target" },
 
+--Multi-Target / AOE
+	{ "Whirlwind", jps.MultiTarget, "target" },
+	{ "Raging Blow", jps.MultiTarget and jps.buff("Meat Cleaver") and nPower>10, "target" },
+
 --Start Rotation w/ rate checks where appropriate
     { "Bloodthirst",   "onCD", "target" },
     { "Colossus Smash",   "onCD", "target" },
     { "Execute",      "onCD" and targetHealth <= 20, "target" }, --Execute when target <=20% HP
     { "Raging Blow",   "onCD" and nPower >= 10, "target" },
     { "Wild Strike",   jps.buff("Bloodsurge") and targetHealth >= 20 and nPower >= 30, "target" },
-    { "Dragon Roar",   "onCD" , "target" },
+    { "Dragon Roar",   "onCD", "target" },
     { "Impending Victory",   nPower >= 10, "target" },
-    { "Heroic Throw",   "onCD" , "target" },
-
+    { "Heroic Throw",   "onCD", "target" },
+    
 --Catch all for AA / swing timer generation
     { {"macro","/startattack"}, nil, "target" },
 }
