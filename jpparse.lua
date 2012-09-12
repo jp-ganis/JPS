@@ -43,29 +43,29 @@ function ImReallySureICanCastThisShit( spell, unit )
 	
 	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end --JPTODO - spell.lower
-	
+
 	return true
 end
 
 -- spell Config Methods
 function setSpellStatus(spell, status)
     spell:lower()
-    jpsDB[jpsRealm][jpsName].spellConfig[spell] = status
+    jps.spellConfig[spell] = status
 end
 
 function getSpellStatus(spell)
     spell:lower()
-    if(jpsDB[jpsRealm][jpsName].spellConfig[spell] == nil) then
+    local spellConfig = jps.spellConfig[spell]
+    if(spellConfig == nil) then
        setSpellStatus(spell, 1)
        addSpellCheckboxToFrame(spell)
        return 1
     else
-       return jpsDB[jpsRealm][jpsName].spellConfig[spell]
+       return jps.spellConfig[spell]
     end
 end
 
 function jps.addRotations(rotationTable)
-    
     for key, spellTable in pairs(rotationTable) do
         table.insert(jps.rotations, spellTable)    
     end
@@ -77,13 +77,33 @@ end
 
 function jps.initRotations() 
     if( not jps.rotationsInitialized ) then
-       jps.addRotations(jps.Rotation(self,"init"))
-       
-       jps.rotationsInitialized = true
-       jps.addRotationDropdown()
+       local rotations = jps.Rotation(self,"init")
+       if(rotations) then
+           jps.addRotations(rotations)
+           jps.rotationsInitialized = true
+           jps.addRotationDropdown()
+       end
     end
 end
 
+function jps.setActiveRotation(pos)
+    jps["useRotation"] = tonumber(pos)
+ end
+
+function jps.getActiveRotation()
+    local rotationID = jps["useRotation"]
+    local rotationTable = jps.rotations[rotationID]
+    if(rotationTable) then
+        rotationTable.key = rotationID
+        return rotationTable
+    else 
+        return nil
+    end
+end
+
+function jps.getActiveRotationKey() 
+    return jps["useRotation"]
+end
 -- canCast debug mode
 function jpd( spell, unit )
 	if unit == nil then unit = "target" end
@@ -100,7 +120,7 @@ function jpd( spell, unit )
 	if UnitIsDeadOrGhost(unit) then
 		write("Failed UnitIsDeadOrGhost test")
 		return false end
-    if jpsDB[jpsRealm][jpsName].spellConfig[spell] == 0 then
+    if jps.spellConfig[spell] == 0 then
          write("spell is not actived")
          return false end
 	if not usable then
@@ -148,7 +168,6 @@ function parseMultiUnitTable( spellTable )
 
 		table.insert( sirenTable, unitTable )
 	end
-
 	return parseSpellTable( sirenTable )
 end
 
@@ -180,14 +199,13 @@ end
 
 -- Pick a spell from a priority table.
 function parseSpellTable( dataTable )
-	local spell,conditions,target = nil
-	if(dataTable[1]["name"] ~= nil) then
-	   hydraTable = dataTable[jps.useRotation]["rotation"]
-	   write(dataTable[jps.useRotation]["rotation"][1])
-	else 
-	   hydraTable = dataTable
-	end
+	local spell,conditions,target,hydraTable = nil
 	
+	if(dataTable[jps.getActiveRotationKey()]["rotation"] ~= nil and jps.rotationsInitialized) then -- we have more than one rotation, pick the active
+        hydraTable = dataTable[jps.getActiveRotationKey()]["rotation"]
+    else 
+        hydraTable = dataTable
+	end
 	for _, spellTable in pairs(hydraTable) do
 		spell = spellTable[1]
 		conditions = spellTable[2]

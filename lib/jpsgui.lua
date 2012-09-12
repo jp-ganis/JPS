@@ -371,25 +371,28 @@ function jps.addRotationDropdown()
     
     local function OnClick(self, arg1, arg2, checked)
        UIDropDownMenu_SetSelectedID(chooseRotationDropdown, arg1)
-       jps.useRotation = arg1
-       write("changed Rotation to", arg2)
+       jps.setActiveRotation(arg1)
+       write("changed your Rotation to ",arg2)
     end
      
     local function initialize(self, level)
-       local info = UIDropDownMenu_CreateInfo()
        for k,v in pairs(items) do
           
           info = UIDropDownMenu_CreateInfo()
-          info.text = v["name"]
+          info.text = v.name
           info.value = k
           info.arg1 = k
-          info.arg2 = v["name"] 
+          info.arg2 = v.name
           info.func = OnClick
+          if(v.tooltip) then
+              info.tooltipTitle = "INFO / USAGE"
+              info.tooltipText = v.tooltip
+              info.tooltipOnButton = true
+          end
           UIDropDownMenu_AddButton(info, level)
        end
     end
-     
-     
+
     UIDropDownMenu_Initialize(chooseRotationDropdown, initialize)
     UIDropDownMenu_SetWidth(chooseRotationDropdown, 100);
     UIDropDownMenu_SetButtonWidth(chooseRotationDropdown, 124)
@@ -397,4 +400,8 @@ function jps.addRotationDropdown()
     UIDropDownMenu_JustifyText(chooseRotationDropdown, "LEFT")
     jps.rotationsInitialized = true
 
+    local currentRotation = jps.getActiveRotation()
+    if(currentRotation) then
+        UIDropDownMenu_SetSelectedID(chooseRotationDropdown, currentRotation.key)
+    end
 end

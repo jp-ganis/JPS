@@ -36,9 +36,14 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].MultiTarget = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 		jpsDB[jpsRealm][jpsName].spellConfig = {}
+		jpsDB[jpsRealm][jpsName].useRotation = 1
+		write("init")
     else
 		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then
 		  jpsDB[jpsRealm][jpsName].spellConfig = {}
+		end 
+		if ( not jpsDB[jpsRealm][jpsName].useRotation) then
+		  jpsDB[jpsRealm][jpsName].useRotation = 1
 		end 
 	end
 	
