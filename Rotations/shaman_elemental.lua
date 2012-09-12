@@ -1,7 +1,14 @@
 function shaman_elemental(self)
-	-- updated by vipersnake
-    -- jpganis basics, thorshammer for all the good stuff :D
-    -- thanks to thorshammer no need for simcraft!
+   -- Updated for MoP
+   -- Tier 1: Astral Shift
+   -- Tier 2: Windwalk Totem
+   -- Tier 3: Call of the Elements
+   -- Tier 4: Echo of the Elements
+   -- Tier 5: Healing Tide Totem
+   -- Major Glyphs: Flame Shock (required), Spiritwalker's Grace (recommended),
+   --    Telluric Currents (recommended)
+   -- Minor Glyphs: Thunderstorm (required)
+
    local spell = nil
    local lsStacks = jps.buffStacks("lightning shield")
    local focus = "focus"
@@ -25,26 +32,52 @@ function shaman_elemental(self)
    -- Miscellaneous
    local feared = jps.debuff("fear","player") or jps.debuff("intimidating shout","player") or jps.debuff("howl of terror","player") or jps.debuff("psychic scream","player")
 
-   local spellTable =
-   {
-      -- Set Me Up.
-      { "lightning shield", not jps.buff("lightning shield")  },
-      { "Flametongue Weapon",         not mh},
+   local spellTable = {
+      { "lightning shield",
+         not jps.buff("lightning shield") },
 
-      -- Totems.
-      { "searing totem",      not haveFireTotem },
-      { "fire elemental totem",   jps.UseCDs },
+      { "Flametongue Weapon",
+         not mh},
 
-      -- Kick.
-      { "wind shear",   jps.shouldKick() },
+      { "searing totem",
+         not haveFireTotem },
+      
+      { "fire elemental totem",
+         jps.UseCDs },
 
-     -- Basic Priority Spells
-      { "flame shock", jps.debuffDuration("flame shock") < 2 },
-      { "lava burst" },
-      { "earth shock", lsStacks > 5 and jps.debuffDuration("flame shock") > 5 },
-      { "spiritwalker's grace", jps.Moving },
-      { "chain lightning", jps.MultiTarget },
-      { "thunderstorm", jps.mana() < .6 and jps.UseCDs },
+      { "earth elemental totem",
+         jps.UseCDs and jps.bloodlusting() },
+
+      { "stormlash totem",
+         jps.UseCDs and jps.bloodlusting() },
+
+      { "blood fury",
+         jps.UseCDs },
+
+      { "wind shear",
+         jps.shouldKick() },
+
+      { "unleash elements",
+         jps.debuffDuration("flame shock") < 2 },
+      
+      { "flame shock",
+         jps.buff("unleash flame") },
+
+      { "lava burst",
+         jps.debuff("flame shock") },
+
+      { "earth shock",
+         lsStacks > 5 and jps.debuffDuration("flame shock") > 5 },
+      
+      { "spiritwalker's grace",
+         jps.Moving },
+      
+      { "chain lightning",
+         jps.MultiTarget },
+      
+      { "thunderstorm",
+         jps.mana() < .6 and jps.UseCDs },
+      
       { "lightning bolt" },
    }
 
