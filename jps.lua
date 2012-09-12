@@ -67,7 +67,6 @@ jps.Configged = false
 jps_variablesLoaded = false
 jpsName = UnitName("player")
 jpsRealm = GetCVar("realmName")
-jps.useRotation = 1
 jps.rotationsInitialized = false
 jps.rotations = {}
 -- Slash Cmd
@@ -117,14 +116,15 @@ function combatEventHandler(self, event, ...)
 			jps.setClassCooldowns()
 		end
 		if jps_variablesLoaded and not jps.Configged then
-			jps_createConfigFrame() 
+    		jps_createConfigFrame()
+			jps.initRotations()
         end
-        jps.initRotations()
 	
 	elseif event == "VARIABLES_LOADED" then
 		jps_VARIABLES_LOADED()
 		if jps.Spec then
     		jps_createConfigFrame()
+    		jps.initRotations()
     		
         end
 	
