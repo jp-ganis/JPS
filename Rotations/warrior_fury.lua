@@ -16,14 +16,14 @@ if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then re
     { "Lifeblood",   "onCD", "player" },  --if I'm an Herbalist.  Otherwise, ignore me!!
 
 --Interrupt that bad boy
-	{ "Pummel",       jps.shouldKick("target") },
+    { "Pummel",       jps.shouldKick("target") },
 
 --Rage Dump w/ various situational implementations
     { "Heroic Strike",   (((jps.buff("player", "Colossus Smash") and nPower >= 40) or (jps.buff("Deadly Calm") and nPower >= 30)) and targetHealth >= 20 ) or nPower >=75 , "target" },
 
 --Multi-Target / AOE
-	{ "Whirlwind", jps.MultiTarget, "target" },
-	{ "Raging Blow", jps.MultiTarget and jps.buff("Meat Cleaver") and nPower>10, "target" },
+    { "Whirlwind", jps.MultiTarget, "target" },
+    { "Raging Blow", jps.MultiTarget and jps.buff("Meat Cleaver") and nPower>10, "target" },
 
 --Start Rotation w/ rate checks where appropriate
     { "Bloodthirst",   "onCD", "target" },
