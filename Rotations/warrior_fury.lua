@@ -15,6 +15,9 @@ if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then re
     { "Deadly Calm",   jps.UseCDs and nPower >= 40, "player" },
     { "Lifeblood",   "onCD", "player" },  --if I'm an Herbalist.  Otherwise, ignore me!!
 
+--Interrupt that shit
+	{ "Pummel",       jps.shouldKick("target") },s
+
 --Rage Dump w/ various situational implementations
     { "Heroic Strike",   (((jps.buff("player", "Colossus Smash") and nPower >= 40) or (jps.buff("Deadly Calm") and nPower >= 30)) and targetHealth >= 20 ) or nPower >=75 , "target" },
 
