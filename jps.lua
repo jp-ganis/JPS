@@ -67,7 +67,8 @@ jps.Configged = false
 jps_variablesLoaded = false
 jpsName = UnitName("player")
 jpsRealm = GetCVar("realmName")
-
+jps.rotationsInitialized = false
+jps.rotations = {}
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
@@ -115,12 +116,17 @@ function combatEventHandler(self, event, ...)
 			jps.setClassCooldowns()
 		end
 		if jps_variablesLoaded and not jps.Configged then
-			jps_createConfigFrame() end
+    		jps_createConfigFrame()
+			jps.initRotations()
+        end
 	
 	elseif event == "VARIABLES_LOADED" then
 		jps_VARIABLES_LOADED()
 		if jps.Spec then
-			jps_createConfigFrame() end
+    		jps_createConfigFrame()
+    		jps.initRotations()
+    		
+        end
 	
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		jps.PLuaFlag = true
