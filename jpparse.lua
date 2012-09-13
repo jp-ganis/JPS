@@ -25,7 +25,6 @@ function ImReallySureICanCastThisShit( spell, unit )
 	--debug mode
 	if jps.Debug then return jpd( spell, unit ) end
 	
-	--
 	if unit == nil then unit = "target" end
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
@@ -67,6 +66,7 @@ end
 
 function jps.addRotations(rotationTable)
     for key, spellTable in pairs(rotationTable) do
+        spellTable["rotation"] = nil
         table.insert(jps.rotations, spellTable)    
     end
 end
