@@ -36,9 +36,14 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].MultiTarget = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 		jpsDB[jpsRealm][jpsName].spellConfig = {}
+		jpsDB[jpsRealm][jpsName].useRotation = 1
+		write("init")
     else
 		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then
 		  jpsDB[jpsRealm][jpsName].spellConfig = {}
+		end 
+		if ( not jpsDB[jpsRealm][jpsName].useRotation) then
+		  jpsDB[jpsRealm][jpsName].useRotation = 1
 		end 
 	end
 	
@@ -106,7 +111,6 @@ function jps_getCombatFunction( class, spec )
 							 ["Holy"]          = priest_holy,
 							 ["Discipline"]    = priest_disc },
 	}
-	
 	return Rotations[class][spec]
 end
 
@@ -150,4 +154,18 @@ function jps.PLuaTest()
 		jpsIcon.border:SetTexture(jps.GUIborder_combat)
 		jps.PLuaFlag = false
 	end
+end
+
+--If function like C / PHP ternary operator val = (condition) ? true : false
+function sif(condition, doIt, notDo)
+	if condition then return doIt else return notDo end
+end
+
+--get table length
+function count(data) 
+    local count = 0
+    for k,v in pairs(data) do 
+        count = count+1
+    end
+    return count
 end

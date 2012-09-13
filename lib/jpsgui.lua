@@ -356,3 +356,52 @@ function jps.gui_toggleToggles( value )
 		end
 	end
 end
+
+
+
+function jps.addRotationDropdown()
+    local items = jps.getRotations()
+    
+    if (count(items) == 1) then return false end
+
+    CreateFrame("Button", "chooseRotationDropdown", jpsIcon, "UIDropDownMenuTemplate")
+    chooseRotationDropdown:ClearAllPoints()
+    chooseRotationDropdown:SetPoint("LEFT", -18, -40)
+    chooseRotationDropdown:Show()
+    
+    local function OnClick(self, arg1, arg2, checked)
+       UIDropDownMenu_SetSelectedID(chooseRotationDropdown, arg1)
+       jps.setActiveRotation(arg1)
+       write("changed your Rotation to ",arg2)
+    end
+     
+    local function initialize(self, level)
+       for k,v in pairs(items) do
+          
+          info = UIDropDownMenu_CreateInfo()
+          info.text = v.name
+          info.value = k
+          info.arg1 = k
+          info.arg2 = v.name
+          info.func = OnClick
+          if(v.tooltip) then
+              info.tooltipTitle = "INFO / USAGE"
+              info.tooltipText = v.tooltip
+              info.tooltipOnButton = true
+          end
+          UIDropDownMenu_AddButton(info, level)
+       end
+    end
+
+    UIDropDownMenu_Initialize(chooseRotationDropdown, initialize)
+    UIDropDownMenu_SetWidth(chooseRotationDropdown, 100);
+    UIDropDownMenu_SetButtonWidth(chooseRotationDropdown, 124)
+    UIDropDownMenu_SetSelectedID(chooseRotationDropdown, 1)
+    UIDropDownMenu_JustifyText(chooseRotationDropdown, "LEFT")
+    jps.rotationsInitialized = true
+
+    local currentRotation = jps.getActiveRotation()
+    if(currentRotation) then
+        UIDropDownMenu_SetSelectedID(chooseRotationDropdown, currentRotation.key)
+    end
+end
