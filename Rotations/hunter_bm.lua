@@ -6,7 +6,6 @@ local focus = UnitMana("player")
 local pet_focus = UnitMana("pet")
 local pet_frenzy = jps.buffStacks("Frenzy Effect","pet")
 local pet_attacking = IsPetAttackActive()
-local power = UnitPower("player",6)
 
 
 local spellTable = 
@@ -19,7 +18,7 @@ local spellTable =
 { "kill shot" },
 { "rapid fire", not jps.buff("bloodlust") and not jps.buff("the beast within") and not jps.buff("heroism") and not jps.buff("time warp") },
 { "kill command", },
-{ "cobra shot", power <= 20},
+{ "cobra shot", focus <= 20},
 { "dire beast", },
 { "lynx rush", },
 { "focus fire", pet_frenzy==5 and not jps.buff("the beast within")},
