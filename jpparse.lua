@@ -66,6 +66,7 @@ function getSpellStatus(spell)
 end
 
 function jps.addRotations(rotationTable)
+    if(type(rotationTable) ~= table) then return false end
     for key, spellTable in pairs(rotationTable) do
         table.insert(jps.rotations, spellTable)    
     end
@@ -79,9 +80,10 @@ function jps.initRotations()
     if( not jps.rotationsInitialized ) then
        local rotations = jps.Rotation(self,"init")
        if(rotations) then
-           jps.addRotations(rotations)
-           jps.rotationsInitialized = true
-           jps.addRotationDropdown()
+           if(jps.addRotations(rotations)) then
+              jps.rotationsInitialized = true
+              jps.addRotationDropdown()
+           end
        end
     end
 end
