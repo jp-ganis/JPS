@@ -7,18 +7,21 @@ function rogue_assass(self)
 
 	local spellTable =
 	{
-		{ "envenom", jps.LastCast == "cold blood" },
-		{ "garrote" },
-		{ "slice and dice", not jps.buff("slice and dice") },
-		{ "rupture", rupture_duration <  2 },
+		{ "preparation", not jps.buff("vanish") and jps.cd("vanish") > 60 },
+		{ "vanish", not jps.buff("stealth") and not jps.buff("shadow blades") },
+		{ "ambush" },
+		{ "shadow blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("shadow blades") },
+		{ "slice and dice", snd_duration <= 2 },
+		{ "dispatch",	energy > 90 and rupture_duration < 4 },
+		{ "mutilate", 	energy > 90 and rupture_duration < 4 },
+		{ "rupture",	rupture_duration < 2 or (cp == 5 and rupture_duration < 3) },
 		{ "vendetta" },
-		{ "cold blood", cp == 5 },
-		{ "envenom", cp >= 4 and not jps.buff("envenom") },
-		{ "envenom", cp >= 4 and energy >= 90 },
+		{ "envenom", cp >= 4 and jps.buffDuration("envenom") < 1 },
+		{ "envenom", cp > 4 },
 		{ "envenom", cp >= 2 and snd_duration < 3 },
-		{ "backstab", cp < 5 and jps.hp("target") < 0.35 },
-		{ "mutilate", cp < 4 and jps.hp("target") > 0.35 },
-		{ "vanish", energy > 50 and not jps.buff("overkill") },
+		{ "dispatch", cp < 5 },
+		{ "tricks of the trade" },
+		{ "mutilate" },
 	}
 
 	return parseSpellTable( spellTable )
