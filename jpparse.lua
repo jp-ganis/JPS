@@ -65,11 +65,12 @@ function getSpellStatus(spell)
 end
 
 function jps.addRotations(rotationTable)
-    if(type(rotationTable) ~= table) then return false end
+    if(type(rotationTable) ~= "table") then return false end
     for key, spellTable in pairs(rotationTable) do
         spellTable["rotation"] = nil
         table.insert(jps.rotations, spellTable)    
     end
+    return true
 end
 
 function jps.getRotations() 
