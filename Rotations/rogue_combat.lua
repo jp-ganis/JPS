@@ -5,24 +5,22 @@ function rogue_combat(self)
 	local rupture_duration = jps.debuffDuration("rupture")
 	local snd_duration = jps.buffDuration("slice and dice")
 	local energy = UnitPower("player")
-	local bleeding = jps.debuff("hemorrhage") or jps.debuff("mangle") or jps.debuff("blood frenzy")
-
 	
 	local spellTable = 
 	{
-		{ nil,			ub("player","killing spree") },
-		{ "Kick",		jps.Interrupts and jps.shouldKick("target") and cd("kick") == 0 },
-		-- SnD
-		{ "slice and dice",	cp > 0 and snd_duration < 2 },
-		-- CDs
-		{ "killing spree",	energy < 35 and snd_duration > 4 and not jps.buff("adrenaline rush") },
-		{ "adrenaline rush",	energy < 35 },
-		-- SINGLE TARGET
-		{ "eviscerate",		cp == 5 and jps.buff("deep insight") },
-		{ "rupture",		bleeding and cp == 5 and rupture_duration <= 2 },
-		{ "eviscerate",		cp == 5 },
-		{ "revealing strike",	cp == 4 },
-		{ "sinister strike",	cp < 4 },
+		{ "preparation", not jps.buff("vanish") and jps.cd("vanish") > 60 },
+		{ "vanish", not jps.buff("shadow blades") and not jps.buff("adrenaline rush") and energy < 20 and ((jps.buff("deep insight") and cp < 4)) },
+		{ "ambush" },
+		{ "slice and dice", snd_duration < 2 or (snd_duration < 15 and jps.buffStacks("bandit's guile") == 11 and cp >= 4) },
+		{ "shadow blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("shadow blades") },
+		{ "killing spree", energy < 35 and snd_duration > 4 and not jps.buff("adrenaline rush") },
+		{ "adrenaline rush", energy < 35 or jps.buff("shadow's blade") },
+		{ "rupture", rupture_duration < 4 cp == 5 and jps.buff("deep insight") },
+		{ "eviscerate", cp == 5 and jps.buff("deep insight") },
+		{ "rupture", rupture_duration < 4 and cp == 5 },
+		{ "revealing strike", jps.buff("deep insight") and cp < 5 },
+		{ "tricks of the trade" },
+		{ "sinister strike", cp < 5 },
 	}
 
 	return parseSpellTable(spellTable)
