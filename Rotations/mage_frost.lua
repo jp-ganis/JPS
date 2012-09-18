@@ -1,21 +1,40 @@
---jpganis + SIMCRAFT
--- no pet freeze on simcraft, is this right? (??)
+--psycho + stolen code ;-)
+
 function mage_frost(self)
+--pcmd
+	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
+
 	local spellTable =
 	{
-		{ "evocation", jps.mana() < 0.4 and (jps.buff("icy veins") or jps.bloodlusting()) },
-		{ "cold snap", jps.cd("deep freeze") > 15 and jps.cd("flame orb") > 30 and jps.cd("icy veins") > 30 },
-		{ "flame orb", not jps.debuff("frostfire orb") },
-		{ "mirror image" },
-		{ "icy veins", not jps.buff("icy veins") and not jps.bloodlusting() },
-		{ "deep freeze", jps.buff("fingers of frost") },
+	--interrupt
+		{ "Counterspell",     jps.Interrupts and jps.shouldKick("target"), "target" },
+		{ "Ice Barrier",      (UnitHealth("player") / UnitHealthMax("player") < 0.40)  and not jps.buff("Ice Barrier","player"), "player" },
+		
+		--buffs
+		{ "Molten Armor",     not jps.buff("Molten Armor","player"), "player" },
+		{ "Arcane Brilliance",     not jps.buff("Arcane Brilliance","player"), "player" },
+		
+		--CDs
+		{ "Mirror Image",     jps.UseCDs },
+		{jps.useTrinket(1),     jps.UseCDs},
+		{jps.useTrinket(2),     jps.UseCDs},
+		
+		--aoe
+		{ "Flamestrike",      jps.MultiTarget and IsShiftKeyDown() ~= nil },
+		
+		--rotation
 		{ "frostfire bolt", jps.buff("brain freeze") },
 		{ "ice lance", jps.buffStacks("fingers of frost") > 1 },
-		{ "ice lance", jps.buff("fingers of frost") and jps.petCooldown("5") < 1.5 },
-		{ {"macro","/cast freeze\n/run jps.groundClick()"}, jps.petCooldown("5")==0 },
 		{ "frostbolt" },
 		{ "ice lance", jps.Moving },
 	}
 
-	return parseSpellTable(spellTable)
+ local spell,target = parseSpellTable(spellTable)
+   if spell == "Flamestrike" then
+       jps.Cast( spell )
+       jps.groundClick()
+   end
+
+   jps.Target = target
+   return spell
 end
