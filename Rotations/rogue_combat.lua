@@ -15,7 +15,7 @@ function rogue_combat(self)
 		{ "shadow blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("shadow blades") },
 		{ "killing spree", energy < 35 and snd_duration > 4 and not jps.buff("adrenaline rush") },
 		{ "adrenaline rush", energy < 35 or jps.buff("shadow's blade") },
-		{ "rupture", rupture_duration < 4 cp == 5 and jps.buff("deep insight") },
+		{ "rupture", rupture_duration < 4 and cp == 5 and jps.buff("deep insight") },
 		{ "eviscerate", cp == 5 and jps.buff("deep insight") },
 		{ "rupture", rupture_duration < 4 and cp == 5 },
 		{ "revealing strike", jps.buff("deep insight") and cp < 5 },
