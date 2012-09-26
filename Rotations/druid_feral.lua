@@ -14,6 +14,7 @@ function druid_feral(self)
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
 	local tf_up = jps.buff("tiger's fury")
+	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 
 	local spellTable =
 	{
@@ -25,10 +26,15 @@ function druid_feral(self)
 		{ "nature's vigil",		jps.UseCDs and jps.buff("berserk") },
 		{ "incarnation",		jps.UseCDs and jps.buff("berserk") },
 		{ jps.DPSRacial,		jps.UseCDs and jps.buff("berserk") },
+		{ "nature's swiftness", 	jps.UseCDs and hp < 25 },
 		--
 		{ "skull bash",jps.shouldKick() and jps.Interrupts },
 		--
 		{ nil,					gcdLocked },
+		-- 
+		{ "healing touch",		(hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness") },
+		{ "barkskin",			hp < 75 and jps.UseCDs },
+		{ "survival instincts",		hp < 40 and jps.UseCDs },
 		--
 		{ "savage roar",		srDuration <= 1 or (srDuration <= 3 and cp > 0 and (cp < 5 or jps.buff("Dream of Cenarius"))) },
 		{ "faerie fire", 		jps.debuffStacks("weakened armor")~=3 },
@@ -55,6 +61,7 @@ function druid_feral(self)
 		{ "shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
 		{ "shred",				tfCD <= 3 },
 		{ "shred",				energy >= 100 - (energyPerSec*2) },
+
 	}
 
 	return parseSpellTable(spellTable)
