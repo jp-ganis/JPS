@@ -110,6 +110,9 @@ function jps_getCombatFunction( class, spec )
 		["Priest"]       = { ["Shadow"]        = priest_shadow,
 							 ["Holy"]          = priest_holy,
 							 ["Discipline"]    = priest_disc },
+		["Monk"]       = { ["Brewmaster"]        = monk_brewmaster,
+							 ["Windwalker"]    = monk_windwalker,
+							 ["Mistweaver"]    = monk_mistweaver },
 	}
 	return Rotations[class][spec]
 end
