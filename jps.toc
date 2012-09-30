@@ -63,3 +63,7 @@ Rotations\warrior_arms_pve.lua
 Rotations\warrior_arms_pvp.lua
 Rotations\warrior_fury.lua
 Rotations\warrior_prot.lua
+
+Rotations\monk_brewmaster.lua
+Rotations\monk_mistweaver.lua
+Rotations\monk_windwalker.lua
