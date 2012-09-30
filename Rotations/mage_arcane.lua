@@ -19,7 +19,7 @@ function mage_arcane(self)
 		{ "rune of power",	not jps.buff("rune of power") and not jps.buff("alter time") },
 		{ "mana gem",		jps.mana() < 0.84 and not jps.buff("alter time") },
 		{ "mirror image" },
-		{ "arcane power", 	jps.buff("rune of power") > 15 and not jps.buff("alter time") and stacks > 1 },
+		{ "arcane power", 	not jps.buff("alter time") and stacks > 1 },
 		{ "presence of mind", not jps.buff("alter time") },
 		{ "nether tempest",	not jps.debuff("nether tempest") },
 		{ "arcane blast",	jps.mana() > 0.92 },
