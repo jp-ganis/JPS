@@ -1,5 +1,5 @@
 function druid_guardian(self)
-	--attempted by jpganis, fixed by Attip!
+	--attempted by jpganis, fixed by Attip, updated by peanutbird
 	-- simcraft
 	-- Threat-Vars
 	local myTargetThreatStatus = UnitThreatSituation("player","target")
@@ -13,39 +13,43 @@ function druid_guardian(self)
 	local rage = UnitMana("player")
 	local lacCount = jps.debuffStacks("lacerate")
 	local lacDuration = jps.debuffDuration("lacerate")
-	local demoDuration = jps.debuffDuration("demoralizing roar")
+	local thrashDuration = jps.debuffDuration("thrash")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 	local onCD = "onCD"
 
 	-- Moves
 	local spellTable =
 	{
-		{nil,						IsSpellInRange("lacerate","target") ~= 1 },
-		{"skull bash(bear form)",	jps.Interrupts and jps.shouldKick() },
-		-- {"bash",					jps.Interrupts and jps.shouldKick() },
-		{"maul",					rage > 60 },
+		{nil,				IsSpellInRange("lacerate","target") ~= 1 },
+		{"skull bash",			jps.Interrupts and jps.shouldKick() },
+		{"mighty bash",			jps.Interrupts and jps.shouldKick() },
+		{"mangle",			rage > 60 },
+
 		-- Defense
-		{"barkskin",				hp < 75 and jps.UseCDs},
+		{"barkskin",			hp < 65 and jps.UseCDs},
 		{"survival instincts",		hp < 40 and jps.UseCDs},
-		{"frenzied regeneration",	hp < 15 and jps.UseCDs},
-		{"demoralizing roar",		not jps.debuff("demoralizing roar") or demoDuration < 3},
-		{"enrage",			rage <= 80},
+		{"might of ursoc",		hp < 25 and jps.UseCDs},
+		{"frenzied regeneration",	hp < 55 and jps.buff("savage defense")},
+		{"enrage",			rage <= 10 and hp > 95},
+		{"savage defense",		(hp < 85 and rage >= 60)},
+		-- Trinkets
+		{jps.useTrinket(1),    		hp < 65 and jps.UseCDs },
+		{jps.useTrinket(2),    		hp < 65 and jps.UseCDs },
 		-- Offense
-		{"berserk",					jps.UseCDs and jps.debuff("demoralizing roar") and jps.debuff("faerie fire")},
+		{"berserk",			jps.UseCDs and jps.debuff("thrash") and jps.debuff("faerie fire")},
 		-- Taunts
-		{"growl",					myTargetThreatStatus < 2 and not jps.targetTargetTank() },
-		{"challenging roar",		myFocusThreatStatus > 1 },
+		{"growl",			myTargetThreatStatus < 2 and not jps.targetTargetTank() },
 		-- Multi-Target
-		{"mangle(bear form)",		jps.buff("berserk") and jps.MultiTarget },
-		{"swipe(bear form)",		jps.MultiTarget },
-		{"thrash",					jps.MultiTarget },
+		{"thrash",			jps.MultiTarget and not jps.debuff("thrash")},
+		{"mangle",			jps.MultiTarget },
+		{"swipe",			jps.MultiTarget },
 		-- Single Target
-		{"mangle(bear form)",		onCD or ub("player","berserk") },
-		{"faerie fire (feral)",		not jps.debuff("faerie fire") },
-		{"thrash",					rage >= 25 },
-		{"pulverize",				lacCount == 3 },
-		{"lacerate",				lacCount < 3 or lacDuration < 1 },
-		{"faerie fire (feral)",		onCD },
+		{"mangle",			onCD or ub("player","berserk") },
+		{"maul",			rage > 90 and hp >= 85 },	
+		{"faerie fire",			not jps.debuff("weakened armor") },
+		{"thrash",			not jps.debuff("thrash") or thrashDuration < 3},
+		{"lacerate",			lacCount < 3 or lacDuration < 1 },
+		{"faerie fire",			onCD },
 	}
 
 
