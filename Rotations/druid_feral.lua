@@ -9,7 +9,7 @@ function druid_feral(self)
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
 	local executePhase = jps.hp("target") <= 0.25 --ADD TALENT DETECTION
-	local gcdLocked = jps.cooldown("shred") == 0
+	local gcdLocked = true -- they changed this :( jps.cooldown("shred") == 0
 	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
