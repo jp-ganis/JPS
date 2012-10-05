@@ -55,7 +55,7 @@ function druid_feral(self)
 		--
 		{ "savage roar",		cp > 0 and srDuration < 1 and ripDuration > 6 },
 		--
-		{ "ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 14 and srDuration >= 10 },
+		{ "ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 10 and srDuration >= 10 },
 		--
 		{ "shred", 				berserking or jps.buff("tiger's fury") },
 		{ "shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
