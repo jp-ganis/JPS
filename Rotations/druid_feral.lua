@@ -18,7 +18,8 @@ function druid_feral(self)
 
 	local spellTable =
 	{
-		{ nil,					IsSpellInRange("shred","target") == 0 },
+		{nil,				not jps.buff("Cat Form") },
+		{ nil,				IsSpellInRange("shred","target") == 0 },
 		-- 
 		{ "tiger's fury", 		energy <= 35 and not clearcasting and gcdLocked },
 		--
@@ -30,7 +31,7 @@ function druid_feral(self)
 		--
 		{ "skull bash",jps.shouldKick() and jps.Interrupts },
 		--
-		{ nil,					gcdLocked },
+		{ nil,				gcdLocked },
 		-- 
 		{ "healing touch",		not clearcasting and not berserking and energy < 70 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
 		{ "healing touch",		not berserking and energy < 40 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
@@ -41,26 +42,26 @@ function druid_feral(self)
 		{ "ferocious bite",		executePhase and cp == 5 and ripDuration > 0 },
 		{ "ferocious bite",		executePhase and cp > 0 and ripDuration <= 2 and ripDuration > 0 },
 		--
-		{ "rip", 				cp == 5 and ripDuration < 2 and (berserking or ripDuration+2 <= tfCD) },
+		{ "rip", 			cp == 5 and ripDuration < 2 and (berserking or ripDuration+2 <= tfCD) },
 		--
 		{ "ferocious bite",		berserking and cp == 5 and ripDuration > 5 and srDuration > 1 },
 		--
 		{ "savage roar",		cp == 5 and ripDuration <= 12 and srDuration <= (ripDuration+4) },
 		--
-		{ "rake", 				jps.buff("tiger's fury") and rakeDuration < 9 },
-		{ "rake", 				rakeDuration < 3 and (berserking or rakeDuration-0.8 <= tfCD or energy >= 71) },
+		{ "rake", 			jps.buff("tiger's fury") and rakeDuration < 9 },
+		{ "rake", 			rakeDuration < 3 and (berserking or rakeDuration-0.8 <= tfCD or energy >= 71) },
 		--
-		{ "thrash",				jps.debuffDuration("thrash") < 6 and jps.buff("clearcasting") },
-		{ "shred",				jps.buff("clearcasting") },
+		{ "thrash",			jps.debuffDuration("thrash") < 6 and jps.buff("clearcasting") },
+		{ "shred",			jps.buff("clearcasting") },
 		--
 		{ "savage roar",		cp > 0 and srDuration < 1 and ripDuration > 6 },
 		--
 		{ "ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 10 and srDuration >= 10 },
 		--
-		{ "shred", 				berserking or jps.buff("tiger's fury") },
-		{ "shred",				(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
-		{ "shred",				tfCD <= 3 },
-		{ "shred",				energy >= 100 - (energyPerSec*2) },
+		{ "shred", 			berserking or jps.buff("tiger's fury") },
+		{ "shred",			(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
+		{ "shred",			tfCD <= 3 },
+		{ "shred",			energy >= 100 - (energyPerSec*2) },
 
 	}
 
