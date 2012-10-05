@@ -8,13 +8,12 @@ function druid_feral(self)
 	local rakeDuration = jps.debuffDuration("rake")
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
-	local executePhase = jps.hp("target") <= 0.25 --ADD TALENT DETECTION
+	local executePhase = jps.hp("target") <= 0.25
 	local gcdLocked = true -- they changed this :( jps.cooldown("shred") == 0
 	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
 	local tf_up = jps.buff("tiger's fury")
-	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 
 	local spellTable =
 	{
