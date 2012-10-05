@@ -42,7 +42,7 @@ function druid_feral(self)
 		--
 		{ "nature's swiftness",		cenarion_stacks == 0 and not ps and cp >= 5 and execute_phase },
 		--
-		--{ "rip",			cp >= 5 and cenarion_stacks > 0 and execute_phase }, -- stronger rip detection
+		{ "rip",			cp >= 5 and cenarion_stacks > 0 and execute_phase and not jps.RipBuffed }, -- stronger rip detection
 		{ "ferocious bite",		executePhase and cp == 5 and ripDuration > 0 },
 		--
 		{ "rip",			cp >= 5 and rip_duration < 2 and cenarion_stacks > 0 },
@@ -53,10 +53,22 @@ function druid_feral(self)
 		{ "savage roar",		sr_duration <= 6 and cp >= 5 and rip_duration > 4 },
 		{ "ferocious bite",		cp >= 5 and rip_duration > 4 },
 		--
+		{ "rake",			cenarion_stacks > 0 and not jps.RakeBuffed },
+		{ "rake",			rake_duration < 3 and (berserking or tf_cd+0.8 >= rake_duration) },
+		--
+		{ "shred",			clearcasting },
+		{ "shred",			jps.buffDuration("predatory swiftness") > 1 and not (energy + (energyPerSec * (jps.buffDuration("predatory swiftness")-1)) < (4 - cp)*20) },
+		{ "shred",			((cp < 5 and rip_duration < 3) or (cp == 0 and sr_duration < 2 )) },
+		--
+		{ "thrash",			cp >= 5 and jps.debuffDuration("thrash") < 6 and (tf_up or berserking) },
+		{ "thrash",			cp >= 5 and jps.debuffDuration("thrash") < 6 and tf_cd <= 3 },
+		{ "thrash",			cp >= 5 and jps.debuffDuration("thrash") < 6 and energy >= 100 - energyPerSec },
+		--
 		{ "shred", 			berserking or jps.buff("tiger's fury") },
-		{ "shred",			(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
 		{ "shred",			tfCD <= 3 },
 		{ "shred",			energy >= 100 - (energyPerSec*2) },
+		--
+		{ "force of nature" }, -- treants lol
 
 	}
 
