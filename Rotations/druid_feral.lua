@@ -50,6 +50,7 @@ function druid_feral(self)
 		{ "rake", 				jps.buff("tiger's fury") and rakeDuration < 9 },
 		{ "rake", 				rakeDuration < 3 and (berserking or rakeDuration-0.8 <= tfCD or energy >= 71) },
 		--
+		{ "thrash",				jps.debuffDuration("thrash") < 6 and jps.buff("clearcasting") },
 		{ "shred",				jps.buff("clearcasting") },
 		--
 		{ "savage roar",		cp > 0 and srDuration < 1 and ripDuration > 6 },
