@@ -14,11 +14,18 @@ function druid_feral(self)
 	local clearcasting = jps.buff("clearcasting")
 	local berserking = jps.buff("berserk")
 	local tf_up = jps.buff("tiger's fury")
+	local ps = jps.buff("predatory swiftness")
+	local cenarion_stacks = jps.buffStacks("Dream of Cenarius")
 
 	local spellTable =
 	{
-		{nil,				not jps.buff("Cat Form") },
+		{ nil,				not jps.buff("Cat Form") },
 		{ nil,				IsSpellInRange("shred","target") == 0 },
+		--
+		{ "savage roar",		srDuration == 0 },
+		--
+		{ "healing touch",		jps.buff("predatory swiftness") and cp >= 4 and cenarion_stacks < 2 },
+		{ "healing touch",		jps.buff("nature's swiftness") },
 		-- 
 		{ "tiger's fury", 		energy <= 35 and not clearcasting and gcdLocked },
 		--
@@ -26,36 +33,25 @@ function druid_feral(self)
 		{ "nature's vigil",		jps.UseCDs and jps.buff("berserk") },
 		{ "incarnation",		jps.UseCDs and jps.buff("berserk") },
 		{ jps.DPSRacial,		jps.UseCDs and jps.buff("berserk") },
-		{ "nature's swiftness", 	jps.UseCDs and hp < 25 },
 		--
-		{ "skull bash",jps.shouldKick() and jps.Interrupts },
+		{ "skull bash",			jps.shouldKick() and jps.Interrupts },
 		--
-		{ nil,				gcdLocked },
-		-- 
-		{ "healing touch",		not clearcasting and not berserking and energy < 70 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
-		{ "healing touch",		not berserking and energy < 40 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
-		--
-		{ "savage roar",		srDuration <= 1 or (srDuration <= 3 and cp > 0 and (cp < 5 or jps.buff("Dream of Cenarius"))) },
-		{ "faerie fire", 		jps.debuffStacks("weakened armor") < 3 },
-		--
-		{ "ferocious bite",		executePhase and cp == 5 and ripDuration > 0 },
 		{ "ferocious bite",		executePhase and cp > 0 and ripDuration <= 2 and ripDuration > 0 },
+		{ "thrash",			clearcasting and jps.debuffDuration("thrash") < 3 and cenarion_stacks == 0 },
+		{ "savage roar",		sr_duration <= 1 or (sr_duration <= 3 and cp > 0) and execute_phase },
 		--
-		{ "rip", 			cp == 5 and ripDuration < 2 and (berserking or ripDuration+2 <= tfCD) },
+		{ "nature's swiftness",		cenarion_stacks == 0 and not ps and cp >= 5 and execute_phase },
 		--
-		{ "ferocious bite",		berserking and cp == 5 and ripDuration > 5 and srDuration > 1 },
+		--{ "rip",			cp >= 5 and cenarion_stacks > 0 and execute_phase }, -- stronger rip detection
+		{ "ferocious bite",		executePhase and cp == 5 and ripDuration > 0 },
 		--
-		{ "savage roar",		cp == 5 and ripDuration <= 12 and srDuration <= (ripDuration+4) },
-		--
-		{ "rake", 			jps.buff("tiger's fury") and rakeDuration < 9 },
-		{ "rake", 			rakeDuration < 3 and (berserking or rakeDuration-0.8 <= tfCD or energy >= 71) },
-		--
-		{ "thrash",			jps.debuffDuration("thrash") < 6 and jps.buff("clearcasting") },
-		{ "shred",			jps.buff("clearcasting") },
-		--
-		{ "savage roar",		cp > 0 and srDuration < 1 and ripDuration > 6 },
-		--
-		{ "ferocious bite",		(not berserking or energy < 25) and cp == 5 and ripDuration >= 10 and srDuration >= 10 },
+		{ "rip",			cp >= 5 and rip_duration < 2 and cenarion_stacks > 0 },
+		{ "savage roar",		sr_duration <= 1 or (sr_duration <= 3 and cp > 0) },
+		{ "nature's swiftness",		cenarion_stacks == 0 and not ps and cp >= 5 and rip_duration < 3 and (berserking or rip_duration <= tf_cd) and not execute_phase },		
+		{ "rip",			cp >= 5 and rip_duration < 2 and (berserking or rip_duration < tf_cd) },
+		{ "thrash",			clearcasting and jps.debuffDuration("thrash") < 3 },
+		{ "savage roar",		sr_duration <= 6 and cp >= 5 and rip_duration > 4 },
+		{ "ferocious bite",		cp >= 5 and rip_duration > 4 },
 		--
 		{ "shred", 			berserking or jps.buff("tiger's fury") },
 		{ "shred",			(cp < 5 and ripDuration <= 3) or (cp == 0 and srDuration <= 2) },
