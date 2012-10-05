@@ -36,7 +36,7 @@ function druid_feral(self)
 		{ "healing touch",		not berserking and energy < 40 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
 		--
 		{ "savage roar",		srDuration <= 1 or (srDuration <= 3 and cp > 0 and (cp < 5 or jps.buff("Dream of Cenarius"))) },
-		{ "faerie fire", 		jps.debuffStacks("weakened armor")~=3 },
+		{ "faerie fire", 		jps.debuffStacks("weakened armor") < 3 },
 		--
 		{ "ferocious bite",		executePhase and cp == 5 and ripDuration > 0 },
 		{ "ferocious bite",		executePhase and cp > 0 and ripDuration <= 2 and ripDuration > 0 },
