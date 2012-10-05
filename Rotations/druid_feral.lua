@@ -32,9 +32,8 @@ function druid_feral(self)
 		--
 		{ nil,					gcdLocked },
 		-- 
-		{ "healing touch",		(hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness") },
-		{ "barkskin",			hp < 75 and jps.UseCDs },
-		{ "survival instincts",		hp < 40 and jps.UseCDs },
+		{ "healing touch",		not clearcasting and not berserking and energy < 70 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
+		{ "healing touch",		not berserking and energy < 40 and ((hp < 70 and jps.buff("predatory swiftness")) or jps.buff("nature's swiftness")) },
 		--
 		{ "savage roar",		srDuration <= 1 or (srDuration <= 3 and cp > 0 and (cp < 5 or jps.buff("Dream of Cenarius"))) },
 		{ "faerie fire", 		jps.debuffStacks("weakened armor")~=3 },
