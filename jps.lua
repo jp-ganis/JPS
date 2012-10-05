@@ -53,6 +53,8 @@ jps.EngiGloves = nil
 -- Class Specific
 jps.Opening = true
 jps.Healing = false
+jps.RakeBuffed = false
+jps.RipBuffed = false
 -- Misc.
 jps.MacroSpam = false
 jps.Fishing = false
