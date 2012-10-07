@@ -354,6 +354,21 @@ function jps.debuffStacks( spell, unit )
 	return count
 end
 
+function jps.buffStacksID( spellID, unit )
+	if unit == nil then unit = "player" end
+	local i = 1 
+	while( i <= 40 ) do
+		local ID = select(11, UnitBuff(unit, i) )
+		local count = select(4, UnitBuff(unit, i) )
+		if ID == spellID then 
+			if count == nil then count = 0 end
+			return count
+		end
+	i = i + 1
+	end
+	return 0
+end
+
 function jps.buffStacks( spell, unit )
 	if unit == nil then unit = "player" end
 	local _, _, _, count, _, _, _, _, _ = UnitBuff(unit,spell)
