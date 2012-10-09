@@ -6,6 +6,7 @@
 -- Tier 3: From Darkness, Comes Light (required)
 -- Tier 4: Angelic Bulwark
 -- Tier 5: Divine Insight (required)
+-- Tier 6: Cascade (required)
 -- Major Glyphs: Mind Spike (required), Dark Binding (required)
 
 -- You should have the following on your bar, which are hard/dangerous to automate:
@@ -44,6 +45,9 @@ function priest_shadow(self)
 		
 		{ "vampiric touch", -- Keep VT up
 			not jps.debuff("vampiric touch") or vtDuration < 4 and jps.LastCast ~= "vampiric touch" },
+
+		{ "Cascade",
+			jps.MultiTarget },
 
 		{ "devouring plague", -- Plauge when we have 3 orbs
 			sorbs > 2 },
