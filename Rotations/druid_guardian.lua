@@ -21,17 +21,23 @@ function druid_guardian(self)
 	local spellTable =
 	{
 		{nil,				IsSpellInRange("lacerate","target") ~= 1 },
+		-- Interrupts
 		{"skull bash",			jps.Interrupts and jps.shouldKick() },
 		{"mighty bash",			jps.Interrupts and jps.shouldKick() },
-		{"mangle",			rage > 60 },
-
+		-- Healing / Support
+		{"heart of the wild",		IsControlKeyDown() ~= nil},
+		{"rejuvenation",		jps.buff("heart of the wild") and hp < 75 and not jps.buff("rejuvenation")},
+		{"rejuvenation", 		jps.buff("heart of the wild") and IsControlKeyDown() ~= nil and IsSpellInRange("rejuvenation", "mouseover"), "mouseover" },
 		-- Defense
-		{"barkskin",			hp < 65 and jps.UseCDs},
-		{"survival instincts",		hp < 40 and jps.UseCDs},
+		{"barkskin",			hp < 75 and jps.UseCDs},
+		{"survival instincts",		hp < 50 and jps.UseCDs},
 		{"might of ursoc",		hp < 25 and jps.UseCDs},
 		{"frenzied regeneration",	hp < 55 and jps.buff("savage defense")},
+		{"savage defense",		hp < 90 and rage >= 60},
+		{"renewal",           		hp < 20 and jps.UseCDs },
+		{"nature’s swiftness",          hp < 20 and jps.UseCDs },
+		{"healing touch",          	hp < 20 and jps.buff("nature's swiftness") and jps.UseCDs },
 		{"enrage",			rage <= 10 and hp > 95},
-		{"savage defense",		(hp < 85 and rage >= 60)},
 		-- Trinkets
 		{jps.useTrinket(1),    		hp < 65 and jps.UseCDs },
 		{jps.useTrinket(2),    		hp < 65 and jps.UseCDs },
@@ -44,10 +50,10 @@ function druid_guardian(self)
 		{"mangle",			jps.MultiTarget },
 		{"swipe",			jps.MultiTarget },
 		-- Single Target
-		{"mangle",			onCD or ub("player","berserk") },
+		{"mangle",			onCD or jps.buff("berserk") },
 		{"maul",			rage > 90 and hp >= 85 },	
 		{"faerie fire",			not jps.debuff("weakened armor") },
-		{"thrash",			not jps.debuff("thrash") or thrashDuration < 3},
+		{"thrash",			not jps.debuff("thrash") or thrashDuration < 3 },
 		{"lacerate",			lacCount < 3 or lacDuration < 1 },
 		{"faerie fire",			onCD },
 	}
