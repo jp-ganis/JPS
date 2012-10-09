@@ -1,5 +1,5 @@
 function hunter_bm(self)
--- valve
+-- jp
 local spell = nil
 local sps_duration = jps.debuffDuration("serpent sting")
 local focus = UnitMana("player")
@@ -10,20 +10,32 @@ local pet_attacking = IsPetAttackActive()
 
 local spellTable = 
 {
+	{ "aspect of the hawk", not jps.Moving and not jps.buff("aspect of the hawk") },
+	{ "aspect of the fox", jps.Moving and not jps.buff("aspect of the fox") },
 	{ "hunter's mark", not jps.debuff("hunter's mark") },
 	{ {"macro","/petattack"}, not IsPetAttackActive() },
-	{ jps.DPSRacial, jps.UseCDs },
-	{ "bestial wrath", focus > 60 },
-	{ "serpent sting", not jps.debuff("serpent sting") },
-	{ "kill shot" },
-	{ "rapid fire", not jps.buff("bloodlust") and not jps.buff("the beast within") and not jps.buff("heroism") and not jps.buff("time warp") },
-	{ "kill command", },
-	{ "cobra shot", focus <= 20},
-	{ "dire beast", },
-	{ "lynx rush", },
 	{ "focus fire", pet_frenzy==5 and not jps.buff("the beast within")},
-	{ "arcane shot", focus >= 59 or jps.buff("the beast within") },
-	{ {"macro","/cast cobra shot"}, jps.cooldown("cobra shot") == 0 },
+	{ "serpent sting", not jps.debuff("serpent sting") },
+	{ "fervor", focus < 65 and not jps.buff("fervor") },
+	{ jps.DPSRacial, jps.UseCDs },
+	{ "bestial wrath", focus > 60 and not jps.buff("the beast within") },
+	{ "rapid fire", not jps.buff("rapid fire") and not jps.buff("the beast within") and not jps.bloodlusting() },
+	{ "stampede" },
+	{ "kill shot" },
+	{ "kill command", },
+	{ "a murder of crows", not jps.debuff("a murder of crows") },
+	{ "glaive toss" },
+	{ "lynx rush", },
+	{ "dire beast", focus <= 90 },
+	{ "barrage" },
+	{ "powershot" },
+	{ "blink strike" },
+	{ "readiness", jps.buff("rapid fire") },
+	{ "arcane shot", jps.buff("thrill of the hunt") },
+	{ "focus fire", pet_frenzy==5 and not jps.buff("the beast within")},
+	{ "cobra shot", sps_duration  < 6 },
+	{ "arcane shot", focus >= 61 or jps.buff("the beast within") },
+	{ "cobra shot" },
 	{ "explosive trap", IsShiftKeyDown() and jps.MultiTarget },
 }
 
