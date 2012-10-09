@@ -10,7 +10,7 @@ local pet_attacking = IsPetAttackActive()
 
 local spellTable = 
 {
-	{ "aspect of the hawk", not jps.Moving and not jps.buff("aspect of the hawk") },
+	{ "aspect of the hawk", not jps.Moving and not jps.buff("aspect of the hawk") and not jps.buff("aspect of the iron hawk") },
 	{ "aspect of the fox", jps.Moving and not jps.buff("aspect of the fox") },
 	{ "hunter's mark", not jps.debuff("hunter's mark") },
 	{ {"macro","/petattack"}, not IsPetAttackActive() },
