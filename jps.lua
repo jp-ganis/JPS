@@ -156,7 +156,7 @@ function combatEventHandler(self, event, ...)
 		for bag = 0,4,1 do
 		  for slot = 1, GetContainerNumSlots(bag), 1 do
 			local name = GetContainerItemLink(bag,slot)
-			  if name and (string.find(name,"ff9d9d9d") or string.find(name,"Murglesnout")) then
+			  if name and (string.find(name,"ff9d9d9d") or string.find(name,"Golden Carp")) then
 				PickupContainerItem(bag,slot)
 				DeleteCursorItem()
 			  end 
