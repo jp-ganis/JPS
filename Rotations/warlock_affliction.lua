@@ -25,7 +25,7 @@ function warlock_affliction(self)
 	{
 		{ "demon soul" },
 		{ "corruption", cpn_duration < cpnTick },
-		{ "unstable affliction", ua_duration < (uaTick+uaCast) },
+		{ "unstable affliction", ua_duration < (uaTick+uaCast) and jps.LastCast ~= "unstable affliction" },
 		{ "bane of doom", bod_duration == 0 },
 		{ "haunt" },
 		{ "summon doomguard" },
