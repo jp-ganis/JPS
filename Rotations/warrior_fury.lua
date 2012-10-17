@@ -23,11 +23,11 @@ function warrior_fury(self)
       { "Shockwave" },
       { "Dragon Roar" },
       { "Heroic Throw"  },
-      { "Battle Shout" ,          nPower <= 70 and not jps.debuff("Colossus Smash") },
+      { "Commanding Shout" ,          nPower <= 70 and not jps.debuff("Colossus Smash") },
       { "Wild Strike" ,         jps.debuff("Colossus Smash") and targetHealth >= 20 },   
       { "Impending Victory" ,      targetHealth >= 20  },
       { "Wild Strike" ,         jps.cooldown("Colossus Smash") >= 1 and nPower >= 60 and targetHealth >= 20  },
-      { "Battle Shout" ,          nPower <= 70  },   
+      { "Commanding Shout" ,          nPower <= 70  },   
    }
 
    local spell,target = parseSpellTable(spellTable)
