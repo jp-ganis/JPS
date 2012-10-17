@@ -15,6 +15,7 @@ function warrior_fury(self)
       { "Heroic Strike" ,       (((jps.debuff("Colossus Smash") and nPower >= 40) or (jps.buff("Deadly Calm") and nPower >= 30)) and targetHealth >= 20 ) or nPower >=110 },
       { "Bloodthirst" ,         not (targetHealth < 20 and jps.debuff("colossus smash") and nPower >= 30 ) }, 
       { "Wild Strike" ,          jps.buff("Bloodsurge") and targetHealth >= 20 and jps.cooldown("Bloodthirst") <= 1 },
+      { nil,                     not (targetHealth < 20 and jps.debuff("colossus smash") and rage >= 30) and jps.cd("bloodthirst") <= 1 },
       { "Colossus Smash" },
       { "Execute" },
       { "Raging Blow" ,          jps.buff("Raging Blow!") },
