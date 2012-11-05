@@ -1,10 +1,11 @@
 function new_dk_blood(self)
 	-- Talents:
 	-- Tier 1: Roiling Blood
-	-- Tier 2: ...
+	-- Tier 2: Anti-Magic Zone
 	-- Tier 3: Death's Advance
-	-- Tier 4: ...
+	-- Tier 4: Death Pact
 	-- Tier 5: Runic Corruption
+	-- Tier 6: Remorseless Winter
 	-- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
 	
 	-- Usage info:
@@ -24,6 +25,8 @@ function new_dk_blood(self)
 	local ffDuration = jps.debuffDuration("frost fever")
 	local bpDuration = jps.debuffDuration("blood plague")
 	local bcStacks = jps.buffStacks("blood charge") --Blood Stacks
+	
+	local haveGhoul, _, _, _, _ = GetTotemInfo(1) --Information about Ghoul pet
 
 	local dr1 = select(3,GetRuneCooldown(1))
 	local dr2 = select(3,GetRuneCooldown(2))
@@ -63,6 +66,7 @@ function new_dk_blood(self)
 		{ "Raise Dead", 			jps.UseCDs and UnitExists("pet") == nil },
 		{ "Dancing Rune Weapon", 	jps.UseCDs },
 		-- Defensive cooldowns
+		{ "Death Pact", 			jps.hp() < 0.5 and haveGhoul},
 		{ "Icebound Fortitude", 	jps.hp() < 0.3 },
 		{ "Vampiric Blood", 		jps.hp() < 0.5 },
 		{ "Rune Tap", 				jps.hp() < 0.8 },
@@ -73,6 +77,7 @@ function new_dk_blood(self)
 		{ "Bone Shield", 			not jps.buff("bone shield") },
 		-- Single target
 		{ "outbreak",				ffDuration <= 2 or bpDuration <= 2 },
+		{ "soul reaper",			jps.hp("target") <= 0.35 }, 					-- Requires level 87
 		{ "plague strike", 			not jps.debuff("blood plague") },
 		{ "icy touch", 				not jps.debuff("frost fever") },
 		{ "death strike", 			"onCD" },
