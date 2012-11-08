@@ -14,7 +14,7 @@ function warrior_arms(self)
       { "Berserker Rage" ,       jps.UseCDs and not nRage, "player" },
       { "Deadly Calm" ,         jps.UseCDs and nPower >= 40, "player" },
       { "Lifeblood" ,          jps.UseCDs , "player" },
-      { "Heroic Strike" ,       (((jps.buff("taste for blood") and jps.buffDuration("taste for blood") <= 2) or (jps.buffStacks("taste for blood") == 5 and jps.buff("Overpower")) or (jps.buff("Taste for Blood") and jps.debuffDuration("Colossus Smash") <= 2 and jps.cooldown("Colossus Smash") > 0) or jps.buff("Deadly Calm") or nPower >= 110)) and targetHealth >= 20 and jps.debuff("Colossus Smash") , "target" },
+      { "Heroic Strike" ,       (((jps.buff("taste for blood") and jps.buffDuration("taste for blood") <= 2) or (jps.buffStacks("taste for blood") == 5) or (jps.buff("Taste for Blood") and jps.debuffDuration("Colossus Smash") <= 2 and jps.cooldown("Colossus Smash") > 0) or jps.buff("Deadly Calm") or nPower >= 110)) and targetHealth >= 20 and jps.debuff("Colossus Smash") , "target" },
       { "Mortal Strike" ,       "onCD" , "target" },
       { "Colossus Smash" ,       jps.debuffDuration("Colossus Smash") <= 1.5 , "target" },
       { "Execute" ,            "onCD" , "target" },
