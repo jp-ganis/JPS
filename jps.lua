@@ -366,18 +366,25 @@ function combat(self)
 	-- Table RaidStatus
 	if jps.Healing then jps.SortRaidStatus() end
 	
-	-- Get spell from rotation
-	jps.ThisCast = jps.Rotation()
-
 	-- Check spell usability
-	if jps.ThisCast ~= nil and not jps.Casting then
-		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
-				jps.Cast(jps.NextCast)
-				jps.NextCast = nil
-        	else
-            	jps.Cast(jps.ThisCast)
+	if jps.NextCast ~= nil then
+		if not jps.Casting then
+				if jps.Cast(jps.NextCast) ~= false then
+					jps.NextCast = nil
+				else
+					if (jps.cooldownNoLag(jps.NextCast) > 1.5) then
+						jps.NextCast = nil
+					end
+				end
 		end
-   	end
+	else
+		-- Get spell from rotation
+		jps.ThisCast = jps.Rotation()
+	
+		if jps.ThisCast ~= nil and not jps.Casting then
+			jps.Cast(jps.ThisCast)
+		end
+	end
 	
 	-- Hide Error
 	StaticPopup1:Hide()
