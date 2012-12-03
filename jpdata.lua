@@ -192,6 +192,7 @@ function jps.Cast(spell)
 	if not jps.Casting then jps.LastCast = spell end
 	
     if(getSpellStatus(spell) == 0) then return false end
+	if(jps.cooldownNoLag(spell) ~= 0) then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
@@ -206,6 +207,14 @@ function jps.cooldown(spell)
 	local start,duration,_ = GetSpellCooldown(spell)
 	if start == nil then return 0 end
 	local cd = start+duration-GetTime()-jps.Lag
+	if cd < 0 then return 0 end
+	return cd
+end
+
+function jps.cooldownNoLag(spell)
+	local start,duration,_ = GetSpellCooldown(spell)
+	if start == nil then return 0 end
+	local cd = start+duration-GetTime()
 	if cd < 0 then return 0 end
 	return cd
 end
