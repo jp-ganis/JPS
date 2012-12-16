@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 50100
 ## Title: |cffff8000Jp DPS AddOn
 ## Notes: Protect your LUA.
 ## SavedVariables: jpsDB
