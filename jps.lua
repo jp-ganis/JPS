@@ -262,6 +262,10 @@ function SlashCmdList.jps(cmd, editbox)
 		write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "multi" or msg == "multitarget" or msg == "aoe" then
 		jps.gui_toggleMulti()
+	elseif msg == "enmulti" then
+		jps.gui_toggleMulti(true)
+	elseif msg == "dismulti" then
+		jps.gui_toggleMulti(false)
 	elseif msg == "cds" then
 		jps.gui_toggleCDs()
 	elseif msg == "int" or msg == "interrupts" then
