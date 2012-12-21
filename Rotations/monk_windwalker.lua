@@ -1,52 +1,151 @@
-    function monk_windwalker(self)
-      --rer09
+function monk_windwalker(self)
+  -- Tested with so-so gear around a 470 ilvl.
+  -- Approximately 50k single-target DPS with self buffs.
+  -- Approximately 60k single-target DPS with raid buffs.
+  -- Over 70k multi-target DPS. Can easily go over 100k if there's a lot of mobs and a decent tank.
 
-          local energy = UnitMana("player")
-          local chi = UnitPower("Player", 12)
-          local tpDuration = jps.buffDuration("Tiger Power")
-          local tpclearcasting = jps.buff("Combo Breaker: Tiger Palm")
-          local bkclearcasting = jps.buff("Combo Breaker: Blackout Kick")
+  local energy = UnitMana("player")
+  local chi = UnitPower("Player", 12)
+  local tpDuration = jps.buffDuration("Tiger Power")
+  local tpclearcasting = jps.buff("Combo Breaker: Tiger Palm")
+  local bkclearcasting = jps.buff("Combo Breaker: Blackout Kick")
+  local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
+  local tbStacks = jps.buffStacks("Tigereye Brew")
 
-          local spellTable =
-          {
-      -- Chi Builders
-      { "jab",                         chi < 3 and energy > 40 and (jps.cooldown("Expel Harm") > 0 or jps.hp() > .94) and not jps.MultiTarget and not tpclearcasting and not bkclearcasting },
-             { "Expel Harm",                 chi < 3 and jps.hp() < 0.94 and jps.cooldown("Expel Harm") == 0 and energy > 40 },      
+  -- Spells should be ordered by priority.
+  local possibleSpells = {
 
-      -- On-Use Trinkets
-      {jps.useTrinket(1),           jps.UseCds },
-          {jps.useTrinket(2),           jps.UseCds },
-      
-      -- Chi Finishers
-             { "Rising Sun Kick",              chi > 1 and jps.cooldown("Rising Sun Kick") == 0 and not jps.buff("Death Note") },
-             { "Tiger Palm",                 chi > 0 and jps.buffStacks("Tiger Power") < 3 and not jps.buff("Death Note") },
-             { "Tiger Palm",                 tpDuration <= 5 and chi > 0 },
-             { "Fists of Fury",              chi > 2 and not jps.Moving and IsSpellInRange("jab","target") and jps.cooldown("Fists of Fury") == 0 },
-             { "Blackout Kick",              chi > 1  and not jps.buff("Death Note") },
+    -- Defensive Cooldowns
+    { { "macro","/cast Touch of Karma" }, 
+      jps.UseCDs 
+      and jps.hp() < .5 
+      and not defensiveCDActive },
 
-      -- Combo Breakers
-             { "Tiger Palm",                 tpclearcasting },
-             { "Blackout Kick",              bkclearcasting },
+    { "Fortifying Brew", 
+      jps.UseCDs 
+      and jps.hp() < .6 
+      and not defensiveCDActive },
 
-      -- Defensive Abilities
-      { "Fortifying Brew",         jps.UseCDs and jps.hp() < .5 },
-      { {"macro","/cast Chi Wave"},       jps.UseCDs and jps.hp() < .6 },
-      { {"macro","/cast Touch of Karma"},   jps.UseCDs and jps.hp() < .7 and jps.cooldown("Touch of Karma") },
+    { "Diffuse Magic", 
+      jps.UseCDs 
+      and jps.hp() < .6 
+      and not defensiveCDActive },
 
-      -- Cooldowns
-             { "Tigereye Brew",              jps.UseCDs and jps.buffStacks("Tigereye Brew") == 10 },
-            { "Touch of Death",              jps.UseCDs and jps.buff("Death Note") and chi > 2 },
-             { "Energizing Brew",              jps.UseCDs and energy <= 70 },
+    { "Dampen Harm", 
+      jps.UseCDs 
+      and jps.hp() < .6 
+      and not defensiveCDActive },
 
-      -- Interrupts
-      { "Spear Hand Strike",         jps.Interrupts and jps.shouldKick() },
-      { "Leg Sweep",            jps.Interrupts and jps.shouldKick() and jps.cooldown("Spear Hand Strike") > 0 },
+    { { "macro", "/cast Chi Wave" }, 
+      jps.UseCDs 
+      and jps.hp() < .6 
+      and chi >= 2 },
+    
 
-      -- AoE (4+ targets)
-      { "Spinning Crane Kick",      jps.MultiTarget and energy > 40 and chi < 3 },
+    -- Insta-kill single target when available
+    { "Touch of Death", 
+      jps.UseCDs 
+      and jps.buff("Death Note") 
+      and not jps.MultiTarget },
 
 
-        }
+    -- Interrupt
+    { "Spear Hand Strike", 
+      jps.Interrupts 
+      and jps.shouldKick() },
 
-          return parseSpellTable(spellTable)
-       end
+
+    -- On-Use Trinkets
+    { jps.useTrinket(1), 
+      jps.UseCDs },
+
+    { jps.useTrinket(2), 
+      jps.UseCDs },
+
+    -- DPS Racial on cooldown.
+    { jps.DPSRacial,
+      jps.UseCDs 
+      and jps["DPS Racial"] },
+
+    -- Tigereye Brew when we have 10 stacks.
+    { "Tigereye Brew", 
+      jps.UseCDs 
+      and tbStacks == 10 },
+    
+
+    -- Energizing Brew whenever we're under 70 energy so we don't waste it.
+    { "Energizing Brew", 
+      jps.UseCDs 
+      and energy <= 70 },
+
+
+    -- Rising Sun Kick on cooldown.
+    { "Rising Sun Kick", 
+      chi >= 2 },
+
+
+    -- Invoke Xuen on cooldown for single-target (if this talent was taken). 
+    { "Invoke Xuen, the White Tiger", 
+      jps.UseCDs 
+      and not jps.MultiTarget },
+
+
+    -- Rushing Jade Wind on cooldown for multi-target (if this talent was taken).
+    { "Rushing Jade Wind", 
+      jps.UseCDs 
+      and not jps.MultiTarget },
+
+
+    -- Tiger Palm single-target if the buff is close to falling off.
+    { "Tiger Palm", 
+      not jps.MultiTarget 
+      and ( (tpclearcasting 
+        and tpDuration <= 3) 
+      or (chi >= 1 
+        and tpDuration <= 1) ) },
+
+
+    -- Blackout Kick as single-target chi dump or on clearcast.
+    { "Blackout Kick", 
+      (chi >= 2 
+        or bkclearcasting) 
+      and not jps.MultiTarget },
+
+
+    -- Leg sweep on cooldown during multi-target to reduce tank damage. TODO: Check if our target is stunned already.
+    { "Leg Sweep", 
+      jps.MultiTarget },
+
+
+    -- Heal + chi builder if we're not at full health.
+    { "Expel Harm", 
+      chi < 3 
+      and energy > 40 
+      and jps.hp() < 0.85 },
+
+
+    -- Spinning Crane Kick when we're multi-target (4+ targets ideal).
+    { "Spinning Crane Kick", 
+      energy >= 40 
+      and jps.MultiTarget },
+    
+
+    -- Default chi builder.
+    { "jab", 
+      chi < 3 
+      and energy >= 40 
+      and not jps.MultiTarget },
+
+
+    -- Fist of fury is very situational. Only use it with low energy and if RSK will be on CD for it's duration.
+    { "Fists of Fury", 
+      chi > 2 
+      and energy < 40 
+      and jps.cooldown("Rising Sun Kick") > 3.5 
+      and not jps.Moving 
+      and IsSpellInRange("jab","target") },
+
+  }
+
+  return parseSpellTable(possibleSpells)
+end
