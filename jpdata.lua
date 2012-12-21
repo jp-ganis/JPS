@@ -193,6 +193,9 @@ function jps.Cast(spell)
 	
     if(getSpellStatus(spell) == 0) then return false end
 	if(jps.cooldownNoLag(spell) ~= 0) then return false end
+
+	-- Don't roll for people
+	if (spell == 'Roll' or spell == 'Chi Torpedo') then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
