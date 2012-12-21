@@ -39,18 +39,18 @@ function mage_fire(self)
 			jps.Interrupts 
       and jps.shouldKick() },
 
-    -- -- On-Use Trinket 1
-    -- { jps.useTrinket(1), 
-    --   jps.UseCDs },
+    -- On-Use Trinket 1
+    { jps.useTrinket(1), 
+      jps.UseCDs },
 
-    -- -- On-Use Trinket 2
-    -- { jps.useTrinket(2), 
-    --   jps.UseCDs },
+    -- On-Use Trinket 2
+    { jps.useTrinket(2), 
+      jps.UseCDs },
 
-    -- DPS Racial on cooldown.
-		-- { jps.DPSRacial,
-		-- 	jps.UseCDs 
-		-- 	and jps["DPS Racial"] },
+    DPS Racial on cooldown.
+		{ jps.DPSRacial,
+			jps.UseCDs 
+			and jps["DPS Racial"] },
 
 		-- Alter Time for a second pyroblast.
 		{ "Alter Time",
@@ -59,9 +59,9 @@ function mage_fire(self)
 				or jps.buff("Pyroblast!") ) },
 
 		-- POM Pyro on cooldown.
-		-- { { "macro", "/cast Presence of Mind /cast Pyroblast" }, 
-		-- 	jps.UseCDs
-		-- 	and jps.cooldown("Presence of Mind") == 0 },
+		{ { "macro", "/cast Presence of Mind /cast Pyroblast" }, 
+			jps.UseCDs
+			and jps.cooldown("Presence of Mind") == 0 },
 
 		-- Incanter's Ward on cooldown - not sure about this yet.
 		{ "Incanter's Ward", 
