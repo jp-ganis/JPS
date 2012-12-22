@@ -16,11 +16,6 @@ function monk_windwalker(self)
   local possibleSpells = {
 
     -- Defensive Cooldowns
-    { { "macro","/cast Touch of Karma" }, 
-      jps.UseCDs 
-      and jps.hp() < .5 
-      and not defensiveCDActive },
-
     { "Fortifying Brew", 
       jps.UseCDs 
       and jps.hp() < .6 
@@ -36,6 +31,11 @@ function monk_windwalker(self)
       and jps.hp() < .6 
       and not defensiveCDActive },
 
+    { { "macro","/cast Touch of Karma" }, 
+      jps.UseCDs 
+      and jps.hp() < .7
+      and not defensiveCDActive },
+      
     { { "macro", "/cast Chi Wave" }, 
       jps.UseCDs 
       and jps.hp() < .6 
@@ -67,6 +67,10 @@ function monk_windwalker(self)
       jps.UseCDs 
       and jps["DPS Racial"] },
 
+    -- Chi Brew if we have no chi. (talent based)
+    { "Chi Brew", 
+      chi == 0 },
+
     -- Tigereye Brew when we have 10 stacks.
     { "Tigereye Brew", 
       jps.UseCDs 
@@ -84,13 +88,13 @@ function monk_windwalker(self)
       chi >= 2 },
 
 
-    -- Invoke Xuen on cooldown for single-target (if this talent was taken). 
+    -- Invoke Xuen on cooldown for single-target. (talent based)
     { "Invoke Xuen, the White Tiger", 
       jps.UseCDs 
       and not jps.MultiTarget },
 
 
-    -- Rushing Jade Wind on cooldown for multi-target (if this talent was taken).
+    -- Rushing Jade Wind on cooldown for multi-target. (talent based)
     { "Rushing Jade Wind", 
       jps.UseCDs 
       and not jps.MultiTarget },
@@ -116,19 +120,32 @@ function monk_windwalker(self)
     { "Leg Sweep", 
       jps.MultiTarget },
 
+    -- Chi Wave if we're not at full health. (talent based)
+    { "Chi Wave", 
+      and jps.hp() < .9
+      and chi >= 2 },
+
+    -- Chi Burst if we're not at full health. (talent based)
+    { "Chi Burst", 
+      jps.hp() < .9
+      and chi >= 2 },
+
+    -- Zen Sphere if we're not at full health. (talent based)
+    { "Zen Sphere", 
+      jps.hp() < .8
+      and chi >= 2
+      and not jps.buff("Zen Sphere") },
 
     -- Heal + chi builder if we're not at full health.
     { "Expel Harm", 
       chi < 3 
-      and energy > 40 
+      and energy >= 40 
       and jps.hp() < 0.85 },
-
 
     -- Spinning Crane Kick when we're multi-target (4+ targets ideal).
     { "Spinning Crane Kick", 
       energy >= 40 
       and jps.MultiTarget },
-    
 
     -- Default chi builder.
     { "jab", 
