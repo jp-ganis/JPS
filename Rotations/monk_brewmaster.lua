@@ -128,7 +128,7 @@ function monk_brewmaster(self)
 			and chi < 4 },
 
 		-- Tiger Palm to keep the Tiger Power buff up. No chi cost due to Brewmaster specialization at level 34.
-		{ "Tiger Palm", true },
+		{ "Tiger Palm" },
 		
 	}
 

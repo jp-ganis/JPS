@@ -35,7 +35,7 @@ function monk_windwalker(self)
       jps.UseCDs 
       and jps.hp() < .7
       and not defensiveCDActive },
-      
+
     { { "macro", "/cast Chi Wave" }, 
       jps.UseCDs 
       and jps.hp() < .6 
@@ -63,9 +63,8 @@ function monk_windwalker(self)
       jps.UseCDs },
 
     -- DPS Racial on cooldown.
-    { jps.DPSRacial,
-      jps.UseCDs 
-      and jps["DPS Racial"] },
+    { jps.DPSRacial, 
+        jps.UseCDs },
 
     -- Chi Brew if we have no chi. (talent based)
     { "Chi Brew", 
