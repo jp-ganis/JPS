@@ -1,4 +1,6 @@
 function monk_windwalker(self)
+  -- Using the rotation outlined here: http://www.noxxic.com/wow/pve/monk/windwalker/dps-rotation-and-cooldowns
+  
   -- Tested with so-so gear around a 470 ilvl.
   -- Approximately 50k single-target DPS with self buffs.
   -- Approximately 60k single-target DPS with raid buffs.
@@ -31,18 +33,11 @@ function monk_windwalker(self)
       and not defensiveCDActive },
 
     -- Defensive Cooldown.
-    { { "macro","/cast Touch of Karma" }, 
-    -- { "Touch of Karma",
+    -- { { "macro","/cast Touch of Karma" }, 
+    { "Touch of Karma",
       jps.UseCDs 
       and jps.hp() < .7
       and not defensiveCDActive },
-
-    -- Healing Cooldown.
-    { { "macro", "/cast Chi Wave" }, 
-    -- { "Chi Wave",
-      jps.UseCDs 
-      and jps.hp() < .6 
-      and chi >= 2 },
     
     -- Insta-kill single target when available
     { "Touch of Death", 
@@ -100,23 +95,36 @@ function monk_windwalker(self)
       jps.UseCDs 
       and not jps.MultiTarget },
 
-    -- Tiger Palm single-target if the buff is close to falling off and we have a clearcast or enough chi.
+    -- Tiger Palm single-target if the buff is close to falling off.
     { "Tiger Palm", 
       not jps.MultiTarget 
-      and ( 
-        ( jps.buff("Combo Breaker: Tiger Palm") 
-          and tigerPowerDuration <= 3 ) 
-        or ( chi >= 1 
-          and tigerPowerDuration <= 1 ) 
-      ) },
+      and tigerPowerDuration <= 1
+      and chi >= 1 },
 
-    -- Blackout Kick as single-target chi dump or on clearcast.
+    -- Fist of fury is a very situational chi dump, and is mainly filler to regenerate energy while it channels.
+    -- Only use it with low energy and if RSK will be on CD and Tiger Power will be up for it's duration.
+    { "Fists of Fury", 
+      chi >= 3 
+      and energy <= 30 
+      and jps.cooldown("Rising Sun Kick") > 3
+      and tigerPowerDuration > 3.5
+      and not jps.Moving 
+      and IsSpellInRange("jab","target") },
+
+    -- Blackout Kick single-target on clearcast.
+    { "Blackout Kick",
+      not jps.MultiTarget 
+      and jps.buff("Combo Breaker: Blackout Kick") },
+
+    -- Tiger Palm single-target on clearcast.
+    { "Tiger Palm",
+      not jps.MultiTarget 
+      and jps.buff("Combo Breaker: Tiger Palm") },
+
+    -- Blackout Kick as single-target chi dump.
     { "Blackout Kick", 
       not jps.MultiTarget
-      and (
-        chi >= 2 
-        or jps.buff("Combo Breaker: Blackout Kick")
-      ) },
+      and chi >= 3 },
 
     -- Leg sweep on cooldown during multi-target to reduce tank damage. TODO: Check if our target is stunned already.
     { "Leg Sweep", 
@@ -124,12 +132,14 @@ function monk_windwalker(self)
 
     -- Chi Wave if we're not at full health. (talent based)
     { "Chi Wave", 
-      jps.hp() < .9
+      jps.MultiTarget
+      and jps.hp() < .9
       and chi >= 2 },
 
     -- Chi Burst if we're not at full health. (talent based)
     { "Chi Burst", 
-      jps.hp() < .9
+      jps.MultiTarget
+      and jps.hp() < .9
       and chi >= 2 },
 
     -- Zen Sphere if we're not at full health. (talent based)
@@ -138,7 +148,7 @@ function monk_windwalker(self)
       and chi >= 2
       and not jps.buff("Zen Sphere") },
 
-    -- Heal + chi builder if we're not at full health.
+    -- Expel Harm to build chi and heal if we're not at full health.
     { "Expel Harm", 
       chi < 3 
       and energy >= 40 
@@ -154,15 +164,6 @@ function monk_windwalker(self)
       chi < 3 
       and energy >= 40 
       and not jps.MultiTarget },
-
-    -- Fist of fury is very situational. Only use it with low energy and if RSK will be on CD for it's duration.
-    { "Fists of Fury", 
-      chi > 2 
-      and energy < 40 
-      and jps.cooldown("Rising Sun Kick") > 3.5 
-      and not jps.Moving 
-      and IsSpellInRange("jab","target") },
-
   }
 
   return parseSpellTable(possibleSpells)
