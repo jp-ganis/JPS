@@ -6,59 +6,58 @@ function monk_windwalker(self)
 
   local energy = UnitMana("player")
   local chi = UnitPower("Player", 12)
-  local tpDuration = jps.buffDuration("Tiger Power")
-  local tpclearcasting = jps.buff("Combo Breaker: Tiger Palm")
-  local bkclearcasting = jps.buff("Combo Breaker: Blackout Kick")
   local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
-  local tbStacks = jps.buffStacks("Tigereye Brew")
+  local tigerPowerDuration = jps.buffDuration("Tiger Power")
 
   -- Spells should be ordered by priority.
   local possibleSpells = {
 
-    -- Defensive Cooldowns
+    -- Defensive Cooldown.
     { "Fortifying Brew", 
       jps.UseCDs 
       and jps.hp() < .6 
       and not defensiveCDActive },
 
+    -- Defensive Cooldown. (talent specific)
     { "Diffuse Magic", 
       jps.UseCDs 
       and jps.hp() < .6 
       and not defensiveCDActive },
 
+    -- Defensive Cooldown. (talent specific)
     { "Dampen Harm", 
       jps.UseCDs 
       and jps.hp() < .6 
       and not defensiveCDActive },
 
+    -- Defensive Cooldown.
     { { "macro","/cast Touch of Karma" }, 
+    -- { "Touch of Karma",
       jps.UseCDs 
       and jps.hp() < .7
       and not defensiveCDActive },
 
+    -- Healing Cooldown.
     { { "macro", "/cast Chi Wave" }, 
+    -- { "Chi Wave",
       jps.UseCDs 
       and jps.hp() < .6 
       and chi >= 2 },
     
-
     -- Insta-kill single target when available
     { "Touch of Death", 
       jps.UseCDs 
       and jps.buff("Death Note") 
       and not jps.MultiTarget },
 
-
     -- Interrupt
     { "Spear Hand Strike", 
       jps.Interrupts 
       and jps.shouldKick() },
 
-
     -- On-Use Trinkets
     { jps.useTrinket(1), 
       jps.UseCDs },
-
     { jps.useTrinket(2), 
       jps.UseCDs },
 
@@ -73,47 +72,44 @@ function monk_windwalker(self)
     -- Tigereye Brew when we have 10 stacks.
     { "Tigereye Brew", 
       jps.UseCDs 
-      and tbStacks == 10 },
+      and jps.buffStacks("Tigereye Brew") == 10 },
     
-
     -- Energizing Brew whenever we're under 70 energy so we don't waste it.
     { "Energizing Brew", 
       jps.UseCDs 
       and energy <= 70 },
 
-
     -- Rising Sun Kick on cooldown.
     { "Rising Sun Kick", 
       chi >= 2 },
-
 
     -- Invoke Xuen on cooldown for single-target. (talent based)
     { "Invoke Xuen, the White Tiger", 
       jps.UseCDs 
       and not jps.MultiTarget },
 
-
     -- Rushing Jade Wind on cooldown for multi-target. (talent based)
     { "Rushing Jade Wind", 
       jps.UseCDs 
       and not jps.MultiTarget },
 
-
-    -- Tiger Palm single-target if the buff is close to falling off.
+    -- Tiger Palm single-target if the buff is close to falling off and we have a clearcast or enough chi.
     { "Tiger Palm", 
       not jps.MultiTarget 
-      and ( (tpclearcasting 
-        and tpDuration <= 3) 
-      or (chi >= 1 
-        and tpDuration <= 1) ) },
-
+      and ( 
+        ( jps.buff("Combo Breaker: Tiger Palm") 
+          and tigerPowerDuration <= 3 ) 
+        or ( chi >= 1 
+          and tigerPowerDuration <= 1 ) 
+      ) },
 
     -- Blackout Kick as single-target chi dump or on clearcast.
     { "Blackout Kick", 
-      (chi >= 2 
-        or bkclearcasting) 
-      and not jps.MultiTarget },
-
+      not jps.MultiTarget
+      and (
+        chi >= 2 
+        or jps.buff("Combo Breaker: Blackout Kick")
+      ) },
 
     -- Leg sweep on cooldown during multi-target to reduce tank damage. TODO: Check if our target is stunned already.
     { "Leg Sweep", 
@@ -121,7 +117,7 @@ function monk_windwalker(self)
 
     -- Chi Wave if we're not at full health. (talent based)
     { "Chi Wave", 
-      and jps.hp() < .9
+      jps.hp() < .9
       and chi >= 2 },
 
     -- Chi Burst if we're not at full health. (talent based)
@@ -151,7 +147,6 @@ function monk_windwalker(self)
       chi < 3 
       and energy >= 40 
       and not jps.MultiTarget },
-
 
     -- Fist of fury is very situational. Only use it with low energy and if RSK will be on CD for it's duration.
     { "Fists of Fury", 
