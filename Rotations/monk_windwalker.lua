@@ -57,13 +57,20 @@ function monk_windwalker(self)
 
     -- On-Use Trinkets
     { jps.useTrinket(1), 
-      jps.UseCDs },
+      jps.UseCDs
+      and chi > 3 },
     { jps.useTrinket(2), 
-      jps.UseCDs },
+      jps.UseCDs
+      and chi > 3 },
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
         jps.UseCDs },
+
+    -- Lifeblood when we have a decent amount of chi. (requires herbalism)
+    { "Lifeblood",
+      jps.UseCDs
+      and chi > 3 },
 
     -- Chi Brew if we have no chi. (talent based)
     { "Chi Brew", 
