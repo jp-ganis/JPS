@@ -1,4 +1,6 @@
 function monk_windwalker(self)
+  if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
+  
   -- Using the rotation outlined here: http://www.noxxic.com/wow/pve/monk/windwalker/dps-rotation-and-cooldowns
   
   -- Tested with so-so gear around a 470 ilvl.
@@ -33,7 +35,6 @@ function monk_windwalker(self)
       and not defensiveCDActive },
 
     -- Defensive Cooldown.
-    -- { { "macro","/cast Touch of Karma" }, 
     { "Touch of Karma",
       jps.UseCDs 
       and jps.hp() < .7
@@ -50,22 +51,31 @@ function monk_windwalker(self)
       jps.Interrupts 
       and jps.shouldKick() },
 
-    -- On-Use Trinkets
-    { jps.useTrinket(1), 
+    -- On-use Trinkets when we have decent chi and energy.
+    { jps.useSlot(13), 
       jps.UseCDs
-      and chi > 3 },
-    { jps.useTrinket(2), 
+      and chi > 3
+      and energy >= 50 },
+    { jps.useSlot(14), 
       jps.UseCDs
-      and chi > 3 },
+      and chi > 3
+      and energy >= 50 },
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
         jps.UseCDs },
 
-    -- Lifeblood when we have a decent amount of chi. (requires herbalism)
+    -- Engineers may have synapse springs on their gloves (slot 10).
+    { jps.useSlot(10), 
+      jps.UseCDs
+      and chi > 3
+      and energy >= 50 },
+
+    -- Herbalists have Lifeblood.
     { "Lifeblood",
       jps.UseCDs
-      and chi > 3 },
+      and chi > 3
+      and energy >= 50 },
 
     -- Chi Brew if we have no chi. (talent based)
     { "Chi Brew", 
@@ -160,7 +170,7 @@ function monk_windwalker(self)
       and jps.MultiTarget },
 
     -- Default chi builder.
-    { "jab", 
+    { "Jab", 
       chi < 3 
       and energy >= 40 
       and not jps.MultiTarget },
