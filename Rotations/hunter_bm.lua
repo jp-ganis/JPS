@@ -32,7 +32,7 @@ local spellTable =
 	{ "arcane shot", jps.buff("thrill of the hunt") },
 	{ "focus fire", pet_frenzy==5 },
 	{ "cobra shot", focus <= 45 },
-        { "arcane shot", focus >= 46 },
+	{ "arcane shot", focus >= 46 },
 }
 
 return parseSpellTable(spellTable)

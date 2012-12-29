@@ -10,7 +10,6 @@ function hunter_mm(self)
 
 	-- Interupting, Borrowed directly from feral cat
 	if jps.Interrupts and jps.shouldKick("target") and cd("Silencing Shot") == 0 then
-		print("Silencing Target")
 		return "Silencing Shot"
 
 	-- Misdirecting to pet if not in a party
@@ -43,29 +42,81 @@ function hunter_mm(self)
 	else
 		local spellTable = 
 		{
-			{ "aspect of the hawk", 	not jps.Moving },
-			{ "aspect of the fox",		jps.Moving },
-			{ "explosive trap",			jps.MultiTarget },
+			{ "aspect of the iron hawk", 
+				not jps.Moving
+				and not jps.buff("aspect of the iron hawk") },
+
+			{ "aspect of the fox",
+				jps.Moving
+				and not jps.buff("aspect of the fox") },
+
+			{ "explosive trap",
+				jps.MultiTarget },
+
+			-- Lifeblood. (requires herbalism)
+			{ "Lifeblood",
+				jps.UseCDs
+				and jps.hp() < .7 },
+
 			{ "glaive toss" },
+
 			{ "powershot" },
+
 			{ "barrage" },
+
 			{ "blink strike" },
+
 			{ "lynx rush" },
-			{ "multi-shot",				jps.MultiTarget },
-			{ "steady shot", 			jps.MultiTarget },
-			{ "serpent sting",			not jps.debuff("Serpent Sting") and jps.hp("target") <= 0.9 },
-			{ "chimera shot",			jps.hp("target") <= 0.9 },
+
+			{ "multi-shot",
+				jps.MultiTarget },
+
+			{ "steady shot",
+				jps.MultiTarget },
+
+			{ "serpent sting",
+				not jps.debuff("Serpent Sting") 
+				and jps.hp("target") <= 0.9 },
+
+			{ "chimera shot",
+				jps.hp("target") <= 0.9 },
+
 			{ "dire beast" },
-			{ "rapid fire",				not jps.buff("rapid fire") },
+
+			{ "rapid fire",
+				not jps.buff("rapid fire") },
+
 			{ "stampede" },
-			{ "readiness",				jps.buff("rapid fire") },
+
+			{ "readiness",
+				jps.buff("rapid fire") },
+
 			{ "kill shot" },
-			{ "aimed shot",				jps.buff("Fire!") },
-			{ "a murder of crows",		not jps.debuff("a murder of crows") },
-			{ "arcane shot",			jps.buff("thrill of the hunt") },
-			{ "aimed shot",				jps.hp("target") > 0.9 or jps.buff("rapid fire") or jps.bloodlusting() },
-			{ "arcane shot",			(focus >= 66 or jps.cd("chimera shot") >= 5) and (jps.hp("target") < 90 and not jps.buff("rapid fire") and not jps.bloodlusting()) },
-			{ "fervor",					focus <= 50 },
+
+			{ "aimed shot",
+				jps.buff("Fire!") },
+
+			{ "a murder of crows",
+				not jps.debuff("a murder of crows") },
+
+			{ "arcane shot",
+				jps.buff("thrill of the hunt") },
+
+			{ "aimed shot",
+				jps.hp("target") > 0.9 
+				or jps.buff("rapid fire") 
+				or jps.bloodlusting() },
+
+			{ "arcane shot",
+				( focus >= 66 
+					or jps.cd("chimera shot") >= 5) 
+				and (jps.hp("target") < 90 
+					and not jps.buff("rapid fire") 
+					and not jps.bloodlusting() ) },
+
+			{ "fervor",
+				focus <= 50 },
+
 			{ "steady shot" },
 		}
 
