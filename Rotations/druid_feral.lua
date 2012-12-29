@@ -118,6 +118,13 @@ function druid_feral(self)
 			jps.shouldKick() 
 			and jps.Interrupts },
 
+		-- Faerie Fire single-target when we know it's going to be a longer fight.
+		{ "Faerie Fire", 
+			not jps.MultiTarget
+			and energy <= 60
+			and not jps.debuff("Weakened Armor")
+			and UnitHealth("target") > (UnitHealth("player") * .8) },
+
 		-- Ferocious Bite if we're in execute phase and Rip is about the fall off.
 		{ "Ferocious Bite", 
 			not jps.MultiTarget
