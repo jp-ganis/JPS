@@ -57,13 +57,13 @@ function monk_brewmaster(self)
     --  Use it instead of Blackout kick when it's available. (talent based)
     { "Rushing Jade Wind", 
       ( not jps.buff("Shuffle")
-        or jps.buffDuration("shuffle") < 3 )
+        or jps.buffDuration("Shuffle") < 3 )
       and chi >= 2 },
 
     -- Blackout Kick if shuffle is missing or about to drop.
     { "Blackout Kick", 
       ( not jps.buff("Shuffle")
-        or jps.buffDuration("shuffle") < 3 )
+        or jps.buffDuration("Shuffle") < 3 )
       and chi >= 2 },
 
 		-- Guard when Power Guard buff is available, we're taking some damage.
@@ -72,11 +72,19 @@ function monk_brewmaster(self)
 			and jps.hp() < .9 },
 
     -- On-Use Trinket 1.
-    { jps.useTrinket(1), 
+    { jps.useSlot(13), 
       jps.UseCDs },
 
     -- On-Use Trinket 2.
-    { jps.useTrinket(2), 
+    { jps.useSlot(14), 
+      jps.UseCDs },
+
+    -- Engineers may have synapse springs on their gloves (slot 10).
+    { jps.useSlot(10), 
+      jps.UseCDs },
+
+    -- Herbalists have Lifeblood.
+    { "Lifeblood",
       jps.UseCDs },
 
 		-- Keg Smash to build some chi and threat.
@@ -121,6 +129,10 @@ function monk_brewmaster(self)
 		{ "Spinning Crane Kick", 
 			jps.MultiTarget 
 			and energy >= 40 },
+
+    -- DPS Racial on cooldown.
+    { jps.DPSRacial, 
+        jps.UseCDs },
 
 		-- Jab is our basic chi builder.
 		{ "Jab", 

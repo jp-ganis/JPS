@@ -23,6 +23,29 @@
 -- Credit (and thanks!) to BenPhelps
 -------------------------------------
 
+-- In order to avoid double casting spells that you sometimes will use but that have no cooldown,
+-- we need to maintain an ignore list. For example, when a monk rolls, we shouldn't queue up another roll
+-- and take them over the side of a cliff. Or if a mage initiates combat with Living Bomb, etc.
+jps.UserInitiatedSpellsToIgnore = {
+	"Auto Attack",
+	"Roll",
+	"Chi Torpedo",
+	"Living Bomb",
+	"Nether Tempest",
+}
+
+function jps.shouldSpellBeIgnored(spell)
+	local result = false
+	for _, v in pairs(jps.UserInitiatedSpellsToIgnore) do
+	  if spell == v then
+	  	-- write("Ignoring", spell, "for next cast.")
+	  	result = true
+	    break
+	  end
+	end
+	return result
+end
+
 jps.Dispells = {
 	["Magic"] = {
 		"Static Disruption", -- Akil'zon
@@ -191,11 +214,8 @@ function jps.Cast(spell)
 	if not jps.Target then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spell end
 	
-    if(getSpellStatus(spell) == 0) then return false end
+  if(getSpellStatus(spell) == 0) then return false end
 	if(jps.cooldownNoLag(spell) ~= 0) then return false end
-
-	-- Don't roll for people
-	if (spell == 'Roll' or spell == 'Chi Torpedo') then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
@@ -571,8 +591,8 @@ end
 
 
 function jps.useTrinket(id)
-    local idConvention = id -1
-    local slotName = "Trinket"..idConvention.."Slot"
+  local idConvention = id -1
+  local slotName = "Trinket"..idConvention.."Slot"
 	local slotId,_,_ = GetInventorySlotInfo(slotName)
 	local trinketId = GetInventoryItemID("player", slotId)
 	if(not trinketId) then return false end
@@ -582,4 +602,15 @@ function jps.useTrinket(id)
 	if(not isUsable) then return false end
 	
     return {"macro","/use "..slotId}
+end
+
+function jps.useSlot(num)
+	local itemId = GetInventoryItemID("player", num)
+	if(not itemId) then return false end
+	
+  if(jps.itemCooldown(itemId) > 0) then return false end
+	local isUsable,_ = GetItemSpell(itemId)
+	if(not isUsable) then return false end
+	
+    return {"macro","/use "..num}
 end
