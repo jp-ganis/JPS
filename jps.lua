@@ -326,18 +326,18 @@ local function GetSpellInfo(a)
 end
 
 -- get spell from UseAction
-hooksecurefunc("UseAction", function(...)
-	if jps.Enabled and select(3, ...) ~= nil then
-		local stype, id = GetActionInfo( select(1, ...) )
-		if stype == "spell" then
-			local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
-			if jps.NextCast ~= name and not jps.shouldSpellBeIgnored(name) then 
-				jps.NextCast = name
-				if jps.Combat then write("Set",name,"for next cast.") end
-			end
-		end
-	end
-end)
+--hooksecurefunc("UseAction", function(...)
+--	if jps.Enabled and select(3, ...) ~= nil then
+--		local stype, id = GetActionInfo( select(1, ...) )
+--		if stype == "spell" then
+--			local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
+--			if jps.NextCast ~= name and not jps.shouldSpellBeIgnored(name) then 
+--				jps.NextCast = name
+--				if jps.Combat then write("Set",name,"for next cast.") end
+--			end
+--		end
+--	end
+--end)
 
 function combat(self) 
 	-- Check for the Rotation

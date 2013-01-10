@@ -10,9 +10,27 @@ local pet_attacking = IsPetAttackActive()
 
 local spellTable = 
 {
-	{ "aspect of the iron hawk", not jps.Moving and not jps.buff("aspect of the iron hawk") },
-	{ "aspect of the fox", jps.Moving and not jps.buff("aspect of the fox") },
-	{ "hunter's mark", not jps.debuff("hunter's mark") },
+	-- Aspect of the Iron Hawk if you have it and are not moving.
+	{ "Aspect of the Iron Hawk", 
+		not jps.Moving 
+		and not jps.buff("Aspect of the Iron Hawk")
+		and not jps.buff("Aspect of the Hawk") },
+
+	-- Aspect of the Hawk otherwise if you're not moving.
+	{ "Aspect of the Hawk", 
+		not jps.Moving 
+		and not jps.buff("Aspect of the Iron Hawk")
+		and not jps.buff("Aspect of the Hawk") },
+
+	-- Aspect of the Fox if you're moving.
+	{ "Aspect of the Fox", 
+		jps.Moving
+		and not jps.buff("Aspect of the Fox") },
+
+	-- Hunters Mark always.
+	{ "Hunter's Mark", 
+		not jps.debuff("Hunter's Mark") },
+
 	{ "multi-shot", jps.MultiTarget },
 	{ "serpent sting", not jps.debuff("serpent sting") },
 	{ "fervor", focus < 65 and not jps.buff("fervor") },
