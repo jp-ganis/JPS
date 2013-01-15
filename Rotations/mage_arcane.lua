@@ -34,16 +34,18 @@ function mage_arcane(self)
 			not jps.buff("Arcane Brilliance")
       and not atActive, "player" },
       
-		-- Flamestrike when holding down shift.
+		-- Flamestrike (targeted) when holding down shift.
 		{ "Flamestrike", 
 		  IsShiftKeyDown() ~= nil
-      and GetCurrentKeyBoardFocus() == nil },
+      and GetCurrentKeyBoardFocus() == nil
+      and not jps.Moving },
     
-		-- Rune of Power when holding down alt. (talent based)
+		-- Rune of Power (targeted) when holding down alt. (talent based)
 		{ "Rune of Power", 
 			IsAltKeyDown() ~= nil
-      and GetCurrentKeyBoardFocus() == nil },
-		
+      and GetCurrentKeyBoardFocus() == nil
+      and not jps.Moving },
+    
 		-- Ice Block when you're about to die.
 		{ "Ice Block",
 			jps.hp() < .3
@@ -87,6 +89,25 @@ function mage_arcane(self)
 			jps.Interrupts 
       and jps.shouldKick() },
 		
+		-- Rune of Power whenever it runs out if we're not moving. (talent based)
+    -- This is going to drop it whever the mouse currently is, 
+    -- so either keep your mouse over your mage, or remove this rule.
+		{ "Rune of Power", 
+			not jps.buff("Rune of Power")
+      and not jps.Moving },
+    
+		-- Evocation whenever you're missing the damage buff.
+		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
+    -- If you have the talent Rune of Power and find yourself casting it over and over again, it's because
+    -- it replaces Evocation and the following command will keep casting it because you don't have Invoker's Energy,
+    -- real pain to track down...
+		-- { "Evocation",
+    --  jps.UseCDs
+    --  and not jps.Moving
+		--	and not jps.buff("Invoker's Energy")
+		--	and jps.cooldown("Evocation") == 0
+		--	and not pomActive },
+      
 		-- Mirror Image is a minor DPS increase.
 		{ "Mirror Image", 
 			jps.UseCDs
@@ -105,8 +126,11 @@ function mage_arcane(self)
 		{ "Nether Tempest", 
 			jps.debuffDuration("Nether Tempest") < 1 },
     
-		-- Arcane Power on cooldown.
-		{ "Arcane Power", 
+    -- ****
+    -- Cooldown stacking starts.
+    
+		-- Arcane Power whenever it's available and altered time isn't active (waste) and we have at least 4 arcane charges.
+		{ "Arcane Power",
 			jps.UseCDs
       and not atActive
       and arcaneCharges >= 4 },
@@ -151,10 +175,14 @@ function mage_arcane(self)
       and arcaneCharges >= 4
       and amStacks >= 1 },
     
+    -- Cooldown stacking ends.
+    -- ****
+    
     -- Arcane Missile once we have 2 stacks, or if we have the altered time buff (no point in saving stacks).
     { "Arcane Missiles",
-      atActive
-      or amStacks == 2 },
+      not jps.Moving
+      and ( atActive 
+        or amStacks == 2 ) },
     
     -- Arcane Barrage once we have full arcane charges and no missile stacks. This won't happen very often.
     { "Arcane Barrage",
@@ -181,7 +209,8 @@ function mage_arcane(self)
       or jps.mana() < .9 },
 
 		-- Arcane Blast as our default.
-		{ "Arcane Blast" },
+		{ "Arcane Blast"
+      not jps.Moving },
 		
 	}
   

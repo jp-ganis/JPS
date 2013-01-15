@@ -68,17 +68,24 @@ function mage_frost(self)
 		{ "Arcane Brilliance", 
 			not jps.buff("Arcane Brilliance"), "player" },
     
+		-- Rune of Power whenever it runs out if we're not moving. (talent based)
+    -- This is going to drop it whever the mouse currently is, 
+    -- so either keep your mouse over your mage, or remove this rule.
+		{ "Rune of Power", 
+			not jps.buff("Rune of Power")
+      and not jps.Moving },
+        
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
     -- If you have the talent Rune of Power and find yourself casting it over and over again, it's because
     -- it replaces Evocation and the following command will keep casting it because you don't have Invoker's Energy,
     -- real pain to track down...
-		{ "Evocation",
-      jps.UseCDs
-      and not jps.Moving
-			and not jps.buff("Invoker's Energy")
-			and jps.cooldown("Evocation") == 0
-			and not pomActive },
+		-- { "Evocation",
+    --  jps.UseCDs
+    --  and not jps.Moving
+		--	and not jps.buff("Invoker's Energy")
+		--	and jps.cooldown("Evocation") == 0
+		--	and not pomActive },
     
 		-- Mirror Image is a minor DPS increase.
 		{ "Mirror Image", 

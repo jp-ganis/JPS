@@ -66,10 +66,13 @@ function mage_fire(self)
 		{ "Arcane Brilliance", 
 			not jps.buff("Arcane Brilliance"), "player" },
 		
-		-- Removed AoE spells since they are very situational.
-		-- { "Dragon's Breath", CheckInteractDistance("target", 3) == 1 }, 
-		-- { "Flamestrike", jps.MultiTarget },
-		
+		-- Rune of Power whenever it runs out if we're not moving. (talent based)
+    -- This is going to drop it whever the mouse currently is, 
+    -- so either keep your mouse over your mage, or remove this rule.
+		{ "Rune of Power", 
+			not jps.buff("Rune of Power")
+      and not jps.Moving },
+        
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
     -- If you have the talent Rune of Power and find yourself casting it over and over again, it's because
