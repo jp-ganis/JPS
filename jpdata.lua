@@ -34,6 +34,10 @@ jps.UserInitiatedSpellsToIgnore = {
 	"Blink",
 	"Living Bomb",
 	"Nether Tempest",
+  "Ice Lance",
+  "Arcane Brilliance",
+  "Spellsteal",
+  "Remove Curse",
   "Rejuvenation",
   "Thrash",
 	"Ravage",
@@ -41,6 +45,12 @@ jps.UserInitiatedSpellsToIgnore = {
   "Faerie Fire",
   "Moonfire",
   "Lifebloom",
+  "Shadow Word: Pain",
+  "Mind Flay",
+  "Mind Spike",
+  "Unstable Affliction",
+  "Corruption",
+  "Shadow Bolt",
 }
 
 function jps.shouldSpellBeIgnored(spell)
@@ -415,6 +425,16 @@ function jps.buffStacks( spell, unit )
 	local _, _, _, count, _, _, _, _, _ = UnitBuff(unit,spell)
 	if count == nil then count = 0 end
 	return count
+end
+
+-- /run print(jps.getIgniteAmount())
+function jps.getIgniteAmount()
+  -- Ignite ID is hardcoded, not sure if there's an alternative.
+  local igniteSpell = GetSpellInfo(12654)
+    
+	buffName, buffRank, buffTexture, buffApplications, school, duration, timeLeft, unitCaster, buffId, isStealable, shouldConsolidate, spellID, canApplyAura, _, igniteAmount = UnitDebuff("target", igniteSpell, nil, "PLAYER");
+
+  return igniteAmount;
 end
 
 function jps.bloodlusting()
