@@ -134,7 +134,7 @@ function monk_brewmaster(self)
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
-        jps.UseCDs },
+      jps.UseCDs },
 
 		-- Jab is our basic chi builder.
 		{ "Jab", 

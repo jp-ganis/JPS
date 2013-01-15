@@ -19,32 +19,27 @@ function monk_windwalker(self)
 
     -- Defensive Cooldown.
     { "Fortifying Brew", 
-      jps.UseCDs 
-      and jps.hp() < .6 
+      jps.hp() < .6 
       and not defensiveCDActive },
 
     -- Defensive Cooldown. (talent specific)
     { "Diffuse Magic", 
-      jps.UseCDs 
-      and jps.hp() < .6 
+      jps.hp() < .6 
       and not defensiveCDActive },
 
     -- Defensive Cooldown. (talent specific)
     { "Dampen Harm", 
-      jps.UseCDs 
-      and jps.hp() < .6 
+      jps.hp() < .6 
       and not defensiveCDActive },
 
     -- Defensive Cooldown.
     { "Touch of Karma",
-      jps.UseCDs 
-      and jps.hp() < .7
+      jps.hp() < .7
       and not defensiveCDActive },
     
     -- Insta-kill single target when available
     { "Touch of Death", 
-      jps.UseCDs 
-      and jps.buff("Death Note") 
+      jps.buff("Death Note") 
       and not jps.MultiTarget },
 
     -- Interrupt
@@ -64,12 +59,11 @@ function monk_windwalker(self)
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
-        jps.UseCDs },
+      jps.UseCDs },
 
     -- Engineers may have synapse springs on their gloves (slot 10).
     { jps.useSlot(10), 
-      jps.UseCDs
-      and chi > 3
+      chi > 3
       and energy >= 50 },
 
     -- Herbalists have Lifeblood.
@@ -84,13 +78,11 @@ function monk_windwalker(self)
 
     -- Tigereye Brew when we have 10 stacks.
     { "Tigereye Brew", 
-      jps.UseCDs 
-      and jps.buffStacks("Tigereye Brew") == 10 },
+      jps.buffStacks("Tigereye Brew") == 10 },
     
     -- Energizing Brew whenever we're under 70 energy so we don't waste it.
     { "Energizing Brew", 
-      jps.UseCDs 
-      and energy <= 70 },
+      energy <= 70 },
 
     -- Rising Sun Kick on cooldown.
     { "Rising Sun Kick", 
@@ -103,8 +95,7 @@ function monk_windwalker(self)
 
     -- Rushing Jade Wind on cooldown for multi-target. (talent based)
     { "Rushing Jade Wind", 
-      jps.UseCDs 
-      and not jps.MultiTarget },
+      jps.MultiTarget },
 
     -- Tiger Palm single-target if the buff is close to falling off.
     { "Tiger Palm", 
