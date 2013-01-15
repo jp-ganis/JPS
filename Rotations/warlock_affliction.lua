@@ -25,6 +25,9 @@ function warlock_affliction(self)
     
 		{ "Demon Soul" },
     
+		{ "Drain Soul", 
+      jps.hp("target") <= .25 },
+      
 		{ "Corruption", 
       corrDuration < corrTick },
     
@@ -38,9 +41,6 @@ function warlock_affliction(self)
 		{ "Haunt" },
     
 		{ "Summon Doomguard" },
-    
-		{ "Drain Soul", 
-      jps.hp("target") <= .25 },
     
 		{ "Shadowflame", 
       IsShiftKeyDown() },
