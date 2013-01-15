@@ -1,6 +1,6 @@
 function mage_frost(self)
 
-	if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
+	if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
   
 	local castingSpell, _, _, _, _, endTime = UnitCastingInfo("player")
   
@@ -11,8 +11,26 @@ function mage_frost(self)
   local bfActive = jps.buff("Brain Freeze")
   local ivActive = jps.buff("Icy Veins")
   
+  local targetType = UnitClassification("target")
+  local onBoss = (targetType == 'worldboss')
+  
 	local possibleSpells = {
+
+		-- Flamestrike when holding down shift.
+		{ "Flamestrike", 
+		  IsShiftKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
     
+		-- Freeze when holding down control.
+		{ "Freeze", 
+			IsControlKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
+    
+		-- Rune of Power when holding down alt. (talent based)
+		{ "Rune of Power", 
+			IsAltKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
+      
 		-- Ice Block when you're about to die.
 		{ "Ice Block",
 			jps.hp() < .3
@@ -28,10 +46,14 @@ function mage_frost(self)
 			jps.cooldown("Ice Block") > 0
 			and jps.cooldown("Cold Snap") == 0 },
 		
-		-- Ice Barrier when you're taking a decent amount of damage. (talent based)
+		-- Incanter's Ward when you're taking some damage. (talent based)
+		{ "Incanter's Ward",
+			jps.hp() < .9
+      and not atActive },
+    
+		-- Ice Barrier when you're taking some damage. (talent based)
 		{ "Ice Barrier",
-			jps.hp() < .7
-			and not jps.buff("Ice Barrier") },
+			jps.hp() < .85 },
 
 		-- Interrupts.
 		{ "Counterspell", 
@@ -40,8 +62,7 @@ function mage_frost(self)
 
 		-- Molten Armor if you forgot to buff it.
 		{ "Molten Armor", 
-			not jps.buff("Molten Armor")
-			and not pomActive },
+			not jps.buff("Molten Armor") },
 
 		-- Arcane Brilliance if you forgot to buff it.
 		{ "Arcane Brilliance", 
@@ -49,8 +70,12 @@ function mage_frost(self)
     
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
+    -- If you have the talent Rune of Power and find yourself casting it over and over again, it's because
+    -- it replaces Evocation and the following command will keep casting it because you don't have Invoker's Energy,
+    -- real pain to track down...
 		{ "Evocation",
       jps.UseCDs
+      and not jps.Moving
 			and not jps.buff("Invoker's Energy")
 			and jps.cooldown("Evocation") == 0
 			and not pomActive },
@@ -100,7 +125,7 @@ function mage_frost(self)
     { "Alter Time",
       jps.UseCDs
       and not evocating
-      and ( fofActive or bfActive or pomActive or ivActive ) },
+      and ( ( fofActive and bfActive ) or ivActive ) },
     
     -- Instant Frostfire Bolt when we have Brain Freeze buff.
 		{ "Frostfire Bolt", 
@@ -109,6 +134,11 @@ function mage_frost(self)
     -- Ice Lance when we have Fingers of Frost buff.
 		{ "Ice Lance", 
       fofActive },
+    
+    -- Spread Living Bomb with Fireblast (talent and glyph based).
+    { "Fire Blast", 
+      jps.MultiTarget 
+      and jps.debuff("Living Bomb") },
     
 		-- Living Bomb. (talent based)
 		{ "Living Bomb", 
@@ -125,18 +155,29 @@ function mage_frost(self)
 		-- Frozen Orb
 		{ "Frozen Orb", 
 			jps.UseCDs },
-        
-    -- Frostbolt if we're not moving.
-		{ "Frostbolt", not jps.Moving },
+    
+    -- Ice Ward for a big nova on the tank if we're multi target. (talent based)
+    { "Ice Ward",
+      jps.MultiTarget,
+      jps.findMeATank() },
     
     -- Scorch if we are moving. (talent based)
 		{ "Scorch", jps.Moving },
     
-    -- Ice Lance if we are moving.
+    -- Ice Lance if we are moving and don't have scorch.
 		{ "Ice Lance", jps.Moving },
     
+    -- Frostbolt filler.
+		{ "Frostbolt" },
 	}
   
-  return parseSpellTable(possibleSpells)
+	local spell, target = parseSpellTable(possibleSpells)
+	jps.Target = target
+  
+  if spell == "Flamestrike" or spell == "Rune of Power" or spell == "Freeze" then
+    jps.groundClick()
+  end
+  
+	return spell
   
 end

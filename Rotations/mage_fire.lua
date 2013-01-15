@@ -9,8 +9,26 @@ function mage_fire(self)
   local pomActive = jps.buff("Presence of Mind")
   local pyroActive = jps.buff("Pyroblast!")
   
+  -- How big should ignite damage be before we combust.
+  local combustAt = 12000
+  local igniteAmount = jps.getIgniteAmount()
+  
+  -- if igniteAmount > combustAt then
+  --   print("We have an ignite of: " .. igniteAmount .. ", so let's combust" )
+  -- end
+  
 	local possibleSpells = {
 
+		-- Flamestrike when holding down shift.
+		{ "Flamestrike", 
+		  IsShiftKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
+    
+		-- Rune of Power when holding down alt. (talent based)
+		{ "Rune of Power", 
+			IsAltKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
+		
 		-- Ice Block when you're about to die.
 		{ "Ice Block",
 			jps.hp() < .3
@@ -26,10 +44,14 @@ function mage_fire(self)
 			jps.cooldown("Ice Block") > 0
 			and jps.cooldown("Cold Snap") == 0 },
 		
-		-- Ice Barrier when you're taking a decent amount of damage. (talent based)
+		-- Incanter's Ward when you're taking some damage. (talent based)
+		{ "Incanter's Ward",
+			jps.hp() < .9
+      and not atActive },
+    
+		-- Ice Barrier when you're taking some damage. (talent based)
 		{ "Ice Barrier",
-			jps.hp() < .7
-			and not jps.buff("Ice Barrier") },
+			jps.hp() < .85 },
 
 		-- Interrupts.
 		{ "Counterspell", 
@@ -38,8 +60,7 @@ function mage_fire(self)
 
 		-- Molten Armor if you forgot to buff it.
 		{ "Molten Armor", 
-			not jps.buff("Molten Armor")
-			and not pomActive },
+			not jps.buff("Molten Armor") },
 
 		-- Arcane Brilliance if you forgot to buff it.
 		{ "Arcane Brilliance", 
@@ -51,20 +72,27 @@ function mage_fire(self)
 		
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
+    -- If you have the talent Rune of Power and find yourself casting it over and over again, it's because
+    -- it replaces Evocation and the following command will keep casting it because you don't have Invoker's Energy,
+    -- real pain to track down...
 		--{ "Evocation",
-		--	not jps.buff("Invoker's Energy")
+    -- jps.UseCDs
+    -- and not jps.Moving
+		--	and not jps.buff("Invoker's Energy")
 		--	and jps.cooldown("Evocation") == 0
 		--	and not pomActive },
 
-		-- Combustion is now based only off ignite. It would be nice if we could judge the size of the ignite though.
+		-- Combustion is now based only off ignite damage.
 		{ "Combustion", 
 			jps.UseCDs
-			and jps.debuffDuration("Ignite") > 0 },
+			and jps.debuffDuration("Ignite") > 0
+      and igniteAmount > combustAt },
 		
 		-- Mirror Image is a minor DPS increase.
 		{ "Mirror Image", 
 			jps.UseCDs
-      and not ( evocating or atActive ) },
+      and jps.hp("target") > .2
+      and not evocating },
 
 		-- PoM for insta-pyro. (talent based)
 		{ "Presence of Mind",
@@ -123,6 +151,11 @@ function mage_fire(self)
 		{ "Inferno Blast", 
 			jps.buff("Heating Up") },
 
+    -- Ice Ward for a big nova on the tank if we're multi target. (talent based)
+    { "Ice Ward",
+      jps.MultiTarget,
+      jps.findMeATank() },
+        
 		-- Scorch if we're moving.
 		{ "Scorch", 
 			jps.Moving },
@@ -132,6 +165,13 @@ function mage_fire(self)
 		
 	}
   
-  return parseSpellTable(possibleSpells)
+	local spell, target = parseSpellTable(possibleSpells)
+	jps.Target = target
+	
+  if spell == "Flamestrike" or spell == "Rune of Power" then
+    jps.groundClick()
+  end
+  
+	return spell
   
 end
