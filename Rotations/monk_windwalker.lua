@@ -1,4 +1,5 @@
 function monk_windwalker(self)
+  
   if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
   
   -- Using the rotation outlined here: http://www.noxxic.com/wow/pve/monk/windwalker/dps-rotation-and-cooldowns
