@@ -22,12 +22,14 @@ function mage_fire(self)
 		-- Flamestrike when holding down shift.
 		{ "Flamestrike", 
 		  IsShiftKeyDown() ~= nil
-      and GetCurrentKeyBoardFocus() == nil },
+      and GetCurrentKeyBoardFocus() == nil
+      and not jps.Moving },
     
 		-- Rune of Power when holding down alt. (talent based)
 		{ "Rune of Power", 
 			IsAltKeyDown() ~= nil
-      and GetCurrentKeyBoardFocus() == nil },
+      and GetCurrentKeyBoardFocus() == nil
+      and not jps.Moving },
 		
 		-- Ice Block when you're about to die.
 		{ "Ice Block",
@@ -60,18 +62,12 @@ function mage_fire(self)
 
 		-- Molten Armor if you forgot to buff it.
 		{ "Molten Armor", 
-			not jps.buff("Molten Armor") },
+			not jps.buff("Molten Armor")
+      and not jps.Moving },
 
 		-- Arcane Brilliance if you forgot to buff it.
 		{ "Arcane Brilliance", 
 			not jps.buff("Arcane Brilliance"), "player" },
-		
-		-- Rune of Power whenever it runs out if we're not moving. (talent based)
-    -- This is going to drop it whever the mouse currently is, 
-    -- so either keep your mouse over your mage, or remove this rule.
-		{ "Rune of Power", 
-			not jps.buff("Rune of Power")
-      and not jps.Moving },
         
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
@@ -144,7 +140,8 @@ function mage_fire(self)
 
 		-- Frost Bomb. (talent based)
 		{ "Frost Bomb", 
-			jps.debuffDuration("Frost Bomb") == 0 },
+			jps.debuffDuration("Frost Bomb") == 0
+      and not jps.Moving },
 
 		-- Nether Tempest. (talent based)
 		{ "Nether Tempest", 

@@ -44,7 +44,6 @@ function mage_arcane(self)
 		{ "Rune of Power", 
 			IsAltKeyDown() ~= nil
       and GetCurrentKeyBoardFocus() == nil
-      and jps.LastCast ~= "Rune of Power"
       and not jps.Moving },
     
 		-- Ice Block when you're about to die.
@@ -89,14 +88,6 @@ function mage_arcane(self)
 		{ "Counterspell", 
 			jps.Interrupts 
       and jps.shouldKick() },
-		
-		-- Rune of Power whenever it runs out if we're not moving. (talent based)
-    -- This is going to drop it whever the mouse currently is, 
-    -- so either keep your mouse over your mage, or remove this rule.
-		{ "Rune of Power", 
-			not jps.buff("Rune of Power")
-      and jps.LastCast ~= "Rune of Power"
-      and not jps.Moving },
     
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
@@ -122,7 +113,8 @@ function mage_arcane(self)
 
 		-- Frost Bomb. (talent based)
 		{ "Frost Bomb", 
-			jps.debuffDuration("Frost Bomb") == 0 },
+			jps.debuffDuration("Frost Bomb") == 0
+      and not jps.Moving },
 
 		-- Nether Tempest. (talent based)
 		{ "Nether Tempest", 
