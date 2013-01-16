@@ -44,6 +44,7 @@ function mage_arcane(self)
 		{ "Rune of Power", 
 			IsAltKeyDown() ~= nil
       and GetCurrentKeyBoardFocus() == nil
+      and jps.LastCast ~= "Rune of Power"
       and not jps.Moving },
     
 		-- Ice Block when you're about to die.
@@ -94,6 +95,7 @@ function mage_arcane(self)
     -- so either keep your mouse over your mage, or remove this rule.
 		{ "Rune of Power", 
 			not jps.buff("Rune of Power")
+      and jps.LastCast ~= "Rune of Power"
       and not jps.Moving },
     
 		-- Evocation whenever you're missing the damage buff.
@@ -138,23 +140,27 @@ function mage_arcane(self)
 		-- Engineers may have synapse springs on their gloves (slot 10).
     { jps.useSlot(10), 
       jps.UseCDs
-      and not ( evocating or atActive )
+      and not ( evocating 
+        or atActive )
       and apActive },
 
 		-- On-use Trinkets when we have a damage buff.
     { jps.useSlot(13), 
       jps.UseCDs
-      and not ( evocating or atActive )
+      and not ( evocating 
+        or atActive )
       and apActive },
     { jps.useSlot(14), 
       jps.UseCDs
-      and not ( evocating or atActive )
+      and not ( evocating 
+        or atActive )
       and apActive },
 
     -- Lifeblood on cooldown. (profession based)
     { "Lifeblood",
       jps.UseCDs
-      and not ( evocating or atActive )
+      and not ( evocating 
+        or atActive )
       and apActive },
 
     -- DPS Racial on cooldown.
@@ -209,7 +215,7 @@ function mage_arcane(self)
       or jps.mana() < .9 },
 
 		-- Arcane Blast as our default.
-		{ "Arcane Blast"
+		{ "Arcane Blast",
       not jps.Moving },
 		
 	}
