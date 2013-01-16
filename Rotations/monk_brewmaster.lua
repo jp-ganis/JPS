@@ -4,6 +4,8 @@ function monk_brewmaster(self)
 	-- Shift to use "Dizzying Haze" at mouse position - AoE threat builder - "Hurl a keg of your finest brew"
 	-- Left control and mouseover target to use "Chi Wave" - can be used on friendlies and enemies (disabled for now)
 
+  if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
+  
 	local chi = UnitPower("player", "12") -- 12 is chi
 	local energy = UnitPower("player", "3") -- 3 is energy
 	local defensiveCDActive = jps.buff("Fortifying Brew") or jps.buff("Diffuse Magic") or jps.buff("Dampen Harm")
@@ -132,7 +134,7 @@ function monk_brewmaster(self)
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
-        jps.UseCDs },
+      jps.UseCDs },
 
 		-- Jab is our basic chi builder.
 		{ "Jab", 
