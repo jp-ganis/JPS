@@ -4,8 +4,7 @@ function druid_feral(self)
 
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
-	local executePhase = jps.hp("target") <= 0.25
-	local gcdLocked = true -- they changed this :( jps.cooldown("shred") == 0
+	local executePhase = jps.hp("target") <= .25
 	local energyPerSec = 10.59
 
 	local tigersFuryCD = jps.cooldown("Tiger's Fury")
@@ -22,9 +21,18 @@ function druid_feral(self)
 	local thrashDuration = jps.debuffDuration("Thrash")
 	local predatorySwiftnessDuration = jps.buffDuration("Predatory Swiftness")
 
+  -- Berserk makes every ability cost 50% less energy, so we can't hardcode these values (more future proof this way, anyways).
+  local thrashCost = ({ GetSpellInfo('Thrash') })[4]
+  local swipeCost = ({ GetSpellInfo('Swipe') })[4]
+  local shredCost = ({ GetSpellInfo('Shred') })[4]
+  local ripCost = ({ GetSpellInfo('Rip') })[4]
+  local ravageCost = ({ GetSpellInfo('Ravage') })[4]
+  local rakeCost = ({ GetSpellInfo('Rake') })[4]
+
 	local maxLevel = (UnitLevel("player") == 90)
 
 	local possibleSpells = {
+
 		-- Bail if not in cat form.
 	  { nil, 
 	  	not jps.buff("Cat Form") },
@@ -69,8 +77,7 @@ function druid_feral(self)
 		-- Tiger's Fury when we're low on energy.
 		{ "Tiger's Fury", 
 			energy <= 35 
-			and not clearcasting 
-			and gcdLocked },
+			and not clearcasting },
 
 		-- Berserk when we have Tiger's Fury
 		{ "Berserk", 
@@ -91,10 +98,10 @@ function druid_feral(self)
 		{ "Force of Nature" },
 
 		-- On-Use Trinkets if Berserk buff in on.
-    { jps.useSlot(13), 
+    { jps.useTrinket(1), 
       jps.UseCDs
       and berserk },
-    { jps.useSlot(14), 
+    { jps.useTrinket(2), 
       jps.UseCDs
       and berserk },
 
@@ -104,7 +111,7 @@ function druid_feral(self)
 			and berserk },
 
 		-- Engineers may have synapse springs on their gloves (slot 10).
-		{ jps.useSlot(10), 
+		{ jps.useSynapseSprings(), 
       jps.UseCDs
       and berserk },
 
@@ -113,8 +120,13 @@ function druid_feral(self)
 			jps.UseCDs
 			and berserk },
 
-		-- Interrupt
+		-- Interrupts
 		{ "Skull Bash", 
+			jps.shouldKick() 
+			and jps.Interrupts },
+
+    -- Talent based stun.
+		{ "Mighty Bash", 
 			jps.shouldKick() 
 			and jps.Interrupts },
 
@@ -136,12 +148,13 @@ function druid_feral(self)
 		-- Multi-target only: Thrash debuff should be kept up at all times.
 	  { "Thrash", 
 	  	jps.MultiTarget
+      and energy >= thrashCost
 	  	and thrashDuration < 2 },
 
 	  -- Multi-target only: Swipe is the base AoE spell. (Assume there's a good reason to limit at 51+?)
 	  { "Swipe", 
 	  	jps.MultiTarget
-	  	and energy > 51 },
+	  	and energy >= swipeCost },
 
 		-- Thrash if we're clearcasting, it's debuff is about to run out, and we have no cenarion stacks.
 		{ "Thrash", 
@@ -166,6 +179,7 @@ function druid_feral(self)
 		-- Rip
 		{ "Rip", 
 			not jps.MultiTarget
+      and (energy >= ripCost or clearcasting)
 			and cp >= 5 
 			and cenarionStacks > 0 
 			and executePhase 
@@ -181,6 +195,7 @@ function druid_feral(self)
 		-- Rip
 		{ "Rip", 
 			not jps.MultiTarget
+      and (energy >= ripCost or clearcasting)
 			and cp >= 5 
 			and ripDuration < 2 
 			and cenarionStacks > 0 },
@@ -210,6 +225,7 @@ function druid_feral(self)
 		-- Rip
 		{ "Rip", 
 			not jps.MultiTarget
+      and (energy >= ripCost or clearcasting)
 			and cp >= 5 
 			and ripDuration < 2 
 			and (berserk 
@@ -235,12 +251,14 @@ function druid_feral(self)
 		-- Rake
 		{ "Rake", 
 			not jps.MultiTarget
+      and (energy >= rakeCost or clearcasting)
 			and cenarionStacks > 0 
 			and not jps.RakeBuffed },
 
 		-- Rake
 		{ "Rake", 
 			not jps.MultiTarget
+      and (energy >= rakeCost or clearcasting)
 			and rakeDuration < 3 
 			and (berserk 
 				or tigersFuryCD + .8 >= rakeDuration) },
@@ -259,6 +277,7 @@ function druid_feral(self)
 		-- Shred
 		{ "Shred", 
 			not jps.MultiTarget
+      and energy >= shredCost
 			and ( 
 				(cp < 5 
 					and ripDuration < 3) 
@@ -269,6 +288,7 @@ function druid_feral(self)
 		-- Thrash
 		{ "Thrash", 
 			cp >= 5 
+      and energy >= thrashCost
 			and thrashDuration < 6 
 			and (tigersFury 
 				or berserk) },
@@ -276,18 +296,21 @@ function druid_feral(self)
 		-- Thrash
 		{ "Thrash", 
 			cp >= 5 
+      and energy >= thrashCost
 			and thrashDuration < 6 
 			and tigersFuryCD <= 3 },
 
 		-- Thrash
 		{ "Thrash", 
 			cp >= 5 
+      and energy >= thrashCost
 			and thrashDuration < 6 
 			and energy >= 100 - energyPerSec },
 
 		-- Shred
 		{ "Shred", 
 			not jps.MultiTarget
+      and energy >= shredCost
 			and ( berserk 
 				or jps.buff("tiger's fury")
 			) },
@@ -295,13 +318,16 @@ function druid_feral(self)
 		-- Shred
 		{ "Shred", 
 			not jps.MultiTarget
+      and energy >= shredCost
 			and tigersFuryCD <= 3 },
 
 		-- Shred
 		{ "Shred", 
 			not jps.MultiTarget
-			and energy >= 100 - (energyPerSec * 2) },
+			and energy >= 100 - (energyPerSec * 2) }
 	}
 
-	return parseSpellTable(possibleSpells)
+  return parseSpellTable(possibleSpells)
+
 end
+

@@ -30,8 +30,27 @@ jps.UserInitiatedSpellsToIgnore = {
 	"Auto Attack",
 	"Roll",
 	"Chi Torpedo",
+	"Flying Serpent Kick",
+	"Blink",
 	"Living Bomb",
 	"Nether Tempest",
+  "Ice Lance",
+  "Arcane Brilliance",
+  "Spellsteal",
+  "Remove Curse",
+  "Rejuvenation",
+  "Thrash",
+	"Ravage",
+  "Mark of the Wild",
+  "Faerie Fire",
+  "Moonfire",
+  "Lifebloom",
+  "Shadow Word: Pain",
+  "Mind Flay",
+  "Mind Spike",
+  "Unstable Affliction",
+  "Corruption",
+  "Shadow Bolt",
 }
 
 function jps.shouldSpellBeIgnored(spell)
@@ -408,6 +427,16 @@ function jps.buffStacks( spell, unit )
 	return count
 end
 
+-- /run print(jps.getIgniteAmount())
+function jps.getIgniteAmount()
+  -- Ignite ID is hardcoded, not sure if there's an alternative.
+  local igniteSpell = GetSpellInfo(12654)
+    
+	buffName, buffRank, buffTexture, buffApplications, school, duration, timeLeft, unitCaster, buffId, isStealable, shouldConsolidate, spellID, canApplyAura, _, igniteAmount = UnitDebuff("target", igniteSpell, nil, "PLAYER");
+
+  return igniteAmount;
+end
+
 function jps.bloodlusting()
 	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
 end
@@ -589,28 +618,34 @@ function jps.checkTimer( name )
 	return 0
 end
 
+-- For trinket's. Pass 1 or 2 for the number.
+function jps.useTrinket(trinketNum)
+  -- THe index actually starts at 0, so subtract one.
+  local slotName = "Trinket"..(trinketNum - 1).."Slot"
+  -- Get the slot number
+	local slotNum = GetInventorySlotInfo(slotName)
+  return jps.useSlot(slotNum)
+end
 
-function jps.useTrinket(id)
-  local idConvention = id -1
-  local slotName = "Trinket"..idConvention.."Slot"
-	local slotId,_,_ = GetInventorySlotInfo(slotName)
-	local trinketId = GetInventoryItemID("player", slotId)
-	if(not trinketId) then return false end
-	
-    if(jps.itemCooldown(trinketId) > 0) then return false end
-	local isUsable,_ = GetItemSpell(trinketId)
-	if(not isUsable) then return false end
-	
-    return {"macro","/use "..slotId}
+-- Engineers will use synapse springs buff on their gloves
+function jps.useSynapseSprings()
+  -- Get the slot number
+  local slotNum = GetInventorySlotInfo("HandsSlot")
+  return jps.useSlot(slotNum)
 end
 
 function jps.useSlot(num)
+  -- Get the item identifier
 	local itemId = GetInventoryItemID("player", num)
-	if(not itemId) then return false end
+	if not itemId then return nil end
 	
-  if(jps.itemCooldown(itemId) > 0) then return false end
-	local isUsable,_ = GetItemSpell(itemId)
-	if(not isUsable) then return false end
-	
-    return {"macro","/use "..num}
+  -- Check if it's on cool down
+  if jps.itemCooldown(itemId) > 0 then return nil end
+
+  -- Check if it's usable
+	local isUsable = GetItemSpell(itemId)
+	if not isUsable then return nil end
+
+  -- Use it
+  return { "macro", "/use "..num }
 end

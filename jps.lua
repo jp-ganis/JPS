@@ -333,7 +333,7 @@ hooksecurefunc("UseAction", function(...)
 			local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
 			if jps.NextCast ~= name and not jps.shouldSpellBeIgnored(name) then 
 				jps.NextCast = name
-				if jps.Combat then write("Set",name,"for next cast.") end
+				if jps.Combat then write("Set", name, "for next cast.") end
 			end
 		end
 	end
