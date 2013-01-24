@@ -4,20 +4,27 @@ function monk_windwalker(self)
   
   -- Using the rotation outlined here: http://www.noxxic.com/wow/pve/monk/windwalker/dps-rotation-and-cooldowns
   
-  -- Tested with so-so gear around a 470 ilvl.
-  -- Approximately 50k single-target DPS with self buffs.
-  -- Approximately 60k single-target DPS with raid buffs.
+  -- Tested with so-so gear around a 480 ilvl.
+  -- Approximately 60k single-target DPS with self buffs.
+  -- Approximately 80k single-target DPS with raid buffs.
   -- Over 70k multi-target DPS. Can easily go over 100k if there's a lot of mobs and a decent tank.
-
+  
   local energy = UnitMana("player")
   local chi = UnitPower("Player", 12)
-  local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
+  local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Zen Meditation") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
   local tigerPowerDuration = jps.buffDuration("Tiger Power")
 
+  -- Need to use the Tigereye Brew buff ID because it shares it's name with the stacks.
+  local tigereyeActive = jps.buffID(116740)
+  
   -- Spells should be ordered by priority.
   local possibleSpells = {
 
-    -- Defensive Cooldown.
+    -- Defensive Cooldowns.
+    -- { "Zen Meditation", 
+    --   jps.hp() < .4 
+    --   and not defensiveCDActive },
+      
     { "Fortifying Brew", 
       jps.hp() < .6 
       and not defensiveCDActive },
@@ -42,43 +49,40 @@ function monk_windwalker(self)
       jps.buff("Death Note") 
       and not jps.MultiTarget },
 
-    -- Interrupt
+    -- Interrupts
     { "Spear Hand Strike", 
       jps.Interrupts 
       and jps.shouldKick() },
+    { "Paralysis", 
+      jps.Interrupts 
+      and jps.shouldKick() },
 
-    -- On-use Trinkets when we have decent chi and energy.
+    -- Tigereye Brew when we have 10 stacks.
+    { "Tigereye Brew", 
+      jps.UseCDs
+      and jps.buffStacks("Tigereye Brew") == 10 },
+        
+    -- Synapse springs when we have Tigereye Brew. (engineers)
+    { jps.useSlot(10), 
+      tigereyeActive },
+    
+    -- Lifeblood when we have Tigereye Brew. (herbalists)
+    { "Lifeblood",
+      tigereyeActive },
+    
+    -- On-use Trinkets when we have Tigereye Brew.
     { jps.useSlot(13), 
-      jps.UseCDs
-      and chi > 3
-      and energy >= 50 },
+      tigereyeActive },
     { jps.useSlot(14), 
-      jps.UseCDs
-      and chi > 3
-      and energy >= 50 },
+      tigereyeActive },
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
       jps.UseCDs },
 
-    -- Engineers may have synapse springs on their gloves (slot 10).
-    { jps.useSlot(10), 
-      chi > 3
-      and energy >= 50 },
-
-    -- Herbalists have Lifeblood.
-    { "Lifeblood",
-      jps.UseCDs
-      and chi > 3
-      and energy >= 50 },
-
     -- Chi Brew if we have no chi. (talent based)
     { "Chi Brew", 
       chi == 0 },
-
-    -- Tigereye Brew when we have 10 stacks.
-    { "Tigereye Brew", 
-      jps.buffStacks("Tigereye Brew") == 10 },
     
     -- Energizing Brew whenever we're under 70 energy so we don't waste it.
     { "Energizing Brew", 
@@ -133,15 +137,13 @@ function monk_windwalker(self)
       jps.MultiTarget },
 
     -- Chi Wave if we're not at full health. (talent based)
-    { "Chi Wave", 
-      jps.MultiTarget
-      and jps.hp() < .9
+    { "Chi Wave",
+      jps.hp() < .8
       and chi >= 2 },
 
     -- Chi Burst if we're not at full health. (talent based)
     { "Chi Burst", 
-      jps.MultiTarget
-      and jps.hp() < .9
+      jps.hp() < .8
       and chi >= 2 },
 
     -- Zen Sphere if we're not at full health. (talent based)
@@ -154,7 +156,7 @@ function monk_windwalker(self)
     { "Expel Harm", 
       chi < 3 
       and energy >= 40 
-      and jps.hp() < 0.85 },
+      and jps.hp() < .85 },
 
     -- Spinning Crane Kick when we're multi-target (4+ targets ideal).
     { "Spinning Crane Kick", 
