@@ -74,6 +74,16 @@ function druid_resto(self)
       and defaultHP < .5
       and not defensiveCDActive, defaultTarget },
     
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+    
+    -- Innervate
+		{ "Innervate",
+      jps.UseCDs
+      and jps.mana() < .75 },
+        
     -- Swiftmend on lowest target. This is a hefty heal and helps us keep harmony up. We want to use it a lot.
 		{ "Swiftmend",
       defaultHP < .8
@@ -138,6 +148,14 @@ function druid_resto(self)
     -- Decurse
 		{ "Remove Corruption",
       cleanseTarget ~= nil, cleanseTarget },
+    
+    -- Lifebloom stacks on tank.
+		{ "Lifebloom",
+      tankHP < 1
+      and (
+        jps.buffDuration("Lifebloom", tank) < 2
+        or jps.buffStacks("Lifebloom", tank) < 3
+      ), tank },
             
     -- Wild Growth on lowest target.
 		{ "Wild Growth",
@@ -148,14 +166,6 @@ function druid_resto(self)
 		{ "Rejuvenation",
       defaultHP < .7
       and not jps.buff("Rejuvenation", defaultTarget), defaultTarget },
-    
-    -- Lifebloom stacks on tank.
-		{ "Lifebloom",
-      tankHP < 1
-      and (
-        jps.buffDuration("Lifebloom", tank) < 2
-        or jps.buffStacks("Lifebloom", tank) < 3
-      ), tank },
     
     -- Rejuvenation on tank.
 		{ "Rejuvenation",
