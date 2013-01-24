@@ -17,24 +17,29 @@ function monk_brewmaster(self)
 			IsShiftKeyDown() ~= nil 
 			and GetCurrentKeyBoardFocus() == nil },
 
-		-- Defensive cooldowns 
+		-- Fortifying Brew if you get low.
 		{ "Fortifying Brew", 
       jps.UseCDs 
       and jps.hp() < .4
       and not defensiveCDActive },
 
-    -- Talent based.
+    -- Diffuse Magic if you get low. (talent based)
     { "Diffuse Magic", 
       jps.UseCDs 
       and jps.hp() < .5 
       and not defensiveCDActive },
 
-    -- Talent based.
+    -- Dampen Harm if you get low. (talent based)
     { "Dampen Harm", 
       jps.UseCDs 
       and jps.hp() < .6 
       and not defensiveCDActive },
 
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+        
 		-- Insta-kill single target when available.
     { "Touch of Death", 
       jps.UseCDs 
@@ -83,7 +88,8 @@ function monk_brewmaster(self)
 
     -- Engineers may have synapse springs on their gloves (slot 10).
     { jps.useSlot(10), 
-      jps.UseCDs },
+      chi > 3
+      and energy >= 50 },
 
     -- Herbalists have Lifeblood.
     { "Lifeblood",
@@ -97,7 +103,15 @@ function monk_brewmaster(self)
     { "Spear Hand Strike", 
       jps.Interrupts 
       and jps.shouldKick() },
+    { "Paralysis", 
+      jps.Interrupts 
+      and jps.shouldKick() },
 
+    -- Invoke Xuen on cooldown for single-target. (talent based)
+    { "Invoke Xuen, the White Tiger", 
+      jps.UseCDs 
+      and not jps.MultiTarget },
+        
 		-- Breath of Fire is the strongest AoE.
 		{ "Breath of Fire", 
 			jps.MultiTarget
@@ -105,7 +119,7 @@ function monk_brewmaster(self)
 
 		-- Expel Harm for building some chi and healing if not at full health.
 		{ "Expel Harm",
-			jps.hp() < .9
+			jps.hp() < .85
 			and energy >= 40
 			and chi < 4 },
 
@@ -115,16 +129,14 @@ function monk_brewmaster(self)
       and not jps.buff("Tiger Power")
       or jps.buffDuration("Tiger Power") <= 1.5 },
 
-    -- Zen Sphere for a small healing boost and some damage (talent based).
+    -- Zen Sphere for threat and heal (talent based).
     { "Zen Sphere",
-      not jps.MultiTarget
-      and jps.hp() < .9
+      jps.hp() < .8
       and chi >= 2 },
       
-		-- Chi Wave for multi-target threat and heal (talent based).
+		-- Chi Wave for threat and heal (talent based).
 		{ "Chi Wave",
-      jps.MultiTarget
-      and jps.hp() < .9
+      jps.hp() < .8
 			and chi >= 2 },
 
 		-- Spinning Crane Kick for multi-target threat.
