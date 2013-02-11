@@ -359,8 +359,7 @@ function combat(self)
 	jps.Moving = select(1,GetUnitSpeed("player")) > 0
 
 	-- Casting
-	-- if UnitCastingInfo("player") or UnitChannelInfo("player") then
-  if UnitCastingInfo("player") then
+	if UnitCastingInfo("player") or UnitChannelInfo("player") then
     jps.Casting = true
 	else
     jps.Casting = false
