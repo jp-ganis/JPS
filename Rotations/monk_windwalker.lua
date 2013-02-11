@@ -45,12 +45,14 @@ function monk_windwalker(self)
 
     -- Defensive Cooldown.
     { "Touch of Karma",
-      jps.hp() < .7
+      jps.UseCDs
+      and jps.hp() < .65
       and not defensiveCDActive },
     
     -- Insta-kill single target when available
     { "Touch of Death", 
-      jps.buff("Death Note") 
+      jps.UseCDs
+      and jps.buff("Death Note") 
       and not jps.MultiTarget },
 
     -- Interrupts
