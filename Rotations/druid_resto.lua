@@ -3,12 +3,10 @@ function druid_resto(self)
 	-- jps.MultiTarget to Wild Regrowth
 	-- Use Innervate and Tranquility manually
 
-	-- Healer
-	local tank = nil
 	local me = "player"
 
 	-- Tank is focus.
-	tank = jps.findMeATank()
+	local tank = jps.findMeATank()
   local tankHP = jps.hpInc(tank)
   
   -- Check if we should cleanse
@@ -32,8 +30,6 @@ function druid_resto(self)
 	local defaultHP = jps.hpInc(defaultTarget)
 
   local defensiveCDActive = jps.buff("Ironbark", defaultTarget) or jps.buff("Nature's Vigil") or jps.buff("Incarnation: Tree of Life")
-  
-	-- JPTODO tranquility detection
 	
 	local possibleSpells = {
     
@@ -100,10 +96,7 @@ function druid_resto(self)
     -- Healing Touch when needed and we have Nature's Swiftness buff.
 		{ "Healing Touch",
       defaultHP < .35
-      and (
-        jps.buff("Nature's Swiftness") 
-        or not jps.Moving
-      ), defaultTarget },
+      and jps.buff("Nature's Swiftness"), defaultTarget },
     
     -- Regrowth when needed.
 		{ "Regrowth",
@@ -126,24 +119,24 @@ function druid_resto(self)
 		{ "Nourish",
       not jps.buff("Harmony")
       and not jps.Moving, tank },
-        
+    
 		-- On-Use Trinkets.
     { jps.useTrinket(1), 
       jps.UseCDs
-      and defaultHP < .6 },
+      and defaultHP < .7 },
     { jps.useTrinket(2), 
       jps.UseCDs
-      and defaultHP < .6 },
+      and defaultHP < .7 },
 
 		-- Engineers may have synapse springs on their gloves (slot 10).
 		{ jps.useSynapseSprings(), 
       jps.UseCDs
-      and defaultHP < .6 },
+      and defaultHP < .7 },
 
 		-- Lifeblood (requires herbalism)
 		{ "Lifeblood",
 			jps.UseCDs
-			and defaultHP < .6 },
+			and defaultHP < .7 },
     
     -- Decurse
 		{ "Remove Corruption",
