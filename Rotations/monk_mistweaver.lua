@@ -42,6 +42,10 @@ function monk_mistweaver(self)
 			IsShiftKeyDown() ~= nil 
 			and GetCurrentKeyBoardFocus() == nil },
     
+		{ "Healing Sphere", 
+			IsControlKeyDown() ~= nil 
+			and GetCurrentKeyBoardFocus() == nil },
+    
 		-- { "Healing Sphere", 
 		--	IsShiftKeyDown() ~= nil 
 		--	and GetCurrentKeyBoardFocus() == nil },
@@ -214,7 +218,7 @@ function monk_mistweaver(self)
   end
   
   -- Debug
-  if IsControlKeyDown() ~= nil and spell then
+  if IsAltKeyDown() ~= nil and spell then
     print( string.format("Healing: %s, Health: %s, Spell: %s", healTarget, healTargetHP, spell) )
   end
   
