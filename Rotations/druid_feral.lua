@@ -33,18 +33,26 @@ function druid_feral(self)
 
 	local possibleSpells = {
 
-		-- Bail if not in cat form.
-	  { nil, 
+		-- Cat Form
+	  { "Cat Form", 
 	  	not jps.buff("Cat Form") },
 
 	  -- Bail if not in melee range.
     { nil, 
     	IsSpellInRange("Shred", "target") == 0 },
 
+    -- Survival Instincts
+		{ "Survival Instincts",
+      jps.hp() < .5 },
+    
     -- Healthstone if you get low.
     { "Healthstone",
       jps.hp() < .5
       and GetItemCount("Healthstone", 0, 1) > 0 },
+        
+    -- Barkskin
+		{ "Barkskin",
+      jps.hp() < .6 },
     
 		-- Interrupts
 		{ "Skull Bash", 
@@ -80,14 +88,7 @@ function druid_feral(self)
 		-- Healing Touch whenever we have Nature's Swiftness. (talent based)
 		{ "Healing Touch", 
 			jps.buff("Nature's Swiftness")
-			and cenarionStacks < 2
-			and maxLevel },
-
-		-- Temporary for leveling.
-		{ "Healing Touch", 
-			predatorySwiftness or jps.buff("Nature's Swiftness")
-			and jps.hp() < .6
-			and not maxLevel },
+			and cenarionStacks < 2 },
 
 		-- Tiger's Fury when we're low on energy.
 		{ "Tiger's Fury", 
