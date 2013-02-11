@@ -13,28 +13,33 @@ function monk_brewmaster(self)
 	local possibleSpells = {
 
 		-- Dizzying Haze when holding down shift.
-		{ "Dizzying Haze", 
-			IsShiftKeyDown() ~= nil 
-			and GetCurrentKeyBoardFocus() == nil },
+		-- { "Dizzying Haze", 
+		--   IsShiftKeyDown() ~= nil 
+		--   and GetCurrentKeyBoardFocus() == nil },
 
-		-- Defensive cooldowns 
+		-- Fortifying Brew if you get low.
 		{ "Fortifying Brew", 
       jps.UseCDs 
       and jps.hp() < .4
       and not defensiveCDActive },
 
-    -- Talent based.
+    -- Diffuse Magic if you get low. (talent based)
     { "Diffuse Magic", 
       jps.UseCDs 
       and jps.hp() < .5 
       and not defensiveCDActive },
 
-    -- Talent based.
+    -- Dampen Harm if you get low. (talent based)
     { "Dampen Harm", 
       jps.UseCDs 
       and jps.hp() < .6 
       and not defensiveCDActive },
 
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+        
 		-- Insta-kill single target when available.
     { "Touch of Death", 
       jps.UseCDs 
@@ -58,9 +63,10 @@ function monk_brewmaster(self)
     -- Rushing Jade Wind applies shuffle with a heal and multi-target damage. 
     --  Use it instead of Blackout kick when it's available. (talent based)
     { "Rushing Jade Wind", 
-      ( not jps.buff("Shuffle")
-        or jps.buffDuration("Shuffle") < 3 )
-      and chi >= 2 },
+      jps.MultiTarget
+      or jps.hp() < .85
+      or ( not jps.buff("Shuffle")
+        or jps.buffDuration("Shuffle") < 3 ) },
 
     -- Blackout Kick if shuffle is missing or about to drop.
     { "Blackout Kick", 
@@ -83,29 +89,37 @@ function monk_brewmaster(self)
 
     -- Engineers may have synapse springs on their gloves (slot 10).
     { jps.useSlot(10), 
-      jps.UseCDs },
+      chi > 3
+      and energy >= 50 },
 
     -- Herbalists have Lifeblood.
     { "Lifeblood",
       jps.UseCDs },
 
-		-- Keg Smash to build some chi and threat.
+		-- Keg Smash to build some chi and keep the weakened blows debuff up.
 		{ "Keg Smash", 
-			chi < 3 },
+			chi < 3
+      or not jps.debuff("Weakened Blows") },
 
 		-- Interrupt.
     { "Spear Hand Strike", 
       jps.Interrupts 
       and jps.shouldKick() },
+    { "Paralysis", 
+      jps.Interrupts 
+      and jps.shouldKick() },
 
+    -- Invoke Xuen on cooldown for single-target. (talent based)
+    { "Invoke Xuen, the White Tiger", 
+      jps.UseCDs },
+        
 		-- Breath of Fire is the strongest AoE.
 		{ "Breath of Fire", 
-			jps.MultiTarget
-      and chi >= 2 },
+			jps.MultiTarget },
 
 		-- Expel Harm for building some chi and healing if not at full health.
 		{ "Expel Harm",
-			jps.hp() < .9
+			jps.hp() < .85
 			and energy >= 40
 			and chi < 4 },
 
@@ -115,22 +129,21 @@ function monk_brewmaster(self)
       and not jps.buff("Tiger Power")
       or jps.buffDuration("Tiger Power") <= 1.5 },
 
-    -- Zen Sphere for a small healing boost and some damage (talent based).
+    -- Zen Sphere for threat and heal (talent based).
     { "Zen Sphere",
-      not jps.MultiTarget
-      and jps.hp() < .9
-      and chi >= 2 },
-      
-		-- Chi Wave for multi-target threat and heal (talent based).
+      jps.hp() < .85 },
+    
+		-- Chi Wave for threat and heal (talent based).
 		{ "Chi Wave",
-      jps.MultiTarget
-      and jps.hp() < .9
-			and chi >= 2 },
+      jps.hp() < .85 },
+    
+		-- Chi Wave for threat and heal (talent based).
+		{ "Chi Burst",
+      jps.hp() < .85 },
 
 		-- Spinning Crane Kick for multi-target threat.
 		{ "Spinning Crane Kick", 
-			jps.MultiTarget 
-			and energy >= 40 },
+			jps.MultiTarget },
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
@@ -138,10 +151,13 @@ function monk_brewmaster(self)
 
 		-- Jab is our basic chi builder.
 		{ "Jab", 
-			energy >= 40 
-			and chi < 4 },
+			chi < 4 },
 
-		-- Tiger Palm to keep the Tiger Power buff up. No chi cost due to Brewmaster specialization at level 34.
+    -- Blackout Kick as a chi dump.
+    { "Blackout Kick", 
+      chi >= 4 },
+        
+		-- Tiger Palm filler.
 		{ "Tiger Palm" },
 		
 	}

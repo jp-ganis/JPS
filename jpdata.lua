@@ -39,12 +39,18 @@ jps.UserInitiatedSpellsToIgnore = {
   "Spellsteal",
   "Remove Curse",
   "Rejuvenation",
+  "Cat Form",
+  "Bear Form",
+  "Treant Form",
+  "Travel Form",
+  "Aquatic Form",
   "Thrash",
 	"Ravage",
   "Mark of the Wild",
   "Faerie Fire",
   "Moonfire",
   "Lifebloom",
+  "Power Word: Fortitude",
   "Shadow Word: Pain",
   "Mind Flay",
   "Mind Spike",
@@ -230,8 +236,13 @@ end
 --------------------------
 
 function jps.Cast(spell)
-	if not jps.Target then jps.Target = "target" end
-	if not jps.Casting then jps.LastCast = spell end
+	if not jps.Target then
+    jps.Target = "target"
+  end
+  
+	if not jps.Casting then
+    jps.LastCast = spell
+  end
 	
   if(getSpellStatus(spell) == 0) then return false end
 	if(jps.cooldownNoLag(spell) ~= 0) then return false end

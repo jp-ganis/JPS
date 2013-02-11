@@ -41,6 +41,11 @@ function mage_fire(self)
 			jps.hp() > .8
 			and jps.buff("Ice Block") },
 
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+        
 		-- Refresh your Ice block. (talent based)
 		{ "Cold Snap",
 			jps.cooldown("Ice Block") > 0
@@ -67,7 +72,7 @@ function mage_fire(self)
 
 		-- Arcane Brilliance if you forgot to buff it.
 		{ "Arcane Brilliance", 
-			not jps.buff("Arcane Brilliance"), "player" },
+			not jps.buff("Arcane Brilliance") },
         
 		-- Evocation whenever you're missing the damage buff.
 		-- ** Important ** This assumes you have the Invocation talent. Comment this line our if you don't.
