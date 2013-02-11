@@ -32,7 +32,7 @@ function mage_arcane(self)
 		-- Arcane Brilliance if you forgot to buff it.
 		{ "Arcane Brilliance", 
 			not jps.buff("Arcane Brilliance")
-      and not atActive, "player" },
+      and not atActive },
       
 		-- Flamestrike (targeted) when holding down shift.
 		{ "Flamestrike", 
@@ -57,6 +57,11 @@ function mage_arcane(self)
 			jps.hp() > .8
 			and jps.buff("Ice Block") },
 
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+        
 		-- Refresh your Ice block. (talent based)
 		{ "Cold Snap",
 			jps.cooldown("Ice Block") > 0
@@ -65,6 +70,8 @@ function mage_arcane(self)
 		-- Incanter's Ward when you're taking some damage. (talent based)
 		{ "Incanter's Ward",
 			jps.hp() < .9
+      and jps.mana() < .94
+      and arcaneCharges >= 4
       and not atActive },
     
 		-- Ice Barrier when you're taking some damage. (talent based)
@@ -123,55 +130,50 @@ function mage_arcane(self)
     -- ****
     -- Cooldown stacking starts.
     
-		-- Arcane Power whenever it's available and altered time isn't active (waste) and we have at least 4 arcane charges.
+		-- Arcane Power when we have 6 charges and 2 stacks.
 		{ "Arcane Power",
 			jps.UseCDs
       and not atActive
-      and arcaneCharges >= 4 },
+      and arcaneCharges == 6
+      and amStacks == 2 },
 
 		-- Engineers may have synapse springs on their gloves (slot 10).
     { jps.useSlot(10), 
-      jps.UseCDs
+      apActive
       and not ( evocating 
-        or atActive )
-      and apActive },
+        or atActive ) },
 
 		-- On-use Trinkets when we have a damage buff.
     { jps.useSlot(13), 
-      jps.UseCDs
+      apActive
       and not ( evocating 
-        or atActive )
-      and apActive },
+        or atActive ) },
     { jps.useSlot(14), 
-      jps.UseCDs
+      apActive
       and not ( evocating 
-        or atActive )
-      and apActive },
+        or atActive ) },
 
     -- Lifeblood on cooldown. (profession based)
     { "Lifeblood",
-      jps.UseCDs
+      apActive
       and not ( evocating 
-        or atActive )
-      and apActive },
+        or atActive ) },
 
     -- DPS Racial on cooldown.
     { jps.DPSRacial, 
       jps.UseCDs
-      and not ( evocating or atActive ) },
+      and not evocating },
 
 		-- PoM for insta-something. (talent based)
 		{ "Presence of Mind",
 			apActive
       and not atActive },
-        
-    -- Alter Time whenver we have decent buffs.
+    
+    -- Arcane Power when arcane power is active and we still have our charges and stacks.
     { "Alter Time",
-      jps.UseCDs
-      and not evocating
-      and apActive
-      and arcaneCharges >= 4
-      and amStacks >= 1 },
+      apActive
+      and arcaneCharges == 6
+      and amStacks == 2 },
     
     -- Cooldown stacking ends.
     -- ****
@@ -184,12 +186,9 @@ function mage_arcane(self)
     
     -- Arcane Barrage once we have full arcane charges and no missile stacks. This won't happen very often.
     { "Arcane Barrage",
-      amStacks == 0
-      and ( arcaneCharges == 6
-        or ( arcaneCharges == 5
-          and jps.mana() < .9 )
-        )
-      },
+      atActive
+      and amStacks == 0
+      and arcaneCharges == 6 },
     
     -- Spread Living Bomb with Fireblast (talent and glyph based).
     { "Fire Blast", 
@@ -197,9 +196,9 @@ function mage_arcane(self)
       and jps.debuff("Living Bomb") },
         
     -- Ice Ward for a big nova on the tank if we're multi target. (talent based)
-    { "Ice Ward",
-      jps.MultiTarget,
-      jps.findMeATank() },
+    { { "macro", "/cast [help][@targettarget,help] Ice Ward" },
+      jps.MultiTarget
+      and jps.cooldown("Ice Ward") == 0 },
     
 		-- Scorch if we're moving or drop below 90% mana. (talent based)
 		{ "Scorch", 
