@@ -184,7 +184,7 @@ function combatEventHandler(self, event, ...)
 	-- RaidStatus Update
     elseif event == "UNIT_HEALTH" and jps.Enabled then
     	jps.UpdateHealerBlacklist()
-    	if jps.Spec == "Restoration" or jps.Spec == "Holy" or jps.Spec == "Discipline" then jps.Healing = true end
+    	if jps.Spec == "Restoration" or jps.Spec == "Holy" or jps.Spec == "Discipline" or jps.Spec == "Mistweaver" then jps.Healing = true end
  		
         local unit = ...
         if jps.canHeal(unit) and jps.Enabled and jps.Healing then combat() end -- and jps.Combat
@@ -359,8 +359,11 @@ function combat(self)
 	jps.Moving = select(1,GetUnitSpeed("player")) > 0
 
 	-- Casting
-	if UnitCastingInfo("player") or UnitChannelInfo("player") then jps.Casting = true
-	else jps.Casting = false
+	-- if UnitCastingInfo("player") or UnitChannelInfo("player") then
+  if UnitCastingInfo("player") then
+    jps.Casting = true
+	else
+    jps.Casting = false
 	end
 	
 	-- Table RaidStatus

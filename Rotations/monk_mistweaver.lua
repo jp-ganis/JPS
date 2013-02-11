@@ -8,26 +8,48 @@ function monk_mistweaver(self)
 	local tank = jps.findMeATank()
   local tankHP = jps.hpInc(tank)
   
-	-- Default to healing lowest partymember
-	local defaultTarget = jps.lowestInRaidStatus()
+	-- Set the heal target to the lowest partymember.
+	local healTarget = jps.lowestInRaidStatus()
 
-	-- Check that the tank isn't going critical, and that I'm not about to die
-  if jps.canHeal(tank) and tankHP <= .5 then defaultTarget = tank end
-	if jps.hpInc(me) < .3 then defaultTarget = me end
+	-- If the tank really needs healing, make him the heal target.
+  if jps.canHeal(tank) and tankHP <= .5 then
+    healTarget = tank
+  end
+  
+  -- If I really need healing, make me the heal target.
+	if jps.hpInc() < .4 then
+    healTarget = me
+  end
 
-	-- Get the health of our decided target
-	local defaultHP = jps.hpInc(defaultTarget)
-    
-	
+	-- Get the health of our heal target.
+	local healTargetHP = jps.hpInc(healTarget)
+  
+  -- Check for an active defensive CD.
+  local defensiveCDActive = jps.buff("Fortifying Brew") or jps.buff("Diffuse Magic") or jps.buff("Dampen Harm")
+  
+  local channeling = UnitChannelInfo("player")
+  local soothing = false
+  if channeling then
+    soothing = channeling:find("Soothing Mist")
+  end
+  
+  -- Check if we should detox
+  local dispelTarget = jps.FindMeADispelTarget({"Magic"}, {"Poison"}, {"Disease"})
+  
 	local possibleSpells = {
     
-		{ "Healing Sphere", 
+		{ "Summon Jade Serpent Statue", 
 			IsShiftKeyDown() ~= nil 
 			and GetCurrentKeyBoardFocus() == nil },
     
+		-- { "Healing Sphere", 
+		--	IsShiftKeyDown() ~= nil 
+		--	and GetCurrentKeyBoardFocus() == nil },
+    
+    -- TODO: Figure out a way to detect Jade Serpent
     -- Make sure your statue is up at all times.
-		{ "Summon Jade Serpent Statue",
-      not jsp.buff("Eminence") },
+		-- { "Summon Jade Serpent Statue",
+    --  not jps.buff("Eminence") },
 
 		-- Fortifying Brew if you get low.
 		{ "Fortifying Brew", 
@@ -52,6 +74,11 @@ function monk_mistweaver(self)
       jps.hp() < .5
       and GetItemCount("Healthstone", 0, 1) > 0 },
     
+    -- Insta-kill single target when available
+    { "Touch of Death", 
+      jps.UseCDs
+      and jps.buff("Death Note") },
+    
     -- Thunder Focus Tea on CD
     { "Thunder Focus Tea",
        jps.UseCDs
@@ -59,79 +86,138 @@ function monk_mistweaver(self)
     
     -- Life Cocoon on the tank if he's low.
 		{ "Life Cocoon",
-      tankHP < .4, tank },
-      
+      tankHP < .5, tank },
+    
+    -- Detox if needed.
+    { "Detox",
+      dispelTarget ~= nil, dispelTarget },
+    
+    -- Water Spirit if you get low on mana.
+    { "Water Spirit",
+      jps.mana() < .6
+      and GetItemCount("Water Spirit", 0, 1) > 0 },
+        
 		-- Engineers may have synapse springs on their gloves (slot 10).
 		{ jps.useSynapseSprings(), 
       jps.UseCDs
-      and defaultHP < .7 },
+      and healTargetHP < .7 },
         
 		-- On-Use Trinkets.
     { jps.useTrinket(1), 
       jps.UseCDs
-      and defaultHP < .7 },
+      and healTargetHP < .7 },
     { jps.useTrinket(2), 
       jps.UseCDs
-      and defaultHP < .7 },
+      and healTargetHP < .7 },
 
 		-- Lifeblood (requires herbalism)
 		{ "Lifeblood",
-			jps.UseCDs
-			and defaultHP < .7 },
+      jps.UseCDs
+			and healTargetHP < .7 },
     
-    -- Renewing Mist when someone other than tank is taking mild damage.
-		{ "Renewing Mist",
-      defaultHP < .8
-      and not defaultTarget == tank, defaultTarget },
+    -- Invoke Xuen CD. (talent based)
+    { "Invoke Xuen, the White Tiger", 
+      jps.UseCDs
+      and healTargetHP < .55 },
     
+    -- Mana Tea when we have 2 stacks.
+		{ "Mana Tea",
+      jps.mana() < .9
+      and jps.buffStacks("Mana Tea") >= 2
+      and not soothing },
+        
     -- Uplift when someone other than tank is taking heavy damage.
 		{ "Uplift",
-      defaultHP < .6
-      and chi >= 2
-      and not defaultTarget == tank, defaultTarget },
+      healTargetHP < .75
+      and jps.buff("Renewing Mist", healTarget)
+      and not soothing, healTarget },
     
-    -- Surging Mist for heavy damage.
-		{ "Surging Mist",
-      defaultHP < .5
-      and (
-        jps.buffStacks("Vital Mists") == 5
-        or not jps.Moving ), defaultTarget },
+    -- Expel Harm for Chi when we've taken damage.
+		{ "Expel Harm",
+      jps.hp() < .85
+      and chi < 4
+      and not soothing },
     
-    -- Enveloping Mist for moderate damage.
-		{ "Enveloping Mist",
-      not jps.Moving
-      and defaultHP < .7, defaultTarget },
+    -- Renewing Mist when someone is taking mild damage.
+		{ "Renewing Mist",
+      healTargetHP < .9
+      and not jps.buff("Renewing Mist", healTarget)
+      and not soothing, healTarget },
     
     -- Soothing Mist for mild damage.
 		{ "Soothing Mist",
-      not jps.Moving
-      and defaultHP < .8, defaultTarget },
-        
+      not soothing
+      and not jps.Moving
+      and healTargetHP < .85, healTarget },
+    
+    -- Surging Mist for heavy damage.
+		{ "Surging Mist",
+      healTargetHP < .55
+      and (
+        soothing
+        or jps.buffStacks("Vital Mists") == 5 ), healTarget },
+    
+    -- Enveloping Mist for moderate damage.
+		{ "Enveloping Mist",
+      healTargetHP < .75
+      and soothing, healTarget },
+    
     -- Maintain Tiger Power
     { "Tiger Palm",
       not jps.buff("Tiger Power")
-      and IsSpellInRange("Tiger Palm", "target") },
+      and IsSpellInRange("Tiger Palm", "target")
+      and not soothing },
     
     -- Maintain Serpent's Zeal
     { "Blackout Kick",
-      not jps.buff("Serpent's Zeal")
-      and IsSpellInRange("Blackout Kick", "target") },
+      ( not jps.buff("Serpent's Zeal")
+        or jps.buffStacks("Serpent's Zeal") < 2
+        or jps.buffDuration("Serpent's Zeal") < 5 )
+      and IsSpellInRange("Blackout Kick", "target")
+      and not soothing },
+    
+    -- Chi Wave when we're in melee range.
+		{ "Chi Wave",
+      healTargetHP < .85
+      and IsSpellInRange("Jab", "target")
+      and not soothing },
     
     -- Spinning Crane Kick to cap our chi when MultiTarget is toggled.
     { "Spinning Crane Kick",
       jps.MultiTarget
-      and chi < 4 },
+      and jps.mana() > .9
+      and chi < 4
+      and IsSpellInRange("Jab", "target")
+      and not soothing },
     
     -- Jab to cap our chi.
     { "Jab",
-      chi < 4
-      and IsSpellInRange("Jab", "target") },
+      jps.mana() > .9
+      and chi < 4
+      and IsSpellInRange("Jab", "target")
+      and not soothing },
+    
+    -- Tiger Palm as a chi dump.
+    { "Tiger Palm",
+      jps.mana() > .9
+      and chi > 2
+      and IsSpellInRange("Tiger Palm", "target")
+      and not soothing },
       
 	}
 
 	local spell, target = parseSpellTable(possibleSpells)
   jps.Target = target
-  if spell == "Summon Jade Serpent Statue" or spell == "Healing Sphere" then jps.groundClick() end
+  
+  if spell == "Summon Jade Serpent Statue" or spell == "Healing Sphere" then
+    jps.groundClick()
+  end
+  
+  -- Debug
+  if IsControlKeyDown() ~= nil and spell then
+    print( string.format("Healing: %s, Health: %s, Spell: %s", healTarget, healTargetHP, spell) )
+  end
+  
 	return spell
 
 end
