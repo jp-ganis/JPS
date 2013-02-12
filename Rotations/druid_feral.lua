@@ -33,14 +33,37 @@ function druid_feral(self)
 
 	local possibleSpells = {
 
-		-- Bail if not in cat form.
-	  { nil, 
+		-- Cat Form
+	  { "Cat Form", 
 	  	not jps.buff("Cat Form") },
 
 	  -- Bail if not in melee range.
     { nil, 
     	IsSpellInRange("Shred", "target") == 0 },
 
+    -- Survival Instincts
+		{ "Survival Instincts",
+      jps.hp() < .5 },
+    
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+        
+    -- Barkskin
+		{ "Barkskin",
+      jps.hp() < .6 },
+    
+		-- Interrupts
+		{ "Skull Bash", 
+			jps.shouldKick() 
+			and jps.Interrupts },
+
+    -- Talent based stun.
+		{ "Mighty Bash", 
+			jps.shouldKick() 
+			and jps.Interrupts },
+    
 		-- Savage Roar should be kept up at all times.
     { "Savage Roar", 
     	savageRoarDuration == 0 },
@@ -65,14 +88,7 @@ function druid_feral(self)
 		-- Healing Touch whenever we have Nature's Swiftness. (talent based)
 		{ "Healing Touch", 
 			jps.buff("Nature's Swiftness")
-			and cenarionStacks < 2
-			and maxLevel },
-
-		-- Temporary for leveling.
-		{ "Healing Touch", 
-			predatorySwiftness or jps.buff("Nature's Swiftness")
-			and jps.hp() < .6
-			and not maxLevel },
+			and cenarionStacks < 2 },
 
 		-- Tiger's Fury when we're low on energy.
 		{ "Tiger's Fury", 
@@ -94,42 +110,27 @@ function druid_feral(self)
 			jps.UseCDs
 			and berserk },
 
-		-- Treants (talent specific)
-		{ "Force of Nature" },
-
+		-- Engineers may have synapse springs on their gloves (slot 10).
+		{ jps.useSynapseSprings(), 
+      jps.UseCDs },
+      
 		-- On-Use Trinkets if Berserk buff in on.
     { jps.useTrinket(1), 
-      jps.UseCDs
-      and berserk },
+      jps.UseCDs },
     { jps.useTrinket(2), 
-      jps.UseCDs
-      and berserk },
+      jps.UseCDs },
 
 		-- DPS Racial if Berserk buff in on.
 		{ jps.DPSRacial, 
-			jps.UseCDs
-			and berserk },
-
-		-- Engineers may have synapse springs on their gloves (slot 10).
-		{ jps.useSynapseSprings(), 
-      jps.UseCDs
-      and berserk },
+			jps.UseCDs },
 
 		-- Lifeblood if Berserk buff in on. (requires herbalism)
 		{ "Lifeblood",
-			jps.UseCDs
-			and berserk },
+			jps.UseCDs },
 
-		-- Interrupts
-		{ "Skull Bash", 
-			jps.shouldKick() 
-			and jps.Interrupts },
-
-    -- Talent based stun.
-		{ "Mighty Bash", 
-			jps.shouldKick() 
-			and jps.Interrupts },
-
+		-- Treants (talent specific)
+		{ "Force of Nature" },
+    
 		-- Faerie Fire single-target when we know it's going to be a longer fight.
 		{ "Faerie Fire", 
 			not jps.MultiTarget
@@ -311,9 +312,8 @@ function druid_feral(self)
 		{ "Shred", 
 			not jps.MultiTarget
       and energy >= shredCost
-			and ( berserk 
-				or jps.buff("tiger's fury")
-			) },
+			and (tigersFury 
+				or berserk) },
 
 		-- Shred
 		{ "Shred", 
