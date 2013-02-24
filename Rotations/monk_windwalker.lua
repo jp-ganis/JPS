@@ -73,7 +73,7 @@ function monk_windwalker(self)
     { jps.useSlot(10), 
       jps.UseCDs },
     
-    -- Disabled because it requires targetting before it's cast, which is really fucking annoying.
+    -- Disabled because it requires targeting before it's cast, which is really fucking annoying.
     -- Thermal Grenade CD. (engineering belt)
     -- { jps.useSlot(6), 
     --   jps.UseCDs },
