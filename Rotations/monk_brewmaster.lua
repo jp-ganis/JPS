@@ -50,7 +50,10 @@ function monk_brewmaster(self)
     -- Purifying Brew to clear stagger when it's moderate or heavy.
 		{ "Purifying Brew",
 			jps.debuff("Moderate Stagger") 
-			or jps.debuff("Heavy Stagger") },
+			or jps.debuff("Heavy Stagger")
+			or jps.buff("Healing Elixirs")
+			and jps.hp() < .9
+			and chi >= 1},
 		
 		-- Elusive Brew with 10 or more stacks.
 		{ "Elusive Brew", 
@@ -66,7 +69,8 @@ function monk_brewmaster(self)
       jps.MultiTarget
       or jps.hp() < .85
       or ( not jps.buff("Shuffle")
-        or jps.buffDuration("Shuffle") < 3 ) },
+        or jps.buffDuration("Shuffle") < 3 )
+        and chi >= 2},
 
     -- Blackout Kick if shuffle is missing or about to drop.
     { "Blackout Kick", 
@@ -74,10 +78,11 @@ function monk_brewmaster(self)
         or jps.buffDuration("Shuffle") < 3 )
       and chi >= 2 },
 
-		-- Guard when Power Guard buff is available, we're taking some damage.
+		-- Guard when Power Guard buff is available and while taking some damage.
 		{ "Guard", 
 			jps.buff("Power Guard") 
-			and jps.hp() < .9 },
+			and jps.hp() < .9
+			and chi > 1 },
 
     -- On-Use Trinket 1.
     { jps.useSlot(13), 
@@ -113,9 +118,11 @@ function monk_brewmaster(self)
     { "Invoke Xuen, the White Tiger", 
       jps.UseCDs },
         
-		-- Breath of Fire is the strongest AoE.
+		-- Breath of Fire when target(s) have Dizzying Haze debuff and while you can't AOE with Spinning Crane Kick.
 		{ "Breath of Fire", 
-			jps.MultiTarget },
+			jps.MultiTarget
+			and jps.debuff("Dizzying Haze")
+			and chi >= 2 },
 
 		-- Expel Harm for building some chi and healing if not at full health.
 		{ "Expel Harm",
