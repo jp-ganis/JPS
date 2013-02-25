@@ -64,8 +64,13 @@ function monk_windwalker(self)
       and jps.shouldKick() },
     
     -- Trinket CDs.
-    { jps.useSlot(13), 
-      jps.UseCDs },
+    -- Disabled one slot (the 1st one) just so the addon won't waste a cooldown, like PvP trinkets. Most people
+    -- don't even use 2 trinkets with USE effect anyways. Even if you DO use 2 trinkets with USE effect, having
+    -- one trinket slot spared will even time your burst or defensive cooldowns better. Put your most used and
+    -- faster, or the one you just forget most to activate at slot 2. You will thank me later.
+    
+    -- { jps.useSlot(13), 
+    --   jps.UseCDs },
     { jps.useSlot(14), 
       jps.UseCDs },
     
