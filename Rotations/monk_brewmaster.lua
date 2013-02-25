@@ -122,8 +122,7 @@ function monk_brewmaster(self)
 		{ "Breath of Fire", 
 			jps.MultiTarget
 			and jps.debuff("Dizzying Haze")
-			and chi >= 2
-			and energy < 40 },
+			and chi >= 2 },
 
 		-- Expel Harm for building some chi and healing if not at full health.
 		{ "Expel Harm",
