@@ -28,35 +28,49 @@
 -- and take them over the side of a cliff. Or if a mage initiates combat with Living Bomb, etc.
 jps.UserInitiatedSpellsToIgnore = {
 	"Auto Attack",
+	-- Monks Skills
+	"Storm, Earth and Fire", -- Stops JPS from despawning your copy as soon as it is created.
+  	"Purifying Brew", -- Having more than 1 chi, this can prevent using it twice in a row.
+  	"Tigereye Brew",
+  	"Detox", -- When casting Detox without any dispellable debuffs, the cooldown resets.
+  	"Provoke", -- It can prevent you wasting your taunt in some rare situations.
+  	"Disable", -- Gives you a better control on this skill using JPS.
+  	"Legacy of the Emperor",
+  	"Legacy of the White Tiger",
 	"Roll",
 	"Chi Torpedo",
 	"Flying Serpent Kick",
+	"Expel Harm", -- Brewmasters below 35% health have no cooldown on this skill due Desperate Measures.
+	"Breath of Fire", -- If you have 4 chi or more, this can kick twice.
+	-- Mage Skills
 	"Blink",
 	"Living Bomb",
 	"Nether Tempest",
-  "Ice Lance",
-  "Arcane Brilliance",
-  "Spellsteal",
-  "Remove Curse",
-  "Rejuvenation",
-  "Cat Form",
-  "Bear Form",
-  "Treant Form",
-  "Travel Form",
-  "Aquatic Form",
-  "Thrash",
+  	"Ice Lance",
+  	"Arcane Brilliance",
+  	"Spellsteal",
+  	"Remove Curse",
+  	-- Druid Skills
+  	"Rejuvenation",
+  	"Cat Form",
+ 	"Bear Form",
+ 	"Treant Form",
+  	"Travel Form",
+  	"Aquatic Form",
+  	"Thrash",
 	"Ravage",
-  "Mark of the Wild",
-  "Faerie Fire",
-  "Moonfire",
-  "Lifebloom",
-  "Power Word: Fortitude",
-  "Shadow Word: Pain",
-  "Mind Flay",
-  "Mind Spike",
-  "Unstable Affliction",
-  "Corruption",
-  "Shadow Bolt",
+ 	"Mark of the Wild",
+	"Faerie Fire",
+  	"Moonfire",
+  	"Lifebloom",
+  	-- Priest Skills
+  	"Power Word: Fortitude",
+  	"Shadow Word: Pain",
+  	"Mind Flay",
+  	"Mind Spike",
+  	"Unstable Affliction",
+  	"Corruption",
+  	"Shadow Bolt",
 }
 
 function jps.shouldSpellBeIgnored(spell)
