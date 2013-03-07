@@ -17,10 +17,10 @@ function monk_brewmaster(self)
 		--   IsShiftKeyDown() ~= nil 
 		--   and GetCurrentKeyBoardFocus() == nil },
 
-		-- Fortifying Brew if you get low.
-		{ "Fortifying Brew", 
+    -- Fortifying Brew if you get low.
+    { "Fortifying Brew", 
       jps.UseCDs 
-      and jps.hp() < .4
+      and jps.hp() < .35 -- Changed to 35% health because when at or below it, Desperate Measures triggers.
       and not defensiveCDActive },
 
     -- Diffuse Magic if you get low. (talent based)
@@ -35,12 +35,12 @@ function monk_brewmaster(self)
       and jps.hp() < .6 
       and not defensiveCDActive },
 
-    -- Healthstone if you get low.
-    { "Healthstone",
-      jps.hp() < .5
-      and GetItemCount("Healthstone", 0, 1) > 0 },
+    -- Healthstone if you get low. (I will disable this, because it's not working...)
+    -- { "Healthstone",
+    --  jps.hp() < .5
+    --  and GetItemCount("Healthstone", 0, 1) > 0 },
         
-		-- Insta-kill single target when available.
+    -- Insta-kill single target when available.
     { "Touch of Death", 
       jps.UseCDs 
       and jps.buff("Death Note") 
@@ -52,7 +52,7 @@ function monk_brewmaster(self)
 			jps.debuff("Moderate Stagger") 
 			or jps.debuff("Heavy Stagger")
 			or jps.buff("Healing Elixirs")
-			and jps.hp() < .9
+			and jps.hp() < .85 -- 5.2 now restore 15% with Healing Elixirs.
 			and chi >= 1},
 		
 		-- Elusive Brew with 10 or more stacks.
@@ -63,26 +63,26 @@ function monk_brewmaster(self)
     { "Chi Brew", 
       chi == 0 },
 
-    -- Rushing Jade Wind applies shuffle with a heal and multi-target damage. 
+    -- Rushing Jade Wind applies shuffle and multi-target damage. 
     --  Use it instead of Blackout kick when it's available. (talent based)
     { "Rushing Jade Wind", 
       jps.MultiTarget
-      or jps.hp() < .85
+      -- or jps.hp() < .85 (this skill doesn't heal, who wrote this before was mistaken).
       or ( not jps.buff("Shuffle")
-        or jps.buffDuration("Shuffle") < 3 )
-        and chi >= 2},
+      or jps.buffDuration("Shuffle") < 3 )
+      and chi >= 2},
 
     -- Blackout Kick if shuffle is missing or about to drop.
     { "Blackout Kick", 
       ( not jps.buff("Shuffle")
         or jps.buffDuration("Shuffle") < 3 )
-      and chi >= 2 },
+        and chi >= 2 },
 
 		-- Guard when Power Guard buff is available and while taking some damage.
 		{ "Guard", 
 			jps.buff("Power Guard") 
 			and jps.hp() < .9
-			and chi > 1 },
+			and chi >= 2 },
 
     -- On-Use Trinket 1.
     { jps.useSlot(13), 
@@ -103,8 +103,8 @@ function monk_brewmaster(self)
 
 		-- Keg Smash to build some chi and keep the weakened blows debuff up.
 		{ "Keg Smash", 
-			chi < 3
-      or not jps.debuff("Weakened Blows") },
+		chi < 3
+      		or not jps.debuff("Weakened Blows") },
 
 		-- Interrupt.
     { "Spear Hand Strike", 
@@ -118,7 +118,7 @@ function monk_brewmaster(self)
     { "Invoke Xuen, the White Tiger", 
       jps.UseCDs },
         
-		-- Breath of Fire when target(s) have Dizzying Haze debuff and while you can't AOE with Spinning Crane Kick.
+		-- Breath of Fire when target(s) have Dizzying Haze debuff.
 		{ "Breath of Fire", 
 			jps.MultiTarget
 			and jps.debuff("Dizzying Haze")
@@ -129,6 +129,11 @@ function monk_brewmaster(self)
 			jps.hp() < .85
 			and energy >= 40
 			and chi < 4 },
+
+		-- Expel Harm when below 35% heatlh does not have cooldown due Desperate Measures.
+		{ "Expel Harm",
+			jps.hp() < .35
+			and energy >= 40 },
 
     -- Tiger Palm to keep the Tiger Power buff up. No chi cost due to Brewmaster specialization at level 34.
     { "Tiger Palm", 
