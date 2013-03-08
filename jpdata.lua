@@ -29,7 +29,7 @@
 jps.UserInitiatedSpellsToIgnore = {
 	"Auto Attack",
 	-- Monks Skills
-	"Storm, Earth and Fire", -- Stops JPS from despawning your copy as soon as it is created.
+	"Storm, Earth, and Fire", -- Stops JPS from despawning your copy as soon as it is created.
   	"Purifying Brew", -- Having more than 1 chi, this can prevent using it twice in a row.
   	"Tigereye Brew",
   	"Detox", -- When casting Detox without any dispellable debuffs, the cooldown resets.
