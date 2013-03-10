@@ -108,7 +108,14 @@ function monk_windwalker(self)
     -- Tigereye Brew when we have 10 stacks.
     { "Tigereye Brew", 
       jps.UseCDs
-      and jps.buffStacks("Tigereye Brew") == 10 },
+      and jps.buffStacks("Tigereye Brew") >= 10 },
+    
+    -- Tigereye Brew to heal you if you have the Healing Elixirs talent. This is a more PvP
+    -- oriented strategy, but can also help you in PvE enviroment).
+    { "Tigereye Brew", 
+      jps.UseCDs
+      and jps.buff("Healing Elixirs")
+      and jps.hp() < .85 },
     
     -- Energizing Brew whenever if it'll take approximately more than 5 seconds of regen to max energy.
     { "Energizing Brew", 
@@ -119,11 +126,14 @@ function monk_windwalker(self)
       jps.UseCDs },
     
     -- Rushing Jade Wind. (talent based)
-    { "Rushing Jade Wind" },
+    { "Rushing Jade Wind", 
+        jps.MultiTarget
+        and chi >= 2},
     
     -- Rising Sun Kick on cooldown.
     { "Rising Sun Kick" },
-
+    
+    
     -- Fist of fury is a very situational chi dump, and is mainly filler to regenerate energy while it channels.
     -- Only use it with low energy and if RSK will be on CD and Tiger Power will be up for it's duration.
     { "Fists of Fury",
@@ -152,18 +162,15 @@ function monk_windwalker(self)
 
     -- Chi Wave if we're not at full health. (talent based)
     { "Chi Wave",
-      jps.hp() < .8
-      and chi >= 2 },
+      jps.hp() < .8 },
 
     -- Chi Burst if we're not at full health. (talent based)
     { "Chi Burst", 
-      jps.hp() < .8
-      and chi >= 2 },
+      jps.hp() < .8 },
 
     -- Zen Sphere if we're not at full health. (talent based)
     { "Zen Sphere", 
       jps.hp() < .8
-      and chi >= 2
       and not jps.buff("Zen Sphere") },
 
     -- Expel Harm to build chi and heal if we're not at full health.
