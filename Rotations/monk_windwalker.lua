@@ -16,9 +16,6 @@ function monk_windwalker(self)
   local chi = UnitPower("Player", 12)
   local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Zen Meditation") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
   local tigerPowerDuration = jps.buffDuration("Tiger Power")
-  local disableDuration = jps.debuffDuration("Disable")
-	local targetClass = UnitClass("target")
-	local shouldDisable = targetClass == "warrior" or targetClass == "rogue" or targetClass == "death knight" or targetClass == "mage" or targetClass == "priest" or targetClass == "druid" or targetClass == "monk" or targetClass == "death knight" or targetClass == "hunter" or targetClass == "paladin" or targetClass == "warlock"
 
   -- Need to use the Tigereye Brew buff ID because it shares it's name with the stacks.
   local tigereyeActive = jps.buffID(116740)
@@ -136,12 +133,7 @@ function monk_windwalker(self)
     -- Rising Sun Kick on cooldown.
     { "Rising Sun Kick" },
     
-    -- Disable in PvP.
-    { "Disable",
-      shouldDisable
-      and not jps.debuff ("Disable","target")
-      and not jps.buff ("Hand of Freedom","target") },
-
+    
     -- Fist of fury is a very situational chi dump, and is mainly filler to regenerate energy while it channels.
     -- Only use it with low energy and if RSK will be on CD and Tiger Power will be up for it's duration.
     { "Fists of Fury",
