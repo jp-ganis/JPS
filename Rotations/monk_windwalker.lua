@@ -16,6 +16,9 @@ function monk_windwalker(self)
   local chi = UnitPower("Player", 12)
   local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Zen Meditation") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
   local tigerPowerDuration = jps.buffDuration("Tiger Power")
+  local disableDuration = jps.debuffDuration("Disable")
+	local targetClass = UnitClass("target")
+	local shouldDisable = targetClass == "warrior" or targetClass == "rogue" or targetClass == "death knight" or targetClass == "mage" or targetClass == "priest" or targetClass == "druid" or targetClass == "monk" or targetClass == "death knight" or targetClass == "hunter" or targetClass == "paladin" or targetClass == "warlock"
 
   -- Need to use the Tigereye Brew buff ID because it shares it's name with the stacks.
   local tigereyeActive = jps.buffID(116740)
@@ -108,7 +111,14 @@ function monk_windwalker(self)
     -- Tigereye Brew when we have 10 stacks.
     { "Tigereye Brew", 
       jps.UseCDs
-      and jps.buffStacks("Tigereye Brew") == 10 },
+      and jps.buffStacks("Tigereye Brew") >= 10 },
+    
+    -- Tigereye Brew to heal you if you have the Healing Elixirs talent. This is a more PvP
+    -- oriented strategy, but can also help you in PvE enviroment).
+    { "Tigereye Brew", 
+      jps.UseCDs
+      and jps.buff("Healing Elixirs")
+      and jps.hp() < .85 },
     
     -- Energizing Brew whenever if it'll take approximately more than 5 seconds of regen to max energy.
     { "Energizing Brew", 
@@ -119,10 +129,18 @@ function monk_windwalker(self)
       jps.UseCDs },
     
     -- Rushing Jade Wind. (talent based)
-    { "Rushing Jade Wind" },
+    { "Rushing Jade Wind", 
+        jps.MultiTarget
+        and chi >= 2},
     
     -- Rising Sun Kick on cooldown.
     { "Rising Sun Kick" },
+    
+    -- Disable in PvP.
+    { "Disable",
+      shouldDisable
+      and not jps.debuff ("Disable","target")
+      and not jps.buff ("Hand of Freedom","target") },
 
     -- Fist of fury is a very situational chi dump, and is mainly filler to regenerate energy while it channels.
     -- Only use it with low energy and if RSK will be on CD and Tiger Power will be up for it's duration.
@@ -152,18 +170,15 @@ function monk_windwalker(self)
 
     -- Chi Wave if we're not at full health. (talent based)
     { "Chi Wave",
-      jps.hp() < .8
-      and chi >= 2 },
+      jps.hp() < .8 },
 
     -- Chi Burst if we're not at full health. (talent based)
     { "Chi Burst", 
-      jps.hp() < .8
-      and chi >= 2 },
+      jps.hp() < .8 },
 
     -- Zen Sphere if we're not at full health. (talent based)
     { "Zen Sphere", 
       jps.hp() < .8
-      and chi >= 2
       and not jps.buff("Zen Sphere") },
 
     -- Expel Harm to build chi and heal if we're not at full health.
