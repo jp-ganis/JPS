@@ -1,87 +1,175 @@
 function shaman_enhancement(self)
-    --simcraft and more
-	-- Talents:
-	-- Tier 1: Astral Shift
-	-- Tier 2: Windwalk Totem
-	-- Tier 3: Call of the Elements
-	-- Tier 4: Echo of the Elements
-	-- Tier 5: Ancestral Guidance
-	-- Tier 6: Unleashed Fury
-	-- Major Glyphs: Glyph of Chain Lightning, Glyph of Flame Shock
+  --simcraft and more
+  -- Talents:
+  -- Tier 1: Astral Shift
+  -- Tier 2: Windwalk Totem
+  -- Tier 3: Call of the Elements
+  -- Tier 4: Echo of the Elements
+  -- Tier 5: Ancestral Guidance
+  -- Tier 6: Unleashed Fury
+  -- Major Glyphs: Glyph of Chain Lightning, Glyph of Flame Shock
 	
-	-- Usage info:
-	-- Use CDs for trinkets, Feral Spirit and Fire Elemental Totem
-	-- Use AoE for Magma Totem, Fire Nova and Chain Lightning on Maelstrom Stacks
-	-- Searing and Magma Totem will not override Fire Elemental Totem
+  -- Usage info:
+  -- Use CDs for trinkets, Feral Spirit and Fire Elemental Totem
+  -- Use AoE for Magma Totem, Fire Nova and Chain Lightning on Maelstrom Stacks
+  -- Searing and Magma Totem will not override Fire Elemental Totem
 	
-	-- Todo:
-	-- Perhaps implement more survivability for soloing
+  -- Todo:
+  -- Perhaps implement more survivability for soloing
 	
-    local maelstromStacks = jps.buffStacks("maelstrom weapon")
-    local shockCD = jps.cd("earth shock")
-    local chainCD = jps.cd("chain lightning")
+  local maelstromStacks = jps.buffStacks("maelstrom weapon")
+  local shockCD = jps.cd("earth shock")
+  local chainCD = jps.cd("chain lightning")
 
-    -- Totems
-    local _, fireName, _, _, _ = GetTotemInfo(1)
-    local _, earthName, _, _, _ = GetTotemInfo(2)
-    local _, waterName, _, _, _ = GetTotemInfo(3)
-    local _, airName, _, _, _ = GetTotemInfo(4)
+  -- Weapon Enchants
+  local mh, _, _, oh, _, _, _, _, _ = GetWeaponEnchantInfo()
 
-    local mh, _, _, oh, _, _, _, _, _ =GetWeaponEnchantInfo()
+  -- Totems
+  local _, fireTotem, _, _, _ = GetTotemInfo(1)
+  local _, earthTotem, _, _, _ = GetTotemInfo(2)
+  local _, waterName, _, _, _ = GetTotemInfo(3)
+  local _, airTotem, _, _, _ = GetTotemInfo(4)
 
-    local haveFireTotem = fireName ~= ""
-    local haveEarthTotem = earthName ~= ""
-    local haveWaterTotem = waterName ~= ""
-    local haveAirTotem = airName ~= ""
+  local fireTotemActive = fireTotem ~= ""
+  local earthTotemActive = earthTotem ~= ""
+  local waterTotemActive = waterName ~= ""
+  local airTotemActive = airTotem ~= ""
+  
+  -- Fear
+  local feared = jps.debuff("Fear") or jps.debuff("Intimidating Shout") or jps.debuff("Howl of Terror") or jps.debuff("Psychic Scream")
+  
+  local possibleSpells = {
+    
+    { "Lightning Shield",
+      not jps.buff("Lightning Shield") },
 
-	-- Intelligent trinkets
-	local trinket1ID = GetInventoryItemID("player", GetInventorySlotInfo("Trinket0Slot"))
-	local canUseTrinket1,_ = GetItemSpell(trinket1ID)
-	local _,Trinket1ready,_ = GetItemCooldown(trinket1ID)
+    -- Weapons.
+    { "Windfury Weapon",
+      not mh },
+    { "Flametongue Weapon",
+      mh
+      and not oh },
+    
+    -- Oh shit button
+    { "Astral Shift", 
+      jps.hp() < .35 },
+    
+    -- Healing Tide
+    { "Healing Tide Totem", 
+      jps.hp() < .5 },
+    
+    -- Healing Surge
+    { "Healing Surge", 
+      jps.hp() < .7 },
+    
+    -- Wolves
+    { "Feral Spirit",
+      jps.UseCDs },
+    
+    -- Big guy
+    { "Fire Elemental Totem",
+       jps.UseCDs },
+    
+    -- AoE
+    { "Magma Totem",
+      jps.MultiTarget 
+      and fireTotem ~= "Magma Totem" 
+      and fireTotem ~= "Fire Elemental Totem" },
+    
+    -- Searing
+    { "Searing Totem",
+       not fireTotemActive },
+    
+    -- Trinket CDs.
+    { jps.useSlot(13), 
+      jps.UseCDs },
+    { jps.useSlot(14), 
+      jps.UseCDs },
+    
+    -- Synapse Springs CD. (engineering gloves)
+    { jps.useSlot(10), 
+      jps.UseCDs },
+      
+    -- Lifeblood CD. (herbalists)
+    { "Lifeblood",
+      jps.UseCDs },
+    
+    -- DPS Racial CD.
+    { jps.DPSRacial, 
+      jps.UseCDs },
+         
+    -- Interrupts
+    { "Wind Shear",
+      jps.shouldKick() },
+    
+    -- AoE
+    { "Fire Nova",
+      jps.MultiTarget 
+      and jps.debuff("Flame Shock") },
 
-	local trinket2ID = GetInventoryItemID("player", GetInventorySlotInfo("Trinket1Slot"))
-	local canUseTrinket2,_ = GetItemSpell(trinket2ID)
-	local _,Trinket2ready,_ = GetItemCooldown(trinket2ID)
-
-    local spellTable =
-    {
-		-- Trinkets
-		{ {"macro","/use 13"}, 		jps.UseCDs and canUseTrinket1 ~= nil and Trinket1ready == 0 },  
-		{ {"macro","/use 14"}, 		jps.UseCDs and canUseTrinket2 ~= nil and Trinket2ready == 0 }, 	
-		-- Cooldowns
-		{ "fire elemental totem", 	jps.UseCDs },
-        { "feral spirit", 			jps.UseCDs },
-        -- Kicks
-        { "wind shear", 			jps.shouldKick("target") },
-        { "wind shear", 			jps.shouldKick("focus"), "focus" },
-		-- Weapon buffs/enchants
-        { "Windfury Weapon", 		not mh},
-        { "Flametongue Weapon", 	not oh and mh},
-        { "lightning shield", 		not jps.buff("lightning shield") },
-		-- AoE
-        { "magma totem", 			jps.MultiTarget and fireName ~= "Magma Totem" and fireName ~= "Fire Elemental Totem" },
-        { "Fire Nova", 				jps.MultiTarget and jps.debuff("flame shock") },
-		{ "chain lightning", 		jps.MultiTarget and maelstromStacks >= 3 },
+    -- AoE
+    { "Chain Lightning",
+      jps.MultiTarget 
+      and maelstromStacks >= 3 },
 		
-		-- Rotation
-        { "Ascendance", 			jps.UseCDs and not jps.buff("Ascendance") }, -- jps.cd("strike") >= 3
-        { "searing totem", 			not jps.MultiTarget and fireName ~= "Searing Totem" and fireName ~= "Fire Elemental Totem" }, -- GetTotemTimeLeft(1) < 1
-        { "Unleash Elements", 		"onCD"}, -- If talent in tier 6
-        { "Elemental Blast", 		"onCD"}, -- Talent in tier 6
-        { "Lightning Bolt", 		maelstromStacks >= 5 },
-        { "Stormsblast", 			"onCD"},
-        { "Stormstrike", 			"onCD"},
-        { "flame shock", 			jps.debuffDuration("flame shock") <= 1.5 or jps.buff("unleash flame") },
-        { "lava lash", 				"onCD"},
-        { "Unleash Elements", 		"onCD"}, 
-        { "lightning bolt", 		maelstromStacks >= 3 and jps.buff("Ascendance") },
-        { "Ancestral Swiftness", 	maelstromStacks < 2 }, -- Talent tier 4
-        { "Lightning Bolt", 		jps.buff("Ancestral Swiftness") },
-        { "flame shock", 			jps.buff("unleash flame") and jps.debuffDuration("Flame Shock") <= 3 },
-        { "earth shock", 			"onCD" },
-        { "spiritwalker's grace", 	jps.Moving },
-        { "lightning bolt", 		maelstromStacks > 1 and not jps.buff("Ascendance") },
-    }
+    -- Ascendance
+    { "Ascendance",
+      jps.UseCDs 
+      and not jps.buff("Ascendance") },
+    
+    -- Unleash Elements
+    { "Unleash Elements" },
 
-    return parseSpellTable( spellTable )
+    -- Elemental Blast
+    { "Elemental Blast" },
+    
+    -- Lightning Bolt
+    { "Lightning Bolt",
+      maelstromStacks >= 5 },
+    
+    -- Stormsblast
+    { "Stormsblast" },
+    
+    -- Stormstrike
+    { "Stormstrike" },
+    
+    -- Flame Shock
+    { "Flame Shock",
+      jps.debuffDuration("Flame Shock") <= 1.5 
+      or jps.buff("Unleash Flame") },
+    
+    -- Lava Lash
+    { "Lava Lash" },
+
+    -- Unleash Elements
+    { "Unleash Elements" }, 
+    
+    -- Lightning Bolt
+    { "Lightning Bolt",
+      maelstromStacks >= 3 
+      and jps.buff("Ascendance") },
+    
+    -- Ancestral Swiftness
+    { "Ancestral Swiftness",
+      maelstromStacks < 2 },
+
+    -- Lightning Bolt
+    { "Lightning Bolt",
+      jps.buff("Ancestral Swiftness") },
+    
+    -- Earth Shock
+    { "Earth Shock" },
+
+    -- Spiritwalker's Grace
+    { "Spiritwalker's Grace",
+      jps.Moving },
+    
+    -- Lightning Bolt
+    { "Lightning Bolt",
+      maelstromStacks >= 4
+      and not jps.buff("Ascendance")
+      and jps.mana() > .5 },
+  }
+
+  return parseSpellTable(possibleSpells)
 end

@@ -123,23 +123,23 @@ function monk_brewmaster(self)
 			and energy >= 40
 			and chi < 4 },
 
+    -- Zen Sphere for threat and heal (talent based).
+    { "Zen Sphere",
+      jps.hp() < .95 },
+    
+		-- Chi Wave for threat and heal (talent based).
+		{ "Chi Wave",
+      jps.hp() < .95 },
+    
+		-- Chi Wave for threat and heal (talent based).
+		{ "Chi Burst",
+      jps.hp() < .95 },
+        
     -- Tiger Palm to keep the Tiger Power buff up. No chi cost due to Brewmaster specialization at level 34.
     { "Tiger Palm", 
       not jps.MultiTarget
       and not jps.buff("Tiger Power")
       or jps.buffDuration("Tiger Power") <= 1.5 },
-
-    -- Zen Sphere for threat and heal (talent based).
-    { "Zen Sphere",
-      jps.hp() < .85 },
-    
-		-- Chi Wave for threat and heal (talent based).
-		{ "Chi Wave",
-      jps.hp() < .85 },
-    
-		-- Chi Wave for threat and heal (talent based).
-		{ "Chi Burst",
-      jps.hp() < .85 },
 
 		-- Spinning Crane Kick for multi-target threat.
 		{ "Spinning Crane Kick", 

@@ -50,46 +50,118 @@ function new_dk_blood(self)
 	local canUseTrinket2,_ = GetItemSpell(trinket2ID)
 	local _,Trinket2ready,_ = GetItemCooldown(trinket2ID)
 	
-	local spellTable =
+	local possibleSpells =
 	{
-		-- Blood presence
-		{ "blood presence", 		not jps.buff("blood presence") },
-		-- Moved DnD to the top so it will cast immediately
-		{ "death and decay",		IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, -- GetCurrentKeyBoardFocus: Avoid casting while chat is open and you press shift
---		{ "army of the dead",		IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, -- todo
+		-- Make sure we're in Blood Presence.
+		{ "Blood Presence",
+      not jps.buff("Blood Presence") },
+    
+		-- Death and Decay when shift is down.
+		{ "Death and Decay",
+      IsShiftKeyDown() ~= nil 
+      and GetCurrentKeyBoardFocus() == nil },
+    
+    -- Army of the Dead when control is down.
+    { "Army of the Dead",
+      IsLeftControlKeyDown() ~= nil 
+      and GetCurrentKeyBoardFocus() == nil },
+    
 		-- Taunt
-		{ "dark command", 			targetThreatStatus ~= 3 and not jps.targetTargetTank() },
+		{ "Dark Command",
+      targetThreatStatus ~= 3 
+      and not jps.targetTargetTank() },
+      
 		-- Kick
-		{ "mind freeze", 			jps.shouldKick() },
-		{ "Strangulate", 			jps.shouldKick() and jps.LastCast ~= "mind freeze" },
+		{ "Mind Freeze",
+      jps.shouldKick() },
+    
+    -- Kick
+		{ "Strangulate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "mind freeze" },
+      
 		-- Aggro cooldowns
-		{ "Raise Dead", 			jps.UseCDs and UnitExists("pet") == nil },
-		{ "Dancing Rune Weapon", 	jps.UseCDs },
-		-- Defensive cooldowns
-		{ "Death Pact", 			jps.hp() < 0.5 and haveGhoul},
-		{ "Icebound Fortitude", 	jps.hp() < 0.3 },
-		{ "Vampiric Blood", 		jps.hp() < 0.5 },
-		{ "Rune Tap", 				jps.hp() < 0.8 },
-		-- Trinkets
-		{ {"macro","/use 13"}, 		jps.UseCDs and canUseTrinket1 ~= nil and Trinket1ready == 0 }, -- 0 = no CD = trinket is ready 
-		{ {"macro","/use 14"}, 		jps.UseCDs and canUseTrinket2 ~= nil and Trinket2ready == 0 }, 		
+		{ "Raise Dead",
+      jps.UseCDs 
+      and UnitExists("pet") == nil },
+    
+		{ "Dancing Rune Weapon",
+      jps.UseCDs },
+      
+		-- Defensive cooldown
+		{ "Death Pact",
+      jps.hp() < 0.5
+      and haveGhoul },
+    
+    -- Defensive cooldown
+		{ "Icebound Fortitude",
+      jps.hp() < 0.3 },
+    
+    -- Defensive cooldown
+		{ "Vampiric Blood",
+      jps.hp() < 0.5 },
+      
+    -- Defensive cooldown
+		{ "Rune Tap",
+      jps.hp() < 0.8 },
+      
+    -- On-Use Trinket 1.
+    { jps.useSlot(13), 
+      jps.UseCDs },
+
+    -- On-Use Trinket 2.
+    { jps.useSlot(14), 
+      jps.UseCDs },
+
+    -- Engineers may have synapse springs on their gloves (slot 10).
+    { jps.useSlot(10), 
+      chi > 3
+      and energy >= 50 },
+
+    -- Herbalists have Lifeblood.
+    { "Lifeblood",
+      jps.UseCDs },
+		
 		-- Buffs
-		{ "Bone Shield", 			not jps.buff("bone shield") },
+		{ "Bone Shield",
+      not jps.buff("bone shield") },
+    
 		-- Single target
-		{ "outbreak",				ffDuration <= 2 or bpDuration <= 2 },
-		{ "soul reaper",			jps.hp("target") <= 0.35 }, 					-- Requires level 87
-		{ "plague strike", 			not jps.debuff("blood plague") },
-		{ "icy touch", 				not jps.debuff("frost fever") },
-		{ "death strike", 			"onCD" },
-		{ "blood boil", 			jps.buff("crimson scourge") },
-		{ "heart strike", 			jps.debuff("blood plague") and jps.debuff("frost fever") },
-		{ "rune strike", 			rp >= 40 },
-		{ "horn of winter", 		"onCD" },
-		{ "empower rune weapon" , 	not two_dr and not two_fr and not two_ur },
+		{ "Outbreak",
+      ffDuration <= 2 
+      or bpDuration <= 2 },
+      
+		{ "Soul Reaper",
+      jps.hp("target") <= 0.35 },
+      
+		{ "Plague Strike",
+      not jps.debuff("Blood Plague") },
+      
+		{ "Icy Touch",
+      not jps.debuff("Frost Fever") },
+      
+		{ "Death Strike" },
+      
+		{ "Blood Boil",
+      jps.buff("Crimson Scourge") },
+      
+		{ "Heart Strike",
+      jps.debuff("Blood Plague") 
+      and jps.debuff("Frost Fever") },
+      
+		{ "Rune Strike",
+      rp >= 40 },
+      
+		{ "Horn of Winter" },
+    
+		{ "Empower Rune Weapon",
+      not two_dr 
+      and not two_fr 
+      and not two_ur },
 	}
 
-	spell = parseSpellTable(spellTable)
-	if spell == "death and decay" then jps.groundClick() end
+	spell = parseSpellTable(possibleSpells)
+	if spell == "Death and Decay" then jps.groundClick() end
 
 	return spell
 end

@@ -147,18 +147,15 @@ function monk_windwalker(self)
 
     -- Chi Wave if we're not at full health. (talent based)
     { "Chi Wave",
-      jps.hp() < .8
-      and chi >= 2 },
+      jps.hp() < .8 },
 
     -- Chi Burst if we're not at full health. (talent based)
     { "Chi Burst", 
-      jps.hp() < .8
-      and chi >= 2 },
+      jps.hp() < .8 },
 
     -- Zen Sphere if we're not at full health. (talent based)
     { "Zen Sphere", 
       jps.hp() < .8
-      and chi >= 2
       and not jps.buff("Zen Sphere") },
 
     -- Expel Harm to build chi and heal if we're not at full health.

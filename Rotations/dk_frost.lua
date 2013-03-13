@@ -1,130 +1,117 @@
-function dk_frost(self,initOnly)
+-- Shift-key to cast Death and Decay
+function dk_frost(self)
+	
+  if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
+  
+	local runicPower = UnitPower("player")
+
+	local frostFeverDuration = jps.debuffDuration("Frost Fever")
+	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
+
+	local dr1 = select(3,GetRuneCooldown(1))
+	local dr2 = select(3,GetRuneCooldown(2))
+	local ur1 = select(3,GetRuneCooldown(3))
+	local ur2 = select(3,GetRuneCooldown(4))
+	local fr1 = select(3,GetRuneCooldown(5))
+	local fr2 = select(3,GetRuneCooldown(6))
+	local one_dr = dr1 or dr2
+	local two_dr = dr1 and dr2
+	local one_fr = fr1 or fr2
+	local two_fr = fr1 and fr2
+	local one_ur = ur1 or ur2
+	local two_ur = ur1 and ur2
+
+	local possibleSpells = {
     
-    if(initOnly == nil and (UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1)) then return end    
-
-    local rp = UnitPower("player",1)
-    local ff_dur = jps.debuffDuration("frost fever")
-    local bp_dur = jps.debuffDuration("blood plague")
-    local wholeRuneCount = 0
-
-    function getRunes()
-        wholeRuneCount = 0
-        local runes = {}
-        local runeNames = {"dr","dr","fr","fr","ur","ur"}
-        for i = 1, 6,1 do 
-            local oldVal = runes[runeNames[i]] or 0
-            wholeRuneCount = sif((select(3,GetRuneCooldown(i)) == true),wholeRuneCount+1,wholeRuneCount)
-            runes[runeNames[i]] = (oldVal + sif((select(3,GetRuneCooldown(i)) == true),1,0))
-        end
-
-        return runes
-    end
+    -- Death and Decay when shift key is down.
+		{ "Death and Decay",
+  	  IsShiftKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
     
-    function canCastObliterate()
-        local runes = getRunes()
-        if (runes["fr"] >= 1 and runes["ur"] >= 1) then return true end
-        if (runes["dr"] >= 1 and runes["ur"] >= 1) then return true end
-        if (runes["fr"] >= 1 and runes["dr"] >= 1) then return true end
-        return false
-    end
+    -- Empower Rune Weapon
+    { "Empower Rune Weapon",
+      jps.UseCDs
+      and runicPower <= 25
+      and not two_dr
+      and not two_fr
+      and not two_ur },
+    
+    -- Pillar of Frost
+    { "Pillar of Frost",
+      jps.UseCDs },
+    
+    -- Raise Dead when Pillar of Frost is active.
+    { "Raise Dead",
+      jps.UseCDs
+      and jps.buff("Pillar of Frost") },
         
-    spellTable = {}
+    -- Outbreak to keep diseases up.
+		{ "Outbreak",
+      frostFeverDuration < 3
+      or bloodPlagueDuration < 3 },
     
-    spellTable[1] ={
-       ["name"] =  "DK Main Table",
-       ["tooltip"] = 'hold shift for Death and Decay',
-       ["rotation"] = {
-                           -- Kicks
-                        { "mind freeze",        jps.shouldKick() },
-                        { "mind freeze",        jps.shouldKick("focus"), "focus" },
-                        { "Strangulate",        jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze" },
-                        { "Strangulate",        jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
-                
-                        -- Buffs
-                        { "horn of winter",      "onCD" },
-                
-                        -- Cooldowns
-                        { "Pillar of Frost",    jps.UseCDs },
-                        {jps.useTrinket(1),     jps.UseCds },
-                        {jps.useTrinket(2),     jps.UseCds },
-                        { "Unholy Blight",      jps.UseCds and (ff_dur <= 2 or bp_dur <= 2) and CheckInteractDistance("target",3) },  --only if skilled!!!!
-                        { "outbreak",           ff_dur <= 2 or bp_dur <= 2 },    
-                        { jps.DPSRacial,        jps.UseCDs and jps["DPS Racial"]},
-                        { "raise dead",         jps.UseCDs and jps["Raise Dead (DPS)"] },
-                        
-                        -- AoE
-                        { "death and decay",    jps.MultiTarget and IsShiftKeyDown() ~= nil },
-                        {"Pestilence",          jps.MultiTarget and (ff_dur > 10 and bp_dur > 10)},
-                
-                        -- Mofes
-                        { "howling blast",      ff_dur <= 2 },
-                        { "plague strike",      bp_dur <= 2 },
-                        { "obliterate",         canCastObliterate() },
-                        { "frost strike",       rp > 110 },
-                        { "howling blast",      jps.buff("Freezing Fog") },
-                        { "obliterate",         canCastObliterate() },
-                        { "frost strike",       rp > 100 },
-                        { "obliterate",         "onCD" },
-                        { "frost strike",       "onCD" },
-                        { "howling blast",      "onCD" },
-                        { "plague strike",      "onCD" },
-                        { "Empower Rune Weapon" ,jps.UseCDs},
-                }
-    };
-    spellTable[2] ={
-       ["name"] = "DK DW optimized",
-       ["tooltip"] = "for Double Wield equipped DK's, hold shift for Death and Decay.",
-       ["rotation"] = {
-                        -- Kicks
-                        { "mind freeze",        jps.shouldKick() },
-                        { "mind freeze",        jps.shouldKick("focus"), "focus" },
-                        { "Strangulate",        jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze" },
-                        { "Strangulate",        jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
-                
-                        -- Buffs
-                        { "frost presence",       not jps.buff("frost presence") },
-                        { "horn of winter",     "onCD" },
-                
-                        -- Cooldowns
-                        { "Pillar of Frost",    jps.UseCDs },
-                        {jps.useTrinket(1),     jps.UseCds },
-                        {jps.useTrinket(2),     jps.UseCds },
-                        { "Unholy Blight",      jps.UseCds and (ff_dur <= 2 or bp_dur <= 2) and CheckInteractDistance("target",3) },  --only if skilled!!!!
-                        { "outbreak",           ff_dur <= 2 or bp_dur <= 2 },    
-                        { jps.DPSRacial,        jps.UseCDs and jps["DPS Racial"]},
-                        { "raise dead",         jps.UseCDs and jps["Raise Dead (DPS)"] },
-                        { "Empower Rune Weapon",jps.UseCDs and  wholeRuneCount < 4 },
-                        -- AoE
-                        {"death and decay",     jps.MultiTarget and IsShiftKeyDown() ~= nil },
-                        {"Pestilence",          jps.MultiTarget and (ff_dur > 10 and bp_dur > 10)},
-                
-                        -- Mofes
-                        { "frost strike",       jps.buff("Killing Machine") and rp >= 20 },
-                        { "soul reaper",       jps.hp("target") <= 0.35 and UnitLevel("player") >= 87 },
-                        { "plague strike",      bp_dur <= 2 },
-                        { "howling blast",      ff_dur <= 2 or jps.buff("Freezing Fog")},
-                        { "obliterate",         canCastObliterate()},
-                        { "frost strike",       rp >= 40 },
-                        { "obliterate",         canCastObliterate()},
-                        { "frost strike",       "onCD" },
-                        { "howling blast",      "onCD" },
-                        { "plague strike",      "onCD" },
-                        { "Empower Rune Weapon" ,jps.UseCDs},
-                        
-                  }
-    };
-
-    if(initOnly == "init") then
-        return spellTable 
-    end
-
-    local spell = parseSpellTable(spellTable)
+    -- Unholy Blight to keep diseases up. (talent based)
+		{ "Unholy Blight",
+      frostFeverDuration < 3 
+      or bloodPlagueDuration < 3 },
     
-    if spell == "death and decay" then
-        jps.Cast( spell )
-        jps.groundClick()
-        spell = nil
-    end
+    -- Soul Reaper when the target is below 35% health.
+    { "Soul Reaper",
+      jps.hp("target") < .35 },
+    
+    -- On-Use Trinket 1.
+    { jps.useSlot(13), 
+      jps.UseCDs },
 
-    return spell
+    -- On-Use Trinket 2.
+    { jps.useSlot(14), 
+      jps.UseCDs },
+
+    -- Engineers may have synapse springs on their gloves (slot 10).
+    { jps.useSlot(10), 
+      chi > 3
+      and energy >= 50 },
+
+    -- Herbalists have Lifeblood.
+    { "Lifeblood",
+      jps.UseCDs },
+        
+    -- Howling Blast to keep frost fever up or when you have a Rime proc.
+		{ "Howling Blast",
+      frostFeverDuration <= 0
+      or jps.buff("Rime") },
+    
+    -- Plague Strike to keep blood plague up.
+		{ "Plague Strike",
+      bloodPlagueDuration <= 0 },
+    
+    -- Dual wield specific. Disabling for now.
+    -- Frost Strike when we have a Killing Machine proc.
+		-- { "Frost Strike",
+    --    jps.buff("Killing Machine") },
+    
+    -- Obliterate when you have a Killing Machine proc or you won't cap runic power.
+		{ "Obliterate",
+      jps.buff("Killing Machine")
+      or runicPower < 60 },
+    
+    -- Frost Strike filler when available.
+		{ "Frost Strike" },
+
+    -- Howling Blast filler when available.
+		{ "Howling Blast" },
+    
+    -- Horn of Winter filler when available.
+		{ "Horn of Winter" },
+    
+	}
+
+	local spell = parseSpellTable(possibleSpells)
+	
+	if spell == "Death and Decay" then
+    jps.groundClick() 
+  end
+	
+	return spell
+
 end

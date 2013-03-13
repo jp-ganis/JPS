@@ -17,7 +17,7 @@ function monk_mistweaver(self)
   end
   
   -- If I really need healing, make me the heal target.
-	if jps.hpInc() < .4 then
+	if jps.hpInc(me) < .4 then
     healTarget = me
   end
 
@@ -29,26 +29,34 @@ function monk_mistweaver(self)
   
   local channeling = UnitChannelInfo("player")
   local soothing = false
-  if channeling then
-    soothing = channeling:find("Soothing Mist")
+  local crackling = false
+  if channeling and channeling == "Soothing Mist" then
+    soothing = true
+  else
+    crackling = true
   end
   
+  refreshTiger = ( not jps.buff("Tiger Power")
+    or jps.buffDuration("Tiger Power") < 2 )
+          
+  refreshSerpent = ( not jps.buff("Serpent's Zeal")
+    or jps.buffStacks("Serpent's Zeal") < 2
+    or jps.buffDuration("Serpent's Zeal") < 5 )
+  
+  
+          
   -- Check if we should detox
   local dispelTarget = jps.FindMeADispelTarget({"Magic"}, {"Poison"}, {"Disease"})
   
 	local possibleSpells = {
     
 		{ "Summon Jade Serpent Statue", 
-			IsShiftKeyDown() ~= nil 
-			and GetCurrentKeyBoardFocus() == nil },
-    
-		{ "Healing Sphere", 
 			IsControlKeyDown() ~= nil 
 			and GetCurrentKeyBoardFocus() == nil },
     
-		-- { "Healing Sphere", 
-		--	IsShiftKeyDown() ~= nil 
-		--	and GetCurrentKeyBoardFocus() == nil },
+		{ "Healing Sphere", 
+			IsShiftKeyDown() ~= nil 
+			and GetCurrentKeyBoardFocus() == nil },
     
     -- TODO: Figure out a way to detect Jade Serpent
     -- Make sure your statue is up at all times.
@@ -90,7 +98,7 @@ function monk_mistweaver(self)
     
     -- Life Cocoon on the tank if he's low.
 		{ "Life Cocoon",
-      tankHP < .5, tank },
+      tankHP < .4, tank },
     
     -- Detox if needed.
     { "Detox",
@@ -98,9 +106,10 @@ function monk_mistweaver(self)
     
     -- Water Spirit if you get low on mana.
     { "Water Spirit",
-      jps.mana() < .6
+      jps.UseCDs
+      and jps.mana() < .6
       and GetItemCount("Water Spirit", 0, 1) > 0 },
-        
+    
 		-- Engineers may have synapse springs on their gloves (slot 10).
 		{ jps.useSynapseSprings(), 
       jps.UseCDs
@@ -127,87 +136,93 @@ function monk_mistweaver(self)
     -- Mana Tea when we have 2 stacks.
 		{ "Mana Tea",
       jps.mana() < .9
-      and jps.buffStacks("Mana Tea") >= 2
-      and not soothing },
-        
-    -- Uplift when someone other than tank is taking heavy damage.
+      and jps.buffStacks("Mana Tea") >= 2 },
+    
+    -- Surging Mist w/ Vital for moderate damage.
+		{ "Surging Mist",
+      jps.buffStacks("Vital Mists") == 5
+      and healTargetHP < .7, healTarget },
+    
+    -- Uplift when someone with Renewing Mist is taking moderate damage.
 		{ "Uplift",
       healTargetHP < .75
-      and jps.buff("Renewing Mist", healTarget)
-      and not soothing, healTarget },
+      and jps.buff("Renewing Mist", healTarget), healTarget },
     
-    -- Expel Harm for Chi when we've taken damage.
-		{ "Expel Harm",
-      jps.hp() < .85
-      and chi < 4
-      and not soothing },
-    
-    -- Renewing Mist when someone is taking mild damage.
+    -- Renewing Mist when someone is taking mild damage who doesn't already have it.
 		{ "Renewing Mist",
-      healTargetHP < .9
-      and not jps.buff("Renewing Mist", healTarget)
-      and not soothing, healTarget },
+      healTargetHP < .95
+      and not jps.buff("Renewing Mist", healTarget), healTarget },
     
-    -- Soothing Mist for mild damage.
-		{ "Soothing Mist",
-      not soothing
-      and not jps.Moving
-      and healTargetHP < .85, healTarget },
+    -- Expel Harm for cheap Chi when we've taken damage.
+		{ "Expel Harm",
+      jps.hp() < .99
+      and chi < 4 },
     
-    -- Surging Mist for heavy damage.
-		{ "Surging Mist",
-      healTargetHP < .55
-      and (
-        soothing
-        or jps.buffStacks("Vital Mists") == 5 ), healTarget },
+    -- Zen Sphere on the tank. (talent based)
+		{ "Zen Sphere",
+      tankHP < .85
+      and not jps.buff("Zen Sphere", tank), tank },
     
-    -- Enveloping Mist for moderate damage.
-		{ "Enveloping Mist",
-      healTargetHP < .75
-      and soothing, healTarget },
-    
+    -- Chi Burst on the tank. (talent based)
+		{ "Chi Burst",
+      tankHP < .85, tank },
+        
     -- Maintain Tiger Power
     { "Tiger Palm",
-      not jps.buff("Tiger Power")
-      and IsSpellInRange("Tiger Palm", "target")
-      and not soothing },
+      refreshTiger
+      and IsSpellInRange("Tiger Palm", "target") },
     
     -- Maintain Serpent's Zeal
     { "Blackout Kick",
-      ( not jps.buff("Serpent's Zeal")
-        or jps.buffStacks("Serpent's Zeal") < 2
-        or jps.buffDuration("Serpent's Zeal") < 5 )
-      and IsSpellInRange("Blackout Kick", "target")
-      and not soothing },
+      refreshSerpent
+      and IsSpellInRange("Blackout Kick", "target") },
     
-    -- Chi Wave when we're in melee range.
-		{ "Chi Wave",
-      healTargetHP < .85
-      and IsSpellInRange("Jab", "target")
-      and not soothing },
-    
-    -- Spinning Crane Kick to cap our chi when MultiTarget is toggled.
+    -- Spinning Crane Kick for Chi when MultiTarget is enabled.
     { "Spinning Crane Kick",
       jps.MultiTarget
-      and jps.mana() > .9
+      and jps.mana() > .85
       and chi < 4
-      and IsSpellInRange("Jab", "target")
-      and not soothing },
+      and IsSpellInRange("Jab", "target") },
     
-    -- Jab to cap our chi.
+    -- Chi Wave when we're in melee range. (talent based)
+		{ "Chi Wave",
+      healTargetHP < .85
+      and IsSpellInRange("Jab", "target") },
+    
+    -- Soothing Mist as filler if someone will be healed.
+		{ "Soothing Mist",
+      not soothing
+      and not jps.Moving
+      and healTargetHP < .9, healTarget },
+        
+    -- Surging Mist for heavy damage.
+		{ "Surging Mist",
+      not jps.Moving
+      and healTargetHP < .3, healTarget },
+    
+    -- Enveloping Mist for moderate damage.
+		{ "Enveloping Mist",
+      not jps.Moving
+      and healTargetHP < .65, healTarget },
+    
+    -- Jab to cap our chi if we don't have tiger power to serpent's zeal up already.
     { "Jab",
-      jps.mana() > .9
-      and chi < 4
+      not soothing
       and IsSpellInRange("Jab", "target")
-      and not soothing },
+      and chi < 3
+      and refreshTiger
+      and refreshSerpent },
     
-    -- Tiger Palm as a chi dump.
+    -- Tiger Palm as a chi dump only if someone will be healed.
     { "Tiger Palm",
-      jps.mana() > .9
+      healTargetHP < .85
       and chi > 2
       and IsSpellInRange("Tiger Palm", "target")
       and not soothing },
-      
+        
+    -- Make sure we're auto attacking if nothing else.
+    { { "macro", "/startattack" }, 
+      not soothing, defaultTarget },
 	}
 
 	local spell, target = parseSpellTable(possibleSpells)
