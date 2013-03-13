@@ -54,8 +54,7 @@ function dk_unholy(self)
 
     -- Engineers may have synapse springs on their gloves (slot 10).
     { jps.useSlot(10), 
-      chi > 3
-      and energy >= 50 },
+      jps.UseCDs },
 
     -- Herbalists have Lifeblood.
     { "Lifeblood",
