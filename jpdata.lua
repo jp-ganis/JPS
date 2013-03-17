@@ -34,7 +34,6 @@ jps.UserInitiatedSpellsToIgnore = {
   	"Tigereye Brew",
   	"Detox", -- When casting Detox without any dispellable debuffs, the cooldown resets.
   	"Provoke", -- It can prevent you wasting your taunt in some rare situations.
-  	"Disable", -- Gives you a better control on this skill using JPS.
   	"Legacy of the Emperor",
   	"Legacy of the White Tiger",
 	"Roll",
