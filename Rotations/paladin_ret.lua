@@ -57,8 +57,8 @@ function paladin_ret(self)
     { jps.useSlot(14), 
       jps.UseCDs },
     
-    -- Synapse Springs CD. (engineering gloves)
-    { jps.useSlot(10), 
+		-- Engineers may have synapse springs on their gloves (slot 10).
+		{ jps.useSynapseSprings(), 
       jps.UseCDs },
     
     -- Lifeblood CD. (herbalists)
@@ -69,6 +69,7 @@ function paladin_ret(self)
     { jps.DPSRacial, 
       jps.UseCDs },
     
+    -- Buff
     { "Inquisition", 
       jps.buffDuration("Inquisition") < 5 
       and (
@@ -76,6 +77,7 @@ function paladin_ret(self)
         or jps.buff("Divine Purpose")
       ) },
     
+    -- Damage
     { "Templar's Verdict", 
       holyPower == 5 },
     
@@ -87,11 +89,14 @@ function paladin_ret(self)
     -- Exorcism proc
     { "Exorcism", 
       jps.buff("The Art of War") },
-      
+    
+    -- Damage
     { "Judgment" },
     
+    -- Damage
     { "Crusader Strike" },
     
+    -- Damage
     { "Exorcism" },
   }
    

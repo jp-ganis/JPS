@@ -23,9 +23,14 @@ function dk_frost(self)
 
 	local possibleSpells = {
     
-    -- Death and Decay when shift key is down.
+		-- Death and Decay when shift is down.
 		{ "Death and Decay",
-  	  IsShiftKeyDown() ~= nil
+      IsShiftKeyDown() ~= nil 
+      and GetCurrentKeyBoardFocus() == nil },
+    
+    -- Army of the Dead when control is down.
+    { "Army of the Dead",
+      IsLeftControlKeyDown() ~= nil 
       and GetCurrentKeyBoardFocus() == nil },
     
     -- Empower Rune Weapon
@@ -50,15 +55,38 @@ function dk_frost(self)
       frostFeverDuration < 3
       or bloodPlagueDuration < 3 },
     
-    -- Unholy Blight to keep diseases up. (talent based)
-		{ "Unholy Blight",
-      frostFeverDuration < 3 
-      or bloodPlagueDuration < 3 },
-    
     -- Soul Reaper when the target is below 35% health.
     { "Soul Reaper",
       jps.hp("target") < .35 },
     
+		-- Kick
+		{ "Mind Freeze",
+      jps.shouldKick()
+      and jps.LastCast ~= "Strangulate"
+      and jps.LastCast ~= "Asphyxiate" },
+    
+    -- Kick
+		{ "Strangulate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Asphyxiate" },
+      
+    -- Kick
+		{ "Asphyxiate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Strangulate" },
+    
+    -- Raise Dead
+		{ "Raise Dead",
+      jps.UseCDs 
+      and UnitExists("pet") == nil },
+        
+    -- Unholy Blight to keep diseases up. (talent based)
+		{ "Unholy Blight",
+      frostFeverDuration < 3 
+      or bloodPlagueDuration < 3 },
+        
     -- On-Use Trinket 1.
     { jps.useSlot(13), 
       jps.UseCDs },
@@ -67,9 +95,10 @@ function dk_frost(self)
     { jps.useSlot(14), 
       jps.UseCDs },
 
-    -- Engineers may have synapse springs on their gloves (slot 10).
-    { jps.useSlot(10), 
+		-- Engineers may have synapse springs on their gloves (slot 10).
+		{ jps.useSynapseSprings(), 
       jps.UseCDs },
+    
 
     -- Herbalists have Lifeblood.
     { "Lifeblood",
@@ -84,6 +113,14 @@ function dk_frost(self)
 		{ "Plague Strike",
       bloodPlagueDuration <= 0 },
     
+    -- Death Siphon when we need a bit of healing. (talent based)
+		{ "Death Siphon",
+      jps.hp() < .8 },
+        
+    -- Death strike when we need a bit of healing.
+		{ "Death Strike",
+      jps.hp() < .7 },
+        
     -- Dual wield specific. Disabling for now.
     -- Frost Strike when we have a Killing Machine proc.
 		-- { "Frost Strike",

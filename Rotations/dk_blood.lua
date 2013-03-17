@@ -70,7 +70,25 @@ function new_dk_blood(self)
 		{ "Dark Command",
       targetThreatStatus ~= 3 
       and not jps.targetTargetTank() },
-      
+    
+		-- Kick
+		{ "Mind Freeze",
+      jps.shouldKick()
+      and jps.LastCast ~= "Strangulate"
+      and jps.LastCast ~= "Asphyxiate" },
+    
+    -- Kick
+		{ "Strangulate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Asphyxiate" },
+    
+    -- Kick
+		{ "Asphyxiate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Strangulate" },
+        
 		-- Kick
 		{ "Mind Freeze",
       jps.shouldKick() },
@@ -78,7 +96,7 @@ function new_dk_blood(self)
     -- Kick
 		{ "Strangulate",
       jps.shouldKick() 
-      and jps.LastCast ~= "mind freeze" },
+      and jps.LastCast ~= "Mind Freeze" },
       
 		-- Aggro cooldowns
 		{ "Raise Dead",
@@ -90,21 +108,25 @@ function new_dk_blood(self)
       
 		-- Defensive cooldown
 		{ "Death Pact",
-      jps.hp() < 0.5
+      jps.hp() < .5
       and haveGhoul },
     
     -- Defensive cooldown
 		{ "Icebound Fortitude",
-      jps.hp() < 0.3 },
+      jps.hp() < .3 },
     
     -- Defensive cooldown
 		{ "Vampiric Blood",
-      jps.hp() < 0.5 },
+      jps.hp() < .5 },
       
     -- Defensive cooldown
 		{ "Rune Tap",
-      jps.hp() < 0.8 },
-      
+      jps.hp() < .8 },
+    
+    -- Death Siphon when we need a bit of healing. (talent based)
+		{ "Death Siphon",
+      jps.hp() < .8 },
+        
     -- On-Use Trinket 1.
     { jps.useSlot(13), 
       jps.UseCDs },
@@ -113,25 +135,29 @@ function new_dk_blood(self)
     { jps.useSlot(14), 
       jps.UseCDs },
 
-    -- Engineers may have synapse springs on their gloves (slot 10).
-    { jps.useSlot(10), 
+		-- Engineers may have synapse springs on their gloves (slot 10).
+		{ jps.useSynapseSprings(), 
       jps.UseCDs },
-
+    
     -- Herbalists have Lifeblood.
     { "Lifeblood",
       jps.UseCDs },
 		
 		-- Buffs
 		{ "Bone Shield",
-      not jps.buff("bone shield") },
+      not jps.buff("Bone Shield") },
     
 		-- Single target
 		{ "Outbreak",
       ffDuration <= 2 
       or bpDuration <= 2 },
-      
+    
+		{ "Blood Boil",
+      jps.buff("Crimson Scourge")
+      or jps.MultiTarget },
+        
 		{ "Soul Reaper",
-      jps.hp("target") <= 0.35 },
+      jps.hp("target") <= .35 },
       
 		{ "Plague Strike",
       not jps.debuff("Blood Plague") },
@@ -140,9 +166,6 @@ function new_dk_blood(self)
       not jps.debuff("Frost Fever") },
       
 		{ "Death Strike" },
-      
-		{ "Blood Boil",
-      jps.buff("Crimson Scourge") },
       
 		{ "Heart Strike",
       jps.debuff("Blood Plague") 

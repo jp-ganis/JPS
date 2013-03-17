@@ -44,6 +44,24 @@ function dk_unholy(self)
 		{ "Soul Reaper",
       jps.hp("target") <= .35 },
     
+		-- Kick
+		{ "Mind Freeze",
+      jps.shouldKick()
+      and jps.LastCast ~= "Strangulate"
+      and jps.LastCast ~= "Asphyxiate" },
+    
+    -- Kick
+		{ "Strangulate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Asphyxiate" },
+      
+    -- Kick
+		{ "Asphyxiate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Strangulate" },
+        
     -- On-Use Trinket 1.
     { jps.useSlot(13), 
       jps.UseCDs },
