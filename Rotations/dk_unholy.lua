@@ -9,12 +9,12 @@ function dk_unholy(self)
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
 	-- Automatically raise ghoul if dead
 
-	local rp = UnitPower("player") 
+  if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
+  
+	local runicPower = UnitPower("player")
 
-	local ffDuration = jps.debuffDuration("frost fever")
-	local bpDuration = jps.debuffDuration("blood plague")
-	local siStacks = jps.buffStacks("shadow infusion","pet")
-	local superPet = jps.buff("dark transformation","pet")
+	local frostFeverDuration = jps.debuffDuration("Frost Fever")
+	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
 
 	local dr1 = select(3,GetRuneCooldown(1))
 	local dr2 = select(3,GetRuneCooldown(2))
@@ -29,58 +29,107 @@ function dk_unholy(self)
 	local one_ur = ur1 or ur2
 	local two_ur = ur1 and ur2
 
-	-- Dark Simulacrum in raids and dungeons (+ misc. mainly PvP)
-	-- Hagara 			- Dragon Soul: 			Shattered Ice
-	-- Ragnaros			- Firelands:			Hand of Ragnaros
-	-- Ivoroc 			- Blackwing Descent:	Shadowflame, Curse of Mending
-	-- Echo of Jaina 	- End Time: 			Pyroblast
-	-- ??				- Throne of the Tides:	Chain lightning
-	-- Zanzil 			- Zul'Gurub: 			Zanzili Fire
+	local possibleSpells = {
+    
+		{ "Death and Decay",
+  	  IsShiftKeyDown() ~= nil
+      and GetCurrentKeyBoardFocus() == nil },
+    
+		{ "Unholy Frenzy" },
+    
+		{ "Outbreak",
+      frostFeverDuration < 3
+      or bloodPlagueDuration < 3 },
+    
+		{ "Soul Reaper",
+      jps.hp("target") <= .35 },
+    
+		-- Kick
+		{ "Mind Freeze",
+      jps.shouldKick()
+      and jps.LastCast ~= "Strangulate"
+      and jps.LastCast ~= "Asphyxiate" },
+    
+    -- Kick
+		{ "Strangulate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Asphyxiate" },
+      
+    -- Kick
+		{ "Asphyxiate",
+      jps.shouldKick() 
+      and jps.LastCast ~= "Mind Freeze"
+      and jps.LastCast ~= "Strangulate" },
+        
+    -- On-Use Trinket 1.
+    { jps.useSlot(13), 
+      jps.UseCDs },
 
-	local spellBeingCastByTarget = nil
-	local castDarkSim = false
-	local DarkSimTarget = "target"
-	if UnitExists("focus") and UnitIsEnemy("focus","player") then
-		spellBeingCastByTarget = select(1,UnitCastingInfo("focus"))
-		DarkSimTarget = "focus"
-	else
-		spellBeingCastByTarget = select(1,UnitCastingInfo("target"))
-		DarkSimTarget = "target"		
-	end
-	
-	-- Spells have to be written exactly how they are spelled, case sensitive
-	if spellBeingCastByTarget == "Shattered Ice" or spellBeingCastByTarget == "Hand of Ragnaros" or spellBeingCastByTarget == "Shadowflame" or spellBeingCastByTarget == "Curse of Mending" or spellBeingCastByTarget == "Pyroblast" or spellBeingCastByTarget == "Chain Lightning" or spellBeingCastByTarget == "Zanzili Fire" or spellBeingCastByTarget == "Polymorph" or spellBeingCastByTarget == "Hex" or spellBeingCastByTarget == "Mind Control" or spellBeingCastByTarget == "Cyclone" then
-		castDarkSim = true
-	end	
-	
-	local spellTable =
-	{
-		{ "death and decay",		IsShiftKeyDown() ~= nil },
-		{ "unholy frenzy" },
-		{ "outbreak",				ffDuration < 3 or bpDuration < 3 },
-		{ "soul reaper",			jps.hp("target") <= 0.35 },
-		{ "unholy blight",			ffDuration < 3 or bpDuration < 3 },
-		{ "icy touch",				ffDuration <= 0 },
-		{ "plague strike",			bpDuration <= 0 },
-		{ "plague leech",			jps.cd("outbreak") < 1 },
-		{ "summon gargoyle" },
-		{ "dark transformation" },
-		{ "empower rune weapon" },
-		{ "scourge strike",			two_ur and rp < 90 },
-		{ "festering strike",		two_dr and two_fr and rp < 90 },
-		{ "death coil",				rp > 90 },
-		{ "death coil",				jps.buff("sudden doom") },
-		{ "blood tap" },
-		{ "scourge strike" },
-		{ "festering strike" },
-		{ "death coil", 			jps.cd("summon gargoyle") > 8 },
-		{ "horn of winter" },
-		{ "empower rune weapon" },
+    -- On-Use Trinket 2.
+    { jps.useSlot(14), 
+      jps.UseCDs },
+
+    -- Engineers may have synapse springs on their gloves (slot 10).
+    { jps.useSlot(10), 
+      jps.UseCDs },
+
+    -- Herbalists have Lifeblood.
+    { "Lifeblood",
+      jps.UseCDs },
+        
+		{ "Unholy Blight",
+      frostFeverDuration < 3 
+      or bloodPlagueDuration < 3 },
+    
+		{ "Icy Touch",
+      frostFeverDuration <= 0 },
+    
+		{ "Plague Strike",
+      bloodPlagueDuration <= 0 },
+    
+		{ "Plague Leech",
+      jps.cd("Outbreak") < 1 },
+    
+		{ "Summon Gargoyle" },
+    
+		{ "Dark Transformation" },
+    
+		{ "Empower Rune Weapon" },
+    
+		{ "Scourge Strike",
+      two_ur 
+      and runicPower < 90 },
+    
+		{ "Festering Strike",
+      two_dr 
+      and two_fr 
+      and runicPower < 90 },
+    
+		{ "Death Coil",
+      runicPower > 90
+      or jps.buff("sudden doom") },
+    
+		{ "Blood Tap" },
+    
+		{ "Scourge Strike" },
+    
+		{ "Festering Strike" },
+    
+		{ "Death Coil",
+      jps.cd("Summon Gargoyle") > 8 },
+    
+		{ "Horn of Winter" },
+    
+		{ "Empower Rune Weapon" },
+    
 	}
 
-	local spell = parseSpellTable( spellTable ) 
+	local spell = parseSpellTable(possibleSpells)
 	
-	if spell == "death and decay" then jps.groundClick() end
+	if spell == "Death and Decay" then
+    jps.groundClick() 
+  end
 	
 	return spell
 
