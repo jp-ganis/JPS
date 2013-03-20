@@ -333,7 +333,7 @@ hooksecurefunc("UseAction", function(...)
 			local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
 			if jps.NextCast ~= name and not jps.shouldSpellBeIgnored(name) then 
 				jps.NextCast = name
-				if jps.Combat then write("Set", name, "for next cast.") end
+				-- if jps.Combat then write("Set", name, "for next cast.") end
 			end
 		end
 	end
@@ -358,8 +358,8 @@ function combat(self)
 	-- Movement
 	jps.Moving = select(1,GetUnitSpeed("player")) > 0
 
-	-- Casting
-	if UnitCastingInfo("player") or UnitChannelInfo("player") then
+	-- Casting (Modified for Mistweaver so that we can still cast while channeling)
+	if UnitCastingInfo("player") or (UnitChannelInfo("player") and jps.Spec ~= "Mistweaver") then
     jps.Casting = true
 	else
     jps.Casting = false
