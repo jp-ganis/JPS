@@ -18,6 +18,10 @@
 -- JPS Priority List Stuff
 --jpganis
 
+-- startattack macro
+
+jps.autoAttack = { "macro", "/startattack" }
+
 -- canCast
 function ImReallySureICanCastThisShit( spell, unit )
   if spell == nil then return false end
