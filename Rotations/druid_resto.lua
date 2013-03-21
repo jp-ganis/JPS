@@ -78,11 +78,11 @@ function druid_resto(self)
     -- Innervate
 		{ "Innervate",
       jps.UseCDs
-      and jps.mana() < .75 },
-        
+      and jps.mana() < .75, me },
+    
     -- Swiftmend on lowest target. This is a hefty heal and helps us keep harmony up. We want to use it a lot.
 		{ "Swiftmend",
-      defaultHP < .8
+      defaultHP < .85
       and (
         jps.buff("Rejuvenation", defaultTarget)
         or jps.buff("Regrowth", defaultTarget)
@@ -92,16 +92,16 @@ function druid_resto(self)
 		{ "Nature's Swiftness", 
       jps.UseCDs
       and defaultHP < .4 },
-        
+    
     -- Healing Touch when needed and we have Nature's Swiftness buff.
 		{ "Healing Touch",
-      defaultHP < .35
+      defaultHP < .8
       and jps.buff("Nature's Swiftness"), defaultTarget },
-    
+        
     -- Regrowth when needed.
 		{ "Regrowth",
       not jps.Moving
-      and defaultHP < .5, defaultTarget },
+      and defaultHP < .45, defaultTarget },
     
     -- Regrowth during clearcasting procs.
 		{ "Regrowth",
@@ -152,12 +152,12 @@ function druid_resto(self)
             
     -- Wild Growth on lowest target.
 		{ "Wild Growth",
-      defaultHP < .8
+      defaultHP < .9
       and jps.MultiTarget, defaultTarget },
     
     -- Rejuvenation on lowest target.
 		{ "Rejuvenation",
-      defaultHP < .7
+      defaultHP < .85
       and not jps.buff("Rejuvenation", defaultTarget), defaultTarget },
     
     -- Rejuvenation on tank.
