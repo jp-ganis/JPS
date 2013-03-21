@@ -15,52 +15,101 @@
 --   Void Shift - Swaps health with targeted friendly.
 
 function priest_shadow(self)
-	local swpDuration = jps.debuffDuration("shadow word: pain")
-	local plagueDuration = jps.debuffDuration("devouring plague")
-	local vtDuration = jps.debuffDuration("vampiric touch")
-	local sorbs = UnitPower("player",13)
+  if UnitCanAttack("player","target")~=1 or UnitIsDeadOrGhost("target")==1 then return end
+  
+	local swpDuration = jps.debuffDuration("Shadow Word: Pain")
+	local plagueDuration = jps.debuffDuration("Devouring Plague")
+	local vtDuration = jps.debuffDuration("Vampiric Touch")
+	local orbs = UnitPower("player", 13)
 
-	local spellTable = {
-		{ "shadowform", -- Stay in Shadowform
-			not jps.buff("shadowform") },
+	local possibleSpells = {
+    
+    -- Stay in Shadowform
+		{ "Shadowform",
+			not jps.buff("Shadowform") },
 
-		{ "inner fire", -- Keep Inner Fire up
-			not jps.buff("inner fire") },
+    -- Keep Inner Fire up
+		{ "Inner Fire",
+			not jps.buff("Inner Fire") },
 
-		{ "mind spike", -- FD,CL proc
-			jps.buff("surge of darkness") },
+    -- Healthstone if you get low.
+    { "Healthstone",
+      jps.hp() < .5
+      and GetItemCount("Healthstone", 0, 1) > 0 },
+    
+    -- FD,CL proc
+		{ "Mind Spike",
+			jps.buff("Surge of Darkness") },
 
-		{ "mind blast", -- Divine Insight proc
-			jps.buff("divine insight") },
+    -- Divine Insight proc
+		{ "Mind Blast",
+			jps.buff("Divine Insight") },
 
-		{ "renew", -- Self heal when critical
-			jps.hp("player") <= 0.20,
+    -- Self heal when critical
+		{ "Renew",
+      not jps.buff("Renew")
+			and jps.hp("player") <= .2,
 			"player" },
 
-		{ "mind blast", -- Stack shadow orbs
-			jps.cooldown("mind blast") == 0 and sorbs < 3 },
+		-- Engineers may have synapse springs on their gloves (slot 10).
+    { jps.useSlot(10), 
+      jps.UseCDs
+      and orbs == 3 },
+
+		-- On-use Trinkets when we have a damage buff.
+    { jps.useSlot(13), 
+      jps.UseCDs
+      and orbs == 3 },
+    { jps.useSlot(14), 
+      jps.UseCDs
+      and orbs == 3 },
+
+    -- Lifeblood on cooldown. (profession based)
+    { "Lifeblood",
+      jps.UseCDs
+      and orbs == 3 },
+
+    -- DPS Racial on cooldown.
+    { jps.DPSRacial, 
+      jps.UseCDs },
+    
+    -- Mind Blast if we're not full on orbs.
+		{ "Mind Blast", 
+			jps.cooldown("Mind Blast") == 0 
+      and orbs < 3
+      and not jps.Moving },
 		
-		{ "shadow word: pain", -- Keep SW:P up
-			not jps.debuff("shadow word: pain") or swpDuration < 2 },
+    -- Keep SW:P up.
+		{ "Shadow Word: Pain",
+      jps.LastCast ~= "Shadow Word: Pain"
+      and swpDuration < 2 },
 		
-		{ "vampiric touch", -- Keep VT up
-			not jps.debuff("vampiric touch") or vtDuration < 4 and jps.LastCast ~= "vampiric touch" },
+    -- Keep VT up.
+		{ "Vampiric Touch",
+      jps.LastCast ~= "Vampiric Touch"
+      and vtDuration < 4 },
 
 		{ "Cascade",
 			jps.MultiTarget },
 
-		{ "devouring plague", -- Plauge when we have 3 orbs
-			sorbs > 2 },
+    -- Plauge when we have 3 orbs
+		{ "Devouring Plague",
+			orbs > 2 },
 
-		{ "shadow word: death", -- SW:D in burn phase
-			jps.hp("target") <= 0.25 },
+    -- SW:D in burn phase
+		{ "Shadow Word: Death",
+			jps.hp("target") <= .25 },
 
-		{ "shadowfiend", -- Pet on CD
-			jps.cooldown("shadowfiend") == 0 },
+    -- Pet when we need mana
+		{ "Shadowfiend",
+      jps.hp("target") >= .5
+      and jps.mana() < .7 },
 
-		{ {"macro","/cast mind flay"}, -- Fill with flay
-			jps.cooldown("mind flay") == 0 and not jps.Casting }
+    -- Fill with flay
+		{ "Mind Flay",
+      not jps.Casting
+      and not jps.Moving }
 	}
 
-	return parseSpellTable( spellTable )
+	return parseSpellTable( possibleSpells )
 end

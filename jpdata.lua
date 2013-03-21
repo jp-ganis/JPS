@@ -23,6 +23,67 @@
 -- Credit (and thanks!) to BenPhelps
 -------------------------------------
 
+-- In order to avoid double casting spells that you sometimes will use but that have no cooldown,
+-- we need to maintain an ignore list. For example, when a monk rolls, we shouldn't queue up another roll
+-- and take them over the side of a cliff. Or if a mage initiates combat with Living Bomb, etc.
+jps.UserInitiatedSpellsToIgnore = {
+	"Auto Attack",
+	-- Monks Skills
+	"Storm, Earth, and Fire", -- Stops JPS from despawning your copy as soon as it is created.
+  	"Purifying Brew", -- Having more than 1 chi, this can prevent using it twice in a row.
+  	"Tigereye Brew",
+  	"Detox", -- When casting Detox without any dispellable debuffs, the cooldown resets.
+  	"Provoke", -- It can prevent you wasting your taunt in some rare situations.
+  	"Legacy of the Emperor",
+  	"Legacy of the White Tiger",
+	"Roll",
+	"Chi Torpedo",
+	"Flying Serpent Kick",
+	"Expel Harm", -- Brewmasters below 35% health have no cooldown on this skill due Desperate Measures.
+	"Breath of Fire", -- If you have 4 chi or more, this can kick twice.
+	-- Mage Skills
+	"Blink",
+	"Living Bomb",
+	"Nether Tempest",
+  	"Ice Lance",
+  	"Arcane Brilliance",
+  	"Spellsteal",
+  	"Remove Curse",
+  	-- Druid Skills
+  	"Rejuvenation",
+  	"Cat Form",
+ 	"Bear Form",
+ 	"Treant Form",
+  	"Travel Form",
+  	"Aquatic Form",
+  	"Thrash",
+	"Ravage",
+ 	"Mark of the Wild",
+	"Faerie Fire",
+  	"Moonfire",
+  	"Lifebloom",
+  	-- Priest Skills
+  	"Power Word: Fortitude",
+  	"Shadow Word: Pain",
+  	"Mind Flay",
+  	"Mind Spike",
+  	"Unstable Affliction",
+  	"Corruption",
+  	"Shadow Bolt",
+}
+
+function jps.shouldSpellBeIgnored(spell)
+	local result = false
+	for _, v in pairs(jps.UserInitiatedSpellsToIgnore) do
+	  if spell == v then
+	  	-- write("Ignoring", spell, "for next cast.")
+	  	result = true
+	    break
+	  end
+	end
+	return result
+end
+
 jps.Dispells = {
 	["Magic"] = {
 		"Static Disruption", -- Akil'zon
@@ -188,10 +249,16 @@ end
 --------------------------
 
 function jps.Cast(spell)
-	if not jps.Target then jps.Target = "target" end
-	if not jps.Casting then jps.LastCast = spell end
+	if not jps.Target then
+    jps.Target = "target"
+  end
+  
+	if not jps.Casting then
+    jps.LastCast = spell
+  end
 	
-    if(getSpellStatus(spell) == 0) then return false end
+  if(getSpellStatus(spell) == 0) then return false end
+	if(jps.cooldownNoLag(spell) ~= 0) then return false end
 	
 	CastSpellByName(spell,jps.Target)
 	jps.LastTarget = jps.Target
@@ -206,6 +273,14 @@ function jps.cooldown(spell)
 	local start,duration,_ = GetSpellCooldown(spell)
 	if start == nil then return 0 end
 	local cd = start+duration-GetTime()-jps.Lag
+	if cd < 0 then return 0 end
+	return cd
+end
+
+function jps.cooldownNoLag(spell)
+	local start,duration,_ = GetSpellCooldown(spell)
+	if start == nil then return 0 end
+	local cd = start+duration-GetTime()
 	if cd < 0 then return 0 end
 	return cd
 end
@@ -374,6 +449,16 @@ function jps.buffStacks( spell, unit )
 	local _, _, _, count, _, _, _, _, _ = UnitBuff(unit,spell)
 	if count == nil then count = 0 end
 	return count
+end
+
+-- /run print(jps.getIgniteAmount())
+function jps.getIgniteAmount()
+  -- Ignite ID is hardcoded, not sure if there's an alternative.
+  local igniteSpell = GetSpellInfo(12654)
+    
+	buffName, buffRank, buffTexture, buffApplications, school, duration, timeLeft, unitCaster, buffId, isStealable, shouldConsolidate, spellID, canApplyAura, _, igniteAmount = UnitDebuff("target", igniteSpell, nil, "PLAYER");
+
+  return igniteAmount;
 end
 
 function jps.bloodlusting()
@@ -597,17 +682,34 @@ function jps.checkTimer( name )
 	return 0
 end
 
+-- For trinket's. Pass 1 or 2 for the number.
+function jps.useTrinket(trinketNum)
+  -- THe index actually starts at 0, so subtract one.
+  local slotName = "Trinket"..(trinketNum - 1).."Slot"
+  -- Get the slot number
+	local slotNum = GetInventorySlotInfo(slotName)
+  return jps.useSlot(slotNum)
+end
 
-function jps.useTrinket(id)
-    local idConvention = id -1
-    local slotName = "Trinket"..idConvention.."Slot"
-	local slotId,_,_ = GetInventorySlotInfo(slotName)
-	local trinketId = GetInventoryItemID("player", slotId)
-	if(not trinketId) then return false end
+-- Engineers will use synapse springs buff on their gloves
+function jps.useSynapseSprings()
+  -- Get the slot number
+  local slotNum = GetInventorySlotInfo("HandsSlot")
+  return jps.useSlot(slotNum)
+end
+
+function jps.useSlot(num)
+  -- Get the item identifier
+	local itemId = GetInventoryItemID("player", num)
+	if not itemId then return nil end
 	
-    if(jps.itemCooldown(trinketId) > 0) then return false end
-	local isUsable,_ = GetItemSpell(trinketId)
-	if(not isUsable) then return false end
-	
-    return {"macro","/use "..slotId}
+  -- Check if it's on cool down
+  if jps.itemCooldown(itemId) > 0 then return nil end
+
+  -- Check if it's usable
+	local isUsable = GetItemSpell(itemId)
+	if not isUsable then return nil end
+
+  -- Use it
+  return { "macro", "/use "..num }
 end

@@ -1,51 +1,96 @@
-function jps.MageSheepDuration_Eng(unit)
-	if unit==nil then return false end
-	local delay = 0
-	local Class, _ = UnitClass(unit)
-	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
-	if Class== "Mage" and spell == "Polymorph" then -- 1.5 sec cast
-		delay = jps.castTimeLeft(unit) - jps.Lag
-	end
-	if delay < 0 then return true end
-return false
-end
+-- Disc Priest updated for MoP
+
+-- Make sure you are using the correct talent build/glyphs for optimal rotation
+-- Tier 1: Void Tendrils
+-- Tier 2: Body and Soul
+-- Tier 3: From Darkness, Comes Light (required)
+-- Tier 4: Angelic Bulwark
+-- Tier 5: Divine Insight (required)
+-- Tier 6: Cascade (required)
+-- Major Glyphs: Mind Spike (required), Dark Binding (required)
+
 
 function priest_disc(self)
+  
+	-- Healer
+	local tank = nil
+	local me = "player"
 
--- get average heal value from healtable
-local average_renew = getaverage_heal("Renew")
-local average_heal = getaverage_heal("Heal")
-local average_greater_heal = getaverage_heal("Greater Heal") 
-local average_penitence = getaverage_heal("Penance")
-local average_flashheal = getaverage_heal("Flash Heal")
-local average_POH = getaverage_heal("Prayer of Healing")
+	-- Tank is focus.
+	tank = jps.findMeATank()
+  local tankHP = jps.hpInc(tank)
+  
+  -- Check if we should cleanse
+  local cleanseTarget = nil
+  local hasSacredCleansingTalent = 0
+  _,_,_,_,hasSacredCleansingTalent = 1 -- GetTalentInfo(1,14) JPTODO: find the resto talent
+  if hasSacredCleansingTalent == 1 then
+    cleanseTarget = jps.FindMeADispelTarget({"Poison"},{"Curse"},{"Magic"})
+  else
+    cleanseTarget = jps.FindMeADispelTarget({"Poison"},{"Curse"})
+  end
 
-----------------------
--- HELPER
-----------------------
+	-- Default to healing lowest partymember
+	local defaultTarget = jps.lowestInRaidStatus()
 
---IsControlKeyDown(): debug print text
---AltKey_IsDown : "Mass Dispel"
---jps.Defensive: Heal only the Tank et yourself 	/jps def
---jps.MultiTarget : Dispelling 						/jps multi
---jps.PVPInterrupt: Damage							/jps pint
---jps.UseCDs: group heal "Prayer of Healing"		/jps cds
---jps.Interrupts : "Pain Suppression"				/jps int
+	-- Check that the tank isn't going critical, and that I'm not about to die
+  if jps.canHeal(tank) and tankHP <= .5 then defaultTarget = tank end
+	if jps.hpInc(me) < 0.2 then	defaultTarget = me end
 
-local AltKey_IsDown = false
-if IsAltKeyDown() then AltKey_IsDown = true end
+	-- Get the health of our decided target
+	local defaultHP = jps.hpInc(defaultTarget)
 
-local spell = nil
-local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
-local playerhealth_pct = UnitHealth("player") / UnitHealthMax("player")
-
--- number of party members having a significant health pct loss
-local countInRaid = 3
-local pctLOSS = 0.80
-local COH_countInRaid = jps.countInRaidStatus(0.90)
-local POH_countInRaid = jps.countInRaidStatus(pctLOSS)
-local POH_Target = jps.findSubGroupToHeal(pctLOSS) -- returns the target to heal with POH in RAID
-local borrowed = jps.buff("Borrowed Time", "player")
+  local defensiveCDActive = jps.buff("Ironbark", defaultTarget) or jps.buff("Nature's Vigil") or jps.buff("Incarnation: Tree of Life")
+  
+	-- JPTODO tranquility detection
+	
+	local possibleSpells = {
+    
+    
+    -- Greater Heal when big healing is needed.
+		{ "Greater Heal",
+      defaultHP < .55
+      and not jps.Moving, defaultTarget },
+      
+    -- Flash Heal when big healing is needed.
+		{ "Flash Heal",
+      defaultHP < .35
+      and not jps.Moving, defaultTarget },
+    
+    -- Binding Heal when big healing is needed on target and me.
+		{ "Flash Heal",
+      defaultHP < .35
+      and not jps.Moving, defaultTarget },
+    
+    -- Penance when needed.
+		{ "Penance",
+      not jps.Moving
+      and defaultHP < .9, defaultTarget },
+    
+    -- Power Word: Shield when needed.
+		{ "Power Word: Shield",
+      not jps.Moving
+      and defaultHP < .8, defaultTarget },
+      
+    -- Prayer of Mending on the tank when needed.
+		{ "Prayer of Mending",
+      tankHP < .9, tank },
+    
+    -- Renew if we're moving, the target has Weakened Soul debuff, and Prayer of Mending is on cooldown.
+		{ "Renew",
+      defaultHP < .8
+      and jps.Moving 
+      and jps.debuff("Weakened Soul", defaultTarget) 
+      and jps.cooldown("Prayer of Mending") > 0, 
+      defaultTarget },
+    
+    -- Heal is our default filler.
+		{ "Heal",
+      not jps.Moving
+      and defaultHP < .9, defaultTarget },
+    
+    
+    -- PW:S
 
 ----------------------------
 -- PriestHeal_Target_TANK

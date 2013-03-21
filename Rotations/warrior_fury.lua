@@ -15,6 +15,7 @@ function warrior_fury(self)
       { "Heroic Strike" ,       (((jps.debuff("Colossus Smash") and nPower >= 40) or (jps.buff("Deadly Calm") and nPower >= 30)) and targetHealth >= 20 ) or nPower >=110 },
       { "Bloodthirst" ,         not (targetHealth < 20 and jps.debuff("colossus smash") and nPower >= 30 ) }, 
       { "Wild Strike" ,          jps.buff("Bloodsurge") and targetHealth >= 20 and jps.cooldown("Bloodthirst") <= 1 },
+      { nil,                     not (targetHealth < 20 and jps.debuff("colossus smash") and rage >= 30) and jps.cd("bloodthirst") <= 1 },
       { "Colossus Smash" },
       { "Execute" },
       { "Raging Blow" ,          jps.buff("Raging Blow!") },
@@ -22,11 +23,11 @@ function warrior_fury(self)
       { "Shockwave" },
       { "Dragon Roar" },
       { "Heroic Throw"  },
-      { "Battle Shout" ,          nPower <= 70 and not jps.debuff("Colossus Smash") },
+      { "Commanding Shout" ,          nPower <= 70 and not jps.debuff("Colossus Smash") },
       { "Wild Strike" ,         jps.debuff("Colossus Smash") and targetHealth >= 20 },   
       { "Impending Victory" ,      targetHealth >= 20  },
       { "Wild Strike" ,         jps.cooldown("Colossus Smash") >= 1 and nPower >= 60 and targetHealth >= 20  },
-      { "Battle Shout" ,          nPower <= 70  },   
+      { "Commanding Shout" ,          nPower <= 70  },   
    }
 
    local spell,target = parseSpellTable(spellTable)

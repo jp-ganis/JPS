@@ -184,7 +184,7 @@ function combatEventHandler(self, event, ...)
 	-- RaidStatus Update
     elseif event == "UNIT_HEALTH" and jps.Enabled then
     	jps.UpdateHealerBlacklist()
-    	if jps.Spec == "Restoration" or jps.Spec == "Holy" or jps.Spec == "Discipline" then jps.Healing = true end
+    	if jps.Spec == "Restoration" or jps.Spec == "Holy" or jps.Spec == "Discipline" or jps.Spec == "Mistweaver" then jps.Healing = true end
  		
         local unit = ...
         if jps.canHeal(unit) and jps.Enabled and jps.Healing then combat() end -- and jps.Combat
@@ -327,16 +327,16 @@ end
 
 -- get spell from UseAction
 hooksecurefunc("UseAction", function(...)
-if jps.Enabled and select(3, ...) ~= nil then
-	local stype, id = GetActionInfo( select(1, ...) )
-	if stype == "spell" then
-		local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
-		if jps.NextCast ~= name then 
-			jps.NextCast = name
-			if jps.Combat then write("Set",name,"for next cast.") end
+	if jps.Enabled and select(3, ...) ~= nil then
+		local stype, id = GetActionInfo( select(1, ...) )
+		if stype == "spell" then
+			local name,_,_,_,_,_,_,_,_ = GetSpellInfo(id)
+			if jps.NextCast ~= name and not jps.shouldSpellBeIgnored(name) then 
+				jps.NextCast = name
+				-- if jps.Combat then write("Set", name, "for next cast.") end
+			end
 		end
 	end
-end
 end)
 
 function combat(self) 
@@ -358,26 +358,35 @@ function combat(self)
 	-- Movement
 	jps.Moving = select(1,GetUnitSpeed("player")) > 0
 
-	-- Casting
-	if UnitCastingInfo("player") or UnitChannelInfo("player") then jps.Casting = true
-	else jps.Casting = false
+	-- Casting (Modified for Mistweaver so that we can still cast while channeling)
+	if UnitCastingInfo("player") or (UnitChannelInfo("player") and jps.Spec ~= "Mistweaver") then
+    jps.Casting = true
+	else
+    jps.Casting = false
 	end
 	
 	-- Table RaidStatus
 	if jps.Healing then jps.SortRaidStatus() end
 	
-	-- Get spell from rotation
-	jps.ThisCast = jps.Rotation()
-
 	-- Check spell usability
-	if jps.ThisCast ~= nil and not jps.Casting then
-		if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
-				jps.Cast(jps.NextCast)
-				jps.NextCast = nil
-        	else
-            	jps.Cast(jps.ThisCast)
+	if jps.NextCast ~= nil then
+		if not jps.Casting then
+				if jps.Cast(jps.NextCast) ~= false then
+					jps.NextCast = nil
+				else
+					if (jps.cooldownNoLag(jps.NextCast) > 1.5) then
+						jps.NextCast = nil
+					end
+				end
 		end
-   	end
+	else
+		-- Get spell from rotation
+		jps.ThisCast = jps.Rotation()
+	
+		if jps.ThisCast ~= nil and not jps.Casting then
+			jps.Cast(jps.ThisCast)
+		end
+	end
 	
 	-- Hide Error
 	StaticPopup1:Hide()

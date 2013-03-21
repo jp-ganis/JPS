@@ -1,44 +1,73 @@
 function warlock_affliction(self)
+  
 	--simcrafted
-	local mana = UnitMana("player")/UnitManaMax("player")
-	local shards = UnitPower("player",7)
-	local spell = nil
+	-- local shards = UnitPower("player", 7)
 
-	local bod_duration = jps.debuffDuration("bane of doom")
-	local cpn_duration = jps.debuffDuration("corruption")
-	local ua_duration = jps.debuffDuration("unstable affliction")
+	local baneDuration = jps.debuffDuration("Bane of Doom")
+	local corrDuration = jps.debuffDuration("Corruption")
+	local uaDuration = jps.debuffDuration("Unstable Affliction")
 
 	-- focus dotting
-	local focus_dotting, focus_corruption, focus_ua, focus_bane
+	local focusDotting, focusCorr, focusUA, focusBane
+  
 	if UnitExists("focus") then
-		focus_dotting = true
-		focus_corruption = jps.debuffDuration("corruption","focus")
-		focus_ua = jps.debuffDuration("unstable affliction","focus")
-		focus_bane = jps.debuffDuration("bane of agony","focus")
+		focusDotting = true
+		focusCorr = jps.debuffDuration("Corruption", "focus")
+		focusUA = jps.debuffDuration("Unstable Affliction", "focus")
+		focusBane = jps.debuffDuration("Bane of Agony", "focus")
 	end
 
-	local cpnTick = 2
+	local corrTick = 2
 	local uaTick = 2	
-	local uaCast = 1.5
+	local uaCastTime = 1.5
 
-	local spellTable =
-	{
-		{ "demon soul" },
-		{ "corruption", cpn_duration < cpnTick },
-		{ "unstable affliction", ua_duration < (uaTick+uaCast) },
-		{ "bane of doom", bod_duration == 0 },
-		{ "haunt" },
-		{ "summon doomguard" },
-		{ "drain soul", jps.hp("target") <= 0.25 },
-		{ "shadowflame", IsShiftKeyDown() },
-		{ "life tap", jps.mana() <= 0.35 },
-		{ "soulburn", not jps.buff("demon soul: felhunter") },
-		{ "soulfire", jps.buff("soulburn") },
-		{ "shadow bolt" },
-		{ "life tap", jps.Moving and jps.mana() < 0.8 and jps.mana() < jps.hp("target") },
-		{ "fel flame", jps.Moving },
-		{ "life tap", jps.mana() <= 0.6 },
+	local possibleSpells = {
+    
+		{ "Demon Soul" },
+    
+		{ "Drain Soul", 
+      jps.hp("target") <= .25 },
+      
+		{ "Corruption", 
+      corrDuration < corrTick },
+    
+		{ "Unstable Affliction", 
+      uaDuration < (uaTick + uaCastTime) 
+      and jps.LastCast ~= "Unstable Affliction" },
+      
+		{ "Bane of Doom", 
+      baneDuration == 0 },
+    
+		{ "Haunt" },
+    
+		{ "Summon Doomguard" },
+    
+		{ "Shadowflame", 
+      IsShiftKeyDown() },
+    
+		{ "Life Tap", 
+      jps.mana() <= .35 },
+      
+		{ "Soulburn", 
+      not jps.buff("Demon Soul: Felhunter") },
+      
+		{ "Soulfire", 
+      jps.buff("Soulburn") },
+    
+		{ "Shadow Bolt" },
+    
+		{ "Life Tap", 
+      jps.Moving 
+      and jps.mana() < .8 
+      and jps.mana() < jps.hp("Target") },
+      
+		{ "Fel Flame", 
+      jps.Moving },
+    
+		{ "Life Tap", 
+      jps.mana() <= .6 },
+    
 	}
 
-	return parseSpellTable(spellTable)
+	return parseSpellTable(possibleSpells)
 end
