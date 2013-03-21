@@ -1,6 +1,6 @@
 function paladin_protadin(self)
   
-  local holyPower = UnitPower("player","9")
+  local holyPower = jps.holyPower()
   
   local possibleSpells = {
     
@@ -88,7 +88,7 @@ function paladin_protadin(self)
     { "Judgment" },      
     
     -- Damage (Single target)
-    { "Crusader Strike"
+    { "Crusader Strike",
        not jps.MultiTarget },
     
     -- Damage
