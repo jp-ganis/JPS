@@ -506,31 +506,31 @@ function jps.focus()
 	return UnitPower("player",2)
 end
 
-function jps.runicpower()
+function jps.runicPower()
 	return UnitPower("player",6)
 end
 
-function jps.soulshards()
+function jps.soulShards()
 	return UnitPower("player",7)
 end
 
-function jps.eclipsepower()
+function jps.eclipsePower()
 	return UnitPower("player",8)
 end
 
-function jps.holypower()
+function jps.holyPower()
 	return UnitPower("player",9)
 end
 
-function jps.shadoworbs()
+function jps.shadowOrbs()
 	return UnitPower("player",13)
 end
 
-function jps.burningembers()
+function jps.burningEmbers()
 	return UnitPower("player",14)
 end
 
-function jps.demonicfury()
+function jps.demonicFury()
 	return UnitPower("player",15)
 end
 
