@@ -409,6 +409,46 @@ end
 -- HEALTH Functions
 ------------------------------
 
+function jps.rage()
+	return UnitPower("player",1)
+end
+
+function jps.energy()
+	return UnitPower("player",3)
+end
+
+function jps.focus()
+	return UnitPower("player",2)
+end
+
+function jps.runicpower()
+	return UnitPower("player",6)
+end
+
+function jps.soulshards()
+	return UnitPower("player",7)
+end
+
+function jps.eclipsepower()
+	return UnitPower("player",8)
+end
+
+function jps.holypower()
+	return UnitPower("player",9)
+end
+
+function jps.shadoworbs()
+	return UnitPower("player",13)
+end
+
+function jps.burningembers()
+	return UnitPower("player",14)
+end
+
+function jps.demonicfury()
+	return UnitPower("player",15)
+end
+
 function jps.mana(unit,message)
 	if unit == nil then unit = "player" end
 	if message == "abs" or message == "absolute" then
