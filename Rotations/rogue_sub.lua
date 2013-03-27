@@ -20,7 +20,7 @@ function rogue_sub(self)
 		{ "ambush", jps.buffDuration("shadow dance") <= 2 },
 		{ "eviscerate", cp == 5 },
 		{ "hemorrhage", cp < 4 } ,
-		{ "tricks of the trade" },
+		--{ "tricks of the trade" },
 		{ "backstab", cp < 5 and energy > 80 and jps.cd("shadow dance") >= 2 },
 	}
 
