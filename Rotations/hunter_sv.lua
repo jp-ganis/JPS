@@ -38,7 +38,7 @@ local controlKEY_binary = 0
 
 -- Register key downs
 if IsShiftKeyDown() ~= nil    	and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 	end
-if IsAltKeyDown() ~= nil 		and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 	end
+if IsAltKeyDown() ~= nil 	and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 	end
 if IsControlKeyDown() ~= nil 	and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
 
 -- Binary calculation
@@ -55,8 +55,8 @@ trapKEY_combo = shiftKEY_binary + altKEY_binary + controlKEY_binary
 -- 7 = Shift + Alt + Control
 if trapKEY_combo == 1 then ExplosiveTrap_KEY 	= true 	else ExplosiveTrap_KEY 	= false end -- Launch Explosiv trap
 if trapKEY_combo == 2 then FreezingTrap_KEY 	= true  else FreezingTrap_KEY 	= false end -- Launch Freezing trap (ice block trap)
-if trapKEY_combo == 4 then SnakeTrap_KEY 		= true  else SnakeTrap_KEY 		= false end -- Launch Snake trap
-if trapKEY_combo == 5 then IceTrap_KEY 			= true  else IceTrap_KEY 		= false end -- Launch Ice trap (ice on ground)
+if trapKEY_combo == 4 then SnakeTrap_KEY 	= true  else SnakeTrap_KEY 	= false end -- Launch Snake trap
+if trapKEY_combo == 5 then IceTrap_KEY 		= true  else IceTrap_KEY 	= false end -- Launch Ice trap (ice on ground)
 if trapKEY_combo == 6 then allInOneTraps_KEY 	= true 	else allInOneTraps_KEY 	= false end -- Launch all traps after each other
 
 --------------------
@@ -69,13 +69,13 @@ local autoUseVirminsBite = true -- Increases your Agility by 4000 for 25 sec. (1
 -- Equipped items usage --
 --------------------------
 -- Intelligent Slots (trinkets, engineering gloves and other usable items you can equip)
-function canUseEquippedItem(Slot)									-- e.g. "Trinket0Slot", "Trinket1Slot", "HandsSlot"
+function canUseEquippedItem(Slot)							-- e.g. "Trinket0Slot", "Trinket1Slot", "HandsSlot"
 	local slotNumber = GetInventorySlotInfo(Slot)					-- get slot number
-	if GetInventoryItemTexture("player", slotNumber) ~= nil then	-- if an item is equipped in the slot then check for "use" effect
-		itemID = GetInventoryItemID("player", slotNumber)			-- retrieve item id
-		canUseItem,_ = GetItemSpell(itemID)							-- check if item has "use" effect
-		_,itemIsReady,_ = GetItemCooldown(itemID)					-- get "use" effect cooldown
-		if canUseItem ~= nil and itemIsReady == 0 then				-- 0 => no CD => item is ready
+			if GetInventoryItemTexture("player", slotNumber) ~= nil then	-- if an item is equipped in the slot then check for "use" effect
+			itemID = GetInventoryItemID("player", slotNumber)		-- retrieve item id
+			canUseItem,_ = GetItemSpell(itemID)				-- check if item has "use" effect
+			_,itemIsReady,_ = GetItemCooldown(itemID)			-- get "use" effect cooldown
+			if canUseItem ~= nil and itemIsReady == 0 then			-- 0 => no CD => item is ready
 			return true	
 		end
 	end
@@ -97,12 +97,12 @@ end
 ----------
 -- Virmen's Bite: Increases your Agility by 4000 for 25 sec. (1 Min Cooldown)
 local VirmensBitePotIsReady = false					-- default "ready" to false
-if autoUseVirminsBite 								-- check auto use true/false at top of file
+if autoUseVirminsBite 							-- check auto use true/false at top of file
 	and not jps.buff("Virmen's Bite") 
 	and UnitLevel("target") == -1 					-- Target is a boss (-1 == raid boss / ??)
 	and GetItemCount(76089, false, false) > 0 
 	and select(2,GetItemCooldown(76089)) == 0 then
-		VirmensBitePotIsReady = true
+	VirmensBitePotIsReady = true
 end
 
 ---------------------------------------------------------
@@ -112,8 +112,10 @@ end
 local petTargetID = UnitGUID("pettarget") 		-- get unique ID on pettarget
 local playerTargetID = UnitGUID("target") 		-- get unique ID on playertarget
 local petShouldAttackMyTarget = false 			-- default to false
-if playerTargetID ~= nil and playerTargetID ~= petTargetID and UnitCanAttack("player", "target") ~= nil then -- 1) check if player has target, 2) check petarget is equal to playertarget, 3) check that player can attack current target
-	petShouldAttackMyTarget = true				-- set variable to true = pet should attack playertarget
+if playerTargetID ~= nil				-- 1) check if player has target,
+and playerTargetID ~= petTargetID			-- 2) check petarget is equal to playertarget,
+and UnitCanAttack("player", "target") ~= nil then	-- 3) check that player can attack current target
+petShouldAttackMyTarget = true				-- set variable to true = pet should attack playertarget
 end
 
 -------------------------------------------------------
@@ -129,58 +131,58 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 local spellTable = 
 	{
 		-- Preparation (flasks)
-		{ {"macro","/use Alchemist's Flask"}, 	canUseItemInBags(75525)	and not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") }, -- Alchemist's Flask -- useAlchemistsFlask
+		{ {"macro","/use Alchemist's Flask"},	canUseItemInBags(75525)	and not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") }, -- Alchemist's Flask -- useAlchemistsFlask
 		-- Revive pet
-		{ "Heart of the Phoenix",			UnitIsDead("pet") ~= nil and HasPetUI() ~= nil }, -- Instant revive pet (only some pets, Ferocity)
-		{ "Revive Pet",						((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving }, 
+		{ "Heart of the Phoenix",		UnitIsDead("pet") ~= nil and HasPetUI() ~= nil }, -- Instant revive pet (only some pets, Ferocity)
+		{ "Revive Pet",				((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving }, 
 		-- Heal pet
-		{ "Mend Pet", 						jps.hp("pet") < 0.90 and not jps.buff("Mend Pet","pet") },
+		{ "Mend Pet", 				jps.hp("pet") < 0.90 and not jps.buff("Mend Pet","pet") },
 		-- Set pet to passive (IMPORTANT!)
-		{ {"macro","/script PetPassiveMode()"},		petIsPassive == nil }, -- Set pet to passive
+		{ {"macro","/script PetPassiveMode()"},	petIsPassive == nil }, -- Set pet to passive
 		-- Misc
-		{ {"macro","/petattack"}, 			petShouldAttackMyTarget },
-		{ "Aspect of the Hawk", 			not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") }, -- Tier 3 talent
+		{ {"macro","/petattack"}, 		petShouldAttackMyTarget },
+		{ "Aspect of the Hawk", 		not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") }, -- Tier 3 talent
 		-- Misdirect to pet if no "focus" -- for farming, best with Glyph of Misdirection
-		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
-		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },
+		{ "Misdirection", 			not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
+		{ "Misdirection", 			not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },
 		-- Healthstone
 		{ {"macro","/use Healthstone"}, 	jps.hp("player") < 0.50 and canUseItemInBags(5512) }, -- restores 20% of total health
 		-- 
-		{ "Silencing Shot", 				jps.shouldKick() and jps.castTimeLeft("target") < 1.4 }, -- Tier 2 talent
+		{ "Silencing Shot", 			jps.shouldKick() and jps.castTimeLeft("target") < 1.4 }, -- Tier 2 talent
 		-- Trinkets and Engineering Gloves
-		{ {"macro","/use 10"}, 				jps.UseCDs and canUseEquippedItem("HandsSlot") },
-		{ {"macro","/use 13"}, 				jps.UseCDs and canUseEquippedItem("Trinket0Slot") },
-		{ {"macro","/use 14"}, 				jps.UseCDs and canUseEquippedItem("Trinket1Slot") }, 		
+		{ {"macro","/use 10"}, 			jps.UseCDs and canUseEquippedItem("HandsSlot") },
+		{ {"macro","/use 13"}, 			jps.UseCDs and canUseEquippedItem("Trinket0Slot") },
+		{ {"macro","/use 14"}, 			jps.UseCDs and canUseEquippedItem("Trinket1Slot") }, 		
 		-- Use pot
 		{ {"macro","/use Virmen's Bite"}, 	jps.UseCDs and VirmensBitePotIsReady and (jps.buff("Rapid Fire") or jps.buff("Heroism") or jps.buff("Time Warp") or jps.buff("Ancient Hysteria") or jps.buff("Bloodlust")) }, 		
 		-- CDs
-		{ "Lifeblood", 						jps.UseCDs }, -- Herbalism
---		{ "Readiness", 						jps.UseCDs }, -- Resets all cooldowns except Stampede. Use to chain DPS cooldowns.
-		{ "A Murder of Crows", 				jps.UseCDs and not jps.mydebuff("A Murder of Crows")}, -- Tier 5 talent
-		{ "Dire Beast", 					"onCD" }, -- Tier 4 talents
---		{ "Rabid", 							jps.UseCDs }, -- Pet ability
-		{ "Rapid Fire", 					jps.UseCDs and not jps.buff("Rapid Fire") and not jps.buff("Heroism") and not jps.buff("Time Warp") and not jps.buff("Ancient Hysteria") and not jps.buff("Bloodlust") },
-		{ "Stampede", 						jps.UseCDs },
+		{ "Lifeblood", 				jps.UseCDs }, -- Herbalism
+--		{ "Readiness", 				jps.UseCDs }, -- Resets all cooldowns except Stampede. Use to chain DPS cooldowns.
+		{ "A Murder of Crows", 			jps.UseCDs and not jps.mydebuff("A Murder of Crows")}, -- Tier 5 talent
+		{ "Dire Beast", 			"onCD" }, -- Tier 4 talents
+--		{ "Rabid", 				jps.UseCDs }, -- Pet ability
+		{ "Rapid Fire", 			jps.UseCDs and not jps.buff("Rapid Fire") and not jps.buff("Heroism") and not jps.buff("Time Warp") and not jps.buff("Ancient Hysteria") and not jps.buff("Bloodlust") },
+		{ "Stampede", 				jps.UseCDs },
 		-- Traps
-		{ "Trap Launcher", 					not jps.buff("Trap Launcher") },
-		{ "Explosive Trap",					(ExplosiveTrap_KEY 	or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 
-		{ "Ice Trap",						(IceTrap_KEY 		or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 	
-		{ "Snake Trap",						(SnakeTrap_KEY 		or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 	
-		{ "Freezing Trap",					FreezingTrap_KEY 	and jps.buff("Trap Launcher") }, 	
+		{ "Trap Launcher", 			not jps.buff("Trap Launcher") },
+		{ "Explosive Trap",			(ExplosiveTrap_KEY 	or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 
+		{ "Ice Trap",				(IceTrap_KEY 		or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 	
+		{ "Snake Trap",				(SnakeTrap_KEY 		or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 	
+		{ "Freezing Trap",			FreezingTrap_KEY 	and jps.buff("Trap Launcher") }, 	
 		-- Rotation
-		{ "explosive shot", 				jps.buff("lock and load") and jps.debuffDuration("explosive shot") < 1.0 },
-		{ "Glaive Toss", 					"onCD"}, -- Tier 6 talent
+		{ "explosive shot", 			jps.buff("lock and load") and jps.debuffDuration("explosive shot") < 1.0 },
+		{ "Glaive Toss", 			"onCD"}, -- Tier 6 talent
 		-- AoE
-		{ "Multi-Shot", 					jps.MultiTarget },
-		{ "cobra shot", 					jps.MultiTarget },
+		{ "Multi-Shot", 			jps.MultiTarget },
+		{ "cobra shot", 			jps.MultiTarget },
 		-- Single target
-		{ "kill shot", 						"onCD" }, -- Target below 20%
-		{ "serpent sting", 					jps.mydebuffDuration("serpent sting") < .3 },
-		{ "explosive shot", 				jps.mydebuffDuration("explosive shot") < .3 },
-		{ "black arrow", 					not jps.mydebuff("black arrow") and not jps.MultiTarget },
-		{ "cobra shot", 					jps.mydebuffDuration("serpent sting") < 6 },
-		{ "arcane shot", 					focus >= 70 and not jps.buff("lock and load") and not jps.MultiTarget },
-		{ "cobra shot", 					"onCD"},
+		{ "kill shot", 				"onCD" }, -- Target below 20%
+		{ "serpent sting", 			jps.mydebuffDuration("serpent sting") < .3 },
+		{ "explosive shot", 			jps.mydebuffDuration("explosive shot") < .3 },
+		{ "black arrow", 			not jps.mydebuff("black arrow") and not jps.MultiTarget },
+		{ "cobra shot", 			jps.mydebuffDuration("serpent sting") < 6 },
+		{ "arcane shot", 			focus >= 70 and not jps.buff("lock and load") and not jps.MultiTarget },
+		{ "cobra shot", 			"onCD"},
 	}
 
 	jps.petIsDead = false
