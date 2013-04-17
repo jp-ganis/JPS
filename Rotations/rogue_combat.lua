@@ -19,7 +19,7 @@ function rogue_combat(self)
 		{ "eviscerate", cp == 5 and jps.buff("deep insight") },
 		{ "rupture", rupture_duration < 4 and cp == 5 },
 		{ "revealing strike", jps.buff("deep insight") and cp < 5 },
-		{ "tricks of the trade" },
+--		{ "tricks of the trade" },
 		{ "sinister strike", cp < 5 },
 	}
 
