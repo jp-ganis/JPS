@@ -2,9 +2,12 @@ function priest_disc(self)
     local evangelism = jps.buffStacks("evangelism")
     
     local spellTable = {
+        { "inner fire", not jps.buff("inner fire")},
         { "archangel", evangelism >= 5},
         { "power infusion", "onCD" },
-        { "power word: shield", "onCD" },
+        { "mindbender", jps.mana() <= .85 },
+        { "hymn of hope", jps.mana() <= .5 },
+        { "power word: shield", jps.mana() >= .5 },
         { "penance", "onCD" },
         { "holy fire", "onCD" },
         { "smite"},
