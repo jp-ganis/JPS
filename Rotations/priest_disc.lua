@@ -1,3 +1,20 @@
+function priest_disc(self)
+    local evangelism = jps.buffStacks("evangelism")
+    
+    local spellTable = {
+        { "archangel", evangelism >= 5},
+        { "power infusion", "onCD" },
+        { "power word: shield", "onCD" },
+        { "penance", "onCD" },
+        { "holy fire", "onCD" },
+        { "smite"},
+    }
+
+    return parseSpellTable(spellTable)
+end
+--[[
+
+
 function jps.MageSheepDuration_Eng(unit)
 	if unit==nil then return false end
 	local delay = 0
@@ -483,3 +500,4 @@ end
 -- Holy Word: Serenity - Mot sacré : Sérénité SpellID 88684
 -- Power Word: Shield - Mot de pouvoir : Bouclier
 -- Borrowed Time - Sursis - votre prochain sort d'un bonus à la hâte des sorts après avoir lancé Mot de pouvoir : Bouclier. Dure 6 sec.
+]]
