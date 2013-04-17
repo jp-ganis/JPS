@@ -1,3 +1,15 @@
+function jps.MageSheepDuration_Eng(unit)
+	if unit==nil then return false end
+	local delay = 0
+	local Class, _ = UnitClass(unit)
+	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+	if Class== "Mage" and spell == "Polymorph" then -- 1.5 sec cast
+		delay = jps.castTimeLeft(unit) - jps.Lag
+	end
+	if delay < 0 then return true end
+return false
+end
+
 -- Disc Priest updated for MoP
 
 -- Make sure you are using the correct talent build/glyphs for optimal rotation
@@ -11,7 +23,42 @@
 
 
 function priest_disc(self)
-  
+
+----------------------
+-- HELPER
+----------------------
+-- get average heal value from healtable
+local average_renew = getaverage_heal("Renew")
+local average_heal = getaverage_heal("Heal")
+local average_greater_heal = getaverage_heal("Greater Heal") 
+local average_penitence = getaverage_heal("Penance")
+local average_flashheal = getaverage_heal("Flash Heal")
+local average_POH = getaverage_heal("Prayer of Healing")
+--IsControlKeyDown(): debug print text
+--AltKey_IsDown : "Mass Dispel"
+--jps.Defensive: Heal only the Tank et yourself 	/jps def
+--jps.MultiTarget : Dispelling 						/jps multi
+--jps.PVPInterrupt: Damage							/jps pint
+--jps.UseCDs: group heal "Prayer of Healing"		/jps cds
+--jps.Interrupts : "Pain Suppression"				/jps int
+
+local AltKey_IsDown = false
+if IsAltKeyDown() then AltKey_IsDown = true end
+
+local spell = nil
+local playerhealth_deficiency = UnitHealthMax("player")-UnitHealth("player")
+local playerhealth_pct = UnitHealth("player") / UnitHealthMax("player")
+
+-- number of party members having a significant health pct loss
+local countInRaid = 3
+local pctLOSS = 0.80
+local COH_countInRaid = jps.countInRaidStatus(0.90)
+local POH_countInRaid = jps.countInRaidStatus(pctLOSS)
+local POH_Target = jps.findSubGroupToHeal(pctLOSS) -- returns the target to heal with POH in RAID
+local borrowed = jps.buff("Borrowed Time", "player")
+
+
+
 	-- Healer
 	local tank = nil
 	local me = "player"
@@ -91,7 +138,7 @@ function priest_disc(self)
     
     
     -- PW:S
-
+    }
 ----------------------------
 -- PriestHeal_Target_TANK
 ----------------------------
