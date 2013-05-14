@@ -61,9 +61,9 @@ function warlock_destro(self)
     local interruptCondition = false
     local interruptTable = nil
     if UnitCreatureFamily("pet") == "Observer" then
-        _, interruptCondition, interruptTable = jpsext.interruptSpellTable("Optical blast",2)
+        _, interruptCondition, interruptTable = jpsext.interruptSpellTable("Optical blast",20)
     elseif UnitCreatureFamily("pet") == "Felhunter" then
-        _, interruptCondition, interruptTable = jpsext.interruptSpellTable("Spell Lock",2)
+        _, interruptCondition, interruptTable = jpsext.interruptSpellTable("Spell Lock",20)
     end
     
     local avoidInterrupts = IsAltKeyDown() ~= nil
@@ -137,7 +137,11 @@ function warlock_destro(self)
     else
         spell = parseSpellTable( singleTargetSpellTable );
     end
-    if spell == "rain of fire" then pcall(click) end
+    if spell == "rain of fire" then 
+        jps.Cast( spell ) 
+        jps.groundClick() 
+        spell = nil 
+    end
 
     return spell
 end

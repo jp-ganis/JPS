@@ -12,10 +12,12 @@ function priest_disc(self)
         { "holy fire", "onCD" },
         { "smite"},
     }
-
-    return parseSpellTable(spellTable)
+   -- if UnitIsEnemy("player", "target") then
+        return parseSpellTable(spellTable)
+    --else 
+    --    return priest_disc_heal()
+    --end
 end
---[[
 
 
 function jps.MageSheepDuration_Eng(unit)
@@ -42,7 +44,7 @@ end
 -- Major Glyphs: Mind Spike (required), Dark Binding (required)
 
 
-function priest_disc(self)
+function priest_disc_heal(self)
 
 ----------------------
 -- HELPER
@@ -503,4 +505,3 @@ end
 -- Holy Word: Serenity - Mot sacré : Sérénité SpellID 88684
 -- Power Word: Shield - Mot de pouvoir : Bouclier
 -- Borrowed Time - Sursis - votre prochain sort d'un bonus à la hâte des sorts après avoir lancé Mot de pouvoir : Bouclier. Dure 6 sec.
-]]
