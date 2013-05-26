@@ -79,7 +79,7 @@ end)
 jpsIcon:SetScript("OnEnter", function(self)
 	GameTooltip:SetOwner(self, "ANCHOR_TOP")
 	local text = ""
-	if jps.Enabled then text = "JPS ENABLE" else text = "JPS DISABLE" end
+	if jps.Enabled then text = "JPS enabled" else text = "JPS disabled" end
 	GameTooltip:SetText(text.." for your|cffa335ee "..jps.Class.." "..jps.Spec)
 	GameTooltip:AddLine("jps.Rotation["..jps.Count.."]" , 1, 1, 1)
 	GameTooltip:AddLine("|cffff8000"..jps.Tooltip , 1, 1, 1)
@@ -291,9 +291,10 @@ end)
 ToggleRot:SetScript("OnEnter", function(self)
 	GameTooltip:SetOwner(self, "ANCHOR_TOP")
 	local text = ""
-	if jps.FaceTarget then text = "ENABLE" else text = "DISABLE" end
-	GameTooltip:SetText("jps.FaceTarget")
+	if jps.FaceTarget then text = "currently enabled" else text = "currently disabled" end
+	GameTooltip:SetText("jps FaceTarget")
 	GameTooltip:AddLine( text , 1, 1, 1)
+	GameTooltip:AddLine( "rotates your toon until you face your target" , 1, 1, 1)
 	GameTooltip:Show()
 end)
 ToggleRot:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
