@@ -111,10 +111,10 @@ SLASH_jps1 = '/jps'
 
 local combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
+combatFrame:RegisterEvent("VARIABLES_LOADED")
 combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("PLAYER_UNGHOST")
 combatFrame:RegisterEvent("INSPECT_READY")
-combatFrame:RegisterEvent("VARIABLES_LOADED")
 combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 combatFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -138,10 +138,10 @@ combatFrame:RegisterEvent("SPELL_FAILED_NOT_BEHIND")
 local L = MyLocalizationTable
 
 function write(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS_" .. strjoin(" ", tostringall(...))); -- color orange
+   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 function macrowrite(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO_" .. strjoin(" ", tostringall(...))); -- color orange
+   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 
 --------------------------
@@ -509,18 +509,7 @@ function SlashCmdList.jps(cmd, editbox)
 	end
 end
 
--- Create the frame that does all the work
-JPSFrame = CreateFrame("Frame", "JPSFrame")
-JPSFrame:SetScript("OnUpdate", function(self, elapsed)
-	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
-    self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-    if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-      	if jps.Combat and jps.Enabled then
-         	jps_Combat() 
-         	self.TimeSinceLastUpdate = 0
-      	end
-   	end
-end)
+
 
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
