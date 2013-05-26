@@ -1,9 +1,8 @@
-
 ==============================================================================
-= JPS - A PLUA AUTOMATED ADDON FOR WORLD OF WARCRAFT                         =
+= JPS - A PLUA ADDON FOR WORLD OF WARCRAFT                     =
 ==============================================================================
 
-This addon in combination with a protected LUA hack will help you get the most
+This addon in combination with enabled protected LUA will help you get the most
 out of your WoW experience. See commands below for a full list of available 
 commands.
 
@@ -46,22 +45,19 @@ HPS for your class and spec.
 /jps multi			Toggle support for AOE
 /jps cds			Use cooldowns in rotations
 /jps interrupts (or /jps int)		Interrupt spell casting where possible
-/jps pvp			toggle PVP mode (not supported for all specs)
-/jpw pew			manually start attacking current target (for macros) 
+/jps pew			manually start attacking with jps your current target (for ingame macros)
+/jps face			auto rotate your toon until you face your current target
+/jps defensive (or /jps def)*			toggle defensiv mode (def / heal usage)
+/jps pvp*			toggle pvp mode manually
+/jps version		prints your current JPS version/revision
+/jps db				resets ingame addon database
 /jps debug			Enable debug output
+/jps help			show help
+
+* not all classes/specs are currently supported
 
 ==============================================================================
 = UNSUPPORTED BUILDS AND CLASSES                                             =
 ==============================================================================
 
 All classes and specs are now supported. :)
-
-
-==============================================================================
-= KNOWN ISSUES                                                               =
-==============================================================================
-
-==============================================================================
-= VERSION                                                                    =
-==============================================================================
-1.3
