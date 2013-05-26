@@ -1,5 +1,5 @@
 -- Huge thanks to BenPhelps for these SO sexy buttons.
-jps.GUInormal = "Interface\\AddOns\\JPS\\media\\jps.tga"
+jps.GUInormal = "Interface\\AddOns\\JPS\\Media\\basquiat.tga"
 jps.GUIpvp = "Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Factions.blp"
 jps.GUInoplua = "Interface\\Icons\\Spell_Totem_WardOfDraining"
 jps.GUIshadow = "Interface\\AddOns\\JPS\\Media\\shadow.tga"
@@ -18,15 +18,20 @@ BINDING_HEADER_JPS = "JPS Toggles"
 BINDING_NAME_JPSTOGGLE = "Enabled/Disable"
 BINDING_NAME_JPSTOGGLEMULTI = "Multi Target"
 BINDING_NAME_JPSTOGGLECD = "CD Usage"
+BINDING_NAME_JPSTOGGLEINT = "Int Usage"
+-- Create the frame that does all the work
 
-
--- Create the frame that does all the work, pew pew...
 JPSFrame = CreateFrame("Frame", "JPSFrame")
 JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
-	JPS_OnUpdate(self, elapsed)
+    self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
+    if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
+      	if jps.Combat and jps.Enabled then
+         	jps_Combat() 
+         	self.TimeSinceLastUpdate = 0
+      	end
+   	end
 end)
-
 -- Create the dragable Icon frame, anchor point for everything else
 jpsIcon = CreateFrame("Button", "jpsIcon", UIParent)
 jpsIcon:SetMovable(true)
@@ -309,6 +314,10 @@ function jps.resize( size )
 		ToggleMulti:SetHeight(jps.IconSize)
 		ToggleInt:SetWidth(jps.IconSize)
 		ToggleInt:SetHeight(jps.IconSize)
+		ToggleDef:SetWidth(jps.IconSize)
+		ToggleDef:SetHeight(jps.IconSize)
+		ToggleRot:SetWidth(jps.IconSize)
+		ToggleRot:SetHeight(jps.IconSize)
 		jps.gui_setToggleDir(jps.ButtonGrowthDir)
 	end
 end
@@ -412,27 +421,6 @@ function jps.gui_toggleEnabled( value )
 	return
 end
 
-function jps.gui_toggleMulti( value )
-	if value ~= nil then
-		jps.MultiTarget = value
-		if value == true then
-			ToggleMulti.border:SetTexture(jps.GUIborder_active)
-		else
-			ToggleMulti.border:SetTexture(jps.GUIborder)
-		end
-		return
-	end
-	if jps.MultiTarget then
-		ToggleMulti.border:SetTexture(jps.GUIborder)
-		write("Multi-Target Disabled.")
-	else
-		ToggleMulti.border:SetTexture(jps.GUIborder_active)
-		write("Multi-Target Enabled.")
-	end
-	jps.MultiTarget = not jps.MultiTarget
-	return
-end
-
 function jps.gui_toggleCDs( value )
 	if value ~= nil then
 		jps.UseCDs = value
@@ -445,12 +433,33 @@ function jps.gui_toggleCDs( value )
 	end
 	if jps.UseCDs then
 		ToggleCDs.border:SetTexture(jps.GUIborder)
-		write ("Cooldown Usage Disabled.")
+		write ("Cooldown Disabled.")
 	else
 		ToggleCDs.border:SetTexture(jps.GUIborder_active)
-		write ("Cooldown Usage Enabled.")
+		write ("Cooldown Enabled.")
 	end
 	jps.UseCDs = not jps.UseCDs
+	return
+end
+
+function jps.gui_toggleMulti( value )
+	if value ~= nil then
+		jps.MultiTarget = value
+		if value == true then
+			ToggleMulti.border:SetTexture(jps.GUIborder_active)
+		else
+			ToggleMulti.border:SetTexture(jps.GUIborder)
+		end
+		return
+	end
+	if jps.MultiTarget then
+		ToggleMulti.border:SetTexture(jps.GUIborder)
+		write("MultiTarget Disabled.")
+	else
+		ToggleMulti.border:SetTexture(jps.GUIborder_active)
+		write("MultiTarget Enabled.")
+	end
+	jps.MultiTarget = not jps.MultiTarget
 	return
 end
 
@@ -533,12 +542,6 @@ function jps.gui_toggleCombat( status )
 	end
 end
 
-function jps.set_jps_icon( spell )
-	local icon = GetSpellTexture(spell)
-	jpsIcon.texture:SetTexture(icon)
-	jps.IconSpell = spell
-end
-
 function jps.gui_toggleToggles( value )
 	if value ~= nil then
 		jps.ExtraButtons = value
@@ -546,10 +549,14 @@ function jps.gui_toggleToggles( value )
 			ToggleMulti:Show()
 			ToggleCDs:Show()
 			ToggleInt:Show()
+			ToggleDef:Show()
+			ToggleRot:Show()
 		else
 			ToggleMulti:Hide()
 			ToggleCDs:Hide()
 			ToggleInt:Hide()
+			ToggleDef:Hide()
+			ToggleRot:Hide()
 		end
 
 	else
@@ -559,59 +566,36 @@ function jps.gui_toggleToggles( value )
 			ToggleMulti:Show()
 			ToggleCDs:Show()
 			ToggleInt:Show()
+			ToggleDef:Show()
+			ToggleRot:Show()
 		else
 			ToggleMulti:Hide()
 			ToggleCDs:Hide()
 			ToggleInt:Hide()
+			ToggleDef:Hide()
+			ToggleRot:Hide()
 		end
 	end
 end
 
+---------------------------
+-- TOGGLE PVP
+---------------------------
 
+function jps.togglePvP( value )
+	if value == nil then jps.PvP = not jps.PvP
+	else jps.PvP = value end
 
-function jps.addRotationDropdown()
-    local items = jps.getRotations()
-    
-    if (count(items) == 1) then return false end
+	if jps.PvP then jpsIcon.texture:SetTexture(jps.GUIpvp)
+	else jpsIcon.texture:SetTexture(jps.GUInormal) end
+end
 
-    CreateFrame("Button", "chooseRotationDropdown", jpsIcon, "UIDropDownMenuTemplate")
-    chooseRotationDropdown:ClearAllPoints()
-    chooseRotationDropdown:SetPoint("LEFT", -18, -40)
-    chooseRotationDropdown:Show()
-    
-    local function OnClick(self, arg1, arg2, checked)
-       UIDropDownMenu_SetSelectedID(chooseRotationDropdown, arg1)
-       jps.setActiveRotation(arg1)
-       write("changed your Rotation to ",arg2)
-    end
-     
-    local function initialize(self, level)
-       for k,v in pairs(items) do
-          
-          info = UIDropDownMenu_CreateInfo()
-          info.text = v.name
-          info.value = k
-          info.arg1 = k
-          info.arg2 = v.name
-          info.func = OnClick
-          if(v.tooltip) then
-              info.tooltipTitle = "INFO / USAGE"
-              info.tooltipText = v.tooltip
-              info.tooltipOnButton = true
-          end
-          UIDropDownMenu_AddButton(info, level)
-       end
-    end
+---------------------------
+-- ICON
+---------------------------
 
-    UIDropDownMenu_Initialize(chooseRotationDropdown, initialize)
-    UIDropDownMenu_SetWidth(chooseRotationDropdown, 100);
-    UIDropDownMenu_SetButtonWidth(chooseRotationDropdown, 124)
-    UIDropDownMenu_SetSelectedID(chooseRotationDropdown, 1)
-    UIDropDownMenu_JustifyText(chooseRotationDropdown, "LEFT")
-    jps.rotationsInitialized = true
-
-    local currentRotation = jps.getActiveRotation()
-    if(currentRotation) then
-        UIDropDownMenu_SetSelectedID(chooseRotationDropdown, currentRotation.key)
-    end
+function jps.set_jps_icon( spell )
+	local icon = GetSpellTexture(spell)
+	jpsIcon.texture:SetTexture(icon)
+	jps.IconSpell = spell
 end
