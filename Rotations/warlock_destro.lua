@@ -43,15 +43,16 @@ spellTable[1] =
 	
 	{ {"macro","/focus [target=mouseover,exists,nodead]"}, IsShiftKeyDown() ~= nil },
 	-- doomguard--
-	{ "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.bloodlusting() },
+	{ "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.bloodlusting() and jps.UseCDs},
 	{ "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.hp("target") < 0.25 and jps.UseCDs },
 	
+   { {"macro","/use Potion of the Jade Serpent"},  jps.itemCooldown(76093)==0 and jps.bloodlusting() and GetItemCount(76093) > 0 and jps.UseCDs },
+
 	{ jps.useTrinket(0), jps.UseCds },
 	{ jps.useTrinket(1), jps.UseCds },
 	
 	{ {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and	burningEmbersStacks > 3	},
 	{ {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and	jps.Opening	},
-	{ {"macro","/use 10"}, jps.glovesCooldown() == 0 },
 	{ jps.DPSRacial },
 	
 	-- Requires engineerins
