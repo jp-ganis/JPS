@@ -102,6 +102,14 @@ local L = MyLocalizationTable
 		{ "Avenging Wrath", jps.UseCDs , player }, -- Increases all damage and healing caused by 20% for 20 sec
 		{ "Divine Favor", jps.UseCDs , player }, -- Increases your spell casting haste by 20% and spell critical chance by 20% for 20 sec
 		{ "Guardian of Ancient Kings", jps.UseCDs , rangedTarget }, -- Summons a Guardian of Ancient Kings to help you deal damage for 30 sec.The Guardian of Ancient Kings will attack your current enemy
+		{ jps.useTrinket(1), jps.UseCDs },
+		{ jps.useTrinket(2), jps.UseCDs },
+		
+		-- Requires engineerins
+		{ jps.useSynapseSprings(), jps.UseCDs },
+		
+		-- Requires herbalism
+		{ "Lifeblood", jps.UseCDs },
 		
 	-- Multi Heals
 	
