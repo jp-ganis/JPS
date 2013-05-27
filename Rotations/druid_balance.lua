@@ -37,6 +37,13 @@ function druid_balance()
 	
 	local spellTable =
 	{
+		-- rebirth Ctrl-key + mouseover
+		{ "rebirth", 			IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
+		
+		-- Buffs
+		{ "mark of the wild",		 	not jps.buff("mark of the wild") , player },
+		
+		-- Rotation
 		{ "starfall" },
 		{ "force of nature" },
 		{ "sunfire", jps.Moving },
