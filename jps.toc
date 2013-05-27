@@ -12,8 +12,8 @@ jpparse.lua
 jpdata.lua
 jptips.lua
 
-Lib\jpsgui.lua
-Lib\jpsconfig.lua
+Lib\jpgui.lua
+Lib\jpconfig.lua
 Lib\bindings.xml
 
 Rotations\dk_blood.lua
