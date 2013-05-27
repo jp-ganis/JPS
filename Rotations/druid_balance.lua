@@ -1,36 +1,40 @@
 -- jpganis
 -- simcrafty
---TODO: add tab-dotting everything.
+-- TODO: add tab-dotting everything.
 
-function druid_balance(self)
+function druid_balance()
+	
+	local spell = nil
+	local target = nil
+	
 	-- bpt virtual trackers
 	local Energy = UnitPower("player",SPELL_POWER_ECLIPSE)
 	local Direction = GetEclipseDirection()
-
+	
 	if Direction == "none" then Direction = "sun" end
-
+	
 	-- Insect Swarm and Moonfire /fastest/ tick times.
 	local isTick = 1.3
 	local mfTick = 1.3
-
+	
 	-- Eclipse Buffs
 	local sEclipse = jps.buff("eclipse (solar)")
 	local lEclipse = jps.buff("eclipse (lunar)")
-
+	
 	-- Dot Durations
-	local mfDuration = jps.debuffDuration("moonfire") - jps.castTimeLeft()
-	local sfDuration = jps.debuffDuration("sunfire") - jps.castTimeLeft()
+	local mfDuration = jps.debuffDuration("moonfire") - jps.CastTimeLeft()
+	local sfDuration = jps.debuffDuration("sunfire") - jps.CastTimeLeft()
 	
 	-- Focus dots
 	local focusDotting, focusIS, focusMF, focusSF
 	if UnitExists("focus") then focusDotting = true
 	else focusDotting = false end
-
+	
 	if focusDotting then
 		focusMF = jps.debuffDuration("moonfire","focus")
 		focusSF = jps.debuffDuration("sunfire","focus")
 	end
-
+	
 	local spellTable =
 	{
 		{ "starfall" },
@@ -51,14 +55,7 @@ function druid_balance(self)
 		{ "sunfire" , jps.Moving and mfDuration == 0 },
 		{ "moonfire", jps.Moving and lEclipse },
 	}
-
-	spell = parseSpellTable( spellTable )
-
-
-	if spell == "force of nature" or spell == "wild mushroom" then
-		jps.groundClick()
-	--	Petattack("target")
-	end
-
-	return spell
+	
+	spell,target = parseSpellTable(spellTable)
+	return spell,target
 end
