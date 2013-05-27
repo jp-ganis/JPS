@@ -39,7 +39,11 @@ function druid_resto()
 	{
 		-- rebirth Ctrl-key + mouseover
 		{ "rebirth", 			IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
-		 
+		
+		-- Buffs
+		{ "mark of the wild",		 	not jps.buff("mark of the wild") , player },
+		
+		-- CDs
 		{ "barkskin",			jps.hp() < 0.50 },
 		{ "tree of life",		IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		
