@@ -1,5 +1,6 @@
 function paladin_protadin_pve(self)
-	  
+	local spell = nil
+	local target = nil
 	local holyPower = jps.holyPower()
 	local stance = GetShapeshiftForm()
 	--Paladin (only when arg1 is nil)
