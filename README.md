@@ -54,7 +54,7 @@ HPS for your class and spec.
 * /jps debug			Enable debug output
 * /jps help			show help
 
-not all classes/specs are currently supported
+*not all classes/specs are currently supported
 
 ==============================================================================
 = UNSUPPORTED BUILDS AND CLASSES                                             =
