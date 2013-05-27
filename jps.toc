@@ -16,8 +16,6 @@ Lib\jpsgui.lua
 Lib\jpsconfig.lua
 Lib\bindings.xml
 
-Rotations\kickin.lua
-
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
 Rotations\dk_unholy.lua
