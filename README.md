@@ -39,22 +39,22 @@ HPS for your class and spec.
 = COMMANDS                                                                   =
 ==============================================================================
 
-/jps enable (or /jps e)			Enables JPS
-/jps disable (or /jps d)		Disables JPS
-/jps toggle (or /jps t)			Toggle whether JPS is enabled or not
-/jps multi			Toggle support for AOE
-/jps cds			Use cooldowns in rotations
-/jps interrupts (or /jps int)		Interrupt spell casting where possible
-/jps pew			manually start attacking with jps your current target (for ingame macros)
-/jps face			auto rotate your toon until you face your current target
-/jps defensive (or /jps def)*			toggle defensiv mode (def / heal usage)
-/jps pvp*			toggle pvp mode manually
-/jps version		prints your current JPS version/revision
-/jps db				resets ingame addon database
-/jps debug			Enable debug output
-/jps help			show help
+* /jps enable (or /jps e)			Enables JPS
+* /jps disable (or /jps d)		Disables JPS
+* /jps toggle (or /jps t)			Toggle whether JPS is enabled or not
+* /jps multi			Toggle support for AOE
+* /jps cds			Use cooldowns in rotations
+* /jps interrupts (or /jps int)		Interrupt spell casting where possible
+* /jps pew			manually start attacking with jps your current target (for ingame macros)
+* /jps face			auto rotate your toon until you face your current target
+* /jps defensive (or /jps def)*			toggle defensiv mode (def / heal usage)
+* /jps pvp*			toggle pvp mode manually
+* /jps version		prints your current JPS version/revision
+* /jps db				resets ingame addon database
+* /jps debug			Enable debug output
+* /jps help			show help
 
-* not all classes/specs are currently supported
+not all classes/specs are currently supported
 
 ==============================================================================
 = UNSUPPORTED BUILDS AND CLASSES                                             =
