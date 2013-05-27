@@ -27,7 +27,7 @@ function mage_frost()
 	local function parse_vsDK()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end
@@ -35,7 +35,7 @@ function mage_frost()
 	local function parse_vsDruid()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end
@@ -43,7 +43,7 @@ function mage_frost()
 	local function parse_vsHunter()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}	
 	return table
 	end
@@ -51,7 +51,7 @@ function mage_frost()
 	local function parse_vsMage()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end	
@@ -60,7 +60,7 @@ function mage_frost()
 	local function parse_vsPaladin()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end
@@ -68,7 +68,7 @@ function mage_frost()
 	local function parse_vsPriest()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end
@@ -76,7 +76,7 @@ function mage_frost()
 	local function parse_vsRogue()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end
@@ -84,7 +84,7 @@ function mage_frost()
 	local function parse_vsShaman()
 	local table =
 	{
-	  -- { "empty", empty , empty },	 
+		-- { "empty", empty , empty },	 
 	}
 	return table
 	end
@@ -92,7 +92,7 @@ function mage_frost()
 	local function parse_vsWarlock()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end	
@@ -100,7 +100,7 @@ function mage_frost()
 	local function parse_vsWarrior()
 	local table =
 	{
-	  -- { "empty", empty , empty },
+		-- { "empty", empty , empty },
 	}
 	return table
 	end
@@ -108,26 +108,26 @@ function mage_frost()
 
 -- Remove Curse
 	local function decurse()
-	  if jps.debuff("curse of the elements",player) then return true end
-	  if jps.debuff("curse of enfeeblement",player) then return true end
-	  if jps.debuff("curse of exhaustion",player) then return true end
-	  if jps.debuff("agony",player) then return true end
-	  if jps.debuff("doom",player) then return true end
-	  if jps.debuff("havok",player) then return true end
-	  if jps.debuff("hex",player) then return true end
+		if jps.debuff("curse of the elements",player) then return true end
+		if jps.debuff("curse of enfeeblement",player) then return true end
+		if jps.debuff("curse of exhaustion",player) then return true end
+		if jps.debuff("agony",player) then return true end
+		if jps.debuff("doom",player) then return true end
+		if jps.debuff("havok",player) then return true end
+		if jps.debuff("hex",player) then return true end
 	return false
 	end
  
 -- Enemy Tracking
 	local enemycount,targetcount = jps.TableEnemyCount()
 	local EnemyUnit = {}
-	  for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
+		for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
 	local rangedTargetCount = jps.RaidEnemyTargetCount()
 	local rangedTarget = "target"
-	  if jps.canDPS("target") then rangedTarget = "target"
-	  elseif jps.canDPS("focustarget") then rangedTarget = "focustarget"
-	  elseif jps.canDPS("targettarget") then rangedTarget = "targettarget"
-	  elseif jps.canDPS(EnemyUnit[1]) then rangedTarget = EnemyUnit[1]
+		if jps.canDPS("target") then rangedTarget = "target"
+		elseif jps.canDPS("focustarget") then rangedTarget = "focustarget"
+		elseif jps.canDPS("targettarget") then rangedTarget = "targettarget"
+		elseif jps.canDPS(EnemyUnit[1]) then rangedTarget = EnemyUnit[1]
 	end
 
 	RunMacroText("/target "..rangedTarget)
@@ -162,7 +162,7 @@ local spellTable =
 -- Survival, Heals, etc.
 	{ {"macro","/use Mana Gem"}, mana < 0.70 and GetItemCount("Mana Gem", 0, 1) > 0 , player }, 
 	{ {"macro","/cast icy veins\n/cast evocation"}, jps.hp() < .41 , player },
-	{ "Healthstone",	  jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
+	{ "Healthstone",		jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
 
 -- Debuffs
 	{ "remove curse", decurse() , player },
