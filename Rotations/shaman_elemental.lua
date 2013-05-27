@@ -6,7 +6,7 @@ function shaman_elemental(self)
 	-- Tier 4: Echo of the Elements
 	-- Tier 5: Healing Tide Totem
 	-- Major Glyphs: Flame Shock (required), Spiritwalker's Grace (recommended),
-	--    Telluric Currents (recommended)
+	-- Telluric Currents (recommended)
 	-- Minor Glyphs: Thunderstorm (required)
 	
 	local lsStacks = jps.buffStacks("lightning shield")
@@ -40,15 +40,21 @@ function shaman_elemental(self)
 		{ "Searing Totem", not fireTotemActive },
 		{ "Earth Elemental Totem", jps.UseCDs and jps.bloodlusting() },
 		{ "Stormlash Totem", jps.UseCDs and jps.bloodlusting() },
+		
 		-- Trinket CDs. 
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
+		
 		-- Synapse Springs CD. (engineering gloves) 
 		{ jps.useSynapseSprings(), jps.UseCDs },
+		
 		-- Lifeblood CD. (herbalists) 
 		{ "Lifeblood", jps.UseCDs },
+		
 		-- DPS Racial CD. 
 		{ jps.DPSRacial, jps.UseCDs },
+		
+		-- Prio-List
 		{ "Wind Shear", jps.shouldKick() },
 		{ "Unleash Elements", jps.debuffDuration("Flame Shock") < 2 },
 		{ "Flame Shock", jps.buff("Unleash Flame") },
