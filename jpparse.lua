@@ -152,8 +152,8 @@ end
 -- JPS.CANDPS IS WORKING ONLY FOR PARTYn..TARGET AND RAIDn..TARGET NOT FOR UNITNAME..TARGET
 function jps.canDPS(unit) 
 	if not jps.UnitExists(unit) then return false end
-	if jps.PvP then 
-		local iceblock = tostring(select(1,GetSpellInfo(45438))) -- "Bloc de glace" 45438 "Ice Block"
+	if jps.PvP then  -- do no dmg on players with paladin divine shild or ice block active !!! 
+		local iceblock = tostring(select(1,GetSpellInfo(45438))) --  45438 "Ice Block"
 		local divineshield = tostring(select(1,GetSpellInfo(642))) -- 642 "Divine Shield"
 		if jps.buff(divineshield,unit) then return false end
 		if jps.buff(iceblock,unit) then return false end
@@ -172,15 +172,10 @@ function jpd( spell, unit )
 	local _, spellID = GetSpellBookItemInfo(spell)
 	local usable, nomana = IsUsableSpell(spell)
 
-	if not UnitExists(unit) then
-		write("Failed UnitExists test")
+	if jps.UnitExists(unit) == 0 then 
+		write("Unit Exists test failed");
 		return false end
-	if UnitIsDead(unit) then
-		write("Failed UnitIsDead test")
-		return false end
-	if UnitIsDeadOrGhost(unit) then
-		write("Failed UnitIsDeadOrGhost test")
-		return false end
+	end
     if jps.spellConfig[spell] == 0 then
          write("spell is not actived")
          return false end
@@ -196,12 +191,7 @@ function jpd( spell, unit )
 	if not UnitIsVisible(unit)  then
 		write("Failed Visible test")
 		return false end
-	--[[if not IsSpellKnown(spellID)  then
-		write("Failed IsSpellKnown test")
-		return false end
-		still buggy in wow API , IsPlayerSpell doesnt worked
-    ]]--
-	if SpellHasRange(spell)==1 and IsSpellInRange(spell,unit)==0 then
+	if jps.SpellHasRange(spell)==1 and jps.IsSpellInRange(spell,unit)==0 then
 		write("Failed Range test")
 		return false end
 	if jps[spell] ~= nil and jps[spell] == false then
@@ -264,7 +254,6 @@ function jps.Cast(spell)  -- "number" "string"
 	
 	if jps.Target==nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
-	--if not jps.UnitExists(jps.Target) then return end
 	
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
@@ -425,7 +414,6 @@ end
 
 function jps.RotationActive(spellTable)
 -- GET The Rotation Name in dropDown Menu
-
 	for i,j in ipairs (spellTable) do
 		if spellTable[i]["ToolTip"] ~= nil then
 			jps.MultiRotation = true
