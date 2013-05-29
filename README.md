@@ -34,6 +34,21 @@ simply attacking a target will cause the mod to take over. Using all the best
 spells and abilities with split second timing to ensure maximum DPS, TPS or
 HPS for your class and spec.
 
+==============================================================================
+= TO-DO                                                                      =
+==============================================================================
+
+* check/update Hunter rotations
+* check/update Priest rotations
+* useBagItem function (flask, pots, healthstone...)
+* remove all groundClicks from rotation files (moved to jpsParse line 240)
+* add "jps.RotationActive(spellTable)" to every rotation
+* load all available rotations without /jps pew
+* add golden carp to jps fishing
+* test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
+
+***tester***
+pcmd: dk blood, dk frost, mage fire, mage frost, holy paladin, destro warlock
 
 ==============================================================================
 = COMMANDS                                                                   =
