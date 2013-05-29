@@ -1,7 +1,8 @@
 ==============================================================================
 = JPS =
 ==============================================================================
-***A PLUA ADDON FOR WORLD OF WARCRAFT                     ***
+
+***A PLUA ADDON FOR WORLD OF WARCRAFT***
 
 This addon in combination with enabled protected LUA will help you get the most
 out of your WoW experience. See commands below for a full list of available 
