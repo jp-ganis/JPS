@@ -1,6 +1,7 @@
 ==============================================================================
-= JPS - A PLUA ADDON FOR WORLD OF WARCRAFT                     =
+= JPS =
 ==============================================================================
+***A PLUA ADDON FOR WORLD OF WARCRAFT                     ***
 
 This addon in combination with enabled protected LUA will help you get the most
 out of your WoW experience. See commands below for a full list of available 
@@ -45,6 +46,7 @@ HPS for your class and spec.
 * add "jps.RotationActive(spellTable)" to every rotation
 * load all available rotations without /jps pew
 * add golden carp to jps fishing
+* turn off on toons with level < 10
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 
 ***tester***
