@@ -50,6 +50,7 @@ HPS for your class and spec.
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 
 ***tester***
+
 pcmd: dk blood, dk frost, mage fire, mage frost, holy paladin, destro warlock
 
 ==============================================================================
