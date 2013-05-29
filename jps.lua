@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	 Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	 This program is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	 This program is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the 
+	 GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	 You should have received a copy of the GNU General Public License
+	 along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
 -- Huge thanks to everyone who's helped out on this, <3
@@ -84,7 +84,7 @@ jps.RaidTarget = {}
 jps.HealerBlacklist = {}
 jps.Timers = {}
 Healtable = {}
-jps.EnemyTable =  {}
+jps.EnemyTable =	{}
 jps.FriendTable = {}
 
 -- Config.
@@ -138,10 +138,10 @@ combatFrame:RegisterEvent("SPELL_FAILED_NOT_BEHIND")
 local L = MyLocalizationTable
 
 function write(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
+	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 function macrowrite(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO: " .. strjoin(" ", tostringall(...))); -- color orange
+	DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 
 --------------------------
@@ -152,13 +152,13 @@ function jps_combatEventHandler(self, event, ...)
 
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
-      
+		
 	elseif event == "PLAYER_ENTERING_WORLD" then -- 2er fire > reloadui
 		--print("PLAYER_ENTERING_WORLD")
 		jps.detectSpec()
 		jps.SortRaidStatus()
 		reset_healtable()
-      
+		
 	elseif event == "INSPECT_READY" then -- 3er fire > reloadui
 		--print("INSPECT_READY")
 		if not jps.Spec then 
@@ -179,7 +179,7 @@ function jps_combatEventHandler(self, event, ...)
 		total_damage = 0
 		incoming_dmg = 0
 		start_time = GetTime()
-      
+		
 	elseif (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UNGHOST") then -- or (event == "PLAYER_ALIVE")
 		--print("PLAYER_REGEN_ENABLED")
 		TurnLeftStop()
@@ -198,15 +198,15 @@ function jps_combatEventHandler(self, event, ...)
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then -- only fire when spec change no other event before
 		--print("ACTIVE_TALENT")
 		jps.detectSpec()
-      
+		
 -- On Logout
 	elseif event == "PLAYER_LEAVING_WORLD" then
 		jps_SAVE_PROFILE()
-      
+		
 -- "ADDON_ACTION_FORBIDDEN"
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		jps.PLuaFlag = true
-      
+		
 -- FISHES
 	elseif event == "BAG_UPDATE" and jps.Fishing then
 		for bag = 0,4,1 do
@@ -218,7 +218,7 @@ function jps_combatEventHandler(self, event, ...)
 				end 
 		 	end 
 		end
-      
+		
 -- FACINGTARGET
 -- SetCVar("autointeract", "1") -- Enable Click-to-Move -- RunMacroText("/console AutoInteract 1")
 -- SetCVar("autointeract", "0") -- Disable Click-to-Move -- RunMacroText("/console AutoInteract 0")
@@ -237,7 +237,7 @@ function jps_combatEventHandler(self, event, ...)
 		if (event_error == SPELL_FAILED_NOT_BEHIND) then -- "You must be behind your target."
 			print("SPELL_FAILED_NOT_BEHIND",event_error)
 			jps.isNotBehind = true
-   			jps.isBehind = false
+				jps.isBehind = false
 		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
 			print("ERR_BADATTACKFACING",event_error) -- facing wrong directions			
 			jps.createTimer("Facing",0.6)
@@ -279,7 +279,7 @@ function jps_combatEventHandler(self, event, ...)
 
 	elseif event == "UNIT_HEALTH_FREQUENT" and jps.Enabled then
 		local unit = ... 
-		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
+		local unitname = select(1,UnitName(unit))	-- to avoid that party1, focus and target are added all refering to the same player
 		local unittarget = unit.."target"
 		
 		if jps.canHeal(unit) and UnitIsPlayer(unit) then -- and jps.Healing
@@ -319,8 +319,8 @@ function jps_combatEventHandler(self, event, ...)
 -- eventtable[10] == destFlags
 -- eventtable[15] == amount if suffix is _DAMAGE or _HEAL
 
-    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled then
-		local eventtable =  {...}
+	 elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled then
+		local eventtable =	{...}
 		
 		-- TIMER SHIELD FOR DISC PRIEST
 		if eventtable[2] == "SPELL_CAST_SUCCESS" and eventtable[5] == GetUnitName("player") and eventtable[12] == 17 then
@@ -338,7 +338,7 @@ function jps_combatEventHandler(self, event, ...)
 		end	
 
 		-- REMOVE DIED UNIT OR OUT OF RANGE UNIT OF TABLES
-		if  eventtable[2] == "UNIT_DIED" and (eventtable[8] ~= nil) then
+		if	eventtable[2] == "UNIT_DIED" and (eventtable[8] ~= nil) then
 			local mobName = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 			local mobGuid = eventtable[8] -- eventtable[8] == destGUID 
 			--local mobID = tonumber("0x"..strsub(mobGuid,7,10))
@@ -366,7 +366,7 @@ function jps_combatEventHandler(self, event, ...)
 				jps.gui_toggleCombat(true)
 				end_time = GetTime()
 				total_time = math.max(end_time - start_time, 1)
-				total_damage = (total_damage + eventtable[15]) --  eventtable[15] amount if suffix is _DAMAGE or _HEAL
+				total_damage = (total_damage + eventtable[15]) --	eventtable[15] amount if suffix is _DAMAGE or _HEAL
 				incoming_dmg = math.ceil(total_damage / total_time)
 				local unitName = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 				local unitGuid = eventtable[8] -- eventtable[8] == destGUID
@@ -391,32 +391,38 @@ function jps.detectSpec()
 
 	jps.Race = UnitRace("player")
 	jps.Class = UnitClass("player")
+	local level = UnitLevel("player")
 	if jps.Class then
-	  local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
-	  if not id then write("jps couldn't find your talent tree... One second please.") 
-	  else
+		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
+		if not id and level => 10 then 
+			write("jps couldn't find your talent tree... One second please.") 
+			if level < 10 then 
+				write("your character need to be at least at level 10 and has a specialization choosen before you use jps") 
+				jps.Enabled = false
+			end
+		else
 		 -- local id, name, description, icon, background, role = GetSpecializationInfo(specIndex [, isInspect [, isPet]])
 		 local _,name,_,_,_,_ = GetSpecializationInfo(id) -- patch 5.0.4 remplace GetTalentTabInfo( id )
 		 if name then
 			jps.Spec = name
 			if jps.Spec then 
-			   write("Online for your",jps.Spec,jps.Class)
+				write("Online for your",jps.Spec,jps.Class)
 			end
 		 end
-	  end
+		end
 	end
-   if (GetLocale() == "frFR") then  -- WIP: is there no cleaner way instead of generating new functions because of localization ? 
-      jps.Rotation = jps_getCombatFunction_fr(jps.Class,jps.Spec)
-   elseif (GetLocale() == "deDE") then
-      jps.Rotation = jps_getCombatFunction_de(jps.Class,jps.Spec)
-   else
-      jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
-   end
-   if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.Healing = true end
-   jps.HarmSpell = jps_GetHarmSpell()
-   jps.SpellBookTable = jps_GetSpellBook()
-   write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
-   jps_VARIABLES_LOADED()
+	if (GetLocale() == "frFR") then	-- WIP: is there no cleaner way instead of generating new functions because of localization ? 
+		jps.Rotation = jps_getCombatFunction_fr(jps.Class,jps.Spec)
+	elseif (GetLocale() == "deDE") then
+		jps.Rotation = jps_getCombatFunction_de(jps.Class,jps.Spec)
+	else
+		jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
+	end
+	if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.Healing = true end
+	jps.HarmSpell = jps_GetHarmSpell()
+	jps.SpellBookTable = jps_GetSpellBook()
+	write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
+	jps_VARIABLES_LOADED()
 end
 
 ------------------------
@@ -430,55 +436,55 @@ function SlashCmdList.jps(cmd, editbox)
 		else msg = "d" end
 	end
 	if msg == "config" then
-	  InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
+		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	elseif msg == "show" then
-      jpsIcon:Show()
-      write("Icon set to show")
+		jpsIcon:Show()
+		write("Icon set to show")
 	elseif msg == "hide" then
-      jpsIcon:Hide()
-      write("Icon set to hide")
+		jpsIcon:Hide()
+		write("Icon set to hide")
 	elseif msg== "disable" or msg == "d" then
-      jps.Enabled = false
-      jps.gui_toggleEnabled(false)
-      print "jps Disabled."
+		jps.Enabled = false
+		jps.gui_toggleEnabled(false)
+		print "jps Disabled."
 	elseif msg== "enable" or msg == "e" then
-      jps.Enabled = true
-      jps.gui_toggleEnabled(true)
-      print "jps Enabled."
+		jps.Enabled = true
+		jps.gui_toggleEnabled(true)
+		print "jps Enabled."
 	elseif msg == "respec" then
-	  jps.detectSpec()
+		jps.detectSpec()
 	elseif msg == "multi" or msg == "aoe" then
-      jps.gui_toggleMulti()
+		jps.gui_toggleMulti()
 	elseif msg == "cds" then
-      jps.gui_toggleCDs()
+		jps.gui_toggleCDs()
 	elseif msg == "int" then
-      jps.gui_toggleInt()
+		jps.gui_toggleInt()
 	elseif msg == "pvp" then
-	  jps.togglePvP()
-      write("PvP mode is now set to",tostring(jps.PvP))
+		jps.togglePvP()
+		write("PvP mode is now set to",tostring(jps.PvP))
 	elseif msg == "def" or msg == "defensive" then
-   	  jps.gui_toggleDef()
-      write("Defensive set to",tostring(jps.Defensive))
+			jps.gui_toggleDef()
+		write("Defensive set to",tostring(jps.Defensive))
 	elseif msg == "heal" then
-	  jps.Healing = not jps.Healing
-	  write("Healing set to", tostring(jps.Healing))
+		jps.Healing = not jps.Healing
+		write("Healing set to", tostring(jps.Healing))
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
 	elseif msg == "fishing" or msg == "fish" then
-      jps.Fishing = not jps.Fishing
-      write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
+		jps.Fishing = not jps.Fishing
+		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
 	elseif msg == "debug" then
-      jps.Debug = not jps.Debug
-      write("Debug mode set to",tostring(jps.Debug))
+		jps.Debug = not jps.Debug
+		write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "face" then
-    	jps.gui_toggleRot()
-    	write("jps.FaceTarget set to",tostring(jps.FaceTarget))
+	 	jps.gui_toggleRot()
+	 	write("jps.FaceTarget set to",tostring(jps.FaceTarget))
 	elseif msg == "db" then
-   		jps.ResetDB = not jps.ResetDB
-   		jps_VARIABLES_LOADED()
-   		write("jps.ResetDB set to",tostring(jps.ResetDB))
-   		RunMacroText("/reload")
+			jps.ResetDB = not jps.ResetDB
+			jps_VARIABLES_LOADED()
+			write("jps.ResetDB set to",tostring(jps.ResetDB))
+			RunMacroText("/reload")
 	elseif msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS revision",tostring(jps.Revision))
 	elseif msg == "opening" then
@@ -499,7 +505,7 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps pvp - Toggle pvp")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
-      	jps_Combat()
+			jps_Combat()
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
@@ -513,19 +519,19 @@ end
 
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
-   return unpack(spellcache[a])
+	return unpack(spellcache[a])
 end
 
 hooksecurefunc("UseAction", function(...)
 if jps.Enabled and (select(3, ...) ~= nil) and (InCombatLockdown()==1) and jps.IsCasting("player") then
-   local stype,id,_ = GetActionInfo( select(1, ...) )
-   if stype == "spell" then
-      local name = select(1,GetSpellInfo(id))
-      if jps.NextSpell[#jps.NextSpell] ~= name then -- # valable que pour table ipairs table[1]
-         table.insert(jps.NextSpell, name)
-         if jps.Combat then write("Set",name,"for next cast.") end
-      end
-   end
+	local stype,id,_ = GetActionInfo( select(1, ...) )
+	if stype == "spell" then
+		local name = select(1,GetSpellInfo(id))
+		if jps.NextSpell[#jps.NextSpell] ~= name then -- # valable que pour table ipairs table[1]
+			table.insert(jps.NextSpell, name)
+			if jps.Combat then write("Set",name,"for next cast.") end
+		end
+	end
 end
 end)
 
@@ -534,55 +540,55 @@ end)
 ------------------------
 
 function jps_Combat() 
-   -- Check for the Rotation
-   if not jps.Class then return end
-   if not jps.Rotation then
-      write("JPS does not have a rotation for your",jps.Spec,jps.Class)
-      jps.Enabled = false
-      return 
-   end
-   
-   -- RAID UPDATE
+	-- Check for the Rotation
+	if not jps.Class then return end
+	if not jps.Rotation then
+		write("JPS does not have a rotation for your",jps.Spec,jps.Class)
+		jps.Enabled = false
+		return 
+	end
+	
+	-- RAID UPDATE
 	--jps.SortRaidStatus()
 	jps.UpdateHealerBlacklist()
 	jps.UpdateEnemyTable()
-   
-   -- Movement
-   jps.Moving = GetUnitSpeed("player") > 0
-   jps.MovingTarget = GetUnitSpeed("target") > 0
-   
-   -- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
-   if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
-   
-   -- LagWorld
-   jps.Lag = select(4,GetNetStats()) -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
-   jps.Lag = jps.Lag/100
-   
-   -- Casting
+	
+	-- Movement
+	jps.Moving = GetUnitSpeed("player") > 0
+	jps.MovingTarget = GetUnitSpeed("target") > 0
+	
+	-- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
+	if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
+	
+	-- LagWorld
+	jps.Lag = select(4,GetNetStats()) -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
+	jps.Lag = jps.Lag/100
+	
+	-- Casting
 	if UnitCastingInfo("player") or (UnitChannelInfo("player") and jps.Spec ~= "Mistweaver") then
 		jps.Casting = true
 	else
 		jps.Casting = false
 	end
-   
-   -- Check spell usability 
-   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
-   
-   if not jps.Casting and jps.ThisCast ~= nil then
-      if #jps.NextSpell >= 1 then
-         if jps.NextSpell[1] then
-            jps.Cast(jps.NextSpell[1])
-            table.remove(jps.NextSpell, 1)
-         else
-            jps.NextSpell[1] = nil
-         end
-      else
-         jps.Cast(jps.ThisCast)
-      end
-   end
-   
-   StaticPopup1:Hide()
-   
-   -- Return spellcast.
-   return jps.ThisCast,jps.Target
+	
+	-- Check spell usability 
+	jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+	
+	if not jps.Casting and jps.ThisCast ~= nil then
+		if #jps.NextSpell >= 1 then
+			if jps.NextSpell[1] then
+				jps.Cast(jps.NextSpell[1])
+				table.remove(jps.NextSpell, 1)
+			else
+				jps.NextSpell[1] = nil
+			end
+		else
+			jps.Cast(jps.ThisCast)
+		end
+	end
+	
+	StaticPopup1:Hide()
+	
+	-- Return spellcast.
+	return jps.ThisCast,jps.Target
 end
