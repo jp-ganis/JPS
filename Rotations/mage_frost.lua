@@ -15,7 +15,7 @@ function mage_frost()
 	local targetName = GetUnitName("target")
 	local targetClass = UnitClass("target")
 	local targetSpec = GetSpecialization("target")
-	local targethealth_pct = jps.hpInc("target")
+	local targethealth_pct = jps.hp("target")
 	local dmgBlock = jps.buff("ice block",rangedTarget) or jps.buff("devine shield",rangedTarget) or jps.buff("hand of protection",rangedTarget) or jps.buff("deterrence",rangedTarget)
 	local kick = jps.shouldKick(rangedTarget) or jps.IsCastingPoly(rangedTarget)
 
@@ -119,10 +119,9 @@ function mage_frost()
 	end
  
 -- Enemy Tracking
-	local enemycount,targetcount = jps.TableEnemyCount()
+	local enemycount,targetcount = jps.RaidEnemyCount()
 	local EnemyUnit = {}
 		for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
-	local rangedTargetCount = jps.RaidEnemyTargetCount()
 	local rangedTarget = "target"
 		if jps.canDPS("target") then rangedTarget = "target"
 		elseif jps.canDPS("focustarget") then rangedTarget = "focustarget"

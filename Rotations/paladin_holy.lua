@@ -21,15 +21,11 @@ local L = MyLocalizationTable
 	--------------------------------------------------------------------------------------------
 	
 	local player = jpsName
-	local playerhealth_pct = jps.hpInc(player)
+	local playerhealth_pct = jps.hp(player)
 	
 	local Heal_Target = jps.LowestInRaidStatus() -- return Raid unit name with LOWEST PERCENTAGE in RaidStatus
 	local health_deficiency = UnitHealthMax(Heal_Target) - UnitHealth(Heal_Target)
-	local health_pct = jps.hpInc(Heal_Target) 
-	-- I've removed the incomingHeal because some heal are interrupted in pvp 
-	-- jps.hpInc(unit,"abs") returns UnitHealth(unit) + hpInc
-	-- jps.hpInc(unit,"inc") returns (UnitHealth(unit) + hpInc)/UnitHealthMax(unit) 
-	-- jps.hpInc(unit) returns UnitHealth(unit)/UnitHealthMax(unit)
+	local health_pct = jps.hp(Heal_Target) 
 	
 	local hPower = UnitPower("player",9) -- SPELL_POWER_HOLY_POWER = 9 
 	local stance = GetShapeshiftForm()

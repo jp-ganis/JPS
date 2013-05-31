@@ -1,6 +1,6 @@
 	--Ty to MEW Feral Sim
 	-- jpganis
-function druid_feral_pve(self)
+function druid_feral_pve()
 	local spell = nil
 	local target = nil
 	
@@ -15,7 +15,7 @@ function druid_feral_pve(self)
 	local berserk = jps.buff("Berserk")
 	local tigersFury = jps.buff("Tiger's fury")
 	local predatorySwiftness = jps.buff("Predatory Swiftness")
-	local cenarionStacks = jps.buffStacksID(108381) 
+	local cenarionStacks = jps.buffStacks(108381) 
 	-- Dream of Cenarius
 	
 	local ripDuration = jps.debuffDuration("Rip")

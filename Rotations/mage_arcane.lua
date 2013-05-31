@@ -18,8 +18,8 @@ local spellTable =
 	{ "presence of mind", not jps.buff("alter time") },
 	{ "nether tempest",	not jps.debuff("nether tempest") },
 	{ "arcane blast",	jps.mana() > 0.92 },
-	{ "arcane missiles",jps.buff("arcane missiles") and jps.cd("alter time") > 4 },
-	{ "arcane barrage",	jps.buff("arcane charge") and not jps.buff("arcane power") and not jps.buff("alter time") and jps.cd("mana gem") > 10 },
+	{ "arcane missiles",jps.buff("arcane missiles") and jps.cooldown("alter time") > 4 },
+	{ "arcane barrage",	jps.buff("arcane charge") and not jps.buff("arcane power") and not jps.buff("alter time") and jps.cooldown("mana gem") > 10 },
 	{ "arcane barrage",	stacks >= 4 and not jps.buff("arcane missiles") },
 	{ "arcane blast" },
 }

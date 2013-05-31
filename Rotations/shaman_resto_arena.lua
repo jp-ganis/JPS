@@ -1,4 +1,4 @@
-function shaman_resto_arena(self)
+function shaman_resto_arena()
 -- TO DO : better code/rotation style 
 
 local spell = nil
@@ -12,8 +12,8 @@ local target = nil
    local r = RunMacroText
    local tank = nil
    
-   local my_friend_name = "my_friend_name"
-   local stunAly = jps.Stun(my_friend_name) or jps.checkTimer("PLAYER_CONTROL_LOST")>0 -- return true/false
+   local my_friend_name = jpsName -- Player
+   local stunAly = jps.StunEvents() or jps.checkTimer("PLAYER_CONTROL_LOST") > 0 -- return true/false
    
    -- Totems
    local haveFireTotem, fireName, _, _, _ = GetTotemInfo(1)
@@ -269,10 +269,10 @@ local target = nil
 
 
    -- Dispel offensive with a priority order, the healer then my target then enemy1 then enemy2
-   local dispelOffensive_Enemy1 = jps.canDispelOffensive(arenaEnemy1) -- return true/false
-   local dispelOffensive_Enemy2 = jps.canDispelOffensive(arenaEnemy2) -- return true/false
-   local dispelOffensive_Healer = jps.canDispelOffensive(enemyHealer) -- return true/false
-   local dispelOffensive_Target = jps.canDispelOffensive("target") -- return true/false
+   local dispelOffensive_Enemy1 = jps.DispelOffensive(arenaEnemy1) -- return true/false
+   local dispelOffensive_Enemy2 = jps.DispelOffensive(arenaEnemy2) -- return true/false
+   local dispelOffensive_Healer = jps.DispelOffensive(enemyHealer) -- return true/false
+   local dispelOffensive_Target = jps.DispelOffensive("target") -- return true/false
    if dispelOffensive_Healer and IsSpellInRange("Purge", enemyHealer) and UnitIsVisible(enemyHealer) and UnitExists(enemyHealer)==1 and UnitIsEnemy("player", enemyHealer)==1 then
       jps.Target = enemyHealer
       spell = "Purge"

@@ -117,7 +117,7 @@ function dkUnholy()
 		{ "blood tap",            jps.buffStacks("blood charge") >= 5 and (not oneDr or not oneUr or not oneFr )},
 		{ "scourge strike" },
 		{ "festering strike" },
-		{ "death coil", 			jps.cd("summon gargoyle") > 8 },
+		{ "death coil", 			jps.cooldown("summon gargoyle") > 8 },
 		{ "horn of winter" },
 		{ "empower rune weapon" },
 	}

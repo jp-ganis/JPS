@@ -7,7 +7,7 @@ function priest_holy()
 	
 	local Priest_Target = jps.LowestInRaidStatus() 
 	local health_deficiency = UnitHealthMax(Priest_Target) - UnitHealth(Priest_Target)
-	local health_pct = jps.hpInc(Priest_Target)
+	local health_pct = jps.hp(Priest_Target)
 	
 	local stackSerendip = jps.buffStacks("Serendipity","player")
 	
@@ -18,7 +18,7 @@ function priest_holy()
 		for unit, unitTable in pairs(jps.RaidStatus) do
 			--Only check the relevant units
 			if jps.canHeal(unit) then
-				local thisHP = jps.hpInc(unit)
+				local thisHP = jps.hp(unit)
 				-- Number of people below x%
 				if thisHP < 0.3 then unitsBelow30 = unitsBelow30 + 1 end
 				if thisHP < 0.5 then unitsBelow50 = unitsBelow50 + 1 end

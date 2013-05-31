@@ -29,7 +29,7 @@ function druid_resto()
 	local defaultTarget = jps.LowestInRaidStatus()
 	
 	--Check that the tank isn't going critical, and that I'm not about to die
-	if jps.canHeal(tank) and jps.hpInc(tank) <= 0.5 then defaultTarget = tank end
+	if jps.canHeal(tank) and jps.hp(tank) <= 0.5 then defaultTarget = tank end
 	if jps.hpInc(me) < 0.2 then	defaultTarget = me end
 	
 	--Get the health of our decided target
@@ -57,7 +57,7 @@ function druid_resto()
 		{ "nature's swiftness", defaultHP < 0.40 },
 		{ "healing touch", 		(jps.buff("nature's swiftness") or not jps.Moving) and defaultHP < 0.55, defaultTarget },	
 		{ "nourish",			defaultHP < 0.85, defaultTarget },
-		--	{ "nourish",			jps.hpInc(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
+		--	{ "nourish",			jps.hp(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
 	}
 
 	spell,target = parseSpellTable(spellTable)

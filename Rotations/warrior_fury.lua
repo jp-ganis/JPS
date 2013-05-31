@@ -4,7 +4,7 @@ function warrior_fury()
 
 	local player = jpsName
 	local playerhealth_deficiency =  UnitHealthMax(player) - UnitHealth(player)
-	local playerhealth_pct = jps.hpInc(player) 
+	local playerhealth_pct = jps.hp(player) 
 
 	local EnemyUnit = {}
 	for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
@@ -34,11 +34,11 @@ function warrior_fury()
 	
 	local player_Aggro = jps.checkTimer( "Player_Aggro" )
 	local nRage = jps.buff(12880) -- "Enrage" 12880 "Enrager"
-	local targetHealth = jps.hpInc("target")
+	local targetHealth = jps.hp("target")
 	local targetHealthAbs = jps.hp("target","abs")
 	local nPower = UnitPower("Player",1) -- Rage est PowerType 1
 	local stunMe = jps.StunEvents() -- return true/false
-	local enemycount,targetcount = jps.TableEnemyCount()  
+	local enemycount,targetcount = jps.RaidEnemyCount()  
 	local leap = tostring(select(1,GetSpellInfo(6544))) -- select(1,GetSpellBookItemName(17, "spell"))  -- "Heroic Leap" 6544 "Bond héroïque"
 	local rally = select(1,GetSpellBookItemName(25, "spell")) -- "Cri de ralliement" 97462 "Rallying Cry"
 	local isboss = UnitLevel(rangedTarget) == -1 or UnitClassification(rangedTarget) == "elite"

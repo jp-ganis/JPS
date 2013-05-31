@@ -183,14 +183,6 @@ function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", 
 return targetControlled, timeControlled
 end
 
-function jps.Stun(unit)
-	if unit == nil then unit = "player" end
-	for _, debuff in pairs(jps_StunDebuff) do
-		if  jps.debuff(debuff,unit)  then 
-		return true end
-	end
-	return false
-end
 
 --------------------------------------
 -- Loss of Control check (e.g. PvP) --
@@ -199,13 +191,23 @@ end
 -- local LossOfControlType, _, LossOfControlText, _, LossOfControlStartTime, LossOfControlTimeRemaining, duration, _, _, _ = C_LossOfControl.GetEventInfo(1)
 
 function jps.StunEvents() -- ONLY FOR PLAYER
-	local numEvents = C_LossOfControl.GetNumEvents()
-	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
-	if (numEvents > 0) and (timeRemaining ~=nil) then
-		-- print("numEvents: ",numEvents,"locType: ",locType,"text: ",text) -- ROOT
-		if timeRemaining > 2 then return true end
-	end
-	return false
+    local locTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
+    local numEvents = C_LossOfControl.GetNumEvents()
+    local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
+    if (numEvents > 0) then
+        if   locType == SCHOOL_INTERRUPT then
+            print("SPELL_FAILED_INTERRUPTED",locType)
+            jps.createTimer("Spell_Interrupt", 2 )
+        end
+        --print("|cFFFF0000numEvents: ",numEvents,"locType: ",locType,"text: ",text,"timeRemaining: ",timeRemaining)
+        for i,j in ipairs(locTypeTable) do
+            if locType == j and timeRemaining > 1 then
+                    print("locType: ",locType,"timeRemaining: ",timeRemaining)
+                    return true 
+            end
+        end
+    end
+    return false
 end
 
 --------------------------
@@ -547,9 +549,9 @@ end
 function jps.hp(unit,message)
 	if unit == nil then unit = "player" end
 	if message == "abs" then
-		return UnitHealth(unit)
-	else
 		return UnitHealthMax(unit) - UnitHealth(unit)
+	else
+		return UnitHealth(unit) / UnitHealthMax(unit)
 	end
 end
 
@@ -558,12 +560,10 @@ function jps.hpInc(unit,message)
 	local hpInc = UnitGetIncomingHeals(unit)
 	if not hpInc then hpInc = 0 end
 	if message == "abs" then
-		return UnitHealth(unit) + hpInc -- Absolute Health
-	elseif message == "inc" then
-		return (UnitHealth(unit) + hpInc)/UnitHealthMax(unit) -- Percentage Health
+    	return UnitHealthMax(unit) - (UnitHealth(unit) + hpInc)
 	else
-		return UnitHealth(unit)/UnitHealthMax(unit)
-	end
+    	return (UnitHealth(unit) + hpInc)/UnitHealthMax(unit)
+    end
 end
 
 function jps.rage()
@@ -733,8 +733,8 @@ if unit == nil then unit = "player" end
 	end
 end
 
---[[ name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(spellId or spellName)
-]]
+-- name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(spellId or spellName)
+
 
 --[[ skillType, spellId = GetSpellBookItemInfo(index, bookType)
 index  - Number - The index into the spellbook
@@ -766,18 +766,33 @@ offspecID - Number - 0 if the tab contains spells you can cast (general/speciali
 
 -- "Fouet mental" 15407 is bugged - GetSpellBookItemName(44,"spell") return name "Fouet mental" - but GetSpellBookItemInfo(44, booktype) returns spellID 585 which is "Chatiment"
 
+function jps_GetSpellBook()
+	local AllSpellKnown = {}
+	local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
+	local booktype = "spell"
+			for index = offset+1, numSpells+offset do
+			    -- Get the Global Spell ID from the Player's spellbook
+			    -- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
+	            local name = select(1,GetSpellBookItemName(index, booktype))
+	            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+	 			local spellname = name:lower()
+	            AllSpellKnown[spellname] = spellID
+	        end
+	return AllSpellKnown
+end
+
 function jps_FindSpellBookSlot()
-local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2)
-local booktype = "spell"
-		for index = offset+1, numSpells+offset do
-            -- Get the Global Spell ID from the Player's spellbook 
-            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-            local slotType = select(1,GetSpellBookItemInfo(index, booktype))
-            local name = select(1,GetSpellBookItemName(index, booktype)) 
-            local spellname = select(1,GetSpellInfo(name)) -- select(1,GetSpellInfo(spellID))
-            --local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
-            print("Index",index,"spellID",spellID,"name",name,"spellname",spellname)
-        end
+    local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2)
+    local booktype = "spell"
+    for index = offset+1, numSpells+offset do
+        -- Get the Global Spell ID from the Player's spellbook 
+        local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+        local slotType = select(1,GetSpellBookItemInfo(index, booktype))
+        local name = select(1,GetSpellBookItemName(index, booktype)) 
+        local spellname = select(1,GetSpellInfo(name)) -- select(1,GetSpellInfo(spellID))
+        --local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
+        print("Index",index,"spellID",spellID,"name",name,"spellname",spellname)
+    end
 end
 
 function jps_IsSpellKnown(spell)
@@ -839,8 +854,39 @@ end
 ------------------------------
 -- PLUA PROTECTED
 ------------------------------
+---------------------------
+-- FUNCTION HARMSPELL For Checking Inrange Enemy
+---------------------------
+-- isHarmful = IsHarmfulSpell(index, "bookType") or IsHarmfulSpell("name")
+-- name, texture, offset, numEntries, isGuild, offspecID = GetSpellTabInfo(tabIndex)
+-- tabIndex Number - The index of the tab, ascending from 1.
+-- numTabs = GetNumSpellTabs() -- numTabs Number - number of ability tabs in the player's spellbook (e.g. 4 -- "General", "Arcane", "Fire", "Frost") 
+-- Name, Subtext = GetSpellBookItemName(index, "bookType") or GetSpellBookItemName("spellName")
+-- Name - Name of the spell. (string)
+-- skillType, spellId = GetSpellBookItemInfo(index, "bookType") or GetSpellBookItemInfo("spellName") -- spellId - The global spell id (number) 
 
---PLua 
+function jps_GetHarmSpell()
+    local HarmSpell = nil
+    local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
+    local booktype = "spell"
+        for index = offset+1, numSpells+offset do
+            -- Get the Global Spell ID from the Player's spellbook
+            -- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
+                local name = select(1,GetSpellBookItemName(index, booktype))
+                local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+                local maxRange = select(9,GetSpellInfo(spellID))
+                local minRange = select(8,GetSpellInfo(spellID))
+                local harmful =  IsHarmfulSpell(index, booktype)
+                
+                if (maxRange > 20) and (harmful == 1) and (minRange == 0) then
+                  --print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
+                  HarmSpell = name
+                break end
+            end
+    return HarmSpell
+end
+
+
 function jps.groundClick()
 	RunMacroText("/console deselectOnClick 0")
 	CameraOrSelectOrMoveStart()
@@ -856,52 +902,7 @@ function jps.moveToTarget()
 	InteractUnit("target")
 end
 
----------------------------
--- FUNCTION HARMSPELL FOR CHECKING INRANGE DPS
----------------------------
--- isHarmful = IsHarmfulSpell(index, "bookType") or IsHarmfulSpell("name")
--- name, texture, offset, numEntries, isGuild, offspecID = GetSpellTabInfo(tabIndex)
--- tabIndex Number - The index of the tab, ascending from 1.
--- numTabs = GetNumSpellTabs() -- numTabs Number - number of ability tabs in the player's spellbook (e.g. 4 -- "General", "Arcane", "Fire", "Frost") 
--- Name, Subtext = GetSpellBookItemName(index, "bookType") or GetSpellBookItemName("spellName")
--- Name - Name of the spell. (string)
--- skillType, spellId = GetSpellBookItemInfo(index, "bookType") or GetSpellBookItemInfo("spellName") -- spellId - The global spell id (number) 
 
-function jps_GetHarmSpell()
-	local HarmSpell = nil
-	local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
-	local booktype = "spell"
-			for index = offset+1, numSpells+offset do
-			    -- Get the Global Spell ID from the Player's spellbook
-			    -- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
-	            local name = select(1,GetSpellBookItemName(index, booktype))
-	            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-	            local maxRange = select(9,GetSpellInfo(spellID))
-	            local minRange = select(8,GetSpellInfo(spellID))
-	            local harmful =  IsHarmfulSpell(index, booktype)
-	            
-	            if (maxRange > 20) and (harmful == 1) and (minRange == 0) then
-	            	--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
-	            	HarmSpell = name
-	            break end
-	        end
-	return HarmSpell
-end
-
-function jps_GetSpellBook()
-	local AllSpellKnown = {}
-	local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
-	local booktype = "spell"
-			for index = offset+1, numSpells+offset do
-			    -- Get the Global Spell ID from the Player's spellbook
-			    -- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
-	            local name = select(1,GetSpellBookItemName(index, booktype))
-	            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-	 			local spellname = name:lower()
-	            AllSpellKnown[spellname] = spellID
-	        end
-	return AllSpellKnown
-end
 
 ----------------------------
 -- FUNCTIONS SPECIALIZATION
@@ -931,26 +932,28 @@ jps_tableSpec =
 -- class String - The name of the class to which this specialization belongs.
 
 function jps_EnemySpec_Arena(number)
-	local numOpponents = GetNumArenaOpponentSpecs() -- Returns the number of enemy players which specialization data are available in an arena match
-	if numOpponents == 0 then return 0 end
-	
-	local specID = GetArenaOpponentSpec(number)
-	local enemySpec = select(2,GetSpecializationInfoByID(specID)) 
-	local enemyRole = select(6,GetSpecializationInfoByID(specID)) -- "DAMAGER", "TANK", "HEALER"
-	local enemyClass = select(7,GetSpecializationInfoByID(specID)) -- Class
-	return enemyRole,enemySpec,enemyClass
+    local numOpponents = GetNumArenaOpponentSpecs() -- Returns the number of enemy players which specialization data are available in an arena match
+    if numOpponents == 0 then return 0 end
+    
+    local specID = GetArenaOpponentSpec(number)
+    local enemySpec = select(2,GetSpecializationInfoByID(specID)) 
+    local enemyRole = select(6,GetSpecializationInfoByID(specID)) -- "DAMAGER", "TANK", "HEALER"
+    local enemyClass = select(7,GetSpecializationInfoByID(specID)) -- Class
+    return enemyRole,enemySpec,enemyClass
 end
 
 function jps_EnemySpec_Arena_Healer() 
-	local numOpponents = GetNumArenaOpponentSpecs() -- Returns the number of enemy players which specialization data are available in an arena match
-	if numOpponents == 0 then return 0 end
-	local arenaNumber = 0
-		for num=1,numOpponents do
-		local enemyRole,_,_ = jps_EnemySpec_Arena(num)
-			if enemyRole == "HEALER" then
-			arenaNumber = num break end
-		end
-	return "arena"..arenaNumber
+    local numOpponents = GetNumArenaOpponentSpecs() -- Returns the number of enemy players which specialization data are available in an arena match
+    if numOpponents == 0 then return 0 end
+    local arenaNumber = 0
+    for num=1,numOpponents do
+        local enemyRole,_,_ = jps_EnemySpec_Arena(num)
+        if enemyRole == "HEALER" then
+            arenaNumber = num 
+            break 
+        end
+    end
+    return "arena"..arenaNumber
 end
 
 

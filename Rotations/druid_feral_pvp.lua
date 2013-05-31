@@ -14,7 +14,7 @@ function druid_feral_pvp()
 	local rakeDuration = jps.debuffDuration("rake")
 	local srDuration = jps.buffDuration("savage roar")
 	local srRipSyncTimer = abs(ripDuration - srDuration)
-	local executePhase = jps.hpInc("target") <= 0.25
+	local executePhase = jps.hp("target") <= 0.25
 	local gcdLocked = true -- they changed this :( jps.cooldown("shred") == 0 Deprecated?
 	local energyPerSec = 10.59
 	local clearcasting = jps.buff("clearcasting")
@@ -33,16 +33,16 @@ function druid_feral_pvp()
 	local playerRace = UnitRace(player)
 	local targetClass = UnitClass("target")
 	local targetSpec = GetSpecialization("target")
-	local enemycount,targetcount = jps.TableEnemyCount()
+	local enemycount,targetcount = jps.RaidEnemyCount()
 
 	local isSpellHarmful = IsHarmfulSpell("target")
 	local lastcast = jps.CurrentCast[2]
 	local castSilence = jps.shouldKick("target")
 
-	local playerhealth_pct = jps.hpInc(player)
-	local targethealth_pct = jps.hpInc("target")
-	local focushealth_pct = jps.hpInc("focus")
-	local mousehealth_pct = jps.hpInc("mouseover")
+	local playerhealth_pct = jps.hp(player)
+	local targethealth_pct = jps.hp("target")
+	local focushealth_pct = jps.hp("focus")
+	local mousehealth_pct = jps.hp("mouseover")
 
 	local EnemyUnit = {}
 		for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end

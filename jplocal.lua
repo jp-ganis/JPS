@@ -120,18 +120,6 @@ do
 		["Rogue"] = "Voleur",
 		["Use"] = "Utiliser",
 		} , {__index = function(t, index) return index end})
-		
-	elseif (GetLocale() == "deDE") then
-		MyLocalizationTable = setmetatable({
-		["Death Coil"] = "Todesmantel",
-		["Dragon's Breath"] = "Drachenodem",
-		["Polymorph"] = "Verwandlung",
-		["Frost Nova"] = "Frostnova",
-		["Fear"] = 	"Furcht",
-		["Psychic Scream"] = "Psychischer Schrei",
-		["Freeze"] = "Eiskälte",
-		} , {__index = function(t, index) return index end})
-		
 	else
 		MyLocalizationTable = setmetatable({}, {__index = function(t, index) return index end})
 	end

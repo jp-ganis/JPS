@@ -18,8 +18,8 @@ function shaman_enhancement(self)
 	-- Perhaps implement more survivability for soloing
 	
 	local maelstromStacks = jps.buffStacks("maelstrom weapon")
-	local shockCD = jps.cd("earth shock")
-	local chainCD = jps.cd("chain lightning")
+	local shockCD = jps.cooldown("earth shock")
+	local chainCD = jps.cooldown("chain lightning")
 	
 	-- Weapon Enchants
 	local mh, _, _, oh, _, _, _, _, _ = GetWeaponEnchantInfo()

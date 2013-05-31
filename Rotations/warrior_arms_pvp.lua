@@ -7,7 +7,7 @@ function warrior_arms_pvp()
 	local player = jpsName
 	local playerRace = UnitRace(player)
 	local stance = GetShapeshiftForm()
-	local playerhealth_pct = jps.hpInc("player")
+	local playerhealth_pct = jps.hp("player")
 	local player_Aggro = jps.checkTimer("Player_Aggro")
 	local bZerk = jps.buff("berserker rage",player)
 	local enrage = jps.buff("enrage",player)
@@ -22,7 +22,7 @@ function warrior_arms_pvp()
 	local targetName = GetUnitName("target")
 	local targetClass = UnitClass("target")
 	local targetSpec = GetSpecialization("target")
-	local targethealth_pct = jps.hpInc("target")
+	local targethealth_pct = jps.hp("target")
 	local isHarmSpell = IsHarmfulSpell("target")
 	local melee = IsSpellInRange("pummel","target")==1
 	local noMelee = IsSpellInRange("pummel","target")==0
@@ -243,7 +243,7 @@ function warrior_arms_pvp()
 	local EnemyUnit = {}
 	for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
 		local enemyTargetingMe = jps.IstargetMe()
-		local enemycount,targetcount = jps.TableEnemyCount()
+		local enemycount,targetcount = jps.RaidEnemyCount()
 		
 		local rangedTarget = "target"
 		if jps.canDPS("target") then rangedTarget = "target"
@@ -342,13 +342,14 @@ function warrior_arms_pvp()
 		{ "battle shout", stance==1 and buffShout() , player },
 		{ "commanding shout", stance==2 and buffShout() and jps.LastCast~="charge" , player },
 		-- DPS Buff/Cooldown Cascade
-		{ "berserker rage", jps.UseCDs and melee and not jps.buff("enrage") and jps.TimetoDie(rangedTarget) > 8 , player },
-		{ "berserker rage", jps.buff("avatar") and not jps.buff("enrage") and jps.TimetoDie(rangedTarget) > 8 , player },
-		{ "berserker rage", not jps.buff("enrage") and jps.TimetoDie(rangedTarget) > 6 , player },
+		{ "berserker rage", jps.UseCDs and melee and not jps.buff("enrage") and jps.TimeToDie(rangedTarget) > 8 , player },
+		{ "berserker rage", jps.buff("avatar") and not jps.buff("enrage") and jps.TimeToDie(rangedTarget) > 8 , player },
+		{ "berserker rage", not jps.buff("enrage") and jps.TimeToDie(rangedTarget) > 6 , player },
+
 		-- { "recklessness", jps.UseCDs and melee and (jps.debuffDuration("Colossus Smash") >= 5 or jps.cooldown("Colossus Smash") <= 4 ) or targethealth_pct < 0.21 , player },
-		{ "recklessness", jps.UseCDs and melee and jps.buff("avatar") and jps.TimetoDie(rangedTarget) > 11 or jps.buff("skull banner") , player },
-		{ "avatar", jps.UseCDs and melee and targethealth_pct < 0.30 and jps.TimetoDie(rangedTarget) > 23 , player },
-		{ "avatar", jps.UseCDs and melee and jps.buff("recklessness") or jps.buff("skull banner") and targethealth_pct < 0.30 and jps.TimetoDie(rangedTarget) > 23 , player },
+		{ "recklessness", jps.UseCDs and melee and jps.buff("avatar") and jps.TimeToDie(rangedTarget) > 11 or jps.buff("skull banner") , player },
+		{ "avatar", jps.UseCDs and melee and targethealth_pct < 0.30 and jps.TimeToDie(rangedTarget) > 23 , player },
+		{ "avatar", jps.UseCDs and melee and jps.buff("recklessness") or jps.buff("skull banner") and targethealth_pct < 0.30  and jps.TimeToDie(rangedTarget) > 23 , player },
 		{ "skull banner", jps.UseCDs and jps.buff("avatar") or jps.buff("recklessness") , player },
 		-- { "demoralizing banner", playerhealth_pct < 0.30, "player", jps.groundClick() or IsShiftKeyDown() ~= nil , player },
 		-- { "alliance battle standard", playerhealth_pct < 0.30 and not jps.debuff("demoralizing banner"), jps.groundClick() , player },

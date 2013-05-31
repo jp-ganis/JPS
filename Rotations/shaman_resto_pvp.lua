@@ -51,11 +51,11 @@ function shaman_resto_pvp()
 
 	-- lowest friendly
 	local defaultTarget = jps.LowestFriendly()
-	local defaultHP = jps.hpInc(defaultTarget)
+	local defaultHP = jps.hp(defaultTarget)
 
 	-- NS Macro
 	local NSMacroText = "/cast Nature's Swiftness\n/cast Greater Healing Wave"
-	local NSMacro = { "macro", NSMacroText, "Greater Healing Wave", defaultTarget }
+	local NSMacro = { "macro", NSMacroText , defaultTarget }
 
 	-- Priority Table
 	local spellTable = {
@@ -69,7 +69,7 @@ function shaman_resto_pvp()
 		{ "stoneclaw totem",		jps.hp() < 0.55 },
 	
 		-- Heal anyone really desperate.
-		{ NSMacro,					defaultHP < 0.35 and jps.cd("nature's swiftness") == 0 },
+		{ NSMacro,					defaultHP < 0.35 and jps.cooldown("nature's swiftness") == 0 },
 	
 		-- Earth shield (I manually put it on other people)
 		{ "earth shield",			jps.hp() < 0.5 and not jps.buff("earth shield"), me },
@@ -88,7 +88,7 @@ function shaman_resto_pvp()
 		-- Dispels.
 		{ "purge",					hostileTarget and buffToPurge and lotsOfMana },
 		{ "purge",					focusBuffToPurge and lotsOfMana, focus },
-		{ "cleanse spirit",			dispelFunction, friendlies, lotsOfMana },
+		{ "cleanse spirit",			dispelFunction, friendlies, "cleanse spirit" },
 	
 		-- Hex.
 		{ "hex",					"onCD", focus },

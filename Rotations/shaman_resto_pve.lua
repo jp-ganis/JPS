@@ -33,7 +33,7 @@ function shaman_resto_pve()
 	
 	-- lowest friendly
 	local defaultTarget = jps.LowestInRaidStatus()
-	local defaultHP = jps.hpInc(defaultTarget)
+	local defaultHP = jps.hp(defaultTarget)
 		
 	
 	-- Priority Table

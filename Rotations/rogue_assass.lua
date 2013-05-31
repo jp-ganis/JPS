@@ -10,7 +10,7 @@ function rogue_assass()
 	
 	local spellTable =
 	{
-		{ "preparation", not jps.buff("vanish") and jps.cd("vanish") > 60 },
+		{ "preparation", not jps.buff("vanish") and jps.cooldown("vanish") > 60 },
 		{ "vanish", not jps.buff("stealth") and not jps.buff("shadow blades") },
 		{ "ambush" },
 		{ "shadow blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("shadow blades") },

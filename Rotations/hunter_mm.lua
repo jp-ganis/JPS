@@ -109,7 +109,7 @@ function hunter_mm(self)
 
 			{ "arcane shot",
 				( focus >= 66 
-					or jps.cd("chimera shot") >= 5) 
+					or jps.cooldown("chimera shot") >= 5) 
 				and (jps.hp("target") < 90 
 					and not jps.buff("rapid fire") 
 					and not jps.bloodlusting() ) },

@@ -26,16 +26,6 @@ local L = MyLocalizationTable
 -- FUNCTIONS CLASS SPEC
 ---------------------------
 
-function jps_getCombatFunction_de( class, spec )
-	local Rotations =
-	{
-		["Priester"]      = {["Schatten"]         	= priest_shadow,
-							 ["Heilig"]         	= priest_holy,
-							 ["Disziplin"]    		= priest_disc },
-	}
-	return Rotations[class][spec]
-end
-
 function jps_getCombatFunction_fr( class, spec )
 	local Rotations =
 	{
@@ -112,6 +102,39 @@ function jps_getCombatFunction( class, spec )
 end
 
 ---------------------------
+-- FUNCTION HARMSPELL For Checking Inrange Enemy
+---------------------------
+
+-- isHarmful = IsHarmfulSpell(index, "bookType") or IsHarmfulSpell("name")
+-- name, texture, offset, numEntries, isGuild, offspecID = GetSpellTabInfo(tabIndex)
+-- tabIndex Number - The index of the tab, ascending from 1.
+-- numTabs = GetNumSpellTabs() -- numTabs Number - number of ability tabs in the player's spellbook (e.g. 4 -- "General", "Arcane", "Fire", "Frost") 
+-- Name, Subtext = GetSpellBookItemName(index, "bookType") or GetSpellBookItemName("spellName")
+-- Name - Name of the spell. (string)
+-- skillType, spellId = GetSpellBookItemInfo(index, "bookType") or GetSpellBookItemInfo("spellName") -- spellId - The global spell id (number) 
+
+function jps_GetHarmSpell()
+	local HarmSpell = nil
+	local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
+	local booktype = "spell"
+			for index = offset+1, numSpells+offset do
+				-- Get the Global Spell ID from the Player's spellbook
+				-- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
+				local name = select(1,GetSpellBookItemName(index, booktype))
+				local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+				local maxRange = select(9,GetSpellInfo(spellID))
+				local minRange = select(8,GetSpellInfo(spellID))
+				local harmful =  IsHarmfulSpell(index, booktype)
+
+				if (maxRange > 20) and (harmful == 1) and (minRange == 0) then
+					--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
+					HarmSpell = name
+				break end
+			end
+	return HarmSpell
+end
+
+---------------------------
 -- GET CLASS COOLDOWNS
 ---------------------------
 
@@ -176,18 +199,6 @@ jps_BuffToDispel_Name =
 	L["Predatory Swiftness"] ,
 	L["Ice Barrier"] , -- Dispel type Magic
 }
-
-jps_StunDebuff = 
-{
-	L["Hammer of Justice"],					-- "Hammer of Justice" Stunned. 6 seconds remaining
-	L["Silenced - Improved Counterspell"] , -- "Réduit au silence - Contresort amélioré"  55021
-	L["Fist of Justice"] , 					-- "Poing de la justice" 105593
-	L["Silence"] ,							-- "Silence" 15487
-	L["Garrote"] ,							-- "Garrot" 703
-	L["Garrote - Silence"] ,				-- "Garrot - Silence" 1330
-	L["Psychic Scream"] ,
-}
-
 
 jps_Dispels = {
 	["Deathwing"] = {

@@ -23,7 +23,7 @@ function paladin_ret_pvp()
 	
 	local holyPower = UnitPower("player",9)
 	local stance = GetShapeshiftForm()
-	local targetHealth = jps.hpInc("target")
+	local targetHealth = jps.hp("target")
 	  
 	RunMacroText("/target "..rangedTarget)
 		

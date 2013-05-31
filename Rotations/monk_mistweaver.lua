@@ -5,7 +5,7 @@ function monk_mistweaver(self)
 	
 	-- Tank is focus.
 	local tank = jps.findMeATank()
-	local tankHP = jps.hpInc(tank)
+	local tankHP = jps.hp(tank)
 	
 	-- Set the heal target to the lowest partymember.
 	local healTarget = jps.LowestInRaidStatus()
@@ -16,12 +16,12 @@ function monk_mistweaver(self)
 	end
 	
 	-- If I really need healing, make me the heal target.
-	if jps.hpInc(me) < .4 then
+	if jps.hp(me) < .4 then
 		healTarget = me
 	end
 	
 	-- Get the health of our heal target.
-	local healTargetHP = jps.hpInc(healTarget)
+	local healTargetHP = jps.hp(healTarget)
 	
 	-- Check for an active defensive CD.
 	local defensiveCDActive = jps.buff("Fortifying Brew") or jps.buff("Diffuse Magic") or jps.buff("Dampen Harm")

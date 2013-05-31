@@ -25,7 +25,10 @@ local L = MyLocalizationTable
 --------------------------
 -- Functions CAST
 --------------------------
-
+-- GetSpellInfo -- name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(spellId or spellName)
+-- IsHarmfulSpell(spellname) -- IsHelpfulSpell(spellname)) returns 1 or nil -- USELESS SOMES SPELLS RETURNS NIL AS OUBLI, SPIRIT SHELL
+-- IsSpellInRange(spellID, spellType, unit) -- spellType String, "spell" or "pet"
+-- IsSpellInRange(spellName, unit) -- returns 0 if out of range, 1 if in range, or nil if the unit is invalid.
 function jps_IsSpellInRange(spell,unit)
 	if spell == nil then return false end
 	if unit == nil then unit = "target" end 
@@ -33,14 +36,8 @@ function jps_IsSpellInRange(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 
-    -- Using WoW's standard API first, because Tricks of the Trade is bugged when passing it's spell index 
-    -- So only going further down the function the spell's that returns nil 
-    -- I this returns nil is if the unit is not a valid target for the spell (or you have no target selected)
     local inRange = IsSpellInRange(spellname, unit)
-
-    -- Collecting the Spell GLOBAL SpellID, not to be confused with the SpellID
-    -- Matching the Spell Name and the GLOBAL SpellID will give us the Spellbook index of the Spell 
-    -- With the Spellbook index, we can then proceed to do a proper IsSpellInRange with the index. 
+ 
     if inRange == nil then 
         local myIndex = nil 
         local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2)
@@ -54,7 +51,6 @@ function jps_IsSpellInRange(spell,unit)
             end 
         end 
 
-        -- If the Spell wasn't found, we're checking if we have a Pet Spellbook 
         -- If a Pet Spellbook is found, do the same as above and try to get an Index on the Spell 
         local numPetSpells = HasPetSpells()
         if myIndex == 0 and numPetSpells then 
@@ -79,6 +75,9 @@ end
 
 -- GetSpellInfo -- name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(spellId or spellName)
 -- SpellHasRange(index, "bookType") or SpellHasRange("name") -- hasRange returns 1 if the spell has an effective range. Otherwise nil.
+-- Collecting the Spell GLOBAL SpellID, not to be confused with the SpellID
+-- Matching the Spell Name and the GLOBAL SpellID will give us the Spellbook index of the Spell 
+-- With the Spellbook index, we can then proceed to do a proper IsSpellInRange with the index.
 function jps_SpellHasRange(spell)
 	if spell == nil then return false end
 	local spellname = nil
@@ -87,9 +86,6 @@ function jps_SpellHasRange(spell)
 
     local hasRange = SpellHasRange(spellname)
 
-    -- Collecting the Spell GLOBAL SpellID, not to be confused with the SpellID
-    -- Matching the Spell Name and the GLOBAL SpellID will give us the Spellbook index of the Spell 
-    -- With the Spellbook index, we can then proceed to do a proper IsSpellInRange with the index. 
     if hasRange == nil then 
         local myIndex = nil 
         local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2)
@@ -152,8 +148,8 @@ end
 -- JPS.CANDPS IS WORKING ONLY FOR PARTYn..TARGET AND RAIDn..TARGET NOT FOR UNITNAME..TARGET
 function jps.canDPS(unit) 
 	if not jps.UnitExists(unit) then return false end
-	if jps.PvP then  -- do no dmg on players with paladin divine shild or ice block active !!! 
-		local iceblock = tostring(select(1,GetSpellInfo(45438))) --  45438 "Ice Block"
+	if jps.PvP then 
+		local iceblock = tostring(select(1,GetSpellInfo(45438))) -- "Bloc de glace" 45438 "Ice Block"
 		local divineshield = tostring(select(1,GetSpellInfo(642))) -- 642 "Divine Shield"
 		if jps.buff(divineshield,unit) then return false end
 		if jps.buff(iceblock,unit) then return false end
@@ -166,42 +162,6 @@ function jps.canDPS(unit)
 	return true
 end
 
-function jpd( spell, unit )
-	if unit == nil then unit = "target" end
-	write("|cffa335ee"..spell.." @ "..unit)
-	local _, spellID = GetSpellBookItemInfo(spell)
-	local usable, nomana = IsUsableSpell(spell)
-
-	if jps.UnitExists(unit) == 0 then 
-		write("Unit Exists test failed");
-		return false end
-	end
-    if jps.spellConfig[spell] == 0 then
-         write("spell is not actived")
-         return false end
-	if not usable then
-		write("Failed IsUsableSpell test")
-		return false end
-	if jps.cooldown(spell) ~= 0 then
-		write("Failed Cooldown test")
-		return false end
-	if nomana  then
-		write("Failed Mana test")
-		return false end
-	if not UnitIsVisible(unit)  then
-		write("Failed Visible test")
-		return false end
-	if jps.SpellHasRange(spell)==1 and jps.IsSpellInRange(spell,unit)==0 then
-		write("Failed Range test")
-		return false end
-	if jps[spell] ~= nil and jps[spell] == false then
-		write("Failed JPS Lookup test")
-		return false end
-	write("Passed all tests")
-	return true
-end
-
-
 function jps.canCast(spell,unit)
 	if unit == nil then unit = "target" end
 	local spellname = nil
@@ -213,6 +173,8 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
+	--debug mode
+	--if jps.Debug then return jps_canCast_debug(spellname,unit) end
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
 	local usable, nomana = IsUsableSpell(spellname) -- usable, nomana = IsUsableSpell("spellName" or spellID)
@@ -221,13 +183,14 @@ function jps.canCast(spell,unit)
 	if (jps.cooldown(spellname)~=0) then return false end
 	if jps.SpellHasRange(spell) and not jps.IsSpellInRange(spell,unit) then return false end
 	if jps[spell] ~= nil and jps[spell] == false then return false end
-	if jps.Debug then jpd(spell, unit) end
 	return true
 end
--- local isKnown = IsPlayerSpell(spellID) true if the player can cast this spell, false otherwise.
--- if not isKnown then then return false end
 
-function jps.spellNeedSelect(spell)
+----------------------
+-- CAST
+----------------------
+
+function jps.spell_need_select(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
@@ -243,7 +206,6 @@ function jps.spellNeedSelect(spell)
 	for i,j in ipairs (tableSelect) do
 		if spellname == tostring(select(1,GetSpellInfo(j))) then return true end 
 	end
-	
 return false
 end
 
@@ -254,14 +216,15 @@ function jps.Cast(spell)  -- "number" "string"
 	
 	if jps.Target==nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
+	--if not jps.UnitExists(jps.Target) then return end
+	
+	if jps.spell_need_select(spellname) then
+		jps.groundClick()
+	end
 	
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
-	if jps.spellNeedSelect(spellname) then
-		jps.groundClick()
-	end
-
-	if jps.IconSpell ~= spellname then
+	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastCast) then
 		jps.set_jps_icon(spellname)
 		if jps.Debug then write(spellname,"|cff1eff00",jps.Target,"|cffffffff",jps.Message) end
 	end
@@ -270,6 +233,40 @@ function jps.Cast(spell)  -- "number" "string"
 	jps.Target = nil
 	jps.Message = nil
 	jps.ThisCast = nil
+end
+
+----------------------
+-- DEBUG MODE
+----------------------`
+
+function jps_canHeal_debug(unit)
+	if not jps.UnitExists(unit) then write("not Unit") return false end
+	if GetUnitName("player") == GetUnitName(unit) then write("Player") return true end
+	if UnitExists(unit)~=1 then write("not Exists") return false end
+	if UnitIsVisible(unit)~=1 then write("not Visible") return false end
+	if UnitIsDeadOrGhost(unit)==1 then write("Dead") return false end
+	if UnitCanAssist("player",unit)~=1 then write("not Friend") return false end
+	if UnitInVehicle(unit)==1 then write("in Vehicle") return false end
+	if jps.PlayerIsBlacklisted(unit) then write("Blacklist") return false end
+	if not select(1,UnitInRange(unit)) then write("not inRange") return false end
+	write("Passed all tests canHeal".."|cffa335ee"..unit)
+	return true
+end
+
+function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
+	if spell == nil then write("not Spell") return false end
+	if not jps.UnitExists(unit) then write("not Unit") return false end
+
+	write("|cffa335ee"..spell.." @ "..unit)
+
+	local usable, nomana = IsUsableSpell(spell) -- IsUsableSpell("spellName" or spellID)
+	if not usable then write("Failed IsUsableSpell test") return false end
+	if nomana  then write("Failed Mana test") return false end
+	if jps.cooldown(spell)~=0 then write("Failed Cooldown test") return false end
+	if jps_SpellHasRange(spell)~=1 then write("Failed SpellHasRange test") return false end
+	if jps_IsSpellInRange(spell,unit)~=1 then write("Failed SpellinRange test") return false end
+	write("Passed all tests canCast ".."|cffa335ee"..spell)
+	return true
 end
 
 -------------------------
@@ -300,6 +297,24 @@ end
 -- PARSE
 -------------------------
 
+--[[ -- MultiTable
+function jps.IsCastingPoly( unit )
+	if ... then return false end
+	return true
+end
+parseMultiUnitTable( { "shadow word: death", jps.IsCastingPoly, {"arena1","arena2","arena3"} } )
+
+the code is equivalent to:
+
+parseSpellTable(
+   {
+      { "shadow word: death", jps.IsCastingPoly("arena1") , "arena1" },
+      { "shadow word: death", jps.IsCastingPoly("arena2") , "arena2" },
+      { "shadow word: death", jps.IsCastingPoly("arena3") , "arena3" },
+   }
+)
+--]]
+
 function parseMultiUnitTable( spellTable )
 	local spell = spellTable[1]
 	local unitFunction = spellTable[2]
@@ -312,7 +327,8 @@ function parseMultiUnitTable( spellTable )
 		table.insert( unitTable, 1, spell )
 		table.insert( unitTable, 2, unitFunction(unit) )
 		table.insert( unitTable, 3, unit )
-		table.insert( unitTable, 4, message..unit )  -- WARNING the table need a valid massage to concatenate in parseMultiUnitTable
+		-- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
+		table.insert( unitTable, 4, message..unit )  
 		table.insert( sirenTable, unitTable )
 	end
 
@@ -360,7 +376,7 @@ function parseSpellTable( hydraTable )
 			local macroTarget = spell[3]
 			-- Workaround for TargetUnit is still PROTECTED despite goblin active
  			if jps.UnitExists(macroTarget) then RunMacroText("/target "..macroTarget) end
-
+ 			
 			if conditions and type(macroText) == "string" then
 				local macroSpell = macroText
 				if string.find(macroText,"%s") == nil then -- {"macro","/startattack"}
@@ -371,7 +387,11 @@ function parseSpellTable( hydraTable )
 				RunMacroText(macroText)
 				if jps.Debug then macrowrite(macroSpell,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 			end
-			
+		
+			-- CASTSEQUENCE WORKS ONLY FOR {INSTANT CAST, SPELL}
+			-- better than "#showtooltip\n/cast Frappe du colosse\n/cast Sanguinaire"
+			-- because I can check the spell with jps.canCast
+			-- {"macro",{109964,2060},player}
 			if conditions and type(macroText) == "table" then
 				for _,sequence in ipairs (macroText) do
 					local spellname = tostring(select(1,GetSpellInfo(sequence)))
@@ -400,6 +420,7 @@ function parseSpellTable( hydraTable )
 
 		-- Return spell if conditions are true and spell is castable.
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
+			-- if jps.Debug then print("|cffff8000Spell","|cffffffff",tostring(select(1,GetSpellInfo(spell)))) end 
 			-- jps.Target = target
 			-- jps.ThisCast = spell
 			return spell,target 
@@ -414,6 +435,7 @@ end
 
 function jps.RotationActive(spellTable)
 -- GET The Rotation Name in dropDown Menu
+
 	for i,j in ipairs (spellTable) do
 		if spellTable[i]["ToolTip"] ~= nil then
 			jps.MultiRotation = true
