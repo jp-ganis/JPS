@@ -259,7 +259,7 @@ end
 local function parse_dispel()
 	-- "Purifier" 527 Purify -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
 	-- function jps.DispelFriendlyTarget() returns same unit & condition as jps.DispelFriendly(unit) 
-	-- These two functions dispel SOME DEBUFF of FriendUnit according to a debuff table jps_DebuffToDispell_Name 
+	-- These two functions dispel SOME DEBUFF of FriendUnit according to a debuff table jps_DebuffToDispel_Name 
 	-- EXCEPT if unit is affected by some debuffs "Unstable Affliction" , "Lifebloom" , "Vampiric Touch"
 	-- we can add others cond like UnitIsPVP(player)==1 with jps.DispelFriendlyTarget() -- { "Purify", jps.canHeal(dispelFriendly_Target) and (UnitIsPVP(player) == 1) , dispelFriendly_Target },
 	-- jps.DispelFriendly(unit) is a function must be alone in condition but the target can be a table 
@@ -274,13 +274,13 @@ local table=
 {
 	-- "Leap of Faith" 73325 -- "Saut de foi" -- "Leap of Faith" with Glyph dispel Stun
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Leap_LoseControl__Cond_Multi_" },
-	-- OFFENSIVE DISPELL -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
+	-- OFFENSIVE Dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
-	-- DISPELL "Purifier" 527 -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
+	-- Dispel "Purifier" 527 -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
 	{ 527, jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition
 	{ 527, jps.DispelFriendly , FriendUnit , "dispelFriendly_MultiUnit_" }, -- jps.DispelFriendly is a function must be alone in condition
-	{ {"func",527,jps.MagicDispel}, jps.MultiTarget and isInBG , FriendUnit , "dispelMagic_Cond_Multi_" }, -- Dispell all Magic debuff
+	{ {"func",527,jps.MagicDispel}, jps.MultiTarget and isInBG , FriendUnit , "dispelMagic_Cond_Multi_" }, -- Dispel all Magic debuff
 }
 return table
 end
@@ -300,7 +300,7 @@ local table=
 	-- "Pénitence" 47540 -- FARMING OR PVP -- NOT PVE
 	{ 47540, true , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
 	-- "Mot de l'ombre: Douleur" 589 -- FARMING OR PVP -- NOT PVE
-	{ 589, isInBG and jps.mydebuffDuration(589,rangedTarget) == 0 , rangedTarget },
+	{ 589, isInBG and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget },
 	-- "Mot de pouvoir : Réconfort" -- "Power Word: Solace" 139139 -- REGEN MANA
 	{ 139139, true , rangedTarget, "|cFFFF0000DPS_Solace_"..rangedTarget },
 	-- parse_dispel()
@@ -680,7 +680,7 @@ local spellTable_moving =
 -- DAMAGE "Pénitence" 47540 -- FARMING OR PVP -- NOT PVE
 	{ 47540, true , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
 -- DAMAGE "Mot de l'ombre: Douleur" 589 -- FARMING OR PVP -- NOT PVE
-	{ 589, isInBG and jps.mydebuffDuration(589,rangedTarget) == 0 , rangedTarget },
+	{ 589, isInBG and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget },
 
 -- "Feu intérieur" 588 -- "Volonté intérieure" 73413
 	{ 588, not jps.buff(588,player) and not jps.buff(73413,player) , player }, 

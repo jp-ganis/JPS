@@ -60,9 +60,9 @@ function priest_shadow()
 	local stunMe = jps.StunEvents() --- return true/false ONLY FOR PLAYER
 	local enemycount,targetcount = jps.RaidEnemyCount() 
 
-	local swpDuration = jps.mydebuffDuration(589)
-	local plagueDuration = jps.mydebuffDuration(2944)
-	local vtDuration = jps.mydebuffDuration(34914)
+	local swpDuration = jps.myDebuffDuration(589)
+	local plagueDuration = jps.myDebuffDuration(2944)
+	local vtDuration = jps.myDebuffDuration(34914)
 	local sorbs = UnitPower("player",13)
 	local vamptouch = tostring(select(1,GetSpellInfo(34914)))
 	local swPain = tostring(select(1,GetSpellInfo(589)))
@@ -250,10 +250,10 @@ spellTable[1] =
 -- "Mind Flay" 15407
 	{ 15407, jps.cooldown(15407) == 0 and jps.mydebuff(2944,rangedTarget) , rangedTarget },
 	
--- DISPELL
+-- Dispel
 -- "Saut de foi" 73325
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Friendly_LoseControl__Cond_Multi_" },
--- Offensive dispell -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
+-- Offensive dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473
@@ -367,10 +367,10 @@ spellTable[2] =
 	{ 34433, jps.cooldown(34433) == 0 and canCastShadowfiend , rangedTarget },
 	{ 123040, jps.cooldown(123040) == 0 and canCastShadowfiend , rangedTarget },
 	
--- DISPELL
+-- Dispel
 -- "Saut de foi" 73325
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Friendly_LoseControl_Cond_Multi_" },
--- Offensive dispell -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
+-- Offensive dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473
@@ -455,10 +455,10 @@ local spellTable_moving =
 	{ 34433, jps.cooldown(34433) == 0 and canCastShadowfiend , rangedTarget },
 	{ 123040, jps.cooldown(123040) == 0 and canCastShadowfiend , rangedTarget },
 	
--- DISPELL
+-- Dispel
 -- "Saut de foi" 73325
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Friendly_LoseControl__Cond_Multi_" },
--- Offensive dispell -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
+-- Offensive dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473

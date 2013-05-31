@@ -177,10 +177,10 @@ local spellTable =
 		{ "cobra shot", 			jps.MultiTarget },
 		-- Single target
 		{ "kill shot", 				"onCD" }, -- Target below 20%
-		{ "serpent sting", 			jps.mydebuffDuration("serpent sting") < .3 },
-		{ "explosive shot", 			jps.mydebuffDuration("explosive shot") < .3 },
+		{ "serpent sting", 			jps.myDebuffDuration("serpent sting") < .3 },
+		{ "explosive shot", 			jps.myDebuffDuration("explosive shot") < .3 },
 		{ "black arrow", 			not jps.mydebuff("black arrow") and not jps.MultiTarget },
-		{ "cobra shot", 			jps.mydebuffDuration("serpent sting") < 6 },
+		{ "cobra shot", 			jps.myDebuffDuration("serpent sting") < 6 },
 		{ "arcane shot", 			focus >= 70 and not jps.buff("lock and load") and not jps.MultiTarget },
 		{ "cobra shot", 			"onCD"},
 	}
