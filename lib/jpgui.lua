@@ -1,5 +1,5 @@
 -- Huge thanks to BenPhelps for these SO sexy buttons.
-jps.GUInormal = "Interface\\AddOns\\JPS\\Media\\basquiat.tga"
+jps.GUInormal = "Interface\\AddOns\\JPS\\Media\\jps.tga"
 jps.GUIpvp = "Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Factions.blp"
 jps.GUInoplua = "Interface\\Icons\\Spell_Totem_WardOfDraining"
 jps.GUIshadow = "Interface\\AddOns\\JPS\\Media\\shadow.tga"
