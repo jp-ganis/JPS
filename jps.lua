@@ -99,6 +99,7 @@ jps.Count = 1
 jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
 jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
+rotationDropdownHolder = nil
 
 -- IN COMBAT
 local start_time = 0
@@ -220,7 +221,7 @@ end
 -- EVENTS HANDLER
 --------------------------
 
-function jps_combatEventHandler(self, event, ...)
+	function jps_combatEventHandler(self, event, ...)
 
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
@@ -230,7 +231,7 @@ function jps_combatEventHandler(self, event, ...)
 		jps.detectSpec()
 		jps.SortRaidStatus()
 		reset_healtable()
-      
+
 	elseif event == "INSPECT_READY" then -- 3er fire > reloadui
 		--print("INSPECT_READY")
 		if not jps.Spec then 
@@ -473,6 +474,7 @@ function jps.detectSpec()
 	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
 	jps.ToggleRotationName = {"No Rotations"}
 	jps.MultiRotation = false
+	rotationDropdownHolder:Hide()
 
 	jps.Race = UnitRace("player")
 	jps.Class = UnitClass("player")
@@ -663,8 +665,9 @@ function jps_Combat()
    
    -- Check spell usability 
    jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
-   if not jps.initializedRotation then return nil,nil end 
-   
+   if jps.initializedRotation == false then
+	   return nil,nil 
+    end 
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	jps.UpdateEnemyTable()

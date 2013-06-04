@@ -81,11 +81,69 @@ jpsIcon:SetScript("OnEnter", function(self)
 	local text = ""
 	if jps.Enabled then text = "JPS enabled" else text = "JPS disabled" end
 	GameTooltip:SetText(text.." for your|cffa335ee "..jps.Class.." "..jps.Spec)
-	GameTooltip:AddLine("jps.Rotation["..jps.Count.."]" , 1, 1, 1)
-	GameTooltip:AddLine("|cffff8000"..jps.Tooltip , 1, 1, 1)
+	if(jps.MultiRotation) then 
+		GameTooltip:AddLine("Rotation: "..jps.ToggleRotationName[jps.Count] , 1, 1, 1)
+	end
+	
+	GameTooltip:AddLine("shift+right to rotate, cmd +right for options" , 1, 1, 1)
 	GameTooltip:Show()
 end)
 jpsIcon:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+
+
+---------------------------------
+-- DROPDOWN ROTATIONS
+---------------------------------
+
+
+rotationDropdownHolder = CreateFrame("frame","rotationDropdownHolder")
+rotationDropdownHolder:SetWidth(150)
+rotationDropdownHolder:SetHeight(60)
+rotationDropdownHolder:SetPoint("CENTER",UIParent)
+rotationDropdownHolder:EnableMouse(true)
+rotationDropdownHolder:SetMovable(true)
+rotationDropdownHolder:RegisterForDrag("LeftButton")
+rotationDropdownHolder:SetScript("OnDragStart", function(self) self:StartMoving() end)
+rotationDropdownHolder:SetScript("OnDragStart", function(self) self:StartMoving() end)
+rotationDropdownHolder:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+
+DropDownRotationGUI = CreateFrame("FRAME", "JPS Rotation GUI", rotationDropdownHolder, "UIDropDownMenuTemplate")
+DropDownRotationGUI:ClearAllPoints()
+DropDownRotationGUI:SetPoint("CENTER",10,10)
+local title = DropDownRotationGUI:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+title:SetPoint("TOPLEFT", 20, 10) 
+title:SetText("JPS ROTATIONS")	
+
+local function GUIRotation_OnClick(self)
+   UIDropDownMenu_SetSelectedID(DropDownRotationGUI, self:GetID())
+   jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
+   write("Changed your active Rotation to: "..jps.ToggleRotationName[jps.Count])
+end
+
+local function GUIDropDown_Initialize(self, level)
+	local menuListGUI = {
+	   jps.ToggleRotationName[1], -- will be {"No Rotations"} or spellTable[1]["ToolTip"]
+	   jps.ToggleRotationName[2],
+	   jps.ToggleRotationName[3],
+	   jps.ToggleRotationName[4],
+	   jps.ToggleRotationName[5],
+	}
+	local infoGUI = UIDropDownMenu_CreateInfo()
+	for k,v in pairs(menuListGUI) do
+	  infoGUI = UIDropDownMenu_CreateInfo()
+	  infoGUI.text = v
+	  infoGUI.value = v
+	  infoGUI.func = GUIRotation_OnClick
+	  UIDropDownMenu_AddButton(infoGUI, level)
+	end
+end
+
+UIDropDownMenu_Initialize(DropDownRotationGUI, GUIDropDown_Initialize)
+UIDropDownMenu_SetSelectedID(DropDownRotationGUI, 1)
+UIDropDownMenu_SetWidth(DropDownRotationGUI, 100);
+UIDropDownMenu_SetButtonWidth(DropDownRotationGUI, 100)
+UIDropDownMenu_JustifyText(DropDownRotationGUI, "LEFT")
+
 
 ------------------------------------------------------
 --------------- ToggleCDs ----------------------------

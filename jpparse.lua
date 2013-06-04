@@ -435,16 +435,25 @@ end
 -------------------------
 
 function jps.RotationActive(spellTable)
-
+	local countRotations = 0
+	
 	for i,j in ipairs (spellTable) do
 		if spellTable[i]["ToolTip"] ~= nil then
 			jps.MultiRotation = true
-			write("found rotation: "..spellTable[i]["ToolTip"])
+			countRotations = countRotations+1 
 			jps.ToggleRotationName[i] = spellTable[i]["ToolTip"]
 		end
 	end
 	
 	jps.initializedRotation = true
+	
+	if countRotations > 1 then 
+		rotationDropdownHolder:Show()
+		UIDropDownMenu_SetSelectedID(DropDownRotationGUI, 1)
+
+	else  
+		rotationDropdownHolder:Hide() 
+	end
 	
 	if jps.MultiRotation then
 		jps.Tooltip = spellTable[jps.Count]["ToolTip"]
