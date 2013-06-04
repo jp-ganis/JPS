@@ -223,6 +223,7 @@ JPSEXTInfoFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal") -- "OVERLAY"
+infoFrameText:SetJustifyH("LEFT")
 infoFrameText:SetPoint("LEFT", 10, 0)
 local infoTTL = 60
 local infoTTD = 60
@@ -245,7 +246,7 @@ end)
 
 function jps.updateInfoText()
     if infoTTL ~= nil or infoTTD ~= nil then
-        infoFrameText:SetText("TTL:"..infoTTL.."\nTTD:"..infoTTD)
+        infoFrameText:SetText("TimeToLive: "..infoTTL.."\nTimeToDie: "..infoTTD)
     else
         infoFrameText:SetText("TTL: n/a\nTTD: n/a")
     end
