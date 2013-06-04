@@ -53,8 +53,7 @@ function dk_frost()
 		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
 		-- Rune Management
-		{ "Plague Leech", (ffDuration > 0  and bpDuration > 0) and (not two_dr or not two_fr or not two_ur) and (ffDuration < 3 and bpDuration < 3)}, 
-		
+		{ "Plague Leech", (frostFeverDuration > 0  and bloodPlagueDuration > 0) and (not twodr or not twofr or not twour) and (frostFeverDuration < 3 and bloodPlagueDuration < 3)}, 
 		
 		{ "Pillar of Frost", jps.UseCDs },
 		{ jps.DPSRacial, jps.UseCDs },
@@ -123,7 +122,7 @@ function dk_frost()
 		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
 		-- Rune Management
-		{ "Plague Leech", (ffDuration > 0  and bpDuration > 0) and (not two_dr or not two_fr or not two_ur) and (ffDuration < 3 and bpDuration < 3) }, 
+		{ "Plague Leech", (frostFeverDuration > 0  and bloodPlagueDuration > 0) and (not twodr or not twofr or not twour) and (frostFeverDuration < 3 and bloodPlagueDuration < 3) }, 
 		
 		{ "Pillar of Frost", jps.UseCDs },
 		{ jps.DPSRacial, jps.UseCDs },
