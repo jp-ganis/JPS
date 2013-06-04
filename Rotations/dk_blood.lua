@@ -56,11 +56,10 @@ function dk_blood()
 		
 		-- Defensive cooldowns
 		{ "Death Pact",		jps.hp() < .5 and haveGhoul },
+		{ { "macro",  "/cast !Lichborne \r\n/cast [@player] Death Coil" }, jps.hp() < 0.5 and rp >= 40 and (jps.cooldown("Lichborne") == 0 or jps.buff("lichborne") )},
+		{ "Rune Tap",		jps.hp() < .8 },
 		{ "Icebound Fortitude",		jps.hp() < .3 },
 		{ "Vampiric Blood",		jps.hp() < .4 },
-		{ "Rune Tap",		jps.hp() < .8 },
-		
-		{ "Plague Leech",	(ffDuration > 0	and bpDuration > 0) and (not two_dr or not two_fr or not two_ur) and (ffDuration < 3 and bpDuration < 3)},
 		
 		-- Interrupts
 		{ "Mind Freeze",		jps.shouldKick() and jps.LastCast ~= "Strangulate" and jps.LastCast ~= "Asphyxiate" },
@@ -83,21 +82,24 @@ function dk_blood()
 		
 		-- Buff
 		{ "Bone Shield",		not jps.buff("Bone Shield") },
-		
-		{ "Outbreak",	ffDuration <= 2 or bpDuration <= 2 },
-		
-		{ "Soul Reaper",		jps.hp("target") <= .35 },
-		
+				
 		-- Diseases
+		{ "Outbreak",	ffDuration <= 2 or bpDuration <= 2 },
 		{ "Plague Strike",		not jps.debuff("Blood Plague") },
 		{ "Icy Touch",		not jps.debuff("Frost Fever") },
 		
+		{ "Plague Leech",	ffDuration > 0	and bpDuration > 0 and ffDuration < 3 and bpDuration < 3},
+		
+		{ "Soul Reaper",		jps.hp("target") <= .35 },
+
 		-- Multi target
 		{ "Blood Boil",		jps.MultiTarget or jps.buff("Crimson Scourge")},
-		{ "Death Strike" 	jps.hp() < .7 or jps.buffDuration("Blood Shield") < 3 },
-		{ "Rune Strike",		rp >= 80 and	not two_fr and not two_ur },
-		{ "Death Strike" },
 		
+		-- Rotation
+		{ "Death Strike", 	jps.hp() < .7 or jps.buffDuration("Blood Shield") < 3 },
+		{ "Rune Strike",		rp >= 80 and not two_fr and not two_ur },
+		{ "Death Strike" },
+
 		{ "Heart Strike",		jps.debuff("Blood Plague") and jps.debuff("Frost Fever") },
 		
 		{ "Rune Strike",		rp >= 40 },
@@ -117,6 +119,7 @@ function dk_blood()
 		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate", "focus" },
+
 		-- Buffs
 		{ "blood presence",	 not jps.buff("blood presence") },
 		{ "horn of winter",	 "onCD" },
@@ -128,8 +131,9 @@ function dk_blood()
 		{ "Icy Touch",		not jps.debuff("Frost Fever") },
 		
 	}
-	
+
 	local spellTableActive = jps.RotationActive(spellTable)
 	spell,target = parseSpellTable(spellTableActive)
+
 	return spell,target
 end
