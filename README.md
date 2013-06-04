@@ -37,7 +37,7 @@ spells and abilities with split second timing to ensure maximum DPS, TPS or
 HPS for your class and spec.
 
 ==============================================================================
-= TO-DO                                                                      =
+= TO-DO / KNOWN BUGS                                                         =
 ==============================================================================
 
 * check/update Hunter rotations
@@ -49,6 +49,8 @@ HPS for your class and spec.
 * add golden carp to jps fishing
 * turn off on toons with level < 10
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
+* BUG: Mage Frost doesn't cast
+* BUG: JPS breaks the roll window for disenchant while infight & rejects invites
 
 ***tester***
 
