@@ -8,7 +8,7 @@ function shaman_resto_pve()
 	local me = "player"
 	local mh, _, _, oh, _, _, _, _, _ =GetWeaponEnchantInfo()
 	local engineering ="/use 10"
-	local r = RunMacroText
+	local r = jps.Macro
 	local tank = nil
 	local mana = UnitMana("player")/UnitManaMax("player")
 	

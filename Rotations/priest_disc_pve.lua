@@ -177,7 +177,7 @@ local canCastShadowfiend = jps.canDPS(rangedTarget) and (jps.TimeToDie(rangedTar
 -- FIREHACK
 ---------------------
 
-if jps.FaceTarget and jps.canDPS(rangedTarget) then RunMacroText("/target "..rangedTarget) end
+if jps.FaceTarget and jps.canDPS(rangedTarget) then jps.Macro("/target "..rangedTarget) end
 
 ---------------------
 -- DISPEL

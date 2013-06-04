@@ -48,9 +48,9 @@ function warrior_fury()
 	local isInPvE = (GetNumGroupMembers() > 0) and (UnitIsPVP(player) ~= 1) and UnitAffectingCombat(player)==1
 	local mcStks = jps.buffStacks("Meat Cleaver") --MC Stacks Count
 	
-	RunMacroText("/target "..rangedTarget)
-	--RunMacroText("/startattack")
-	--RunMacroText("/target "..rangedTarget.."\n/startattack")
+	jps.Macro("/target "..rangedTarget)
+	--jps.Macro("/startattack")
+	--jps.Macro("/target "..rangedTarget.."\n/startattack")
 
 	------------------------
 	-- SPELL TABLE ---------

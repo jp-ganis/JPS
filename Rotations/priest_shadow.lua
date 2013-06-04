@@ -49,7 +49,7 @@ function priest_shadow()
 -- FIREHACK
 ---------------------
 
-	if jps.FaceTarget and jps.canDPS(rangedTarget) then RunMacroText("/target "..rangedTarget) end
+	if jps.FaceTarget and jps.canDPS(rangedTarget) then jps.Macro("/target "..rangedTarget) end
 	
 ---------------------
 -- TIMER

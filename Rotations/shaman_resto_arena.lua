@@ -9,7 +9,7 @@ local target = nil
    local me = "player"
    local mh, _, _, oh, _, _, _, _, _ =GetWeaponEnchantInfo()
    local engineering ="/use 10"
-   local r = RunMacroText
+   local r = jps.Macro
    local tank = nil
    
    local my_friend_name = jpsName -- Player
@@ -97,7 +97,7 @@ local target = nil
          local _, spec1, _, specIcon1, _, role1, class1 = GetSpecializationInfoByID(specID1);
          if role1=="HEALER" then
             enemyHealer = arenaEnemy1
-            RunMacroText("/focus [@arena1]")
+            jps.Macro("/focus [@arena1]")
          end
       end
    end   
@@ -109,7 +109,7 @@ local target = nil
          local _, spec2, _, specIcon2, _, role2, class2 = GetSpecializationInfoByID(specID2);
          if role2=="HEALER" then
             enemyHealer = arenaEnemy2
-            RunMacroText("/focus [@arena2]")
+            jps.Macro("/focus [@arena2]")
          end
       end
    end
@@ -117,25 +117,25 @@ local target = nil
    
    -- If there isn't any healer I want to have in focus these classes with this order of priority
    if  UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy1) and classArenaEnemy1=="Warlock" then
-      RunMacroText("/focus [@arena1]")
+      jps.Macro("/focus [@arena1]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy1) and classArenaEnemy1=="Mage" then
-      RunMacroText("/focus [@arena1]")
+      jps.Macro("/focus [@arena1]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy1) and classArenaEnemy1=="Shaman" then
-      RunMacroText("/focus [@arena1]")
+      jps.Macro("/focus [@arena1]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy1) and classArenaEnemy1=="Priest" then
-      RunMacroText("/focus [@arena1]")
+      jps.Macro("/focus [@arena1]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy1) and classArenaEnemy1=="Druid" then
-      RunMacroText("/focus [@arena1]")
+      jps.Macro("/focus [@arena1]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy2) and classArenaEnemy2=="Warlock" then
-      RunMacroText("/focus [@arena2]")
+      jps.Macro("/focus [@arena2]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy2) and classArenaEnemy2=="Mage" then
-      RunMacroText("/focus [@arena2]")
+      jps.Macro("/focus [@arena2]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy2) and classArenaEnemy2=="Shaman" then
-      RunMacroText("/focus [@arena2]")
+      jps.Macro("/focus [@arena2]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy2) and classArenaEnemy2=="Priest" then
-      RunMacroText("/focus [@arena2]")
+      jps.Macro("/focus [@arena2]")
    elseif UnitExists(enemyHealer)==nil and UnitExists(arenaEnemy2) and classArenaEnemy2=="Druid" then
-      RunMacroText("/focus [@arena2]")
+      jps.Macro("/focus [@arena2]")
    end
    
       
@@ -148,7 +148,7 @@ local target = nil
 
    -- CD WHEN I'm in trouble
    if  IsEquippedItem("Malevolent Gladiator's Emblem of Meditation") and select(1,GetItemCooldown(84939))==0 and IsUsableItem("Malevolent Gladiator's Emblem of Meditation") and jps.hp(me) < 0.25 then 
-      RunMacroText("/use Malevolent Gladiator's Emblem of Meditation")
+      jps.Macro("/use Malevolent Gladiator's Emblem of Meditation")
       spell = "Healing Tide Totem"
       return spell
    end
@@ -157,7 +157,7 @@ local target = nil
       SpellStopCasting()
       jps.Target = me
       print("-- EMERGENCY INSTANT --")
-      RunMacroText("/cast Ancestral Swiftness")
+      jps.Macro("/cast Ancestral Swiftness")
       spell = "Greater Healing Wave"
    return spell end
 
@@ -167,7 +167,7 @@ local target = nil
       SpellStopCasting()
       jps.Target = my_friend_name
       print("-- EMERGENCY INSTANT ON my_friend_name --")
-      RunMacroText("/cast Ancestral Swiftness")
+      jps.Macro("/cast Ancestral Swiftness")
       spell = "Greater Healing Wave"
    return spell end   
 

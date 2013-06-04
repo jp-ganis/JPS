@@ -139,6 +139,7 @@ local function GUIDropDown_Initialize(self, level)
 end
 
 UIDropDownMenu_Initialize(DropDownRotationGUI, GUIDropDown_Initialize)
+
 UIDropDownMenu_SetSelectedID(DropDownRotationGUI, 1)
 UIDropDownMenu_SetWidth(DropDownRotationGUI, 100);
 UIDropDownMenu_SetButtonWidth(DropDownRotationGUI, 100)
@@ -657,4 +658,19 @@ function jps.set_jps_icon( spell )
 	local icon = GetSpellTexture(spell)
 	jpsIcon.texture:SetTexture(icon)
 	jps.IconSpell = spell
+end
+
+function jps.resetView() 
+	if jpsIcon ~= nil then
+		jpsIcon:ClearAllPoints()
+		jpsIcon:SetPoint("CENTER", UIParent)
+	end
+	if rotationDropdownHolder ~= nil then
+		rotationDropdownHolder:ClearAllPoints()
+		rotationDropdownHolder:SetPoint("CENTER", UIParent)
+	end
+	if JPSEXTInfoFrame ~= nil then
+		JPSEXTInfoFrame:ClearAllPoints()
+		JPSEXTInfoFrame:SetPoint("CENTER", UIParent)
+	end
 end

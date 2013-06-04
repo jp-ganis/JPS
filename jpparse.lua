@@ -376,7 +376,7 @@ function parseSpellTable( hydraTable )
 			local macroText = spell[2]
 			local macroTarget = spell[3]
 			-- Workaround for TargetUnit is still PROTECTED despite goblin active
- 			if jps.UnitExists(macroTarget) then RunMacroText("/target "..macroTarget) end
+ 			if jps.UnitExists(macroTarget) then jps.Macro("/target "..macroTarget) end
  			
 			if conditions and type(macroText) == "string" then
 				local macroSpell = macroText
@@ -385,7 +385,7 @@ function parseSpellTable( hydraTable )
 				else 
 					macroSpell = select(3,string.find(macroText,"%s(.*)")) -- {"macro","/cast Sanguinaire"}
 				end
-				RunMacroText(macroText)
+				jps.Macro(macroText)
 				if jps.Debug then macrowrite(macroSpell,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 			end
 		
@@ -398,7 +398,7 @@ function parseSpellTable( hydraTable )
 					local spellname = tostring(select(1,GetSpellInfo(sequence)))
 					if jps.canCast(spellname,macroTarget) then
 						local macroText = "/cast "..spellname
-						RunMacroText(macroText)
+						jps.Macro(macroText)
 						if jps.Debug then macrowrite(spellname,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 					end
 				end

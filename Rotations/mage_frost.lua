@@ -129,7 +129,7 @@ function mage_frost()
 		elseif jps.canDPS(EnemyUnit[1]) then rangedTarget = EnemyUnit[1]
 	end
 
-	RunMacroText("/target "..rangedTarget)
+	jps.Macro("/target "..rangedTarget)
 	
 ------------------------
 -- SPELL TABLE ---------

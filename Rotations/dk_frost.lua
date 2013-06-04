@@ -32,8 +32,8 @@ function dk_frost()
 	elseif jps.canDPS(enemyTargetingMe) then
 		rangedTarget = enemyTargetingMe
 	end
-	
-	RunMacroText("/target "..rangedTarget)
+
+	jps.Macro("/target "..rangedTarget)
 	
 	
 	------------------------

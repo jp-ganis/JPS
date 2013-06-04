@@ -564,7 +564,7 @@ function SlashCmdList.jps(cmd, editbox)
    		jps.ResetDB = not jps.ResetDB
    		jps_VARIABLES_LOADED()
    		write("jps.ResetDB set to",tostring(jps.ResetDB))
-   		RunMacroText("/reload")
+   		jps.Macro("/reload")
 	elseif msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS revision",tostring(jps.Revision))
 	elseif msg == "opening" then

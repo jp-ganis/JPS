@@ -25,7 +25,7 @@ function paladin_ret_pvp()
 	local stance = GetShapeshiftForm()
 	local targetHealth = jps.hp("target")
 	  
-	RunMacroText("/target "..rangedTarget)
+	jps.Macro("/target "..rangedTarget)
 		
 ------------------------
 -- SPELL TABLE ------

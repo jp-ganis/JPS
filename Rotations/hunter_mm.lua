@@ -4,7 +4,7 @@ function hunter_mm(self)
 	--SIMCRAFT
 	------------------------------------------
 	local up = UnitPower
-	local r = RunMacroText;
+	local r = jps.Macro;
 	local spell = nil
 	local focus = UnitPower("player")
 

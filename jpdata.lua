@@ -888,10 +888,10 @@ end
 
 
 function jps.groundClick()
-	RunMacroText("/console deselectOnClick 0")
+	jps.Macro("/console deselectOnClick 0")
 	CameraOrSelectOrMoveStart()
 	CameraOrSelectOrMoveStop()
-	RunMacroText("/console deselectOnClick 1")
+	jps.Macro("/console deselectOnClick 1")
 end
 
 function jps.faceTarget()
@@ -902,7 +902,9 @@ function jps.moveToTarget()
 	InteractUnit("target")
 end
 
-
+function jps.Macro(text) 
+	RunMacroText(text)
+end
 
 ----------------------------
 -- FUNCTIONS SPECIALIZATION

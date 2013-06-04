@@ -14,7 +14,7 @@ function shaman_elemental(self)
 	local me = "player"
 	local mh, _, _, oh, _, _, _, _, _ =GetWeaponEnchantInfo()
 	local engineering ="/use 10"
-	local r = RunMacroText
+	local r = jps.Macro
 	
 	-- Totems
 	local _, fireTotem, _, _, _ = GetTotemInfo(1)
