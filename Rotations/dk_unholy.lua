@@ -53,7 +53,7 @@ function dkUnholy()
 	if spellBeingCastByTarget == "Shattered Ice" or spellBeingCastByTarget == "Hand of Ragnaros" or spellBeingCastByTarget == "Shadowflame" or spellBeingCastByTarget == "Curse of Mending" or spellBeingCastByTarget == "Pyroblast" or spellBeingCastByTarget == "Chain Lightning" or spellBeingCastByTarget == "Zanzili Fire" or spellBeingCastByTarget == "Polymorph" or spellBeingCastByTarget == "Hex" or spellBeingCastByTarget == "Mind Control" or spellBeingCastByTarget == "Cyclone" then
 		castDarkSim = true
 	end	
-	]]--
+
 	
 	local spellTable =
 	{
@@ -80,8 +80,8 @@ function dkUnholy()
 		-- CDs
 		{ "unholy frenzy" },
 		{ jps.DPSRacial, jps.UseCDs },
+		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		{ jps.useTrinket(2), jps.UseCDs },
 		
 		-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },

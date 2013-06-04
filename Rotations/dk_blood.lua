@@ -59,8 +59,8 @@ function dk_blood()
 		{ "Vampiric Blood", 		jps.hp() < 0.5 },
 		{ "Rune Tap", 				jps.hp() < 0.8 },
 		-- Trinkets
+		{ jps.useTrinket(0), 		jps.UseCDs }, 
 		{ jps.useTrinket(1), 		jps.UseCDs }, 
-		{ jps.useTrinket(2), 		jps.UseCDs }, 
 		-- Buffs
 		{ "Bone Shield", 			not jps.buff("bone shield") },
 		-- Single target

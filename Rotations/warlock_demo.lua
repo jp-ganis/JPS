@@ -119,8 +119,8 @@ function warlock_demo()
 		--cd--
 		{ "dark soul: knowledge" },	
 		{ jps.DPSRacial, jps.UseCDs },
+		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		{ jps.useTrinket(2), jps.UseCDs },
 		
 		-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },

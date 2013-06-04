@@ -50,8 +50,8 @@ function monk_windwalker(self)
 		{ jps.DPSRacial, jps.UseCDs },
 		
 		-- On-use Trinkets.
+		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		{ jps.useTrinket(2), jps.UseCDs },
 		
 		-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },

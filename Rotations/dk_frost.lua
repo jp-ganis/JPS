@@ -18,7 +18,7 @@ function dk_frost()
 	local twoFr = fr1 and fr2
 	local oneUr = ur1 or ur2
 	local twoUr = ur1 and ur2
-	local timeToDie = sif(tonumber(_G.TimeToDie.dataobj.text) ~= nil, _G.TimeToDie.dataobj.text , 99999999);
+	local timeToDie = ternary(tonumber(_G.TimeToDie.dataobj.text) ~= nil, _G.TimeToDie.dataobj.text , 99999999);
 	
 	local enemyTargetingMe = jps.IstargetMe()
 
@@ -78,8 +78,8 @@ function dk_frost()
 		{ "Unholy Blight", frostFeverDuration < 3 or bloodPlagueDuration < 3 },
 		
 		-- On-use Trinkets.
+		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		{ jps.useTrinket(2), jps.UseCDs },
 		
 		-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },
@@ -147,8 +147,8 @@ function dk_frost()
 		{ "Unholy Blight", frostFeverDuration < 3 or bloodPlagueDuration < 3 },
 		
 		-- On-use Trinkets.
+		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		{ jps.useTrinket(2), jps.UseCDs },
 		
 		-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },

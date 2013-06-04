@@ -92,8 +92,8 @@ function warlock_affliction()
 		{ "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.hp("target") < 0.25 and jps.UseCDs },		
 		
 		{ jps.DPSRacial, jps.UseCDs },
+		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		{ jps.useTrinket(2), jps.UseCDs },
 		
 		-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },
