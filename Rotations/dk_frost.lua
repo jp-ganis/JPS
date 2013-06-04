@@ -52,19 +52,19 @@ function dk_frost()
 		-- Self heal
 		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
-		-- Rune Management
-		{ "Plague Leech", (frostFeverDuration > 0  and bloodPlagueDuration > 0) and (not twodr or not twofr or not twour) and (frostFeverDuration < 3 and bloodPlagueDuration < 3)}, 
-		
 		{ "Pillar of Frost", jps.UseCDs },
 		{ jps.DPSRacial, jps.UseCDs },
 		
 		{ "Raise Dead", jps.UseCDs and UnitExists("pet") == nil },
+
+		-- Rune Management
+		{ "Plague Leech", frostFeverDuration > 0  and bloodPlagueDuration > 0 and frostFeverDuration < 1 and bloodPlagueDuration < 1}, 
+
 		
-		-- If our diseases are about to fall off.
-		{ "Outbreak", frostFeverDuration < 3 or bloodPlagueDuration < 3 },
+		{ "Outbreak", frostFeverDuration < 1 or bloodPlagueDuration < 1 },
 		
 		{ "Soul Reaper", jps.hp("target") < .35 },
-		
+
 		-- Kick
 		{ "mind freeze",		jps.shouldKick() },
 		{ "mind freeze",		jps.shouldKick("focus"), "focus" },
@@ -98,6 +98,11 @@ function dk_frost()
 		-- Frost Strike when we have a Killing Machine proc.
 		-- { "Frost Strike",	jps.buff("Killing Machine") },
 		{ "Obliterate", runicPower <= 76 or jps.buff("Killing Machine") or jps.bloodlusting(), rangedTarget},
+
+		{ "Plague Leech", frostFeverDuration > 0  and bloodPlagueDuration > 0 and frostFeverDuration < 3 and bloodPlagueDuration < 3}, 
+		
+		{ "Outbreak", frostFeverDuration < 3 or bloodPlagueDuration < 3 },
+		
 		-- Filler.
 		{ "Horn of Winter", runicPower < 20 },
 		
@@ -105,9 +110,9 @@ function dk_frost()
 		
 		{ "Frost Strike", (not jps.buff("Killing Machine") and jps.cooldown("Obliterate") > 1 ) or (jps.buff("Killing Machine") and jps.cooldown("Obliterate") > 1 ), rangedTarget},
 		{ "Obliterate", "onCD", rangedTarget},
+		{ "Empower Rune Weapon", jps.UseCDs and ((runicPower <= 25 and not twoDr and not twoFr and not twoUr) or (timeToDie < 60 and jps.buff("Potion of Mogu Power")) or jps.bloodlusting()) },
 		{ "Frost Strike", "onCD" , rangedTarget},
 		{ "Plague Leech","onCD",rangedTarget},
-		{ "Empower Rune Weapon", jps.UseCDs and ((runicPower <= 25 and not twoDr and not twoFr and not twoUr) or (timeToDie < 60 and jps.buff("Potion of Mogu Power")) or jps.bloodlusting()) },
 	}
 	
 	spellTable[2] =
