@@ -672,7 +672,7 @@ end
 -- function like C / PHP ternary operator val = (condition) ? true : false
 ------------------------------
 
-function Ternary(condition, doIt, notDo)
+function ternary(condition, doIt, notDo)
 	if condition then return doIt else return notDo end
 end
 
