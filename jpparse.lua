@@ -444,17 +444,18 @@ function jps.RotationActive(spellTable)
 			jps.ToggleRotationName[i] = spellTable[i]["ToolTip"]
 		end
 	end
-	
-	jps.initializedRotation = true
-	
-	if countRotations > 1 then 
-		rotationDropdownHolder:Show()
-		UIDropDownMenu_SetSelectedID(DropDownRotationGUI, 1)
 
-	else  
-		rotationDropdownHolder:Hide() 
+	if jps.initializedRotation == false then
+		if countRotations > 1 then 
+			rotationDropdownHolder:Show()
+			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
+		else  
+			rotationDropdownHolder:Hide() 
+		end
 	end
-	
+
+	jps.initializedRotation = true
+
 	if jps.MultiRotation then
 		jps.Tooltip = spellTable[jps.Count]["ToolTip"]
 		return spellTable[jps.Count]

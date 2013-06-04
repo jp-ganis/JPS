@@ -474,6 +474,7 @@ function jps.detectSpec()
 	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
 	jps.ToggleRotationName = {"No Rotations"}
 	jps.MultiRotation = false
+	jps.initializedRotation = false
 	rotationDropdownHolder:Hide()
 
 	jps.Race = UnitRace("player")
@@ -572,6 +573,8 @@ function SlashCmdList.jps(cmd, editbox)
 		write("Opening flag is now set to",tostring(jps.Opening))
 	elseif msg == "size" then
 		jps.resize( rest )
+	elseif msg == "reset" then
+		jps.resetView()
 	elseif msg == "help" then
 		write("Slash Commands:")
 		write("/jps - Show enabled status.")
@@ -580,6 +583,8 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps cds - Toggle use of cooldowns.")
 		write("/jps pew - Spammable macro to do your best moves, if for some reason you don't want it fully automated")
 		write("/jps interrupts - Toggle interrupting")
+		write("/jps reset - reset position of jps icons and UI")
+		write("/jps db - cleares your local jps DB")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
       	jps_Combat()
