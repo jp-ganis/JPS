@@ -72,7 +72,7 @@ jps.EngiGloves = nil
 -- Raccourcis
 cast = CastSpellByName
 
--- Autres
+-- Misc
 jps.Opening = true
 jps.RakeBuffed = false
 jps.RipBuffed = false
@@ -209,10 +209,10 @@ combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 local L = MyLocalizationTable
 
 function write(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS_" .. strjoin(" ", tostringall(...))); -- color orange
+   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 function macrowrite(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO_" .. strjoin(" ", tostringall(...))); -- color orange
+   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 
 --------------------------
