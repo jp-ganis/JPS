@@ -49,57 +49,58 @@ function dk_blood()
 		
 		-- Shift is pressed
 		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
-		{ "Anti-Magic Zone",       IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Anti-Magic Zone",		IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		
 		-- Cntrol is pressed
-		{ "Army of the Dead",       IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Army of the Dead",		IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		
 		-- Defensive cooldowns
-		{ "Death Pact",       jps.hp() < .5 and haveGhoul },
-		{ "Icebound Fortitude",       jps.hp() < .3 },
-		{ "Vampiric Blood",       jps.hp() < .4 },
-		{ "Rune Tap",       jps.hp() < .8 },
+		{ "Death Pact",		jps.hp() < .5 and haveGhoul },
+		{ "Icebound Fortitude",		jps.hp() < .3 },
+		{ "Vampiric Blood",		jps.hp() < .4 },
+		{ "Rune Tap",		jps.hp() < .8 },
 		
-		{ "Plague Leech",	(ffDuration > 0  and bpDuration > 0) and (not two_dr or not two_fr or not two_ur) and (ffDuration < 3 and bpDuration < 3)},
+		{ "Plague Leech",	(ffDuration > 0	and bpDuration > 0) and (not two_dr or not two_fr or not two_ur) and (ffDuration < 3 and bpDuration < 3)},
 		
 		-- Interrupts
-		{ "Mind Freeze",       jps.shouldKick() and jps.LastCast ~= "Strangulate" and jps.LastCast ~= "Asphyxiate" },
-		{ "Strangulate",       jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Asphyxiate" },
-		{ "Asphyxiate",       jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
+		{ "Mind Freeze",		jps.shouldKick() and jps.LastCast ~= "Strangulate" and jps.LastCast ~= "Asphyxiate" },
+		{ "Strangulate",		jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Asphyxiate" },
+		{ "Asphyxiate",		jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
 		
 		-- Aggro cooldowns
-		-- { "Dark Command",     --   targetThreatStatus ~= 3 and not jps.targetTargetTank() },
-		{ "Raise Dead",       jps.UseCDs and UnitExists("pet") == nil },
-		{ "Dancing Rune Weapon",       jps.UseCDs },
+		-- { "Dark Command",	 --	targetThreatStatus ~= 3 and not jps.targetTargetTank() },
+		{ "Raise Dead",		jps.UseCDs and UnitExists("pet") == nil },
+		{ "Dancing Rune Weapon",		jps.UseCDs },
 		
 		-- Death Siphon when we need a bit of healing. (talent based)
-		{ "Death Siphon",       jps.hp() < .8 },
+		{ "Death Siphon",		jps.hp() < .8 },
 		
 		-- Requires engineering
-		{ jps.useSynapseSprings(),       jps.UseCDs },
+		{ jps.useSynapseSprings(),		jps.UseCDs },
 		
 		-- Requires herbalism
-		{ "Lifeblood",       jps.UseCDs },
+		{ "Lifeblood",		jps.UseCDs },
 		
 		-- Buff
-		{ "Bone Shield",       not jps.buff("Bone Shield") },
+		{ "Bone Shield",		not jps.buff("Bone Shield") },
 		
-		{ "Outbreak",   ffDuration <= 2 or bpDuration <= 2 },
+		{ "Outbreak",	ffDuration <= 2 or bpDuration <= 2 },
 		
-		{ "Soul Reaper",       jps.hp("target") <= .35 },
+		{ "Soul Reaper",		jps.hp("target") <= .35 },
 		
 		-- Diseases
-		{ "Plague Strike",       not jps.debuff("Blood Plague") },
-		{ "Icy Touch",       not jps.debuff("Frost Fever") },
+		{ "Plague Strike",		not jps.debuff("Blood Plague") },
+		{ "Icy Touch",		not jps.debuff("Frost Fever") },
 		
 		-- Multi target
-		{ "Blood Boil",  jps.MultiTarget or jps.buff("Crimson Scourge")},
-		
+		{ "Blood Boil",		jps.MultiTarget or jps.buff("Crimson Scourge")},
+		{ "Death Strike" 	jps.hp() < .7 or jps.buffDuration("Blood Shield") < 3 },
+		{ "Rune Strike",		rp >= 80 and	not two_fr and not two_ur },
 		{ "Death Strike" },
 		
-		{ "Heart Strike",       jps.debuff("Blood Plague") and jps.debuff("Frost Fever") },
+		{ "Heart Strike",		jps.debuff("Blood Plague") and jps.debuff("Frost Fever") },
 		
-		{ "Rune Strike",       rp >= 40 },
+		{ "Rune Strike",		rp >= 40 },
 		
 		{ "Horn of Winter" },
 		
@@ -123,8 +124,8 @@ function dk_blood()
 		{ "Unholy Blight", ffDuration < 2 or bpDuration < 2 },
 		
 		-- Diseases
-	    { "Plague Strike",       not jps.debuff("Blood Plague") },
-	    { "Icy Touch",       not jps.debuff("Frost Fever") },
+		{ "Plague Strike",		not jps.debuff("Blood Plague") },
+		{ "Icy Touch",		not jps.debuff("Frost Fever") },
 		
 	}
 	
