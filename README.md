@@ -70,6 +70,7 @@ pcmd: dk blood, dk frost, mage fire, mage frost, holy paladin, destro warlock
 * /jps pvp*			toggle pvp mode manually
 * /jps version		prints your current JPS version/revision
 * /jps db				resets ingame addon database
+* /jps reset			resets position of JPS icons / jps UI
 * /jps debug			Enable debug output
 * /jps help			show help
 
