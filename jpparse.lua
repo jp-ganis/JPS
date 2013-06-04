@@ -173,8 +173,8 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
-	--debug mode
-	--if jps.Debug then return jps_canCast_debug(spellname,unit) end
+	if jps.Debug then jps_canCast_debug(spell,unit) end
+
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
 	local usable, nomana = IsUsableSpell(spellname) -- usable, nomana = IsUsableSpell("spellName" or spellID)
@@ -254,17 +254,18 @@ function jps_canHeal_debug(unit)
 end
 
 function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
-	if spell == nil then write("not Spell") return false end
-	if not jps.UnitExists(unit) then write("not Unit") return false end
-
+	if spell == nil then write("spell is nil") return false end
+	if not jps.UnitExists(unit) then write("unit is not a valid target or nil") return false end
+	
 	write("|cffa335ee"..spell.." @ "..unit)
 
 	local usable, nomana = IsUsableSpell(spell) -- IsUsableSpell("spellName" or spellID)
-	if not usable then write("Failed IsUsableSpell test") return false end
-	if nomana  then write("Failed Mana test") return false end
+	if not usable then write(spell.." = Failed IsUsableSpell test") return false end
+	if nomana  then write(spell.." = Failed Mana test") return false end
 	if jps.cooldown(spell)~=0 then write("Failed Cooldown test") return false end
-	if jps_SpellHasRange(spell)~=1 then write("Failed SpellHasRange test") return false end
-	if jps_IsSpellInRange(spell,unit)~=1 then write("Failed SpellinRange test") return false end
+	if jps_SpellHasRange(spell)~=1 then write(spell.." = Failed SpellHasRange test") return false end
+
+	if jps_IsSpellInRange(spell,unit)~=1 then write(spell.." = Failed SpellinRange test") return false end
 	write("Passed all tests canCast ".."|cffa335ee"..spell)
 	return true
 end
@@ -363,6 +364,7 @@ function parseSpellTable( hydraTable )
 		spell = spellTable[1] 
 		conditions = spellTable[2]
 		target = spellTable[3]
+		if not target then target = "target"
 		message = spellTable[4]
 		if jps.Message ~= message then jps.Message = message end
 
