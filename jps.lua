@@ -86,6 +86,7 @@ jps.EnemyTable =  {}
 jps.FriendTable = {}
 jps.UnitStatus = {}
 jps.RaidTimeLive = {}
+jps.initializedRotation = false
 
 -- Config.
 jps.Configged = false
@@ -499,6 +500,7 @@ function jps.detectSpec()
    jps.SpellBookTable = jps_GetSpellBook()
    write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
    jps_VARIABLES_LOADED()
+   jps_Combat()
 end
 
 ------------------------
@@ -659,6 +661,10 @@ function jps_Combat()
       return 
    end
    
+   -- Check spell usability 
+   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+   if not jps.initializedRotation then return nil,nil end 
+   
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	jps.UpdateEnemyTable()
@@ -678,10 +684,7 @@ function jps_Combat()
    if UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil then jps.Casting = true
    else jps.Casting = false
    end
-   
-   -- Check spell usability 
-   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
-   
+
    if not jps.Casting and jps.ThisCast ~= nil then
       if #jps.NextSpell >= 1 then
          if jps.NextSpell[1] then

@@ -353,6 +353,7 @@ end
 
 -- Pick a spell from a priority table.
 function parseSpellTable( hydraTable )
+	if not jps.initializedRotation then return nil end
 	local spell = nil
 	local conditions = nil
 	local target = nil
@@ -434,15 +435,17 @@ end
 -------------------------
 
 function jps.RotationActive(spellTable)
--- GET The Rotation Name in dropDown Menu
 
 	for i,j in ipairs (spellTable) do
 		if spellTable[i]["ToolTip"] ~= nil then
 			jps.MultiRotation = true
+			write("found rotation: "..spellTable[i]["ToolTip"])
 			jps.ToggleRotationName[i] = spellTable[i]["ToolTip"]
 		end
 	end
-
+	
+	jps.initializedRotation = true
+	
 	if jps.MultiRotation then
 		jps.Tooltip = spellTable[jps.Count]["ToolTip"]
 		return spellTable[jps.Count]
