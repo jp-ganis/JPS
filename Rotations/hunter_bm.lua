@@ -59,7 +59,7 @@ local function shouldSpiritMend()
 ------------------------
 local spellTable = 
 {
-	{ SetView(1), },
+
 -- Should Spirit Mend  
 	{ "spirit mend", jps.IsSpellInRange("spirit mend",spiritMendTarget) and shouldSpiritMend() , spiritMendTarget },
 	

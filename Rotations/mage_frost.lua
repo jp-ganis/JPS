@@ -136,7 +136,6 @@ function mage_frost()
 ------------------------
 local spellTable =
 {
-	{ SetView(1), },
 -- Class Counters
 	{ "nested", targetClass=="Death Knight" , parse_vsDK() },
 	{ "nested", targetClass=="Hunter" , parse_vsHunter() },

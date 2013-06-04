@@ -259,7 +259,6 @@ function warrior_arms_pvp()
 	local function parse_multitarget()
 		local table =
 		{
-		{ SetView(1), },
 		{ "thunder clap", not jps.debuff("weakened blows") , rangedTarget },
 		{ "sweeping strikes", enemycount = 3 , rangedTarget },
 		{ "bladestorm", true , rangedTarget },
