@@ -27,7 +27,7 @@ jps.Rotation = nil
 jps.UpdateInterval = 0.2
 jps.Enabled = false
 jps.Combat = false
-jps.Debug = true
+jps.Debug = false
 jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = true
@@ -76,7 +76,6 @@ cast = CastSpellByName
 jps.Opening = true
 jps.RakeBuffed = false
 jps.RipBuffed = false
-jps.DPSRacial = nil
 jps.BlacklistTimer = 2
 jps.RaidStatus = {}
 jps.RaidTarget = {}
@@ -234,8 +233,8 @@ function jps_combatEventHandler(self, event, ...)
 	elseif event == "INSPECT_READY" then -- 3er fire > reloadui
 		--print("INSPECT_READY")
 		if not jps.Spec then 
-			jps.setClassCooldowns()
 			jps.detectSpec() 
+			jps.setClassCooldowns()
 		end
 		if jps_variablesLoaded and not jps.Configged then jps_createConfigFrame() end
 

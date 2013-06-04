@@ -145,7 +145,7 @@ function jps.setClassCooldowns()
 	if jps.Race == "Troll" then
 		jps.DPSRacial = "berserking"
 	elseif jps.Race == "Orc" then
-		jps.DPSRacial = "blood fury"
+		jps.DPSRacial = "Blood Fury"
 	end
 	if jps.DPSRacial then table.insert(options,"DPS Racial") end
 
