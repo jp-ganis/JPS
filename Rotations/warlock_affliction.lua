@@ -273,7 +273,6 @@ function warlock_affliction(self)
         }
         
         local res = parseSpellTable( singleTargetSpellTable )
-        write(res)
         return res
     end
 end
