@@ -494,7 +494,7 @@ end
 ----------------------------------------------------------
 
 --	SpellStopCasting() with -- "Soins" 2050 if Health < 0.75
-if jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) and (totalAbsorbTank == 0) then 
+if jps.IsCastingSpell(2050,"player") and jps.castTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) and (totalAbsorbTank == 0) then 
 	SpellStopCasting()
 -- Avoid Overhealing with -- "Soins supérieurs" 2060
 elseif jps.IsCastingSpell(2060,"player") and not jps.buffId(109964) and (health_pct_TANK > 0.95) then 
@@ -520,7 +520,7 @@ jps.Tooltip = "Disc Priest PvE"
 -- CancelUnitBuff(player,spiritshell)
 		--{ {"macro","/cancelaura "..spiritshell,"player"}, (health_pct_TANK < 0.60) and jps.buffId(109964) , player , "Macro_CancelAura_Carapace" }, 
 -- SpellStopCasting()
-		--{ {"macro","/stopcasting"},  spellstop == tostring(select(1,GetSpellInfo(2050))) and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) , player , "Macro_StopCasting" },
+		--{ {"macro","/stopcasting"},  spellstop == tostring(select(1,GetSpellInfo(2050))) and jps.castTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) , player , "Macro_StopCasting" },
 
 local spellTable =
 {

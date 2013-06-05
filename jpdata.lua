@@ -345,7 +345,7 @@ end
 --name, subText, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo("unit")
 --name, subText, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo("unit")
 
-function jps.CastTimeLeft(unit)
+function jps.castTimeLeft(unit)
 	if unit == nil then unit = "player" end
 	local _,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
 	if endTime == nil then return 0 end
@@ -364,10 +364,10 @@ function jps.IsCasting(unit)
 	local enemyspell = nil
 	local enemycasting = false
 	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
-	if jps.CastTimeLeft(unit) > 0 then
+	if jps.castTimeLeft(unit) > 0 then
 		enemycasting = true
 		enemyspell = name
-	elseif (jps.CastTimeLeft(unit) > 0) or (jps.ChanelTimeLeft(unit) > 0) then
+	elseif (jps.castTimeLeft(unit) > 0) or (jps.ChanelTimeLeft(unit) > 0) then
 		enemycasting = true
 	end
 	return enemycasting,enemyspell
@@ -379,7 +379,7 @@ function jps.IsCastingSpell(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
 	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
-	if spellname == name and jps.CastTimeLeft(unit) > 0 then return true end
+	if spellname == name and jps.castTimeLeft(unit) > 0 then return true end
 	return false
 end
 
@@ -402,7 +402,7 @@ function jps.IsCastingPoly(unit)
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
 	for spellID,spellname in pairs(tablePoly) do
 		if spell == tostring(select(1,GetSpellInfo(spellID))) then
-			delay = jps.CastTimeLeft(unit) - jps.Lag
+			delay = jps.castTimeLeft(unit) - jps.Lag
 		break end
 	end
 
@@ -438,7 +438,7 @@ function jps.shouldKickLag(unit)
 	if chanel_endTime == nil then chanel_endTime = 0 end
 
 	if target_spell and unInterruptable == false then
-		if jps.CastTimeLeft(unit) < 1 then 
+		if jps.castTimeLeft(unit) < 1 then 
 		return true end
 	elseif channelling and notInterruptible == false then
 		if jps.ChanelTimeLeft(unit) < 1 then

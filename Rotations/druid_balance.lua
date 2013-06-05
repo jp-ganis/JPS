@@ -22,8 +22,8 @@ function druid_balance()
 	local lEclipse = jps.buff("eclipse (lunar)")
 	
 	-- Dot Durations
-	local mfDuration = jps.debuffDuration("moonfire") - jps.CastTimeLeft()
-	local sfDuration = jps.debuffDuration("sunfire") - jps.CastTimeLeft()
+	local mfDuration = jps.debuffDuration("moonfire") - jps.castTimeLeft()
+	local sfDuration = jps.debuffDuration("sunfire") - jps.castTimeLeft()
 	
 	-- Focus dots
 	local focusDotting, focusIS, focusMF, focusSF

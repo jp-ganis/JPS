@@ -181,13 +181,13 @@ local target = nil
 
 
    -- MAGE BUSINESS (glebe and kick damn polymorph)
-   if spellArenaMage == "Polymorph" and UnitExists(mage)==1 and jps.CastTimeLeft(mage) < 1 and jps.cooldown("Grounding Totem")==0 then
+   if spellArenaMage == "Polymorph" and UnitExists(mage)==1 and jps.castTimeLeft(mage) < 1 and jps.cooldown("Grounding Totem")==0 then
       SpellStopCasting()
       jps.Target = mage
       spell = "Grounding Totem"
       print("-- GLEBE MAGE --")
       return spell
-   elseif spellArenaMage == "Polymorph" and UnitExists(mage)==1 and jps.CastTimeLeft(mage) < 0.5 and jps.CastTimeLeft(mage)  > 0.01 and jps.cooldown("Wind Shear")==0 and not (airName=="Grounding Totem")  and not (jps.cooldown("Grounding Totem")==0) and UnitIsVisible(mage) then
+   elseif spellArenaMage == "Polymorph" and UnitExists(mage)==1 and jps.castTimeLeft(mage) < 0.5 and jps.castTimeLeft(mage)  > 0.01 and jps.cooldown("Wind Shear")==0 and not (airName=="Grounding Totem")  and not (jps.cooldown("Grounding Totem")==0) and UnitIsVisible(mage) then
       SpellStopCasting()
       jps.Target = mage
       spell = "Wind Shear"
@@ -197,13 +197,13 @@ local target = nil
 
 
    -- PALADIN BUSINESS (glebe and kick damn repentance)
-   if spellArenaPaladin == "Repentance" and UnitExists(paladin)==1 and jps.CastTimeLeft(paladin) < 1 and jps.cooldown("Grounding Totem")==0 then
+   if spellArenaPaladin == "Repentance" and UnitExists(paladin)==1 and jps.castTimeLeft(paladin) < 1 and jps.cooldown("Grounding Totem")==0 then
       SpellStopCasting()
       jps.Target = paladin
       spell = "Grounding Totem"
       print("-- GLEBE PALADIN --")
       return spell
-   elseif spellArenaPaladin == "Repentance" and UnitExists(paladin)==1 and jps.CastTimeLeft(paladin) < 0.5 and jps.CastTimeLeft(paladin)  > 0.01 and jps.cooldown("Wind Shear")==0 and not (airName=="Grounding Totem")  and not (jps.cooldown("Grounding Totem")==0) and UnitIsVisible(paladin) then
+   elseif spellArenaPaladin == "Repentance" and UnitExists(paladin)==1 and jps.castTimeLeft(paladin) < 0.5 and jps.castTimeLeft(paladin)  > 0.01 and jps.cooldown("Wind Shear")==0 and not (airName=="Grounding Totem")  and not (jps.cooldown("Grounding Totem")==0) and UnitIsVisible(paladin) then
       SpellStopCasting()
       jps.Target = paladin
       spell = "Wind Shear"
@@ -213,13 +213,13 @@ local target = nil
 
    
    -- DRUID BUSINESS (glebe and kick damn cyclone)
-   if spellArenaDruid == "Cyclone" and UnitExists(druid)==1 and jps.CastTimeLeft(druid) < 1 and jps.cooldown("Grounding Totem")==0 then
+   if spellArenaDruid == "Cyclone" and UnitExists(druid)==1 and jps.castTimeLeft(druid) < 1 and jps.cooldown("Grounding Totem")==0 then
       SpellStopCasting()
       jps.Target = druid
       spell = "Grounding Totem"
       print("-- GLEBE --")
       return spell
-   elseif spellArenaDruid == "Cyclone" and UnitExists(druid)==1 and jps.CastTimeLeft(druid) < 0.5 and jps.CastTimeLeft(druid)  > 0.01 and jps.cooldown("Wind Shear")==0 and not (airName=="Grounding Totem")  and not (jps.cooldown("Grounding Totem")==0) and UnitIsVisible(druid) then
+   elseif spellArenaDruid == "Cyclone" and UnitExists(druid)==1 and jps.castTimeLeft(druid) < 0.5 and jps.castTimeLeft(druid)  > 0.01 and jps.cooldown("Wind Shear")==0 and not (airName=="Grounding Totem")  and not (jps.cooldown("Grounding Totem")==0) and UnitIsVisible(druid) then
       SpellStopCasting()
       jps.Target = druid
       spell = "Wind Shear"
@@ -236,7 +236,7 @@ local target = nil
    end
 
    -- Auto Kick penance as soon as he started it
-   if UnitExists(enemyHealer)==1 and enemyHealerSpell=="Penance" and jps.CastTimeLeft(enemyHealer)  < 2 and jps.CastTimeLeft(enemyHealer)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",enemyHealer)==1 and UnitIsVisible(enemyHealer) and not (spellEnemyHealer == "Cyclone") and not (spellEnemyHealer == "Repentance") and not (spellEnemyHealer == "Polymorph") then
+   if UnitExists(enemyHealer)==1 and enemyHealerSpell=="Penance" and jps.castTimeLeft(enemyHealer)  < 2 and jps.castTimeLeft(enemyHealer)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",enemyHealer)==1 and UnitIsVisible(enemyHealer) and not (spellEnemyHealer == "Cyclone") and not (spellEnemyHealer == "Repentance") and not (spellEnemyHealer == "Polymorph") then
       SpellStopCasting()
       jps.Target = enemyHealer
       spell = "Wind Shear"
@@ -246,20 +246,20 @@ local target = nil
 
 
    -- Auto Kick by priority order, if there's a healer he gets kicked first then his friend
-   if UnitExists(enemyHealer)==1 and jps.CastTimeLeft(enemyHealer)  < 0.8 and jps.CastTimeLeft(enemyHealer)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",enemyHealer)==1 and UnitIsVisible(enemyHealer) and not (spellEnemyHealer == "Cyclone") and not (spellEnemyHealer == "Repentance") and not (spellEnemyHealer == "Polymorph") then
+   if UnitExists(enemyHealer)==1 and jps.castTimeLeft(enemyHealer)  < 0.8 and jps.castTimeLeft(enemyHealer)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",enemyHealer)==1 and UnitIsVisible(enemyHealer) and not (spellEnemyHealer == "Cyclone") and not (spellEnemyHealer == "Repentance") and not (spellEnemyHealer == "Polymorph") then
       -- I know this is stupid to check if healer cast polymorph but that way I feel like everything is checked ...
       SpellStopCasting()
       jps.Target = enemyHealer
       spell = "Wind Shear"
       print("-- AUTO KICK HEALER --")
       return spell
-   elseif UnitExists(arenaEnemy1)==1 and jps.CastTimeLeft(arenaEnemy1)  < 0.8 and jps.CastTimeLeft(arenaEnemy1)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",arenaEnemy1)==1 and UnitIsVisible(arenaEnemy1) and not (spellArenaEnemy1 == "Cyclone") and not (spellArenaEnemy1 == "Repentance") and not (spellArenaEnemy1 == "Polymorph") then
+   elseif UnitExists(arenaEnemy1)==1 and jps.castTimeLeft(arenaEnemy1)  < 0.8 and jps.castTimeLeft(arenaEnemy1)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",arenaEnemy1)==1 and UnitIsVisible(arenaEnemy1) and not (spellArenaEnemy1 == "Cyclone") and not (spellArenaEnemy1 == "Repentance") and not (spellArenaEnemy1 == "Polymorph") then
       SpellStopCasting()
       jps.Target = arenaEnemy1
       spell = "Wind Shear"
       print("-- AUTO KICK ARENA 1 --")
       return spell
-   elseif UnitExists(arenaEnemy2)==1 and jps.CastTimeLeft(arenaEnemy2)  < 0.8 and jps.CastTimeLeft(arenaEnemy2)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",arenaEnemy2)==1 and UnitIsVisible(arenaEnemy2) and not (spellArenaEnemy2 == "Cyclone") and not (spellArenaEnemy2 == "Repentance") and not (spellArenaEnemy2 == "Polymorph") then
+   elseif UnitExists(arenaEnemy2)==1 and jps.castTimeLeft(arenaEnemy2)  < 0.8 and jps.castTimeLeft(arenaEnemy2)  > 0.01 and jps.cooldown("Wind Shear")==0 and UnitIsEnemy("player",arenaEnemy2)==1 and UnitIsVisible(arenaEnemy2) and not (spellArenaEnemy2 == "Cyclone") and not (spellArenaEnemy2 == "Repentance") and not (spellArenaEnemy2 == "Polymorph") then
       SpellStopCasting()
       jps.Target = arenaEnemy2
       spell = "Wind Shear"
