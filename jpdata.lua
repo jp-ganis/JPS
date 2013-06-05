@@ -807,7 +807,7 @@ function jps_IsSpellKnown(spell)
 	            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
 	            local slotType = select(1,GetSpellBookItemInfo(index, booktype))
 	            local name = select(1,GetSpellBookItemName(index, booktype))
-	            if spellname == name and slotType ~= "FUTURESPELL" then 
+	            if spellname:lower() == name:lower() and slotType ~= "FUTURESPELL" then 
 	                mySpell = spellname
 	                break -- Breaking out of the for/do loop, because we have a match 
 	            end 

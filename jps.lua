@@ -87,6 +87,7 @@ jps.FriendTable = {}
 jps.UnitStatus = {}
 jps.RaidTimeLive = {}
 jps.initializedRotation = false
+jps.firstInitializingLoop = true
 
 -- Config.
 jps.Configged = false
@@ -236,7 +237,6 @@ end
 		--print("INSPECT_READY")
 		if not jps.Spec then 
 			jps.detectSpec() 
-			jps.setClassCooldowns()
 		end
 		if jps_variablesLoaded and not jps.Configged then jps_createConfigFrame() end
 
@@ -475,6 +475,7 @@ function jps.detectSpec()
 	jps.ToggleRotationName = {"No Rotations"}
 	jps.MultiRotation = false
 	jps.initializedRotation = false
+	jps.firstInitializingLoop = true
 	rotationDropdownHolder:Hide()
 
 	jps.Race = UnitRace("player")
@@ -502,8 +503,11 @@ function jps.detectSpec()
    jps.HarmSpell = jps_GetHarmSpell()
    jps.SpellBookTable = jps_GetSpellBook()
    write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
+   jps.setClassCooldowns()
    jps_VARIABLES_LOADED()
-   jps_Combat()
+   if jps.initializedRotation == false then
+       jps_Combat()
+    end
 end
 
 ------------------------
@@ -670,9 +674,10 @@ function jps_Combat()
    
    -- Check spell usability 
    jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
-   if jps.initializedRotation == false then
-	   return nil,nil 
-    end 
+   if jps.firstInitializingLoop == true then
+       jps.firstInitializingLoop = false
+	   return nil
+    end
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	jps.UpdateEnemyTable()

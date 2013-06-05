@@ -354,7 +354,7 @@ end
 
 -- Pick a spell from a priority table.
 function parseSpellTable( hydraTable )
-	if not jps.initializedRotation then return nil end
+    if jps.firstInitializingLoop == true then return nil,"target" end
 	local spell = nil
 	local conditions = nil
 	local target = nil
@@ -364,7 +364,7 @@ function parseSpellTable( hydraTable )
 		spell = spellTable[1] 
 		conditions = spellTable[2]
 		target = spellTable[3]
-		if not target then target = "target"
+		if not target then target = "target" end
 		message = spellTable[4]
 		if jps.Message ~= message then jps.Message = message end
 
@@ -438,7 +438,7 @@ end
 
 function jps.RotationActive(spellTable)
 	local countRotations = 0
-	
+
 	for i,j in ipairs (spellTable) do
 		if spellTable[i]["ToolTip"] ~= nil then
 			jps.MultiRotation = true
@@ -454,6 +454,7 @@ function jps.RotationActive(spellTable)
 		else  
 			rotationDropdownHolder:Hide() 
 		end
+		jps.firstInitializingLoop = true
 	end
 
 	jps.initializedRotation = true
