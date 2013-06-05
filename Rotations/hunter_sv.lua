@@ -148,7 +148,7 @@ local spellTable =
 		-- Healthstone
 		{ {"macro","/use Healthstone"}, 	jps.hp("player") < 0.50 and canUseItemInBags(5512) }, -- restores 20% of total health
 		-- 
-		{ "Silencing Shot", 			jps.shouldKick() and jps.castTimeLeft("target") < 1.4 }, -- Tier 2 talent
+		{ "Silencing Shot", 			jps.shouldKick() and jps.CastTimeLeft("target") < 1.4 }, -- Tier 2 talent
 		-- Trinkets and Engineering Gloves
 		{ {"macro","/use 10"}, 			jps.UseCDs and canUseEquippedItem("HandsSlot") },
 		{ {"macro","/use 13"}, 			jps.UseCDs and canUseEquippedItem("Trinket0Slot") },

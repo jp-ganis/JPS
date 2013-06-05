@@ -84,8 +84,8 @@ jps.Timers = {}
 Healtable = {}
 jps.EnemyTable =  {}
 jps.FriendTable = {}
-jps.UnitStatus = {}
-jps.RaidTimeLive = {}
+jps.RaidTimeToDie = {}
+jps.RaidTimeToLive = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
 
@@ -107,7 +107,6 @@ local start_time = 0
 local end_time = 0
 local total_time = 0
 
-
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
@@ -127,83 +126,12 @@ combatFrame:RegisterEvent("BAG_UPDATE")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 combatFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
-combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
-combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
---"UNIT_SPELLCAST_INTERRUPTED" -- "UNIT_SPELLCAST_SUCCEEDED"
---	local arg1 = select(1,...) -- Unit casting the spell 
---	local arg2 = select(2,...) -- arg2 Spell name
---	local arg3 = select(3,...) -- arg3 Spell rank (deprecated in 4.0)
---	local arg4 = select(4,...) -- arg4 Spell lineID counter
---	local arg5 = select(5,...) -- The ID of the spell that's being casted (added in 4.0)
-
---"UNIT_COMBAT"
---arg1 the UnitID of the entity 
---arg2 Action,Damage,etc (e.g. HEAL, DODGE, BLOCK, WOUND, MISS, PARRY, RESIST, ...) 
---arg3 Critical/Glancing indicator (e.g. CRITICAL, CRUSHING, GLANCING) 
---arg4 The numeric damage 
---arg5 Damage type in numeric value (1 - physical; 2 - holy; 4 - fire; 8 - nature; 16 - frost; 32 - shadow; 64 - arcane) 
-
---local frame = CreateFrame('Frame')
---frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
---frame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
---frame:SetScript("OnEvent",
---function(self, event, ...)
---   local arg1 = select(1,...) -- Unit casting the spell
---   local arg5 = select(5,...) -- SpellID
---   if arg1 == "player" and (arg5 == 2060 or arg5 == 2061) then
---      print("|cffa335ee",arg5)
---   end
---    DEFAULT_CHAT_FRAME:AddMessage(event.." fired.")
---    for i = 1, select('#', ...) do
---      DEFAULT_CHAT_FRAME:AddMessage("arg"..i..": "..select(i, ...))
---    end
---end
---)
-
---local frame = CreateFrame('Frame')
---frame:RegisterEvent("UNIT_COMBAT")
---frame:SetScript("OnEvent",
---  function(self, event, ...)
---      -- "UNIT_COMBAT" get 5 arg 
---      -- local arg4 = select(4,...) 
---      -- print("|cffa335eeDMG",arg4)  
---    DEFAULT_CHAT_FRAME:AddMessage(event.." fired.")
---    for i = 1, select('#', ...) do
---      DEFAULT_CHAT_FRAME:AddMessage("arg"..i..": "..select(i, ...))
---    end
---  end
---)
-
---local frame = CreateFrame('Frame')
---frame:RegisterEvent("UI_ERROR_MESSAGE")
---frame:SetScript("OnEvent",
---  function(self, event, ...)  
---    DEFAULT_CHAT_FRAME:AddMessage(event.." fired.")
---    for i = 1, select('#', ...) do
---      DEFAULT_CHAT_FRAME:AddMessage("arg"..i..": "..select(i, ...))
---    end
---  end
---)
-
---   if event == "UNIT_SPELLCAST_INTERRUPTED" then
---      local arg1 = select(1,...) -- Unit casting the spell
---      local arg5 = select(5,...) -- SpellID
---      if arg1 == "player" and (arg5 == 2060 or arg5 == 2061 or arg5 == 596 or arg5 == 2050) then
---         jps.Casting = false
---         jps.createTimer( "Spell_Interrupt", 2 )
---      end
---   end   
-   
---   if event == "UNIT_COMBAT" then
---      local dmg1 = select(1,...) -- Unit 
---      local dmg2 = select(2,...) -- Action 
---      local dmg4 = select(4,...) -- numeric dmg
---      if dmg1 == "player" and dmg2~="HEAL" and dmg4 > 0 then 
---         jps.createTimer( "Player_Aggro", 4 )
---      end
---   end 
+--combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
+--combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
+combatFrame:RegisterEvent("RAID_ROSTER_UPDATE")
+combatFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
 --------------------------
 -- LOCALIZATION
@@ -230,7 +158,6 @@ end
 	elseif event == "PLAYER_ENTERING_WORLD" then -- 2er fire > reloadui
 		--print("PLAYER_ENTERING_WORLD")
 		jps.detectSpec()
-		jps.SortRaidStatus()
 		reset_healtable()
 
 	elseif event == "INSPECT_READY" then -- 3er fire > reloadui
@@ -260,8 +187,15 @@ end
 		jps.gui_toggleCombat(false)
 		jps.RaidStatus = {}
 		jps.RaidTarget = {}
+		jps.EnemyTable = {}
+		jps.FriendTable = {}
 		jps.clearTimeToLive()
 		collectgarbage("collect")
+		
+-- Raid Update		
+	elseif (event == "GROUP_ROSTER_UPDATE") or (event == "RAID_ROSTER_UPDATE") then
+		print("ROSTER_UPDATE")
+		jps.SortRaidStatus()
 		
 -- Dual Spec Respec
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then -- only fire when spec change no other event before
@@ -307,7 +241,7 @@ end
    			jps.isBehind = false
    			
 		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
-			-- if (event_error == L["Target needs to be in front of you."] or event_error == L["You are facing the wrong way!"]) then
+			-- if event_error == L["Target needs to be in front of you."] or event_error == L["You are facing the wrong way!"] then
 			print("ERR_BADATTACKFACING",event_error)			
 			jps.createTimer("Facing",0.6)
 			jps.createTimer("FacingBug",1.2)
@@ -325,11 +259,11 @@ end
 	
 		jps.CurrentCast = {...}
 		
-		-- "Druid" -- 5221 "Shred" "Lambeau" -- "Ambush" 8676
+		-- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
 		if jps.CurrentCast[2] == tostring(select(1,GetSpellInfo(5221))) then 
 			jps.isNotBehind = false
 			jps.isBehind = true
-		elseif jps.CurrentCast[2] == tostring(select(1,GetSpellInfo(5221))) then
+		elseif jps.CurrentCast[2] == tostring(select(1,GetSpellInfo(8676))) then
 			jps.isNotBehind = false
 			jps.isBehind = true
 		end
@@ -338,13 +272,6 @@ end
 			TurnLeftStop()
 			CameraOrSelectOrMoveStop()
 		end
-		
-	elseif event == "PLAYER_CONTROL_LOST" then
-		--print("PLAYER_CONTROL_LOST")
-		jps.createTimer("PLAYER_CONTROL_LOST")
-	elseif event == "PLAYER_CONTROL_GAINED" then
-		--print("PLAYER_CONTROL_GAINED")
-		jps.resetTimer("PLAYER_CONTROL_LOST")
 	end
 
 -- RAIDSTATUS UPDATE
@@ -356,8 +283,10 @@ end
 
 	if event == "UNIT_HEALTH_FREQUENT" and jps.Enabled then
 		local unit = ...
-		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
+		local unitname = select(1,UnitName(unit))
 		local unittarget = unit.."target"
+		local unit_guid = UnitGUID(unit)
+		local unit_health = jps.hp(unit) 
 		
 		if jps.canHeal(unit) and UnitIsPlayer(unit) then
 			local subgroup = jps.FindSubGroupUnit(unit)
@@ -367,32 +296,34 @@ end
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
 				["hpct"] = hpct_friend,
 				["subgroup"] = subgroup,
-				["target"] = unittarget
 			}
+		else
+			jps_removeKey(jps.RaidStatus,unitname)
+			jps_removeKey(jps.FriendTable,unitname)
 		end
 		
 		if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
 			local enemyname = select(1,UnitName(unittarget))
 			local hpct_enemy = jps.hp(unittarget)
+			local unittarget_guid = UnitGUID(unittarget)
 			
 			jps.RaidTarget[unittarget] = { 
 				["enemy"] = enemyname,
 				["hpct"] = hpct_enemy
 			}
+		else
+			jps_removeKey(jps.RaidTarget,unittarget)
+			jps_removeKey(jps.EnemyTable,unittarget_guid)
 		end
-	
-		local guid = UnitGUID(unit)
-		local health_unit = UnitHealth(unit)
-		--write("unit",unit,"health_unit",health_unit)
-		
-		if jps.RaidTimeLive[guid] == nil then jps.RaidTimeLive[guid] = {} end
-		local raid_dataset = jps.RaidTimeLive[guid]
+
+		if jps.RaidTimeToLive[unit_guid] == nil then jps.RaidTimeToLive[unit_guid] = {} end
+		local raid_dataset = jps.RaidTimeToLive[unit_guid]
 		local raid_data = table.getn(raid_dataset)
 		if raid_data > jps.timeToLiveMaxSamples then table.remove(raid_dataset, jps.timeToLiveMaxSamples) end
-		table.insert(raid_dataset, 1, {GetTime(), health_unit})
-		jps.RaidTimeLive[guid] = raid_dataset
-		--jps.RaidTimeLive[guid] = { [1] = {GetTime(), health_unit] },[2] = {GetTime(), health_unit },[3] = {GetTime(), health_unit } }
-
+		table.insert(raid_dataset, 1, {GetTime(), unit_health})
+		jps.RaidTimeToLive[unit_guid] = raid_dataset
+		--jps.RaidTimeToLive[unit_guid] = { [1] = {GetTime(), unit_health] },[2] = {GetTime(), unit_health },[3] = {GetTime(), unit_health } }
+	
 -- COMBAT_LOG_EVENT
 -- eventtable[4] == sourceGUID
 -- eventtable[5] == sourceName
@@ -424,11 +355,9 @@ end
 		if  eventtable[2] == "UNIT_DIED" and (eventtable[8] ~= nil) then
 			local mobName = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 			local mobGuid = eventtable[8] -- eventtable[8] == destGUID 
-			--local mobID = tonumber("0x"..strsub(mobGuid,7,10))
-			--local mobSpawn = tonumber("0x"..strsub(mobGuid,11))
 			jps_removeKey(jps.FriendTable,mobName)
 			jps_removeKey(jps.EnemyTable,mobGuid)
-			jps_removeKey(jps.UnitStatus,mobGuid)	
+			jps_removeKey(jps.RaidTimeToDie,mobGuid)	
 -- TABLE ENEMIES IN COMBAT
 		elseif eventtable[6] and (bit.band(eventtable[6],COMBATLOG_OBJECT_REACTION_HOSTILE) > 0) 
 		and (bit.band(eventtable[6],COMBATLOG_OBJECT_AFFILIATION_OUTSIDER) > 0)
@@ -437,8 +366,6 @@ end
 			local enemyFriend = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 			local enemyName = eventtable[5] -- eventtable[5] == sourceName
 			local enemyGuid = eventtable[4] -- eventtable[4] == sourceGUID
-			--local enemyID = tonumber("0x"..strsub(enemyGuid,7,10))
-			--local enemySpawn = tonumber("0x"..strsub(enemyGuid,11))
 			jps.FriendTable[enemyFriend] = { ["name"] = enemyName , ["enemy"] = enemyGuid } -- TABLE OF FRIEND TARGETED BY ENEMY
 			jps.EnemyTable[enemyGuid] = { ["name"] = enemyName , ["friend"] = enemyFriend } -- TABLE OF ENEMY TARGETING FRIEND
 -- TABLE DAMAGE
@@ -451,13 +378,13 @@ end
 				local unitName = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 				local unitGuid = eventtable[8] -- eventtable[8] == destGUID
 				
-				if jps.UnitStatus[unitGuid] == nil then jps.UnitStatus[unitGuid] = {} end
-				local dataset = jps.UnitStatus[unitGuid]
+				if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
+				local dataset = jps.RaidTimeToDie[unitGuid]
 				local data = table.getn(dataset)
 				if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
     			table.insert(dataset, 1, {GetTime(), eventtable[15]})
-    			jps.UnitStatus[unitGuid] = dataset
-				--jps.UnitStatus[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
+    			jps.RaidTimeToDie[unitGuid] = dataset
+				--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
 			end
 		end
 	end
@@ -680,7 +607,6 @@ function jps_Combat()
     end
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
-	jps.UpdateEnemyTable()
    
    -- Movement
    jps.Moving = GetUnitSpeed("player") > 0

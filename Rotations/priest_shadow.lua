@@ -82,7 +82,7 @@ if jps.buff(47585,"player") then return end -- "Dispersion" 47585
 	
 --	SpellStopCasting() -- "Mind Flay" 15407 -- "Mind Blast" 8092 -- buff 81292 "Glyph of Mind Spike"
 local canCastMindBlast = false
-local spellstop = UnitChannelInfo(player) -- it's a channeling spell so jps.castTimeLeft(player) can't work (work only for UnitCastingInfo -- insead use jps.ChanelTimeLeft(unit)
+local spellstop = UnitChannelInfo(player) -- it's a channeling spell so jps.CastTimeLeft(player) can't work (work only for UnitCastingInfo -- insead use jps.ChanelTimeLeft(unit)
 	-- "Mind Blast" 8092 Stack shadow orbs -- buff 81292 "Glyph of Mind Spike"
 	if spellstop == tostring(select(1,GetSpellInfo(15407))) and (jps.cooldown(8092) == 0) and jps.buff(81292,player) then 
 		canCastMindBlast = true

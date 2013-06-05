@@ -48,9 +48,9 @@ function warrior_arms_pvp()
 	local function parse_vsDruid()
 		local table =
 		{
-		{ "pummel", jps.isCastingSpell("healing touch",rangedTarget) and jps.castTimeLeft("target") <=1 , rangedTarget },
-		{ {"macro","/cast every man for himself\n/cast pummel"}, melee and stun and jps.isCastingSpell("healing touch",rangedTarget) and jps.castTimeLeft("target") <=1 , rangedTarget },
-		{ {"macro","/cast every man for himself\n/cast pummel"}, melee and stun and jps.isCastingSpell("cyclone",rangedTarget) and jps.castTimeLeft("target") <=1 , rangedTarget },
+		{ "pummel", jps.isCastingSpell("healing touch",rangedTarget) and jps.CastTimeLeft("target") <=1 , rangedTarget },
+		{ {"macro","/cast every man for himself\n/cast pummel"}, melee and stun and jps.isCastingSpell("healing touch",rangedTarget) and jps.CastTimeLeft("target") <=1 , rangedTarget },
+		{ {"macro","/cast every man for himself\n/cast pummel"}, melee and stun and jps.isCastingSpell("cyclone",rangedTarget) and jps.CastTimeLeft("target") <=1 , rangedTarget },
 		{ "shattering throw", jps.buff("bear form",rangedTarget) , rangedTarget },
 		{ "avatar", melee and targetSpec == "Feral" , rangedTarget },
 		{ "recklessness", melee and targetSpec == "Feral" , rangedTarget },

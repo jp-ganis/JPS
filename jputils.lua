@@ -125,9 +125,11 @@ function jps_GetHarmSpell()
 				local maxRange = select(9,GetSpellInfo(spellID))
 				local minRange = select(8,GetSpellInfo(spellID))
 				local harmful =  IsHarmfulSpell(index, booktype)
-
-				if (maxRange > 20) and (harmful == 1) and (minRange == 0) then
+				
+				if (maxRange > 30) and (harmful == 1) and (minRange == 0) then
 					--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
+					HarmSpell = name
+				elseif (maxRange > 20) and (harmful == 1) and (minRange == 0) then
 					HarmSpell = name
 				break end
 			end
@@ -143,7 +145,7 @@ function jps.setClassCooldowns()
 
 	-- Trolls n' Orcs
 	if jps.Race == "Troll" then
-		jps.DPSRacial = "berserking"
+		jps.DPSRacial = "Berserking"
 	elseif jps.Race == "Orc" then
 		jps.DPSRacial = "Blood Fury"
 	end

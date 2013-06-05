@@ -91,7 +91,9 @@ function jps_createConfigFrame()
 	jps.Configged = true
 	jpsConfigFrame:Hide()
 	
-	-- DROPDOWN ROTATION 
+	-- DROPDOWN ROTATION
+	jps.resetTimeToDieFrame()
+	jps.resetRotationDropdownFrame()
 	jps.addRotationDropdownFrame()
 	jps.addRotationDropdown()
 	
@@ -106,11 +108,11 @@ function jps.addRotationDropdown()
 
 	DropDownRotation = CreateFrame("FRAME", "JPS Rotation", jpsConfigFrame, "UIDropDownMenuTemplate")
 	DropDownRotation:ClearAllPoints()
-	DropDownRotation:SetPoint("CENTER",0,0)
+	DropDownRotation:SetPoint("CENTER",150,120)
 	local title = DropDownRotation:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 20, 20) 
 	title:SetText("JPS ROTATIONS")
-	
+
 	local function Rotation_OnClick(self)
 	   UIDropDownMenu_SetSelectedID(DropDownRotation, self:GetID())
 	   jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
@@ -172,8 +174,6 @@ function jps.addRotationDropdownFrame()
 	desc:SetJustifyV("TOP")
 	desc:SetText("Uncheck spells when you dont want to use them. Do a /jps db to reset the spells")
 
-	jps.resetRotationDropdownFrame()
-	
 	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig) do
 		rotationCount = rotationCount + 1
 		if rotationCount == 16 then 
@@ -218,30 +218,62 @@ end
 ---------------------------
 
 function jps.resetRotationDropdownFrame()
-	local checkbutton = nil
-	initDropDown_CheckButton = CreateFrame("CheckButton","", jpsRotationFrame, "OptionsCheckButtonTemplate");
-	initDropDown_CheckButton:SetPoint("TOPLEFT",400, -10)
+	initDropDown_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
+	initDropDown_CheckButton:SetPoint("TOPLEFT",370,-25)
 	initDropDown_CheckButton:RegisterForClicks("AnyUp")
 	
+	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 30, -5) 
+	title:SetText("|cffe5cc80DROPDOWN ROTATION")
+	
 	local function DropDown_Check_OnClick(self)
-		checkbutton = initDropDown_CheckButton:GetChecked()
-		write(checkbutton)
+		local checkbutton = initDropDown_CheckButton:GetChecked()
+		if checkbutton == 1 then
+			--JPSEXTInfoFrame:Show()
+			rotationDropdownHolder:Show()
+		else
+			--JPSEXTInfoFrame:Hide()
+			rotationDropdownHolder:Hide()
+		end
 	end
-
+	
 	-- local function DropDown_Check_OnShow(self)
 		-- initDropDown_CheckButton:SetChecked(checkbutton)
 	-- end
 	
-	local function DropDown_Initialize_Check(self)
-		if checkbutton then
-			rotationCount = 0
-			jpsDB[jpsRealm][jpsName].spellConfig = {}
+	--initDropDown_CheckButton:SetScript("OnShow", DropDown_Check_OnShow);
+	initDropDown_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
+
+end
+
+
+function jps.resetTimeToDieFrame()
+	TimeToDie_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
+	TimeToDie_CheckButton:SetPoint("TOPLEFT",370, -55)
+	TimeToDie_CheckButton:RegisterForClicks("AnyUp")
+	
+	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 30, -5) 
+	title:SetText("|cffe5cc80TIMETODIE FRAME")
+	
+	local function DropDown_Check_OnClick(self)
+		local timecheckbutton = TimeToDie_CheckButton:GetChecked()
+		if timecheckbutton == 1 then
+			JPSEXTInfoFrame:Show()
+			--rotationDropdownHolder:Show()
+		else
+			JPSEXTInfoFrame:Hide()
+			--rotationDropdownHolder:Hide()
 		end
 	end
 	
+	-- local function DropDown_Check_OnShow(self)
+		-- initDropDown_CheckButton:SetChecked(checkbutton)
+	-- end
+	
 	--initDropDown_CheckButton:SetScript("OnShow", DropDown_Check_OnShow);
-	initDropDown_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
-	UIDropDownMenu_Initialize(initDropDown_CheckButton, DropDown_Initialize_Check)
+	TimeToDie_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
+
 end
 
 ---------------------------

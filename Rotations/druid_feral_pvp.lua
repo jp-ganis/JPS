@@ -205,7 +205,7 @@ local spellTable =
 	{ "dash",							jps.LoseControl(player,"Root") or jps.LoseControl(player,"Snare") , player },
 	{ "berserk",				 	jps.LoseControl(player,"Fear") , player },
 	{ CancelShapeshiftForm(),		jps.LoseControl(player,"Root") , player },
-	{ CancelShapeshiftForm(),  	 player_Aggro > 0 and jps.IsCastingSpell("hibernate",rangedTarget) and jps.castTimeLeft(rangedTarget) < 1 , player },
+	{ CancelShapeshiftForm(),  	 player_Aggro > 0 and jps.IsCastingSpell("hibernate",rangedTarget) and jps.CastTimeLeft(rangedTarget) < 1 , player },
 	
 	-- Kicks, Crowd Control, etc.
 	{ "skull bash",			 	jps.shouldKick() , rangedTarget },

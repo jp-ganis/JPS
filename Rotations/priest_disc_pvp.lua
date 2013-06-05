@@ -93,7 +93,7 @@ local health_deficiency = UnitHealthMax(jps_Target) - UnitHealth(jps_Target)
 local health_pct = jps.hp(jps_Target)
 
 local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
-local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE
+local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
 
 local Tanktable = {}
 if playerhealth_pct < 0.40 then 
@@ -133,12 +133,12 @@ local POH_Target = jps.FindSubGroupTarget(0.75) -- Target to heal with POH in RA
 local groupToHeal = (IsInGroup() and (IsInRaid() == false) and (countInRaid > 2)) or (IsInRaid() and type(POH_Target) == "string") -- return true false
 -- Timer
 local timerShield = jps.checkTimer("Shield")
-local player_Aggro =  jps.checkTimer("Player_Aggro")
+local player_Aggro = jps.checkTimer("Player_Aggro")
 local player_IsInterrupt = jps.checkTimer("Spell_Interrupt")
 -- Local
-local stunMe =  jps.StunEvents() -- return true/false ONLY FOR PLAYER
+local stunMe = jps.StunEvents() -- return true/false ONLY FOR PLAYER
 local Shell_Target = jps.FindSubGroupAura(114908) -- buff target Spirit Shell 114908
-local isAlone = (GetNumGroupMembers() == 0)  and UnitAffectingCombat(player)==1
+local isAlone = (GetNumGroupMembers() == 0) and UnitAffectingCombat(player)==1
 local isInBG = (((GetNumGroupMembers() > 0) and (UnitIsPVP(player) == 1) and UnitAffectingCombat(player)==1)) or isAlone
 local isInPvE = (GetNumGroupMembers() > 0) and (UnitIsPVP(player) ~= 1) and UnitAffectingCombat(player)==1
 
@@ -146,16 +146,14 @@ local isInPvE = (GetNumGroupMembers() > 0) and (UnitIsPVP(player) ~= 1) and Unit
 -- DAMAGE
 ----------------------
 
-local ArenaUnit = {"arena1","arena2","arena3"}
-
 local FriendUnit = {}
 for name, _ in pairs(jps.RaidStatus) do table.insert(FriendUnit,name) end
+
+local ArenaUnit = {"arena1","arena2","arena3"}
 
 -- JPS.CANDPS NE MARCHE QUE POUR PARTYn et RAIDn..TARGET PAS POUR UNITNAME..TARGET
 local EnemyUnit = {}
 for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
-local enemyTargetingMe = jps.IstargetMe()
-local lowestEnemy = jps.RaidLowestEnemy()
 
 local rangedTarget = "target"
 if jps.canDPS("target") then
@@ -164,10 +162,6 @@ elseif jps.canDPS("focustarget") then
 rangedTarget = "focustarget"
 elseif jps.canDPS("targettarget") then
 rangedTarget = "targettarget"
-elseif jps.canDPS(lowestEnemy) then
-rangedTarget = lowestEnemy
-elseif jps.canDPS(enemyTargetingMe) then
-rangedTarget = enemyTargetingMe
 end
 
 local isboss = UnitLevel(rangedTarget) == -1 or UnitClassification(rangedTarget) == "elite"
@@ -227,13 +221,18 @@ local function unitFor_mending(unit)
 end
 
 local function unitLoseControl(unit) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
-	if jps.LoseControlTable(unit,{"CC", "Snare", "Root", "Silence"}) then return true end
+	if jps.LoseControlTable(unit,{"CC", "Snare", "Silence"}) then return true end
 	return false
 end
 
 local function unitFor_Leap(unit) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
 	if (UnitIsUnit(unit,"player")==1) then return false end
 	if jps.LoseControlTable(unit,{"CC", "Snare", "Root"}) then return true end
+	return false
+end
+
+local function unitFor_MassDispel(unit) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
+	if jps.LoseControlTable(unit,{"CC", "Snare", "Root", "Silence"}) then return true end
 	return false
 end
 
@@ -259,7 +258,7 @@ end
 local function parse_dispel()
 	-- "Purifier" 527 Purify -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
 	-- function jps.DispelFriendlyTarget() returns same unit & condition as jps.DispelFriendly(unit) 
-	-- These two functions dispel SOME DEBUFF of FriendUnit according to a debuff table jps_DebuffToDispel_Name 
+	-- These two functions dispel SOME DEBUFF of FriendUnit according to a debuff table jps_DebuffToDispell_Name 
 	-- EXCEPT if unit is affected by some debuffs "Unstable Affliction" , "Lifebloom" , "Vampiric Touch"
 	-- we can add others cond like UnitIsPVP(player)==1 with jps.DispelFriendlyTarget() -- { "Purify", jps.canHeal(dispelFriendly_Target) and (UnitIsPVP(player) == 1) , dispelFriendly_Target },
 	-- jps.DispelFriendly(unit) is a function must be alone in condition but the target can be a table 
@@ -274,13 +273,13 @@ local table=
 {
 	-- "Leap of Faith" 73325 -- "Saut de foi" -- "Leap of Faith" with Glyph dispel Stun
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Leap_LoseControl__Cond_Multi_" },
-	-- OFFENSIVE Dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
+	-- OFFENSIVE DISPELL -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
-	-- Dispel "Purifier" 527 -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
-	{ 527, jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition
+	-- DISPELL "Purifier" 527 -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
+	{ 527, jps.MagicDispel , {player,jps_TANK,jps_FriendTTD} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition
 	{ 527, jps.DispelFriendly , FriendUnit , "dispelFriendly_MultiUnit_" }, -- jps.DispelFriendly is a function must be alone in condition
-	{ {"func",527,jps.MagicDispel}, jps.MultiTarget and isInBG , FriendUnit , "dispelMagic_Cond_Multi_" }, -- Dispel all Magic debuff
+	{ {"func",527,jps.MagicDispel}, jps.MultiTarget and isInBG , FriendUnit , "dispelMagic_Cond_Multi_" }, -- Dispell all Magic debuff
 }
 return table
 end
@@ -494,7 +493,7 @@ end
 ----------------------------------------------------------
 
 --	SpellStopCasting() with -- "Soins" 2050 if Health < 0.75
-if jps.IsCastingSpell(2050,"player") and jps.castTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) and (totalAbsorbTank == 0) then 
+if jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) and (totalAbsorbTank == 0) then 
 	SpellStopCasting()
 -- Avoid Overhealing with -- "Soins supérieurs" 2060
 elseif jps.IsCastingSpell(2060,"player") and not jps.buffId(109964) and (health_pct_TANK > 0.95) then 
@@ -520,7 +519,7 @@ jps.Tooltip = "Disc Priest PvP"
 -- CancelUnitBuff(player,spiritshell)
 		--{ {"macro","/cancelaura "..spiritshell,"player"}, (health_pct_TANK < 0.60) and jps.buffId(109964) , player , "Macro_CancelAura_Carapace" }, 
 -- SpellStopCasting()
-		--{ {"macro","/stopcasting"},  spellstop == tostring(select(1,GetSpellInfo(2050))) and jps.castTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) , player , "Macro_StopCasting" },
+		--{ {"macro","/stopcasting"},  spellstop == tostring(select(1,GetSpellInfo(2050))) and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) , player , "Macro_StopCasting" },
 
 local spellTable =
 {
@@ -533,11 +532,11 @@ local spellTable =
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236
-	{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
+{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-	{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
--- "Void Tendrils" 108920 --  debuff "Void Tendril's Grasp" 114404
-	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },	
+{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+-- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
+{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },	
 -- AGGRO PLAYER
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
@@ -586,8 +585,10 @@ local spellTable =
 
 -- parse_dispel
 	{ "nested", true , parse_dispel() },
+-- "Mass Dispel" 32375 "Dissipation de masse" --- 
+	{ {"func",32375,unitFor_MassDispel}, jps.cooldown(528) > 0 , FriendUnit ,"|cFFFF0000MassDispel_" }, -- Dispell all Magic debuff
 -- parse_dmg
-	{ "nested", (health_pct_TANK > 0.75) , parse_dmg() },
+	{ "nested", (health_pct_TANK > 0.75) and jps.canDPS(rangedTarget) , parse_dmg() },
 
 -- "Focalisation intérieure" 89485 -- 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
 	{ 89485, UnitAffectingCombat(player)==1 and (jps.cooldown(89485) == 0) , player },
@@ -623,9 +624,9 @@ local spellTable_moving =
 -- "Prière du désespoir" 19236
 	{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-	{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
--- "Void Tendrils" 108920 --  debuff "Void Tendril's Grasp" 114404
-	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+-- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
+{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 
 -- AGGRO PLAYER
 	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },

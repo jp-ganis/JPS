@@ -183,31 +183,30 @@ function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", 
 return targetControlled, timeControlled
 end
 
-
 --------------------------------------
 -- Loss of Control check (e.g. PvP) --
 --------------------------------------
 -- API changes http://www.wowinterface.com/forums/showthread.php?t=45176
 -- local LossOfControlType, _, LossOfControlText, _, LossOfControlStartTime, LossOfControlTimeRemaining, duration, _, _, _ = C_LossOfControl.GetEventInfo(1)
+-- LossOfControlType : --STUN_MECHANIC --STUN --PACIFYSILENCE  --SILENCE --FEAR  --CHARM --PACIFY --CONFUSE  --POSSESS --SCHOOL_INTERRUPT  --DISARM  --ROOT 
 
 function jps.StunEvents() -- ONLY FOR PLAYER
-    local locTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
-    local numEvents = C_LossOfControl.GetNumEvents()
-    local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
-    if (numEvents > 0) then
-        if   locType == SCHOOL_INTERRUPT then
-            print("SPELL_FAILED_INTERRUPTED",locType)
-            jps.createTimer("Spell_Interrupt", 2 )
-        end
-        --print("|cFFFF0000numEvents: ",numEvents,"locType: ",locType,"text: ",text,"timeRemaining: ",timeRemaining)
-        for i,j in ipairs(locTypeTable) do
-            if locType == j and timeRemaining > 1 then
-                    print("locType: ",locType,"timeRemaining: ",timeRemaining)
-                    return true 
-            end
-        end
-    end
-    return false
+	local locTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
+	local numEvents = C_LossOfControl.GetNumEvents()
+	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
+	if (numEvents > 0) and (timeRemaining ~= nil) then
+		if 	locType == SCHOOL_INTERRUPT then
+			print("SPELL_FAILED_INTERRUPTED",locType)
+			jps.createTimer("Spell_Interrupt", 2 )
+		end
+		--print("|cFFFF0000numEvents: ",numEvents,"locType: ",locType,"text: ",text,"timeRemaining: ",timeRemaining)
+		for i,j in ipairs(locTypeTable) do
+			if locType == j and timeRemaining > 1 then
+			print("locType: ",locType,"timeRemaining: ",timeRemaining)
+			return true end
+		end
+	end
+	return false
 end
 
 --------------------------
@@ -345,7 +344,7 @@ end
 --name, subText, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo("unit")
 --name, subText, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo("unit")
 
-function jps.castTimeLeft(unit)
+function jps.CastTimeLeft(unit)
 	if unit == nil then unit = "player" end
 	local _,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
 	if endTime == nil then return 0 end
@@ -364,10 +363,10 @@ function jps.IsCasting(unit)
 	local enemyspell = nil
 	local enemycasting = false
 	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
-	if jps.castTimeLeft(unit) > 0 then
+	if jps.CastTimeLeft(unit) > 0 then
 		enemycasting = true
 		enemyspell = name
-	elseif (jps.castTimeLeft(unit) > 0) or (jps.ChanelTimeLeft(unit) > 0) then
+	elseif (jps.CastTimeLeft(unit) > 0) or (jps.ChanelTimeLeft(unit) > 0) then
 		enemycasting = true
 	end
 	return enemycasting,enemyspell
@@ -379,7 +378,7 @@ function jps.IsCastingSpell(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
 	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
-	if spellname == name and jps.castTimeLeft(unit) > 0 then return true end
+	if spellname == name and jps.CastTimeLeft(unit) > 0 then return true end
 	return false
 end
 
@@ -402,7 +401,7 @@ function jps.IsCastingPoly(unit)
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
 	for spellID,spellname in pairs(tablePoly) do
 		if spell == tostring(select(1,GetSpellInfo(spellID))) then
-			delay = jps.castTimeLeft(unit) - jps.Lag
+			delay = jps.CastTimeLeft(unit) - jps.Lag
 		break end
 	end
 
@@ -438,7 +437,7 @@ function jps.shouldKickLag(unit)
 	if chanel_endTime == nil then chanel_endTime = 0 end
 
 	if target_spell and unInterruptable == false then
-		if jps.castTimeLeft(unit) < 1 then 
+		if jps.CastTimeLeft(unit) < 1 then 
 		return true end
 	elseif channelling and notInterruptible == false then
 		if jps.ChanelTimeLeft(unit) < 1 then
@@ -672,7 +671,7 @@ end
 -- function like C / PHP ternary operator val = (condition) ? true : false
 ------------------------------
 
-function ternary(condition, doIt, notDo)
+function Ternary(condition, doIt, notDo)
 	if condition then return doIt else return notDo end
 end
 
@@ -807,7 +806,7 @@ function jps_IsSpellKnown(spell)
 	            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
 	            local slotType = select(1,GetSpellBookItemInfo(index, booktype))
 	            local name = select(1,GetSpellBookItemName(index, booktype))
-	            if spellname:lower() == name:lower() and slotType ~= "FUTURESPELL" then 
+	            if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
 	                mySpell = spellname
 	                break -- Breaking out of the for/do loop, because we have a match 
 	            end 
@@ -830,11 +829,16 @@ end
 
 function ParseGUID(unit)
 local guid = UnitGUID(unit)
-local first3 = tonumber("0x"..strsub(guid, 3,5))
-local unitType = bit.band(first3,0x00f)
-
+if guid then
+	local first3 = tonumber("0x"..strsub(guid, 5,5))
+	local known = tonumber(strsub(guid, 5,5))
+	
+	local unitType = bit.band(first3,0x7)
+	local knownType = tonumber(guid:sub(5,5), 16) % 8
+	
    if (unitType == 0x000) then
-      print("Player, ID #", strsub(guid,6))
+		local playerID = (strsub(guid,6))
+		print("Player, ID #", playerID)
    elseif (unitType == 0x003) then
       local creatureID = tonumber("0x"..strsub(guid,7,10))
       local spawnCounter = tonumber("0x"..strsub(guid,11))
@@ -848,44 +852,13 @@ local unitType = bit.band(first3,0x00f)
       local spawnCounter = tonumber("0x"..strsub(guid,11))
       print("Vehicle, ID #",creatureID,"spawn #",spawnCounter)
    end
+end
    return guid
 end
 
 ------------------------------
 -- PLUA PROTECTED
 ------------------------------
----------------------------
--- FUNCTION HARMSPELL For Checking Inrange Enemy
----------------------------
--- isHarmful = IsHarmfulSpell(index, "bookType") or IsHarmfulSpell("name")
--- name, texture, offset, numEntries, isGuild, offspecID = GetSpellTabInfo(tabIndex)
--- tabIndex Number - The index of the tab, ascending from 1.
--- numTabs = GetNumSpellTabs() -- numTabs Number - number of ability tabs in the player's spellbook (e.g. 4 -- "General", "Arcane", "Fire", "Frost") 
--- Name, Subtext = GetSpellBookItemName(index, "bookType") or GetSpellBookItemName("spellName")
--- Name - Name of the spell. (string)
--- skillType, spellId = GetSpellBookItemInfo(index, "bookType") or GetSpellBookItemInfo("spellName") -- spellId - The global spell id (number) 
-
-function jps_GetHarmSpell()
-    local HarmSpell = nil
-    local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
-    local booktype = "spell"
-        for index = offset+1, numSpells+offset do
-            -- Get the Global Spell ID from the Player's spellbook
-            -- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
-                local name = select(1,GetSpellBookItemName(index, booktype))
-                local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-                local maxRange = select(9,GetSpellInfo(spellID))
-                local minRange = select(8,GetSpellInfo(spellID))
-                local harmful =  IsHarmfulSpell(index, booktype)
-                
-                if (maxRange > 20) and (harmful == 1) and (minRange == 0) then
-                  --print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
-                  HarmSpell = name
-                break end
-            end
-    return HarmSpell
-end
-
 
 function jps.groundClick()
 	jps.Macro("/console deselectOnClick 0")

@@ -150,7 +150,7 @@ function mage_frost()
 		{ "Healthstone",		jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
 		
 		-- Rotation
-		{ "rune of power",  jps.buffDuration("rune of power") < jps.castTimeLeft() and not jps.buff("alter time") }, 
+		{ "rune of power",  jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") }, 
 		{ "rune of power",  jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20}, 
 		{ "mirror image"}, 
 		{ "frozen orb",  not jps.buff("fingers of frost")}, 
@@ -162,7 +162,7 @@ function mage_frost()
 		{ "flamestrike",  IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
 		{ "frostfire bolt",  jps.buff("alter time")  and jps.buff("brain freeze") }, 
 		{ "ice lance",  jps.buff("alter time")  and jps.buff("fingers of frost") }, 
-		{ "frost bomb",  jps.TimeToDie("target") > tonumber(jps.castTimeLeft()) and not jps.Moving},
+		{ "frost bomb",  jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving},
 		{ "frostbolt",   jps.debuffStacks("frostbolt") < 3 and not jps.Moving }, 
 		{ "frostfire bolt",   jps.buff("brain freeze")  and jps.cooldown("icy veins") > 2 }, 
 		{ "ice lance",  jps.buff("fingers of frost") and jps.cooldown("icy veins") >2 }, 
@@ -201,7 +201,7 @@ function mage_frost()
 		-- Debuffs
 		{ "remove curse", decurse() , player },
 		
-		{ "rune of power",  jps.buffDuration("rune of power") < jps.castTimeLeft() and not jps.buff("alter time") }, 
+		{ "rune of power",  jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") }, 
 		{ "rune of power",  jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20}, 
 		{ "mirror image"}, 
 		{ "frozen orb",  not jps.buff("fingers of frost")}, 
@@ -213,7 +213,7 @@ function mage_frost()
 		{ "flamestrike", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
 		{ "frostfire bolt",  jps.buff("alter time")  and jps.buff("brain freeze") }, 
 		{ "ice lance",  jps.buff("alter time")  and jps.buff("fingers of frost") }, 
-		{ "frost bomb",  jps.TimeToDie("target") > tonumber(jps.castTimeLeft()) and not jps.Moving},
+		{ "frost bomb",  jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving},
 		{ "frostbolt",   jps.debuffStacks("frostbolt") < 3 and not jps.Moving }, 
 		{ "frostfire bolt",   jps.buff("brain freeze")  and jps.cooldown("icy veins") > 2 }, 
 		{ "ice lance",  jps.buff("fingers of frost") and jps.cooldown("icy veins") >2 }, 

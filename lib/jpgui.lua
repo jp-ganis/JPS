@@ -19,24 +19,12 @@ BINDING_NAME_JPSTOGGLE = "Enabled/Disable"
 BINDING_NAME_JPSTOGGLEMULTI = "Multi Target"
 BINDING_NAME_JPSTOGGLECD = "CD Usage"
 BINDING_NAME_JPSTOGGLEINT = "Int Usage"
--- Create the frame that does all the work
 
-JPSFrame = CreateFrame("Frame", "JPSFrame")
-JPSFrame:SetScript("OnUpdate", function(self, elapsed)
-	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
-    self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-    if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-      	if jps.Combat and jps.Enabled then
-         	jps_Combat() 
-         	self.TimeSinceLastUpdate = 0
-      	end
-   	end
-end)
 -- Create the dragable Icon frame, anchor point for everything else
 jpsIcon = CreateFrame("Button", "jpsIcon", UIParent)
 jpsIcon:SetMovable(true)
 jpsIcon:EnableMouse(true)
-jpsIcon:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+jpsIcon:RegisterForClicks("LeftButtonUp","RightButtonUp")
 jpsIcon:RegisterForDrag("LeftButton")
 jpsIcon:SetScript("OnDragStart", jpsIcon.StartMoving)
 jpsIcon:SetScript("OnDragStop", jpsIcon.StopMovingOrSizing)

@@ -76,22 +76,21 @@ jps.EnemyTable is 	[enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred"
 function jps.UpdateEnemyTable()
 -- remove all friends I CAN'T HEAL
 -- FriendTable & RaidStatus ont pour index UnitName
--- jps.RaidStatus[unitname] = {["unit"] = unit, ["hpct"] = hpct,["subgroup"] = subgroup,["target"] = unittarget}
+-- jps.RaidStatus[unitname] = {["unit"] = unit, ["hpct"] = hpct,["subgroup"] = subgroup}
 	for unit,index in pairs(jps.RaidStatus) do
 		if not jps.canHeal(unit) then
 			jps_removeKey(jps.RaidStatus,unit)
 			jps_removeKey(jps.FriendTable,unit)
-			--local unitGuid =  UnitGUID(unit)
-			--jps_removeKey(jps.UnitStatus,unitGuid)
 		end
+	end
 -- Impossible to get infos on a unit enemy not targeted
 -- so take only canDPS on RaidTarget and remove of EnemyTable enemies I CAN'T DPS
-		if (index.target ~= nil) and not jps.canDPS(index.target) then
-			jps_removeKey(jps.RaidTarget,index.target)
-			local unit_Guid =  UnitGUID(index.target)
-			jps_removeKey(jps.EnemyTable,unit_Guid)
-			--jps_removeKey(jps.UnitStatus,unit_Guid)
-		
+-- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
+	for unit,index in pairs(jps.RaidTarget) do
+		if not jps.canDPS(unit) then
+			jps_removeKey(jps.RaidTarget,unit)
+			local unittarget_guid =  UnitGUID(unit)
+			jps_removeKey(jps.EnemyTable,unittarget_guid)
 		end
 	end
 end
@@ -119,7 +118,6 @@ function jps.RaidLowestEnemy()
 local mytarget = "target"
 local lowestHP = 1 
 	for unit,index in pairs(jps.RaidTarget) do
-		local unitHpct = UnitHealth(unit) / UnitHealthMax(unit)
 		local unit_Hpct = index.hpct
 		if unit_Hpct < lowestHP then
 			lowestHP = unit_Hpct
@@ -219,7 +217,6 @@ JPSEXTInfoFrame:EnableMouse(true)
 JPSEXTInfoFrame:SetMovable(true)
 JPSEXTInfoFrame:RegisterForDrag("LeftButton")
 JPSEXTInfoFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
-JPSEXTInfoFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal") -- "OVERLAY"
@@ -288,10 +285,8 @@ end
 
 function jps.clearTimeToLive()
     jps.UnitToLiveData = {}
-    jps.UnitStatus = {}
-	jps.EnemyTable = {}
-	jps.FriendTable = {}
-	jps.RaidTimeLive = {}
+    jps.RaidTimeToDie = {}
+	jps.RaidTimeToLive = {}
 end
 
 function jps.UnitTimeToLive(unit)
@@ -325,8 +320,8 @@ function jps.TimeToLive(unit)
 	local totalDmg = 1 -- to avoid 0/0
 	local incomingDps = 1
 	
-    if jps.RaidTimeLive[guid] ~= nil then
-        local dataset = jps.RaidTimeLive[guid]
+    if jps.RaidTimeToLive[guid] ~= nil then
+        local dataset = jps.RaidTimeToLive[guid]
         local data = table.getn(dataset)
         if #dataset > 1 then
         	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
@@ -340,7 +335,7 @@ function jps.TimeToLive(unit)
     return timetolive
 end
 
--- jps.UnitStatus[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
+-- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
 function jps.TimeToDie(unit)
 	if unit == nil then return 60 end
 	local guid = UnitGUID(unit)
@@ -349,8 +344,8 @@ function jps.TimeToDie(unit)
 	local totalDmg = 1 -- to avoid 0/0
 	local incomingDps = 1
 
-	if jps.UnitStatus[guid] ~= nil then
-		local dataset = jps.UnitStatus[guid]
+	if jps.RaidTimeToDie[guid] ~= nil then
+		local dataset = jps.RaidTimeToDie[guid]
         local data = table.getn(dataset)
         if #dataset > 1 then
         	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
@@ -507,13 +502,11 @@ end
 
 -- FIND THE SUBGROUP OF AN UNIT IN RAIDSTATUS
 -- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5 - A member of the opposing team in an Arena match
+-- Pet return nil with UnitInRaid -- UnitInRaid("unit") returns 0 for raid1, 12 for raid13
 function jps.FindSubGroupUnit(unit)
 	if not IsInRaid() then return 0 end
 	local raidname = string.sub(unit,1,4) -- return raid
 	local raidIndex = tonumber(string.sub(unit,5)) -- raid1..40 return returns 1 for raid1, 13 for raid13 
-	-- local raidIndex = UnitInRaid(unit) + 0.5 -- UnitInRaid("unit") returns 0 for raid1, 12 for raid13 
-	-- 0-4 > grp1 -- 5-9 > grp2 -- 10-14 > grp3 -- 15-19 > grp4 -- 20-24 > grp5
-	-- Pet return nil with UnitInRaid
 	local subgroup = 0 
 	if type(raidIndex) == "number" and raidname == "raid" then subgroup = math.ceil(raidIndex/5) end
 	-- math.floor(0.5) > 0 math.ceil(0.5) > 1 Renvoie le nombre entier au-dessus et au-dessous d'une valeur donnée.
@@ -610,7 +603,6 @@ function jps.SortRaidStatus()
 -- UnitInRaid Layout position for raid members: integer ascending from 0 (which is the first member of the first group)
 -- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex)
 -- raidIndex of raid member between 1 and MAX_RAID_MEMBERS (40). If you specify an index that is out of bounds, the function returns nil
-	
 
 	-- table.wipe(jps.RaidStatus)
 	-- jps.RaidStatus = {}
@@ -622,49 +614,34 @@ function jps.SortRaidStatus()
 			
 	local group_type = nil
 	local unit = nil
-	local subgroup = 0
 
 	if IsInRaid() then
-		group_type="raid"
-		nps=1
-		npe=GetNumGroupMembers()
+		group_type = "raid"
+		nps = 1
+		npe = GetNumGroupMembers()
 	else
-		group_type="party"
-		nps=0
-		npe=GetNumSubgroupMembers()
+		group_type = "party"
+		nps = 0
+		npe = GetNumSubgroupMembers()
 	end
 
 	for i=nps,npe do
 		if i==0 then
-		unit="player"
+		unit = "player"
 		else
 		unit = group_type..i
 		end
 		
-		if nps==1 then subgroup = select(3,GetRaidRosterInfo(i)) else subgroup = 0 end
+		local subgroup = select(3,GetRaidRosterInfo(i))
 		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
-		local unittarget = unit.."target"
+		local hpct_friend = jps.hp(unit)
+		-- if jps.canHeal(unit) then -- and jps.hpInc(unit,"abs") > 0
 		
-		if jps.canHeal(unit) then -- and jps.hpInc(unit,"abs") > 0
-			local hpct_friend = jps.hp(unit) 
-			
 			jps.RaidStatus[unitname] = {
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
 				["hpct"] = hpct_friend,
 				["subgroup"] = subgroup,
-				["target"] = unittarget
 			}
-		end
-		
-		if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
-			local enemyname = select(1,UnitName(unittarget))
-			local hpct_enemy = jps.hp(unittarget)
-			
-			jps.RaidTarget[unittarget] = { 
-				["enemy"] = enemyname, 
-				["hpct"] = hpct_enemy
-			}
-		end
 	end
 end
 
@@ -679,11 +656,11 @@ function jps_RaidTest()
 	print("|cff0070dd","AggroTank","|cffffffff"..jps.findMeATank())
 
 	for unit,index in pairs(jps.RaidStatus) do 
-		print("|cffa335ee",unit," - ",index.unit," - ",index.hpct,"- subGroup: ",index.subgroup) -- color violet 
+		print("|cffa335eeJPS",unit," - ",index.unit,"Hpct: ",index.hpct,"|cffa335eesubGroup: ",index.subgroup) -- color violet 
 	end
 
 	for unit,index in pairs(jps.RaidTarget) do
-		print("|cffe5cc80",unit," - ",index.enemy,"|cffa335ee"," - ", index.hpct)
+		print("|cffe5cc80JPS",unit," - ",index.enemy,"|cffa335ee"," - ", index.hpct)
 	end
 	
 	local enemycount,targetcount = jps.RaidEnemyCount()
