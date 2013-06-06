@@ -36,7 +36,7 @@ end
 
 -- load instance info , we should read instance name & check if we fight an encounter
 function jps.raid.getInstanceInfo()
-    name, type , difficultyID = GetInstanceInfo()
+    local name, instanceType , difficultyID = GetInstanceInfo()
     local targetName = UnitName("target")
     local diffTable = {}
     diffTable[0] = "none"
@@ -122,22 +122,14 @@ jps.raid.frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 jps.raid.frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 function jps.raid.eventManager(self, event, ...)
     if event == "PLAYER_REGEN_ENABLED" then
+    print("fire")
         jps.raid.leaveFight()
     elseif event == "PLAYER_REGEN_DISABLED" then
+    print("dis")
         jps.raid.fightEngaged()
     end
 end
 jps.raid.frame:SetScript("OnEvent", jps.raid.eventManager)
-
---[[
-{encounter, 
-    {
-        {ability, type of dmg, conditions }
-    }
-}
-
-]]--
-
 
 -- supported raids & encounters
 jps.raid.supported = {
