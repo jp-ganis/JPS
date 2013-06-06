@@ -1,6 +1,6 @@
-function new_dk_blood(self)
+function dk_blood()
 	-- Talents:
-	-- Tier 1: Roiling Blood
+	-- Tier 1: Roiling Blood (for trash / add fights) or Plague Leech for Single Target
 	-- Tier 2: Anti-Magic Zone
 	-- Tier 3: Death's Advance
 	-- Tier 4: Death Pact
@@ -16,18 +16,16 @@ function new_dk_blood(self)
 	-- Left Ctrl to use Army of the Dead
 
 	-- Change: add UnitExists("pet") == nil for raise dead. In some rare situations the cooldown gets reset and it can try to cast it again (last boss in End of Time)
-
-	local targetThreatStatus = UnitThreatSituation("player","target")
-	if not targetThreatStatus then targetThreatStatus = 0 end
-
-	local rp = UnitPower("player") 
-
+	
+	local spell = nil
+	local target = nil
+	
+	local rp = jps.runicPower();
 	local ffDuration = jps.debuffDuration("frost fever")
 	local bpDuration = jps.debuffDuration("blood plague")
 	local bcStacks = jps.buffStacks("blood charge") --Blood Stacks
-	
 	local haveGhoul, _, _, _, _ = GetTotemInfo(1) --Information about Ghoul pet
-
+	
 	local dr1 = select(3,GetRuneCooldown(1))
 	local dr2 = select(3,GetRuneCooldown(2))
 	local ur1 = select(3,GetRuneCooldown(3))
@@ -40,150 +38,102 @@ function new_dk_blood(self)
 	local two_fr = fr1 and fr2
 	local one_ur = ur1 or ur2
 	local two_ur = ur1 and ur2
-
-	-- Intelligent trinkets
-	local trinket1ID = GetInventoryItemID("player", GetInventorySlotInfo("Trinket0Slot"))
-	local canUseTrinket1,_ = GetItemSpell(trinket1ID)
-	local _,Trinket1ready,_ = GetItemCooldown(trinket1ID)
-
-	local trinket2ID = GetInventoryItemID("player", GetInventorySlotInfo("Trinket1Slot"))
-	local canUseTrinket2,_ = GetItemSpell(trinket2ID)
-	local _,Trinket2ready,_ = GetItemCooldown(trinket2ID)
-	
-	local possibleSpells =
-	{
-		-- Make sure we're in Blood Presence.
-		{ "Blood Presence",
-      not jps.buff("Blood Presence") },
-    
-		-- Death and Decay when shift is down.
-		{ "Death and Decay",
-      IsShiftKeyDown() ~= nil 
-      and GetCurrentKeyBoardFocus() == nil },
-    
-    -- Army of the Dead when control is down.
-    { "Army of the Dead",
-      IsLeftControlKeyDown() ~= nil 
-      and GetCurrentKeyBoardFocus() == nil },
-    
-		-- Taunt
-		{ "Dark Command",
-      targetThreatStatus ~= 3 
-      and not jps.targetTargetTank() },
-    
-		-- Kick
-		{ "Mind Freeze",
-      jps.shouldKick()
-      and jps.LastCast ~= "Strangulate"
-      and jps.LastCast ~= "Asphyxiate" },
-    
-    -- Kick
-		{ "Strangulate",
-      jps.shouldKick() 
-      and jps.LastCast ~= "Mind Freeze"
-      and jps.LastCast ~= "Asphyxiate" },
-    
-    -- Kick
-		{ "Asphyxiate",
-      jps.shouldKick() 
-      and jps.LastCast ~= "Mind Freeze"
-      and jps.LastCast ~= "Strangulate" },
-        
-		-- Kick
-		{ "Mind Freeze",
-      jps.shouldKick() },
-    
-    -- Kick
-		{ "Strangulate",
-      jps.shouldKick() 
-      and jps.LastCast ~= "Mind Freeze" },
-      
-		-- Aggro cooldowns
-		{ "Raise Dead",
-      jps.UseCDs 
-      and UnitExists("pet") == nil },
-    
-		{ "Dancing Rune Weapon",
-      jps.UseCDs },
-      
-		-- Defensive cooldown
-		{ "Death Pact",
-      jps.hp() < .5
-      and haveGhoul },
-    
-    -- Defensive cooldown
-		{ "Icebound Fortitude",
-      jps.hp() < .3 },
-    
-    -- Defensive cooldown
-		{ "Vampiric Blood",
-      jps.hp() < .5 },
-      
-    -- Defensive cooldown
-		{ "Rune Tap",
-      jps.hp() < .8 },
-    
-    -- Death Siphon when we need a bit of healing. (talent based)
-		{ "Death Siphon",
-      jps.hp() < .8 },
-        
-    -- On-Use Trinket 1.
-    { jps.useSlot(13), 
-      jps.UseCDs },
-
-    -- On-Use Trinket 2.
-    { jps.useSlot(14), 
-      jps.UseCDs },
-
-		-- Engineers may have synapse springs on their gloves (slot 10).
-		{ jps.useSynapseSprings(), 
-      jps.UseCDs },
-    
-    -- Herbalists have Lifeblood.
-    { "Lifeblood",
-      jps.UseCDs },
 		
-		-- Buffs
-		{ "Bone Shield",
-      not jps.buff("Bone Shield") },
-    
-		-- Single target
-		{ "Outbreak",
-      ffDuration <= 2 
-      or bpDuration <= 2 },
-    
-		{ "Blood Boil",
-      jps.buff("Crimson Scourge")
-      or jps.MultiTarget },
-        
-		{ "Soul Reaper",
-      jps.hp("target") <= .35 },
-      
-		{ "Plague Strike",
-      not jps.debuff("Blood Plague") },
-      
-		{ "Icy Touch",
-      not jps.debuff("Frost Fever") },
-      
+	local spellTable = {}
+	
+	spellTable[1] = {
+		["ToolTip"] = "DK Blood Main",
+		
+		-- Blood presence
+		{ "Blood Presence", not jps.buff("Blood Presence") },
+		
+		-- Shift is pressed
+		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Anti-Magic Zone",		IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		
+		-- Cntrol is pressed
+		{ "Army of the Dead",		IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		
+		-- Defensive cooldowns
+		{ "Death Pact",		jps.hp() < .5 and haveGhoul },
+		{ { "macro",  "/cast !Lichborne \r\n/cast [@player] Death Coil" }, jps.hp() < 0.5 and rp >= 40 and (jps.cooldown("Lichborne") == 0 or jps.buff("lichborne") )},
+		{ "Rune Tap",		jps.hp() < .8 },
+		{ "Icebound Fortitude",		jps.hp() < .3 },
+		{ "Vampiric Blood",		jps.hp() < .4 },
+		
+		-- Interrupts
+		{ "Mind Freeze",		jps.shouldKick() and jps.LastCast ~= "Strangulate" and jps.LastCast ~= "Asphyxiate" },
+		{ "Strangulate",		jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Asphyxiate" },
+		{ "Asphyxiate",		jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
+		
+		-- Aggro cooldowns
+		-- { "Dark Command",	 --	targetThreatStatus ~= 3 and not jps.targetTargetTank() },
+		{ "Raise Dead",		jps.UseCDs and UnitExists("pet") == nil },
+		{ "Dancing Rune Weapon",		jps.UseCDs },
+		
+		-- Death Siphon when we need a bit of healing. (talent based)
+		{ "Death Siphon",		jps.hp() < .8 },
+		
+		-- Requires engineering
+		{ jps.useSynapseSprings(),		jps.UseCDs },
+		
+		-- Requires herbalism
+		{ "Lifeblood",		jps.UseCDs },
+		
+		-- Buff
+		{ "Bone Shield",		not jps.buff("Bone Shield") },
+				
+		-- Diseases
+		{ "Outbreak",	ffDuration <= 2 or bpDuration <= 2 },
+		{ "Plague Strike",		not jps.debuff("Blood Plague") },
+		{ "Icy Touch",		not jps.debuff("Frost Fever") },
+		
+		{ "Plague Leech",	ffDuration > 0	and bpDuration > 0 and ffDuration < 3 and bpDuration < 3},
+		
+		{ "Soul Reaper",		jps.hp("target") <= .35 },
+
+		-- Multi target
+		{ "Blood Boil",		jps.MultiTarget or jps.buff("Crimson Scourge")},
+		
+		-- Rotation
+		{ "Death Strike", 	jps.hp() < .7 or jps.buffDuration("Blood Shield") < 3 },
+		{ "Rune Strike",		rp >= 80 and not two_fr and not two_ur },
 		{ "Death Strike" },
-      
-		{ "Heart Strike",
-      jps.debuff("Blood Plague") 
-      and jps.debuff("Frost Fever") },
-      
-		{ "Rune Strike",
-      rp >= 40 },
-      
+
+		{ "Heart Strike",		jps.debuff("Blood Plague") and jps.debuff("Frost Fever") },
+		
+		{ "Rune Strike",		rp >= 40 },
+		
 		{ "Horn of Winter" },
-    
-		{ "Empower Rune Weapon",
-      not two_dr 
-      and not two_fr 
-      and not two_ur },
+		
+		{ "Empower Rune Weapon",	not two_dr and not two_fr and not two_ur },
+	}
+	
+	spellTable[2] = {
+		["ToolTip"] = "DK Diseases",
+
+		-- Kicks
+		{ "mind freeze",		jps.shouldKick() },
+		{ "mind freeze",		jps.shouldKick("focus"), "focus" },
+		{ "Strangulate",		jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze" },
+		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
+		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
+		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate", "focus" },
+
+		-- Buffs
+		{ "blood presence",	 not jps.buff("blood presence") },
+		{ "horn of winter",	 "onCD" },
+		{ "Outbreak", ffDuration < 2 or bpDuration < 2 },
+		{ "Unholy Blight", ffDuration < 2 or bpDuration < 2 },
+		
+		-- Diseases
+		{ "Plague Strike",		not jps.debuff("Blood Plague") },
+		{ "Icy Touch",		not jps.debuff("Frost Fever") },
+		
 	}
 
-	spell = parseSpellTable(possibleSpells)
-	if spell == "Death and Decay" then jps.groundClick() end
+	local spellTableActive = jps.RotationActive(spellTable)
+	spell,target = parseSpellTable(spellTableActive)
 
-	return spell
+	return spell,target
 end
