@@ -566,6 +566,7 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
+		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage() end
       	if jps.Combat and jps.Enabled then
          	jps_Combat() 
          	self.TimeSinceLastUpdate = 0
