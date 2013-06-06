@@ -122,10 +122,8 @@ jps.raid.frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 jps.raid.frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 function jps.raid.eventManager(self, event, ...)
     if event == "PLAYER_REGEN_ENABLED" then
-    print("fire")
         jps.raid.leaveFight()
     elseif event == "PLAYER_REGEN_DISABLED" then
-    print("dis")
         jps.raid.fightEngaged()
     end
 end
