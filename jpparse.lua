@@ -202,7 +202,17 @@ function jps.spell_need_select(spell)
 	-- "Light's Hammer" 114158 -- Paladin
 	-- "Healing Rain" 73921 -- Shaman
 	-- "wild mushroom" 88747 -- Druid
-	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747}  
+	-- "Explosive Trap" 13813 - Hunter
+	-- "Ice Trap" 13809 - Hunter
+	-- "Snake Trap" 34600 - Hunter
+	-- "Freezing Trap" 1499 - Hunter
+	-- "Summon Jade Serpent Statue" - 115313 Monk
+	-- "Healing Sphere" - 115460 Monk
+	-- "demoralizing banner" - 114203 warrior
+	-- "mocking banner" - 114192 warrior 
+	-- "heroic leap" - 6544 warrior
+
+	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544}
 	for i,j in ipairs (tableSelect) do
 		if spellname == tostring(select(1,GetSpellInfo(j))) then return true end 
 	end
