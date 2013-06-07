@@ -541,6 +541,26 @@ function jps.useSynapseSprings()
 	return jps.useSlot(slotNum)
 end
 
+function jps.useBagItem(itemName)
+	if type(itemName) == number then
+		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
+	end
+	local count = GetItemCount(itemName, false, false)
+	if count == 0 return nil end -- we doesn't have this item in our bag
+	for bag = 0,4 do
+		for slot = 1,GetContainerNumSlots(bag) do
+			local item = GetContainerItemLink(bag,slot)
+			if item and item:find(search) then -- item place found
+				itemId = GetContainerItemID(bag, slot)  -- get itemID for retrieving item Cooldown
+				local start, dur, isBlocked = GetItemCooldown(itemId) -- maybe we should use GetContainerItemCooldown() will test it
+				if (start + dur ) > GetTime() and isBlocked == -1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
+					UseContainerItem(bag,slot) 
+				end
+		end
+	end
+	return nil
+end 
+
 ------------------------------
 -- HEALTH Functions
 ------------------------------
