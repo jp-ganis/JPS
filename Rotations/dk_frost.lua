@@ -1,5 +1,22 @@
 function dk_frost()
 	
+	-- Talents:
+	-- Tier 1: Plague Leech or Unholy Blight
+	-- Tier 2: Anti-Magic Zone ( lichborne is a small dps loss , purgatory risky because of the debuff ) 
+	-- Tier 3: Death's Advance  / for kiting chillbains  / asphyxiate for another kick / cc
+	-- Tier 4: Death Pact 
+	-- Tier 5: for 2h Runic Empowerment  (others will also work , but Runic Empowerment provides us better burst) , blood tap for DW 
+	-- Tier 6: Remorseless Winter or Desecrated Ground if you need some stun/cc remove
+	-- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
+	
+	-- Usage info:
+	-- Shift to DnD at mouse
+	-- left alt for anti magic zone
+	-- left ctrl for army of death
+	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
+
+	-- Cooldowns: trinkets, raise dead, synapse springs, lifeblood, pillar of frost, racials
+	
 	local spell = nil
 	local target = nil	
 	
@@ -49,7 +66,11 @@ function dk_frost()
     	{ "Horn of Winter",			not jps.buff("Horn of Winter")  },
     	
     	--AOE
-    	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget },
+    	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and not IsLeftAltKeyDown()},
+    	
+    	-- Battle Rezz
+    	{ "Raise Ally",		UnitIsDead("focus") and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
+    	{ "Raise Ally",		UnitIsDead("mouseover") and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
     	
     	-- Self heal
     	{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
@@ -68,7 +89,8 @@ function dk_frost()
     	--CDs + Buffs
     	{ "Pillar of Frost",			jps.UseCDs },
     	--{ "Potion of Mogu Power",			timeToDie <= 30 or (timetoDie <= 60 and jps.buff("pillar of frost))}
-    	{ jps.DPSRacial, jps.UseCDs },
+    	{ jps.DPSRacial, 		jps.UseCDs },
+
     	{ "Raise Dead",			jps.UseCDs and UnitExists("pet") == nil },
     	-- On-use Trinkets.
     	{ jps.useTrinket(0), jps.UseCDs },
