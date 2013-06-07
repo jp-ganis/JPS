@@ -8,8 +8,11 @@ This addon in combination with enabled protected LUA will help you get the most
 out of your WoW experience. See commands below for a full list of available 
 commands.
 
-***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, 
+***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd
 and many more for all their contributions to keeping this project going!***
+
+*** VERSION 1.3 - Huge updates from PCMD/Htordeux. ***
+*** All credit for this version to them.           ***
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,11 +48,9 @@ HPS for your class and spec.
 * useBagItem function (flask, pots, healthstone...)
 * remove all groundClicks from rotation files (moved to jpsParse line 240)
 * add "jps.RotationActive(spellTable)" to every rotation
-* load all available rotations without /jps pew
 * add golden carp to jps fishing
 * turn off on toons with level < 10
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
-* BUG: Mage Frost doesn't cast
 * BUG: JPS breaks the roll window for disenchant while infight & rejects invites
 
 ***tester***

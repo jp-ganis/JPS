@@ -405,7 +405,6 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
-			jps.Macro("/targetlasttarget")
 			
 		-- MultiTarget List -- { { "func" , spell , function_unit }, function_conditions , table_unit , message }
 		elseif type(spell) == "table" and spell[1] == "func" and conditions then

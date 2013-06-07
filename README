@@ -1,8 +1,10 @@
 ==============================================================================
-= JPS - A PLUA AUTOMATED DPS ADDON FOR WORLD OF WARCRAFT                     =
+= JPS =
 ==============================================================================
 
-This addon in combination with a protected LUA hack will help you get the most
+***A PLUA ADDON FOR WORLD OF WARCRAFT***
+
+This addon in combination with enabled protected LUA will help you get the most
 out of your WoW experience. See commands below for a full list of available 
 commands.
 
@@ -37,20 +39,45 @@ simply attacking a target will cause the mod to take over. Using all the best
 spells and abilities with split second timing to ensure maximum DPS, TPS or
 HPS for your class and spec.
 
+==============================================================================
+= TO-DO / KNOWN BUGS                                                         =
+==============================================================================
+
+* check/update Hunter rotations
+* check/update Priest rotations
+* useBagItem function (flask, pots, healthstone...)
+* remove all groundClicks from rotation files (moved to jpsParse line 240)
+* add "jps.RotationActive(spellTable)" to every rotation
+* add golden carp to jps fishing
+* turn off on toons with level < 10
+* test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
+* BUG: JPS breaks the roll window for disenchant while infight & rejects invites
+
+***tester***
+
+pcmd: dk blood, dk frost, mage fire, mage frost, holy paladin, destro warlock
 
 ==============================================================================
 = COMMANDS                                                                   =
 ==============================================================================
 
-/jps enable (e)			Enables JPS
-/jps disable (d)		Disables JPS
-/jps toggle (t)			Toggle whether JPS is enabled or not
-/jps multi			Toggle support for AOE
-/jps cds			Use cooldowns in rotations
-/jps interrupts (int)		Interrupt spell casting where possible
+* /jps enable (or /jps e)			Enables JPS
+* /jps disable (or /jps d)		Disables JPS
+* /jps toggle (or /jps t)			Toggle whether JPS is enabled or not
+* /jps multi			Toggle support for AOE
+* /jps cds			Use cooldowns in rotations
+* /jps interrupts (or /jps int)		Interrupt spell casting where possible
+* /jps pew			manually start attacking with jps your current target (for ingame macros)
+* /jps face			auto rotate your toon until you face your current target
+* /jps defensive (or /jps def)*			toggle defensiv mode (def / heal usage)
+* /jps pvp*			toggle pvp mode manually
+* /jps version		prints your current JPS version/revision
+* /jps db				resets ingame addon database
+* /jps reset			resets position of JPS icons / jps UI
+* /jps debug			Enable debug output
+* /jps help			show help
 
-/jps debug			Enable debug output
-
+*not all classes/specs are currently supported
 
 ==============================================================================
 = UNSUPPORTED BUILDS AND CLASSES                                             =

@@ -36,7 +36,7 @@ end
 
 -- load instance info , we should read instance name & check if we fight an encounter
 function jps.raid.getInstanceInfo()
-    name, type , difficultyID = GetInstanceInfo()
+    local name, instanceType , difficultyID = GetInstanceInfo()
     local targetName = UnitName("target")
     local diffTable = {}
     diffTable[0] = "none"
@@ -128,16 +128,6 @@ function jps.raid.eventManager(self, event, ...)
     end
 end
 jps.raid.frame:SetScript("OnEvent", jps.raid.eventManager)
-
---[[
-{encounter, 
-    {
-        {ability, type of dmg, conditions }
-    }
-}
-
-]]--
-
 
 -- supported raids & encounters
 jps.raid.supported = {
