@@ -45,8 +45,6 @@ HPS for your class and spec.
 
 * check/update Hunter rotations
 * check/update Priest rotations
-* useBagItem function (flask, pots, healthstone...)
-* remove all groundClicks from rotation files (moved to jpsParse line 240)
 * add "jps.RotationActive(spellTable)" to every rotation
 * add golden carp to jps fishing
 * turn off on toons with level < 10
