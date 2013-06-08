@@ -196,13 +196,12 @@ function jps.StunEvents() -- ONLY FOR PLAYER
 	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
 	if (numEvents > 0) and (timeRemaining ~= nil) then
 		if 	locType == SCHOOL_INTERRUPT then
-			print("SPELL_FAILED_INTERRUPTED",locType)
+			--print("SPELL_FAILED_INTERRUPTED",locType)
 			jps.createTimer("Spell_Interrupt", 2 )
 		end
-		--print("|cFFFF0000numEvents: ",numEvents,"locType: ",locType,"text: ",text,"timeRemaining: ",timeRemaining)
 		for i,j in ipairs(locTypeTable) do
 			if locType == j and timeRemaining > 1 then
-			print("locType: ",locType,"timeRemaining: ",timeRemaining)
+			--print("locType: ",locType,"timeRemaining: ",timeRemaining)
 			return true end
 		end
 	end

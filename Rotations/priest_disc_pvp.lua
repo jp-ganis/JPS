@@ -96,7 +96,7 @@ local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
 local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
 
 local Tanktable = {}
-if playerhealth_pct < 0.40 then 
+if playerhealth_pct < 0.40 then
 	jps_TANK = player
 elseif jps.canHeal("focus") and jps.Defensive then -- WARNING FOCUS RETURN FALSE IF NOT IN GROUP OR RAID BECAUSE OF UNITINRANGE(UNIT)
 	table.insert(Tanktable,"player")
@@ -550,6 +550,10 @@ local spellTable =
 -- EMERGENCY TARGET
 	{ "nested", (health_pct_TANK < 0.60) and (groupToHeal == false) , parse_emergency_TANK() },
 	{ "nested", (health_pct_TANK < 0.60) and (groupToHeal == true) , parse_POH() },
+-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
+	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
+-- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
+	{ 2061, (player_IsInterrupt == 0) and jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 
 -- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
 	{ 17, UnitIsUnit(jps_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff(6788,"focustargettarget") and not jps.buff(17,"focustargettarget"), "focustargettarget"},
@@ -563,10 +567,6 @@ local spellTable =
 
 -- "Cascade" 121135 "Escalade"
 	{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 1) , jps_TANK , "Cascade_"..jps_TANK },
--- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
-	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
--- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
-	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Focal_MultiUnit_" },
 -- "Prière de guérison" 33076
 	{ "nested", true , parse_mending() },

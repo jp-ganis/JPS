@@ -1,6 +1,6 @@
 -- tropic (original by jpganis)
 -- Ty to SIMCRAFT for this rotation
-function dkUnholy()
+function dk_unholy()
 
 	-- Shift-key to cast Death and Decay
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
@@ -104,7 +104,7 @@ function dkUnholy()
 		{ "plague strike",			bpDuration <= 0 },
 		
 		-- get Runes
-		{ "Plague Leech", (bloodPlagueDuration < 1 or jps.cooldown("Outbreak") < 2) and frostFeverDuration > 0  and bloodPlagueDuration > 0 and (not twoDr or not twoFr or not twoUr) }, 		{ "summon gargoyle" },
+		--{ "Plague Leech", (bloodPlagueDuration < 1 or jps.cooldown("Outbreak") < 2) and frostFeverDuration > 0  and bloodPlagueDuration > 0 and (not twoDr or not twoFr or not twoUr) }, 		{ "summon gargoyle" },
 		{ "empower rune weapon" },
 		
 		{ "dark transformation",	siStacks >= 5 and not superPet },

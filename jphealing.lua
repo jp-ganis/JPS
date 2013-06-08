@@ -656,13 +656,13 @@ function jps_RaidTest()
 	print("|cff0070dd","AggroTank","|cffffffff"..jps.findMeATank())
 
 	for unit,index in pairs(jps.RaidStatus) do 
-		print("|cffa335eeJPS",unit," - ",index.unit,"Hpct: ",index.hpct,"|cffa335eesubGroup: ",index.subgroup) -- color violet 
+		print("|cffa335eeJPS",unit,"unit:",index.unit,"Hpct: ",index.hpct,"|cffa335eesubGroup: ",index.subgroup) -- color violet 
 	end
 
 	for unit,index in pairs(jps.RaidTarget) do
-		print("|cffe5cc80JPS",unit," - ",index.enemy,"|cffa335ee"," - ", index.hpct)
+		print("|cffe5cc80JPS",unit,"unit:",index.enemy,"|cffa335ee","Hpct:", index.hpct,"target:",index.target)
 	end
-	
+
 	local enemycount,targetcount = jps.RaidEnemyCount()
 	local enemytargeted = jps.RaidLowestEnemy() -- UNIT ENEMY TARGETED BY FRIENDS WITH LOWEST HEALTH
 	local enemytargetMe = jps.IstargetMe() -- UNIT ENEMY TARGETING THE PLAYER

@@ -68,6 +68,7 @@ jps.DPSRacial = nil
 jps.DefRacial = nil
 jps.Lifeblood = nil
 jps.EngiGloves = nil
+jps.isTank = false
 
 -- Raccourcis
 cast = CastSpellByName
@@ -227,7 +228,6 @@ end
 		SaveView(2)
 		TurnLeftStop()
 		CameraOrSelectOrMoveStop()
-		--print("Facing_",jps.checkTimer("Facing"),"FacingBug_",jps.checkTimer("FacingBug"))
 
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then -- and jps.Combat
 	-- "UI_ERROR_MESSAGE" returns ONLY one arg1
@@ -306,10 +306,11 @@ end
 			local enemyname = select(1,UnitName(unittarget))
 			local hpct_enemy = jps.hp(unittarget)
 			local unittarget_guid = UnitGUID(unittarget)
-			
+	
 			jps.RaidTarget[unittarget] = { 
 				["enemy"] = enemyname,
-				["hpct"] = hpct_enemy
+				["hpct"] = hpct_enemy,
+				["target"] = unittarget_guid
 			}
 		else
 			jps_removeKey(jps.RaidTarget,unittarget)
@@ -427,6 +428,10 @@ function jps.detectSpec()
       jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
    end
    if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.Healing = true end
+   if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
+       jps.isTank = true
+       jps.gui_toggleDef(true) 
+   end
    jps.HarmSpell = jps_GetHarmSpell()
    jps.SpellBookTable = jps_GetSpellBook()
    write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
@@ -561,6 +566,7 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
+		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage() end
       	if jps.Combat and jps.Enabled then
          	jps_Combat() 
          	self.TimeSinceLastUpdate = 0

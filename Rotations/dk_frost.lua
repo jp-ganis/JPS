@@ -35,7 +35,7 @@ function dk_frost()
 
 	local frostFeverDuration = jps.debuffDuration("Frost Fever")
 	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
-	local hasDiseases = frostFeverDuration > 0 and bloodPlagueDuration > 0
+	local hasDiseases = jps.debuff("frost fever") and jps.debuff("blood plague")
 	local timeToDie = jps.TimeToDie("target")
 	------------------------
 	-- SPELL TABLE ---------
@@ -54,8 +54,8 @@ function dk_frost()
     	-- Self heal
     	{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
     	-- Self heals
-    	{ "Death Siphon",			jps.hp() < .8, rangedTarget },
-    	{ "Death Strike",			jps.hp() < .7 , rangedTarget},
+    	{ "Death Siphon",	jps.Defensive and jps.hp() < .8, rangedTarget },
+    	{ "Death Strike",	jps.Defensive and jps.hp() < .7 , rangedTarget },
     	
     	-- Interrupts
     	{ "mind freeze",				jps.shouldKick() },
@@ -82,10 +82,10 @@ function dk_frost()
     	{ "plague leech",			(bloodPlagueDuration < 1 or frostFeverDuration <1  ) and hasDiseases, rangedTarget},
     	{ "outbreak",			not jps.debuff("frost fever") or not jps.debuff("blood plague"), rangedTarget},
     	{ "unholy blight",			 not jps.debuff("frost fever") or not jps.debuff("blood plague")},
-    	{ "soul reaper",			jps.hp("target") <= .35, rangedTarget},
-    	{ "blood tap",			 jps.hp("target") <= .35 and jps.cooldown("soul reaper") == 0},
     	{ "howling blast",			not jps.debuff("frost fever"), rangedTarget},
     	{ "plague strike",			not jps.debuff("blood plague"), rangedTarget},
+    	{ "soul reaper",			jps.hp("target") <= .35, rangedTarget},
+    	{ "blood tap",			 jps.hp("target") <= .35 and jps.cooldown("soul reaper") == 0},
     	{ "howling blast",			jps.buff("Freezing Fog"), rangedTarget},
     	{ "obliterate",			jps.buff("killing machine"), rangedTarget},
     	{ "blood tap",			 jps.buff("killing machine")},

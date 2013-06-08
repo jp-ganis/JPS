@@ -380,6 +380,10 @@ function parseSpellTable( hydraTable )
 			-- Workaround for TargetUnit is still PROTECTED despite goblin active
  			if jps.UnitExists(macroTarget) then jps.Macro("/target "..macroTarget) end
  			
+ 			-- {"macro","/cancelaura "..spiritshell,player}
+			-- {"macro","/cast Sanguinaire",target}
+			-- {"macro","/stopcasting"}
+			-- {"macro","/startattack"}
 			if conditions and type(macroText) == "string" then
 				local macroSpell = macroText
 				if string.find(macroText,"%s") == nil then -- {"macro","/startattack"}
@@ -405,7 +409,7 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
-			jps.Macro("/targetlasttarget")
+			if jps.Healing then jps.Macro("/targetlasttarget") end -- TargetLastTarget()
 			
 		-- MultiTarget List -- { { "func" , spell , function_unit }, function_conditions , table_unit , message }
 		elseif type(spell) == "table" and spell[1] == "func" and conditions then
@@ -425,8 +429,6 @@ function parseSpellTable( hydraTable )
 		-- Return spell if conditions are true and spell is castable.
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
 			-- if jps.Debug then print("|cffff8000Spell","|cffffffff",tostring(select(1,GetSpellInfo(spell)))) end 
-			-- jps.Target = target
-			-- jps.ThisCast = spell
 			return spell,target 
 		end
 	end

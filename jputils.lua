@@ -646,3 +646,54 @@ ItemRefShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip1:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip2:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
+
+-----------------------
+-- FUNCTION LOOKUP RAID
+-----------------------
+
+function LookupSpec ()
+local function printing()
+	print("All Rotations return no Lua Error")
+end
+local Table_Spec = 	{
+	druid_feral(),
+	druid_guardian(),
+	druid_balance(),
+	druid_resto() ,
+	dk_unholy(),
+	dk_blood( ),
+	dk_frost( ),  
+	shaman_enhancement( ),
+	shaman_elemental( ),
+	shaman_resto( ),
+	paladin_protadin( ),
+	paladin_ret( ),
+	paladin_holy( ),
+	warlock_affliction( ),
+	warlock_destro( ),
+	warlock_demo( ),
+	hunter_bm( ),
+	hunter_mm( ),
+	hunter_sv( ),
+	mage_fire( ),
+	mage_arcane( ),
+	mage_frost( ),
+	rogue_assass( ),
+	rogue_sub( ),
+	rogue_combat( ),
+	warrior_fury( ),
+	warrior_prot( ),
+	warrior_arms( ),
+	priest_shadow( ),
+	priest_holy( ),
+	priest_disc( ),
+	monk_brewmaster( ),
+	monk_windwalker( ),
+	monk_mistweaver( ),
+	printing( ),
+}
+	for i, j in ipairs(Table_Spec) do
+		RunMacroText("/run "..j)
+	end
+end
+
