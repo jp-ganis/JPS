@@ -532,11 +532,11 @@ local spellTable =
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236
-{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
+	{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+	{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 -- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
-{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },	
+	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },	
 -- AGGRO PLAYER
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
@@ -624,9 +624,9 @@ local spellTable_moving =
 -- "Prière du désespoir" 19236
 	{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+	{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 -- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
-{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 
 -- AGGRO PLAYER
 	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
