@@ -42,9 +42,9 @@ function mage_arcane()
 		{ "alter time", not jps.buff("alter time") and jps.buff("arcane power") },
 		
 		{ "arcane barrage", jps.buff("alter time") and jps.buffDuration("alter time") <2 },
-		{ "arcane missiles", jps.buff("alter time") and mStacks >= 1 },
+		{ "arcane missiles", jps.buff("alter time") and mStacks >= 2 },
 		{ "arcane blast", jps.buff("alter time") },
-		{ "arcane missiles", (mStacks == 2 and jps.cooldown("arcane power") >0) or (stacks ==4 and jps.cooldown("arcane power") >8) },
+		{ "arcane missiles", mStacks == 2 and jps.cooldown("arcane power") >0 and stacks  <4 },
 		{ "Nether Tempest" , not jps.debuff("Nether Tempest")},
 		{ "living bomb", not jps.debuff("Living Bomb") and jps.TimeToDie("target") > 11 },
 		{ "arcane barrage", stacks == 4 and mana < .95 },
