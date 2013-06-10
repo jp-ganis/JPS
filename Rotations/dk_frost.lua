@@ -56,8 +56,8 @@ function dk_frost()
     	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and not IsLeftAltKeyDown()},
     	
     	-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDead("focus") and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
-    	{ "Raise Ally",		UnitIsDead("mouseover") and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
     	
     	-- Self heal
     	{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
