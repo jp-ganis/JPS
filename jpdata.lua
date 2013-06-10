@@ -550,10 +550,12 @@ function jps.useBagItem(itemName)
 	for bag = 0,4 do
 		for slot = 1,GetContainerNumSlots(bag) do
 			local item = GetContainerItemLink(bag,slot)
-			if item and item:find(search) then -- item place found
+			if item and item:find(itemName) then -- item place found
 				itemId = GetContainerItemID(bag, slot)  -- get itemID for retrieving item Cooldown
-				local start, dur, isBlocked = GetItemCooldown(itemId) -- maybe we should use GetContainerItemCooldown() will test it
-				if (start + dur ) > GetTime() and isBlocked == -1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
+				local start, dur, isNotBlocked = GetItemCooldown(itemId) -- maybe we should use GetContainerItemCooldown() will test it
+				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
+				local hasNoCD = Ternary(dur == 0, true, false)
+				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
 					UseContainerItem(bag,slot) 
 				end
 			end
