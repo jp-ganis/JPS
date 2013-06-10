@@ -18,7 +18,7 @@ function mage_arcane()
 		{ "frost armor", not jps.buff("frost armor") }, 
 		{ "ice barrier", not jps.buff("ice barrier") }, 
 		
-		{ "Ice Block", ((UnitHealth("player") / UnitHealthMax("player")) < 0.10 ) and not jps.buff("Ice Block","player") },
+		{ "Ice Block", jps.hp() < 0.10  and not jps.buff("Ice Block","player") },
 		
 		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		{ "mirror image", jps.UseCDs },
