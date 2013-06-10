@@ -546,7 +546,7 @@ function jps.useBagItem(itemName)
 		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
 	end
 	local count = GetItemCount(itemName, false, false)
-	if count == 0 return nil end -- we doesn't have this item in our bag
+	if count == 0 then return nil end -- we doesn't have this item in our bag
 	for bag = 0,4 do
 		for slot = 1,GetContainerNumSlots(bag) do
 			local item = GetContainerItemLink(bag,slot)
@@ -556,6 +556,7 @@ function jps.useBagItem(itemName)
 				if (start + dur ) > GetTime() and isBlocked == -1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
 					UseContainerItem(bag,slot) 
 				end
+			end
 		end
 	end
 	return nil
