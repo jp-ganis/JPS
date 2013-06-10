@@ -1,5 +1,22 @@
 function dk_frost()
 	
+	-- Talents:
+	-- Tier 1: Plague Leech or Unholy Blight
+	-- Tier 2: Anti-Magic Zone ( lichborne is a small dps loss , purgatory risky because of the debuff ) 
+	-- Tier 3: Death's Advance  / for kiting chillbains  / asphyxiate for another kick / cc
+	-- Tier 4: Death Pact 
+	-- Tier 5: for 2h Runic Empowerment  (others will also work , but Runic Empowerment provides us better burst) , blood tap for DW 
+	-- Tier 6: Remorseless Winter or Desecrated Ground if you need some stun/cc remove
+	-- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
+	
+	-- Usage info:
+	-- Shift to DnD at mouse
+	-- left alt for anti magic zone
+	-- left ctrl for army of death
+	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
+
+	-- Cooldowns: trinkets, raise dead, synapse springs, lifeblood, pillar of frost, racials
+	
 	local spell = nil
 	local target = nil	
 	
@@ -20,19 +37,6 @@ function dk_frost()
 	
 	local enemyTargetingMe = jps.IstargetMe()
 
-	local rangedTarget = "target"
-	if jps.canDPS("target") then
-		rangedTarget = "target"
-	elseif jps.canDPS("focustarget") then
-		rangedTarget = "focustarget"
-	elseif jps.canDPS("targettarget") then
-		rangedTarget = "targettarget"
-	elseif jps.canDPS(enemyTargetingMe) then
-		rangedTarget = enemyTargetingMe
-	end
-
-	jps.Macro("/target "..rangedTarget)
-
 	local frostFeverDuration = jps.debuffDuration("Frost Fever")
 	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
 	local hasDiseases = jps.debuff("frost fever") and jps.debuff("blood plague")
@@ -49,13 +53,17 @@ function dk_frost()
     	{ "Horn of Winter",			not jps.buff("Horn of Winter")  },
     	
     	--AOE
-    	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget },
+    	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and not IsLeftAltKeyDown()},
+    	
+    	-- Battle Rezz
+    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
     	
     	-- Self heal
     	{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
     	-- Self heals
-    	{ "Death Siphon",			jps.hp() < .8, rangedTarget and jps.Defensive},
-    	{ "Death Strike",			jps.hp() < .7 , rangedTarget and jps.Defensive},
+    	{ "Death Siphon",			jps.hp() < .8 and jps.Defensive},
+    	{ "Death Strike",			jps.hp() < .7 and jps.Defensive},
     	
     	-- Interrupts
     	{ "mind freeze",				jps.shouldKick() },
@@ -68,7 +76,8 @@ function dk_frost()
     	--CDs + Buffs
     	{ "Pillar of Frost",			jps.UseCDs },
     	--{ "Potion of Mogu Power",			timeToDie <= 30 or (timetoDie <= 60 and jps.buff("pillar of frost))}
-    	{ jps.DPSRacial, jps.UseCDs },
+    	{ jps.DPSRacial, 		jps.UseCDs },
+
     	{ "Raise Dead",			jps.UseCDs and UnitExists("pet") == nil },
     	-- On-use Trinkets.
     	{ jps.useTrinket(0), jps.UseCDs },
@@ -79,31 +88,31 @@ function dk_frost()
     	{ "Lifeblood",			jps.UseCDs },
     	
     	--simcraft 5.3 T14
-    	{ "plague leech",			(bloodPlagueDuration < 1 or frostFeverDuration <1  ) and hasDiseases, rangedTarget},
-    	{ "outbreak",			not jps.debuff("frost fever") or not jps.debuff("blood plague"), rangedTarget},
+    	{ "plague leech",			(bloodPlagueDuration < 1 or frostFeverDuration <1  ) and hasDiseases},
+    	{ "outbreak",			not jps.debuff("frost fever") or not jps.debuff("blood plague")},
     	{ "unholy blight",			 not jps.debuff("frost fever") or not jps.debuff("blood plague")},
-    	{ "howling blast",			not jps.debuff("frost fever"), rangedTarget},
-    	{ "plague strike",			not jps.debuff("blood plague"), rangedTarget},
-    	{ "soul reaper",			jps.hp("target") <= .35, rangedTarget},
+    	{ "howling blast",			not jps.debuff("frost fever")},
+    	{ "plague strike",			not jps.debuff("blood plague")},
+    	{ "soul reaper",			jps.hp("target") <= .35},
     	{ "blood tap",			 jps.hp("target") <= .35 and jps.cooldown("soul reaper") == 0},
-    	{ "howling blast",			jps.buff("Freezing Fog"), rangedTarget},
-    	{ "obliterate",			jps.buff("killing machine"), rangedTarget},
+    	{ "howling blast",			jps.buff("Freezing Fog")},
+    	{ "obliterate",			jps.buff("killing machine")},
     	{ "blood tap",			 jps.buff("killing machine")},
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>76},
-    	{ "frost strike",			runicPower > 76, rangedTarget},
-    	{ "obliterate",			twoDr or twoFr or TwoUr, rangedTarget},
-    	{ "plague leech",			 (bloodPlagueDuration < 3 or frostFeverDuration<3) and hasDiseases, rangedTarget},
-    	{ "outbreak",			frostFeverDuration<3 or bloodPlagueDuration <3, rangedTarget},
+    	{ "frost strike",			runicPower > 76},
+    	{ "obliterate",			twoDr or twoFr or TwoUr},
+    	{ "plague leech",			 (bloodPlagueDuration < 3 or frostFeverDuration<3) and hasDiseases},
+    	{ "outbreak",			frostFeverDuration<3 or bloodPlagueDuration <3},
     	{ "unholy blight",			 frostFeverDuration < 3 or bloodPlagueDuration < 3 },
-    	{ "frost strike",			 not oneFr, rangedTarget},
-    	{ "frost strike",			 jps.buffStacks("blood charge")<=10, rangedTarget},
+    	{ "frost strike",			 not oneFr},
+    	{ "frost strike",			 jps.buffStacks("blood charge")<=10},
     	{ "horn of winter"},
-    	{ "frost strike",			 not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption"), rangedTarget},
-    	{ "obliterate",			"onCD", rangedTarget},
+    	{ "frost strike",			 not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")},
+    	{ "obliterate",			"onCD"},
     	{ "empower rune weapon",			timeToDie<=60 and jps.buff("Potion of Mogu Power") and jps.UseCDs },
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>=20},
-    	{ "frost strike",			"onCD" , rangedTarget},
-    	{ "plague leech",			hasDiseases , rangedTarget},
+    	{ "frost strike",			"onCD" },
+    	{ "plague leech",			hasDiseases },
     	{ "empower rune weapon",			jps.UseCDs},
 	}
 	

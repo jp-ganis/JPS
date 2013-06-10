@@ -189,8 +189,6 @@ local spellTable =
 
 	spell,target = parseSpellTable(spellTable)	
 
-	if spell == "Explosive Trap" or spell == "Ice Trap" or spell == "Snake Trap" or spell == "Freezing Trap" then jps.groundClick() end
-
 	return spell,target
 	
 end
