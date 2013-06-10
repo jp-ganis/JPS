@@ -641,6 +641,30 @@ function jps.targetTargetTank()
 	return false
 end
 
+
+function jps.findTanksInRaid() 
+	local myTanks = {}
+	for unit, _ in pairs(jps.RaidStatus) do
+		local foundTank = false
+		if UnitGroupRolesAssigned(unit) == "TANK" then
+			table.insert(myTanks, unit);
+			foundTank = true
+		end
+		if foundTank == false and jps.buff("bear form",unit) then
+			table.insert(myTanks, unit);
+			foundTank = true
+		end
+		if foundTank == false and jps.buff("blood presence",unit) then
+			table.insert(myTanks, unit);
+			foundTank = true
+		end
+		if foundTank == false and jps.buff("righteous fury",unit) then
+			table.insert(myTanks, unit);
+			foundTank = true
+		end
+	end
+	return myTanks
+end
 ------------------------------
 -- BenPhelps' Timer Functions
 ------------------------------
