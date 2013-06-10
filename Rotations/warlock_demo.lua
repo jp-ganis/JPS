@@ -398,7 +398,7 @@ local StopCasting = StopCasting ()
 if  jps.IsCasting("player") and StopCasting then SpellStopCasting() end
 
 
-
+local spellTable = { }
 spellTable[1] = {
       
    ["ToolTip"] = "Demo Raid",

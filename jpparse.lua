@@ -216,7 +216,6 @@ function jps.Cast(spell)  -- "number" "string"
 	
 	if jps.Target==nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
-	--if not jps.UnitExists(jps.Target) then return end
 	
 	if jps.spell_need_select(spellname) then
 		jps.groundClick()
@@ -409,7 +408,7 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
-			if jps.Healing then jps.Macro("/targetlasttarget") end -- TargetLastTarget()
+			if jps.isHealer then jps.Macro("/targetlasttarget") end
 			
 		-- MultiTarget List -- { { "func" , spell , function_unit }, function_conditions , table_unit , message }
 		elseif type(spell) == "table" and spell[1] == "func" and conditions then

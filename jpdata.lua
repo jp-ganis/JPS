@@ -459,7 +459,7 @@ end
 
 function jps.glovesCooldown()
 	local start, duration, enabled = GetInventoryItemCooldown("player", 10)
-	if enabled==0 then return 9001 end
+	if enabled==0 then return 999 end
 	local cd = start+duration-GetTime() -- jps.Lag
 	if cd < 0 then return 0 end
 	return cd

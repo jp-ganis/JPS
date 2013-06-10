@@ -86,8 +86,7 @@ local L = MyLocalizationTable
 	
 	local spellTable =
 	{
-	-- Kicks                    
-	
+	-- Kicks    
 		{ "Rebuke", jps.shouldKick(rangedTarget) , rangedTarget },
 		{ "Rebuke", jps.shouldKick("focus"), "focus" },
 		{ "Fist of Justice", jps.shouldKick(rangedTarget) and jps.cooldown("Rebuke")~=0 , rangedTarget },
@@ -100,11 +99,11 @@ local L = MyLocalizationTable
 		{ "Guardian of Ancient Kings", jps.UseCDs , rangedTarget }, -- Summons a Guardian of Ancient Kings to help you deal damage for 30 sec.The Guardian of Ancient Kings will attack your current enemy
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		
-		-- Requires engineerins
+	
+	-- Requires engineerins
 		{ jps.useSynapseSprings(), jps.UseCDs },
 		
-		-- Requires herbalism
+	-- Requires herbalism
 		{ "Lifeblood", jps.UseCDs },
 		
 	-- Multi Heals
@@ -141,6 +140,7 @@ local L = MyLocalizationTable
 		{ "Flash of Light", (health_pct < 0.30) , Heal_Target },
 		{ "Divine Light", (health_pct < 0.50) , Heal_Target },
 		{ "Holy Light", (health_pct < 0.95) , Heal_Target },
+		--{ {"macro","/run print('END')"},true},
 	
 	}
 	-- if you're only dps "target" you can let spell alone.

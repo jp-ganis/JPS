@@ -63,7 +63,7 @@ jps.SpellBookTable = {}
 -- Class
 jps.isNotBehind = false
 jps.isBehind = true
-jps.Healing = false
+jps.isHealer = false
 jps.DPSRacial = nil
 jps.DefRacial = nil
 jps.Lifeblood = nil
@@ -301,7 +301,7 @@ end
 			jps_removeKey(jps.RaidStatus,unitname)
 			jps_removeKey(jps.FriendTable,unitname)
 		end
-		
+
 		if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
 			local enemyname = select(1,UnitName(unittarget))
 			local hpct_enemy = jps.hp(unittarget)
@@ -324,7 +324,7 @@ end
 		table.insert(raid_dataset, 1, {GetTime(), unit_health})
 		jps.RaidTimeToLive[unit_guid] = raid_dataset
 		--jps.RaidTimeToLive[unit_guid] = { [1] = {GetTime(), unit_health] },[2] = {GetTime(), unit_health },[3] = {GetTime(), unit_health } }
-	
+
 -- COMBAT_LOG_EVENT
 -- eventtable[4] == sourceGUID
 -- eventtable[5] == sourceName
@@ -427,7 +427,7 @@ function jps.detectSpec()
    else
       jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
    end
-   if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.Healing = true end
+   if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
        jps.isTank = true
        jps.gui_toggleDef(true) 
@@ -483,8 +483,8 @@ function SlashCmdList.jps(cmd, editbox)
    	  jps.gui_toggleDef()
       write("Defensive set to",tostring(jps.Defensive))
 	elseif msg == "heal" then
-	  jps.Healing = not jps.Healing
-	  write("Healing set to", tostring(jps.Healing))
+	  jps.isHealer = not jps.isHealer
+	  write("Healing set to", tostring(jps.isHealer))
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
@@ -566,7 +566,7 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage() end
+		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage("collect") end
       	if jps.Combat and jps.Enabled then
          	jps_Combat() 
          	self.TimeSinceLastUpdate = 0
