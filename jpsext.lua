@@ -3,9 +3,8 @@ jpsext = {}
 jpsext.timeToLiveData = {}
 jpsext.timeToLiveLastUpdate = 100
 jpsext.timeToLiveThrottle = 0.1
-jpsext.timeToLiveMinAge = 1.0
-jpsext.timeToLiveMaxAge = 7.0
-jpsext.timeToLiveMaxSamples = 60
+jpsext.timeToLiveMinSamples = 20
+jpsext.timeToLiveMaxSamples = 30
 
 
 local JPSEXTInfoFrame = CreateFrame("frame","JPSEXTInfoFrame")
@@ -14,8 +13,8 @@ JPSEXTInfoFrame:SetBackdrop({
       tile=1, tileSize=32, edgeSize=32, 
       insets={left=11, right=12, top=12, bottom=11}
 })
-JPSEXTInfoFrame:SetWidth(100)
-JPSEXTInfoFrame:SetHeight(50)
+JPSEXTInfoFrame:SetWidth(150)
+JPSEXTInfoFrame:SetHeight(60)
 JPSEXTInfoFrame:SetPoint("CENTER",UIParent)
 JPSEXTInfoFrame:EnableMouse(true)
 JPSEXTInfoFrame:SetMovable(true)
@@ -26,9 +25,42 @@ JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing()
 JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 infoFrameText:SetPoint("CENTER")
-infoFrameText:SetText("TTL: n/a")
+infoFrameText:SetText("TTL: n/a\nDPS: n/a")
+local infoDPS = 0.0
+local infoTTL = nil
+local infoTTLBurst = nil
+
+function jpsext.provoke()
+    RunMacroText("/run local z,t,s={[32099]='Sha of Anger this week.'},GetQuestsCompleted();for c,v in pairs(z) do if t[c] then s='' else s=' not' end print('You have'..s,'done',v) end")
+end
+
+function jpsext.updateInfoText()
+    if infoTTL ~= nil then
+        infoFrameText:SetText(string.format("TTL: %.1f\nTTL Burst: %.1f\nDPS: %.1f", infoTTL, infoTTLBurst, infoDPS))
+    else 
+        infoFrameText:SetText("TTL: n/a\nTTL Burst: n/a\nDPS: n/a")
+    end 
+end
 
 
+function jpsext.updateTimeToLive(self, elapsed)
+    jpsext.timeToLiveLastUpdate = jpsext.timeToLiveLastUpdate + elapsed
+    if jps.Combat and jpsext.timeToLiveLastUpdate > jpsext.timeToLiveThrottle then
+        jpsext.timeToLiveLastUpdate = 0
+        if UnitExists("target") then
+            jpsext.updateUnitTimeToLive("target")
+        end
+        if UnitExists("focus") and UnitGUID("focus") ~= UnitGUID("target") then
+            jpsext.updateUnitTimeToLive("focus")
+        end
+        if UnitExists("mouseover") and UnitGUID("focus") ~= UnitGUID("mouseover") and UnitGUID("mouseover") ~= UnitGUID("target") then
+            jpsext.updateUnitTimeToLive("mouseover")
+        end
+        infoTTL = jpsext.timeToLive("target")
+        infoTTLBurst = jpsext.timeToLive("target", 0.2)
+        jpsext.updateInfoText()
+    end
+end
 
 JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
 JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -46,30 +78,6 @@ JPSEXTFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 JPSEXTFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 
-
-
-function jpsext.updateTimeToLive(self, elapsed)
-    jpsext.timeToLiveLastUpdate = jpsext.timeToLiveLastUpdate + elapsed
-    if jps.Combat and jpsext.timeToLiveLastUpdate > jpsext.timeToLiveThrottle then
-        jpsext.timeToLiveLastUpdate = 0
-        if UnitExists("target") then
-            jpsext.updateUnitTimeToLive("target")
-        end
-        if UnitExists("focus") and UnitGUID("focus") ~= UnitGUID("target") then
-            jpsext.updateUnitTimeToLive("focus")
-        end
-        if UnitExists("mouseover") and UnitGUID("focus") ~= UnitGUID("mouseover") and UnitGUID("mouseover") ~= UnitGUID("target") then
-            jpsext.updateUnitTimeToLive("mouseover")
-        end
-        ttl = jpsext.timeToLive("target")
-        if ttl ~= nil then
-            infoFrameText:SetText(string.format("TTL: %.1f", ttl))
-        else 
-            infoFrameText:SetText("TTL: n/a")
-        end 
-    end
-end
-
 function jpsext.updateUnitTimeToLive(unit)
     local guid = UnitGUID(unit)
     if jpsext.timeToLiveData[guid] == nil then
@@ -79,10 +87,12 @@ function jpsext.updateUnitTimeToLive(unit)
     if table.getn(dataset) >= jpsext.timeToLiveMaxSamples then
         table.remove(dataset, jpsext.timeToLiveMaxSamples)
     end
-    
-    local timeDelta = dataset[1][1] - dataset[table.getn(dataset)][1]
-    local hpDelta = dataset[table.getn(dataset)][2] - dataset[1][2]
-    local avgDps = hpDelta / timeDelta
+    local avgDps = nil
+    if #dataset >= 2 then
+        local timeDelta = dataset[1][1] - dataset[table.getn(dataset)][1]
+        local hpDelta = dataset[table.getn(dataset)][2] - dataset[1][2]
+        avgDps = hpDelta / timeDelta
+    end
     table.insert(dataset, 1, {GetTime(), UnitHealth(unit), avgDps})
     jpsext.timeToLiveData[guid] = dataset
 end
@@ -91,21 +101,33 @@ function jpsext.clearTimeToLive()
     jpsext.timeToLiveData = {}
 end
 
+function jpsext.calcDatasetDPS(dataset)
+    local sum = 0
+    local count = 0
+    for i,v in ipairs(dataset) do
+        if v[3] ~= nil then
+            sum = sum + v[3]
+            count = count + 1
+        end
+    end
+    if count > 0 then
+        infoDPS = sum/count
+        return sum/count
+    else
+        infoDPS = -1.0
+        return nil
+    end
+end
+
 function jpsext.timeToLive(unit, percent)
     local guid = UnitGUID(unit)
     if percent ~= nil then targetHP = UnitHealthMax(unit) end
     if guid ~= nil and jpsext.timeToLiveData[guid] ~= nil then
         local dataset = jpsext.timeToLiveData[guid]
-        
-        local timeDelta = dataset[1][1] - dataset[table.getn(dataset)][1]
-        if timeDelta < jpsext.timeToLiveMinAge or timeDelta > jpsext.timeToLiveMaxAge then
-            return nil
-        end
-        local hpDelta = dataset[table.getn(dataset)][2] - dataset[1][2]
-        if hpDelta <= 0 then
-            return nil
-        end
-        local avgDps = hpDelta / timeDelta
+        if #dataset <= jpsext.timeToLiveMinSamples then return nil end
+
+        local avgDps = jpsext.calcDatasetDPS(dataset)
+        if avgDps == nil then return nil end
         
         local targetHP = 0
         if percent ~= nil then targetHP = UnitHealthMax(unit) * percent end
@@ -121,13 +143,16 @@ function jpsext.timeToLive(unit, percent)
 end
 
 function jpsext.interruptSpellTable(kickSpell,kickCastLeft)
-    local kickAvailable = jps.cooldown(kickSpell) == 0
+    local kickAvailable = jps.cooldown(kickSpell) == 0 
     if not jps.Interrupts or not kickAvailable then return {"nested", false, nil} end
+    local targetInRange = IsSpellInRange(kickSpell, "target")
+    local focusInRange = IsSpellInRange(kickSpell, "focus")
     
     local kickTarget, stopCastForTarget = jpsext.checkForInterrupt("target", kickCastLeft)
     local kickFocus, stopCastForFocus = jpsext.checkForInterrupt("focus", kickCastLeft)
     --local kickMouseover, stopCastForMouseover = jpsext.checkForInterrupt("mouseover", kickCastLeft)
-    
+    kickTarget = kickTarget and targetInRange
+    kickFocus = kickFocus and focusInRange
     local kickSpellTable = {
         {kickSpell, kickTarget, "target"},
         {kickSpell, kickFocus, "focus"},
@@ -135,7 +160,7 @@ function jpsext.interruptSpellTable(kickSpell,kickCastLeft)
     }
     
     --if stopCastForTarget or stopCastForFocus or stopCastForMouseover then
-    if stopCastForTarget or stopCastForFocus then
+    if (stopCastForTarget and targetInRange) or (stopCastForFocus and focusInRange) then
         SpellStopCasting()
     end
     
@@ -143,12 +168,15 @@ function jpsext.interruptSpellTable(kickSpell,kickCastLeft)
     return {"nested",(kickTarget or kickFocus),kickSpellTable}
 end
 
-function jpsext.checkForInterrupt(target,kickCastLeft)
-    local isFriend = UnitIsFriend("player", target)
-    local castTimeLeft = jps.castTimeLeft(target)
-    local targetIsCasting = castTimeLeft > 0
-    local needStopCast = not isFriend and targetIsCasting and castTimeLeft <= (jps.castTimeLeft("player") + 1)
-    return (targetIsCasting and not isFriend and castTimeLeft < kickCastLeft), needStopCast
+function jpsext.checkForInterrupt(target, kickCastLeft)
+--  IsSpellInRange("Pummel", "target")==1 !!!!
+    local canAttack = UnitCanAttack("player", target)
+    local playerCastTimeLeft = jps.castTimeLeft("player") + 1
+    local enemyCastTimeLeft = jps.castTimeLeft(target)
+    local targetIsCasting = playerCastTimeLeft > 0
+    local _, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(target)
+    local needStopCast = not unInterruptable and canAttack and targetIsCasting and enemyCastTimeLeft-kickCastLeft < playerCastTimeLeft
+    return (not unInterruptable and targetIsCasting and canAttack and enemyCastTimeLeft < kickCastLeft), needStopCast
 end
 
 function jpsext.healthstone(percent)
