@@ -1,13 +1,16 @@
-function rogue_assass(self)
-	--jpganis+simcraft
+-- jpganis
+-- Ty to SIMCRAFT for this rotation
+
+function rogue_assass()
+
 	local cp = GetComboPoints("player")
 	local rupture_duration = jps.debuffDuration("rupture")
 	local snd_duration = jps.buffDuration("slice and dice")
 	local energy = UnitMana("player")
-
+	
 	local spellTable =
 	{
-		{ "preparation", not jps.buff("vanish") and jps.cd("vanish") > 60 },
+		{ "preparation", not jps.buff("vanish") and jps.cooldown("vanish") > 60 },
 		{ "vanish", not jps.buff("stealth") and not jps.buff("shadow blades") },
 		{ "ambush" },
 		{ "shadow blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("shadow blades") },
@@ -24,5 +27,6 @@ function rogue_assass(self)
 		{ "mutilate" },
 	}
 
-	return parseSpellTable( spellTable )
+	local spell,target = parseSpellTable(spellTable)
+	return spell,target
 end

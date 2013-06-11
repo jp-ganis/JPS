@@ -1,20 +1,21 @@
-## Interface: 50100
-## Title: |cffff8000Jp DPS AddOn
+## Interface: 50300
+## Title: |cffff8000JPS Addon
 ## Notes: Protect your LUA.
 ## SavedVariables: jpsDB
 ## Dependencies:
+
+jplocal.lua
 jps.lua
-jpparse.lua
-jpdata.lua
 jputils.lua
 jphealing.lua
+jpparse.lua
+jpdata.lua
 jpsext.lua
+jptips.lua
 
-lib\jpsgui.lua
-lib\jpconfig.lua
-lib\bindings.xml
-
-Rotations\kickin.lua
+Lib\jpgui.lua
+Lib\jpconfig.lua
+Lib\bindings.xml
 
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
@@ -22,8 +23,9 @@ Rotations\dk_unholy.lua
 
 Rotations\druid_balance.lua
 Rotations\druid_feral.lua
+Rotations\druid_feral_pve.lua
+Rotations\druid_feral_pvp.lua
 Rotations\druid_guardian.lua
-Rotations\druid_cat.lua
 Rotations\druid_resto.lua
 
 Rotations\hunter_bm.lua
@@ -34,26 +36,37 @@ Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
 Rotations\mage_frost.lua
 
-Rotations\paladin_protadin.lua
-Rotations\paladin_holy.lua
-Rotations\paladin_ret.lua
+Rotations\monk_brewmaster.lua
+Rotations\monk_mistweaver.lua
+Rotations\monk_windwalker.lua
 
-Rotations\priest_holy.lua
+Rotations\paladin_holy.lua
+Rotations\paladin_protadin.lua
+Rotations\paladin_protadin_pve.lua
+Rotations\paladin_protadin_pvp.lua
+Rotations\paladin_ret.lua
+Rotations\paladin_ret_pve.lua
+Rotations\paladin_ret_pvp.lua
+
 Rotations\priest_disc.lua
+Rotations\priest_disc_pve.lua
+Rotations\priest_disc_pvp.lua
+Rotations\priest_holy.lua
 Rotations\priest_shadow.lua
 
+Rotations\rogue_assass.lua
 Rotations\rogue_combat.lua
 Rotations\rogue_combat_pve.lua
 Rotations\rogue_combat_pvp.lua
-Rotations\rogue_assass.lua
 Rotations\rogue_sub.lua
 
 Rotations\shaman_elemental.lua
 Rotations\shaman_enhancement.lua
 Rotations\shaman_resto.lua
-Rotations\shaman_enhancement_pve.lua
-Rotations\shaman_enhancement_pvp.lua
+Rotations\shaman_resto_arena.lua
+Rotations\shaman_resto_pve.lua
 Rotations\shaman_resto_pvp.lua
+
 
 Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
@@ -65,6 +78,4 @@ Rotations\warrior_arms_pvp.lua
 Rotations\warrior_fury.lua
 Rotations\warrior_prot.lua
 
-Rotations\monk_brewmaster.lua
-Rotations\monk_mistweaver.lua
-Rotations\monk_windwalker.lua
+

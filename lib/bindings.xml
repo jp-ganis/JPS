@@ -8,4 +8,7 @@
 	<Binding name="JPSTOGGLECD" description="Toggle JPS Cooldown Usage" header="JPS">
 		jps.gui_toggleCDs()
 	</Binding>
+    <Binding name="JPSTOGGLEINT" description="Toggle JPS Interrupt Usage" header="JPS">
+		jps.gui_toggleInt()
+	</Binding>
 </Bindings>

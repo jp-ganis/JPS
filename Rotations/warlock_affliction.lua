@@ -1,3 +1,44 @@
+local start_time = 0
+local end_time = 0
+local total_time = 0
+
+-- "UNIT_COMBAT"
+--arg1 the UnitID of the entity
+--arg2 Action,Damage,etc (e.g. HEAL, DODGE, BLOCK, WOUND, MISS, PARRY, RESIST, ...)
+--arg3 Critical/Glancing indicator (e.g. CRITICAL, CRUSHING, GLANCING)
+--arg4 The numeric damage
+--arg5 Damage type in numeric value (1 - physical; 2 - holy; 4 - fire; 8 - nature; 16 - frost; 32 - shadow; 64 - arcane)
+local dmgSchool = false
+local dmgPlayer = 0
+local frame = CreateFrame('Frame')
+frame:RegisterEvent("UNIT_COMBAT")
+frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+local function aggroCalculation(self, event, ...)
+    if event == "UNIT_COMBAT" then
+        local dmg_School = false
+        end_time = GetTime()
+        local total_time = math.max(end_time - start_time, 1)
+        local arg1 = select(1, ...)
+        local arg2 = select(2, ...)
+        local arg4 = select(4, ...)
+        local arg5 = select(5, ...)
+        if (arg1 == "player") and (arg2 == "WOUND") and (arg4 > 0) then
+            dmgPlayer = dmgPlayer + arg4
+            if arg5 == 2 or arg5 == 32 then dmg_School = true end
+            total_time = math.max(end_time - start_time, 1)
+            dpsPlayer = math.ceil(dmgPlayer / total_time)
+        end
+        dmgSchool = dmg_School
+        else
+        if event == "PLAYER_REGEN_DISABLED" then
+            start_time = GetTime()
+        end
+    end
+end
+frame:SetScript("OnEvent", aggroCalculation)
+
+--////////////////////////////////////////////////////////////////////////////////////////////////--
+
 -- Warlock Affliction Spec.
 -- Only Requirement: Kil'jaeden's Cunning, it will work without, but you'll lose a lot of dps
 -- On single target rotation, use focus target and mouseover to dot other targets
@@ -8,72 +49,83 @@
 -- Spell ID's
 local spellIds = {
     -- Lock Spells
-    corruption              = 172,
-    seededCorruption        = 87389, -- Corruption placed by Seed of Corruption
-    agony                   = 980,
-    unstableAffliction      = 30108,
-    curseOfTheElements      = 1490,
-    shadowFlame             = 47960,
-    soulLeech               = 108366,
-    sacrificialPact         = 108416,
-    havoc                   = 80240,
-    backdraft               = 117896,
-    soulburn                = 74434,
-    maleficGrasp            = 103103,
-    darkSoulMisery          = 113860,
-    soulSwap                = 119678,
-    haunt                   = 48181,
-    drainSoul               = 1120,
-    seedOfCorruption        = 27243,
-    lifeTap                 = 1454,
+    corruption = 172,
+    seededCorruption = 87389, -- Corruption placed by Seed of Corruption
+    agony = 980,
+    unstableAffliction = 30108,
+    curseOfTheElements = 1490,
+    shadowFlame = 47960,
+    soulLeech = 108366,
+    sacrificialPact = 108416,
+    havoc = 80240,
+    backdraft = 117896,
+    soulburn = 74434,
+    maleficGrasp = 103103,
+    darkSoulMisery = 113860,
+    soulSwap = 119678,
+    haunt = 48181,
+    drainSoul = 1120,
+    seedOfCorruption = 27243,
+    lifeTap = 1454,
     -- Damage Buffs
-    masterPoisoner          = 93068, -- +5%
-    fluidity                = 138002, -- +40%
-    nutriment               = 140741, -- +100% +10% per stack
-    tricksOfTheTrade        = 57934, -- +15%
-    fearless                = 118977, -- +60%
+    masterPoisoner = 93068, -- +5%
+    fluidity = 138002, -- +40%
+    nutriment = 140741, -- +100% +10% per stack
+    tricksOfTheTrade = 57934, -- +15%
+    fearless = 118977, -- +60%
 }
 
 -- Spell Names's
 local spellNames = {
     -- Lock Spells
-    corruption              = GetSpellInfo(spellIds.corruption),
-    seededCorruption        = GetSpellInfo(spellIds.seededCorruption),
-    agony                   = GetSpellInfo(spellIds.agony),
-    unstableAffliction      = GetSpellInfo(spellIds.unstableAffliction),
-    curseOfTheElements      = GetSpellInfo(spellIds.curseOfTheElements),
-    shadowFlame             = GetSpellInfo(spellIds.shadowFlame),
-    soulLeech               = GetSpellInfo(spellIds.soulLeech),
-    sacrificialPact         = GetSpellInfo(spellIds.sacrificialPact),
-    havoc                   = GetSpellInfo(spellIds.havoc),
-    backdraft               = GetSpellInfo(spellIds.backdraft),
-    soulburn                = GetSpellInfo(spellIds.soulburn),
-    maleficGrasp            = GetSpellInfo(spellIds.maleficGrasp),
-    darkSoulMisery          = GetSpellInfo(spellIds.darkSoulMisery),
-    soulSwap                = GetSpellInfo(spellIds.soulSwap),
-    haunt                   = GetSpellInfo(spellIds.haunt),
-    drainSoul               = GetSpellInfo(spellIds.drainSoul),
-    seedOfCorruption        = GetSpellInfo(spellIds.seedOfCorruption),
-    lifeTap                 = GetSpellInfo(spellIds.lifeTap),
+    corruption = GetSpellInfo(spellIds.corruption),
+    seededCorruption = GetSpellInfo(spellIds.seededCorruption),
+    agony = GetSpellInfo(spellIds.agony),
+    unstableAffliction = GetSpellInfo(spellIds.unstableAffliction),
+    curseOfTheElements = GetSpellInfo(spellIds.curseOfTheElements),
+    shadowFlame = GetSpellInfo(spellIds.shadowFlame),
+    soulLeech = GetSpellInfo(spellIds.soulLeech),
+    sacrificialPact = GetSpellInfo(spellIds.sacrificialPact),
+    havoc = GetSpellInfo(spellIds.havoc),
+    backdraft = GetSpellInfo(spellIds.backdraft),
+    soulburn = GetSpellInfo(spellIds.soulburn),
+    maleficGrasp = GetSpellInfo(spellIds.maleficGrasp),
+    darkSoulMisery = GetSpellInfo(spellIds.darkSoulMisery),
+    soulSwap = GetSpellInfo(spellIds.soulSwap),
+    haunt = GetSpellInfo(spellIds.haunt),
+    drainSoul = GetSpellInfo(spellIds.drainSoul),
+    seedOfCorruption = GetSpellInfo(spellIds.seedOfCorruption),
+    lifeTap = GetSpellInfo(spellIds.lifeTap),
     -- Damage Buffs
-    masterPoisoner          = GetSpellInfo(spellIds.masterPoisoner), -- +5%
-    fluidity                = GetSpellInfo(spellIds.fluidity), -- +40%
-    nutriment               = GetSpellInfo(spellIds.nutriment), -- +100% +10% per stack
-    tricksOfTheTrade        = GetSpellInfo(spellIds.tricksOfTheTrade), -- +15%
-    fearless                = GetSpellInfo(spellIds.fearless), -- +60%
+    masterPoisoner = GetSpellInfo(spellIds.masterPoisoner), -- +5%
+    fluidity = GetSpellInfo(spellIds.fluidity), -- +40%
+    nutriment = GetSpellInfo(spellIds.nutriment), -- +100% +10% per stack
+    tricksOfTheTrade = GetSpellInfo(spellIds.tricksOfTheTrade), -- +15%
+    fearless = GetSpellInfo(spellIds.fearless), -- +60%
 }
 
 local ignoreMouseOverTargets = false
 
 function warlock_affliction(self)
     initializeDotTracker()
-
+    
+    
+    ----------------------------
+    -- debuffstack tsulong ---
+    ----------------------------
+    local TsulongStack = jps.debuffStacks(122768,"player")
+    ----------------------------
+    
+    
+    
+    local pet = UnitExists("pet")
     local shards = UnitPower("player", 7)
     local soulburnDuration = jps.buffDuration(spellNames.soulburn);
     local hauntDuration = jps.debuffDuration(spellNames.haunt, "target");
     local burnPhase = jps.hp("target") <= 0.20;
     local attackFocus = false
     local attackMouseOver = false
+    local isInRaid = GetNumGroupMembers() > 0
     
     -- If focus exists and is not the same as target, consider attacking focus too
     if UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus") then
@@ -87,7 +139,7 @@ function warlock_affliction(self)
     local castCorruptionAtTarget = shouldSpellBeCast(spellIds.corruption,"target")
     local castCorruptionAtFocus = attackFocus and shouldSpellBeCast(spellIds.corruption,"focus")
     local castCorruptionAtMouseover = attackMouseOver and shouldSpellBeCast(spellIds.corruption,"mouseover")
-     
+    
     local castAgonyAtTarget = shouldSpellBeCast(spellIds.agony,"target")
     local castAgonyAtFocus = attackFocus and shouldSpellBeCast(spellIds.agony,"focus")
     local castAgonyAtMouseover = attackMouseOver and shouldSpellBeCast(spellIds.agony,"mouseover")
@@ -109,21 +161,21 @@ function warlock_affliction(self)
         castSoulburn = true
         soulSwapTarget = "focus"
     elseif castCorruptionAtMouseover and castAgonyAtMouseover and castUnstableAfflictionAtMouseover and shards >= 3 then
-        castSoulburn = true
-        soulSwapTarget = "mouseover"
+    	castSoulburn = true
+    	soulSwapTarget = "mouseover"
     end
     
     if jps.MultiTarget then
         -- Multi Target COE
         if not jps.debuff(spellNames.curseOfTheElements) then
-            castSoulburn = true
+        	castSoulburn = true
         end
         -- SeedOfCorruption+Soulburn
         if castCorruptionAtTarget then
-            castSoulburn = true
+        	castSoulburn = true
         end
         -- Prevent Double SoC's
-
+        
         local multiTargetSpellTable = {
             -- Soulburn
             {spellNames.soulburn, castSoulburn},
@@ -133,8 +185,8 @@ function warlock_affliction(self)
             { {"macro","/cast "..spellNames.darkSoulMisery}, jps.cooldown(spellNames.darkSoulMisery) == 0 and jps.UseCDs },
             { jps.DPSRacial, jps.UseCDs },
             { {"macro","/use 10"}, jps.glovesCooldown() == 0 and jps.UseCDs },
-            { jps.useTrinket(1),       jps.UseCDs},
-            { jps.useTrinket(2),       jps.UseCDs},
+            --{ jps.useTrinket(1), jps.UseCDs},
+            --{ jps.useTrinket(2), jps.UseCDs},
             -- Soulburn + SoC/Soul Swap
             {spellNames.seedOfCorruption, soulburnDuration > 0 and castCorruptionAtTarget and not jps.debuff(spellNames.seedOfCorruption, "target") and not isRecast(spellNames.seedOfCorruption,"target")},
             {spellNames.soulSwap, soulburnDuration > 0 and soulSwapTarget, soulSwapTarget},
@@ -159,17 +211,45 @@ function warlock_affliction(self)
         return parseSpellTable( multiTargetSpellTable )
     else
         local singleTargetSpellTable = {
+            ----pluie de feu si alt --
+            { 5740, IsControlKeyDown() ~= nil },
+            -- bouclier shadow sur tsulong ---
+            { 6229, (TsulongStack > 9 and jps.cooldown(6229) == 0) or (dmgSchool and jps.cooldown(6229) == 0) },
+            --- aggro reduction ----
+            { "soulshatter", targetThreatStatus ~= 0 and isInRaid },
+            -------- survival cd ----
+            
+            -- survival cd --
+            { {"macro","/use Healthstone"}, jps.itemCooldown(5512)==0 and jps.hp() < 0.4 and GetItemCount(5512) > 0 },
+            { "mortal coil", jps.hp("player") < 0.70 },
+            { 108416, jps.hp("player") < 0.60 and jps.cooldown(108416) == 0 }, -- sacrifical pact--
+            { "unending resolve", jps.hp("player") < 0.35 },
+            
+            -- doomguard/Potion--
+            { {"macro","/use Potion of the Jade Serpent"}, jps.itemCooldown(76093)==0 and jps.bloodlusting() and GetItemCount(76093) > 0 and jps.UseCDs },
+            
+            { "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.bloodlusting() and jps.UseCDs },
+            { "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.hp("target") < 0.25 and jps.UseCDs },
+            
+            --cd--
+            
+            ---- pet casting ----
+            
+            { 115781, jps.cooldown(115781) == 0 and pet },
+            
             -- COE Debuff
             { spellNames.curseOfTheElements, not jps.debuff(spellNames.curseOfTheElements) },
             { spellNames.curseOfTheElements, attackFocus and not jps.debuff(spellNames.curseOfTheElements, "focus"), "focus" },
             { spellNames.curseOfTheElements, attackMouseOver and not jps.debuff(spellNames.curseOfTheElements, "mouseover"), "mouseover" },
-            -- CD's
-            { {"macro","/cast "..spellNames.darkSoulMisery}, jps.cooldown(spellNames.darkSoulMisery) == 0 and jps.UseCDs },
+            -- CD's 
+
+            { {"macro","/cast "..spellNames.darkSoulMisery}, jps.cooldown(spellNames.darkSoulMisery) == 0 },
             { jps.DPSRacial, jps.UseCDs },
-            { {"macro","/use 10"}, jps.glovesCooldown() == 0 and jps.UseCDs },
-            { jps.useTrinket(1),       jps.UseCDs},
-            { jps.useTrinket(2),       jps.UseCDs},
+            { {"macro","/use 10"}, jps.glovesCooldown() == 0 },
+            --{ jps.useTrinket(1), jps.UseCDs},
+            --{ jps.useTrinket(2), jps.UseCDs},
             -- Soulburn/Soul Swap
+            
             {spellNames.soulSwap, soulburnDuration > 0, soulSwapTarget},
             {spellNames.soulburn, castSoulburn},
             -- Haunt
@@ -191,21 +271,23 @@ function warlock_affliction(self)
             { spellNames.drainSoul, burnPhase },
             { spellNames.maleficGrasp },
         }
-        return parseSpellTable( singleTargetSpellTable )
+        
+        local res = parseSpellTable( singleTargetSpellTable )
+        return res
     end
 end
 
 
---[[ 
-    DANGER HERE BE DRAGONS!
-]]
+--[[
+DANGER HERE BE DRAGONS!
+]]--
 
 
-local timer, throttle       = 0, 0.1
+local timer, throttle = 0, 0.1
 local myGUID
-local dotDamage, targets, trackedSpells   = {},{},{}
-local inCombat             = false
-local isInitialized         = false
+local dotDamage, targets, trackedSpells = {},{},{}
+local inCombat = false
+local isInitialized = false
 local afflictionLock = CreateFrame("Frame", "afflictionLock", UIParent)
 
 
@@ -232,15 +314,15 @@ function shouldSpellBeCast(spellId, target)
     local guid = UnitGUID(target)
     local name,rank,_ = GetSpellInfo(spellId)
     local _,_,_,_,_,duration,expires = UnitDebuff(target,name,rank,"player")
-
+    
     if duration and guid and targets[guid..spellId] then
-        --print("Pandemic: "..targets[guid..spellId][4].pandemicSafe.." Strength: "..targets[guid..spellId][4].strength)
+    --print("Pandemic: "..targets[guid..spellId][4].pandemicSafe.." Strength: "..targets[guid..spellId][4].strength)
         local timeLeft = expires - GetTime()
         if targets[guid..spellId][4].pandemicSafe then
             if targets[guid..spellId][4].strength > 100 then
                 --print("Recasting: "..name.."@ "..target.." (Pandemic Safe @ "..targets[guid..spellId][4].strength.."% with "..timeLeft.." sec left)")
                 return true
-            else 
+            else
                 if timeLeft > 4 then
                     return false
                 else
@@ -253,7 +335,7 @@ function shouldSpellBeCast(spellId, target)
             if targets[guid..spellId][4].strength > 120 then
                 --print("Recasting: "..name.."@ "..target.." (NOT Pandemic Safe @ "..targets[guid..spellId][4].strength.."% with "..timeLeft.." sec left)")
                 return true
-            else 
+            else
                 return false
             end
         end
@@ -270,19 +352,19 @@ local function handleUpdate(self,elapsed)
             updateTrackedSpell(v)
         end
         timer = 0
-    end
+        end
 end
 
 -- OnEvent Handler
-local function handleEvent(self, event, ...) 
+local function handleEvent(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
         --[[
-            local timestamp, type, hideCaster,                                                                      -- arg1  to arg3
-            sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags,     -- arg4  to arg11
-            spellId, spellName, spellSchool,                                                                        -- arg12 to arg14
-            amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ...               -- arg15 to arg23
+        local timestamp, type, hideCaster, -- arg1 to arg3
+        sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, -- arg4 to arg11
+        spellId, spellName, spellSchool, -- arg12 to arg14
+        amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ... -- arg15 to arg23
         ]]
-        --local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID,  destName, destFlags, destRaidFlags = ...
+        --local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = ...
         local _, type, _, sourceGUID, _, _, _, destGUID, _, _, _, spellId = ...
         parseCombatLog(type,spellId,sourceGUID,destGUID)
     elseif event == "COMBAT_RATING_UPDATE" or event == "SPELL_POWER_CHANGED" or event == "UNIT_STATS" or event == "PLAYER_DAMAGE_DONE_MODS" then
@@ -310,7 +392,7 @@ function setCombatStarted()
     inCombat = true
 end
 
--- Helper method  to round up
+-- Helper method to round up
 local function round(num) return math.floor(num+.5) end
 
 -- Add Spell to watched List
@@ -318,15 +400,15 @@ function trackSpell(id,target,duration,tick)
     local spell = {}
     if id > 0 then
         local n,r,_ = GetSpellInfo(id)
-        spell["pandemic" ]    = duration/3
-        spell["name"     ]    = n
-        spell["rank"     ]    = r
-        spell["id"     ]    = id
-        spell["timer"     ]    = 0
+        spell["pandemic" ] = duration/3
+        spell["name" ] = n
+        spell["rank" ] = r
+        spell["id" ] = id
+        spell["timer" ] = 0
     end
-    spell["tick"     ]    = tick
-    spell["duration" ]    = duration
-    spell["target"     ]    = target
+    spell["tick" ] = tick
+    spell["duration" ] = duration
+    spell["target" ] = target
     spell.data = {strength=0, pandemicSafe=true}
     tinsert(trackedSpells, spell)
 end
@@ -372,15 +454,15 @@ function registerEvents()
         local durationMultiplier = getDotDurationMultiplier()
         wipe(trackedSpells)
         --Track Dot's (id,target,duration,tick)
-        trackSpell(spellIds.corruption,     "target",       27*durationMultiplier,  9*durationMultiplier)
-        trackSpell(spellIds.agony,     "target",       36*durationMultiplier,  12*durationMultiplier)
-        trackSpell(spellIds.unstableAffliction,   "target",       21*durationMultiplier,  7*durationMultiplier)
-        trackSpell(spellIds.corruption,     "focus",        27*durationMultiplier,  9*durationMultiplier)
-        trackSpell(spellIds.agony,     "focus",        36*durationMultiplier,  12*durationMultiplier)
-        trackSpell(spellIds.unstableAffliction,   "focus",        21*durationMultiplier,  7*durationMultiplier)
-        trackSpell(spellIds.corruption,     "mouseover",    27*durationMultiplier,  9*durationMultiplier)
-        trackSpell(spellIds.agony,     "mouseover",    36*durationMultiplier,  12*durationMultiplier)
-        trackSpell(spellIds.unstableAffliction,   "mouseover",    21*durationMultiplier,  7*durationMultiplier)
+        trackSpell(spellIds.corruption, "target", 27*durationMultiplier, 9*durationMultiplier)
+        trackSpell(spellIds.agony, "target", 36*durationMultiplier, 12*durationMultiplier)
+        trackSpell(spellIds.unstableAffliction, "target", 21*durationMultiplier, 7*durationMultiplier)
+        trackSpell(spellIds.corruption, "focus", 27*durationMultiplier, 9*durationMultiplier)
+        trackSpell(spellIds.agony, "focus", 36*durationMultiplier, 12*durationMultiplier)
+        trackSpell(spellIds.unstableAffliction, "focus", 21*durationMultiplier, 7*durationMultiplier)
+        trackSpell(spellIds.corruption, "mouseover", 27*durationMultiplier, 9*durationMultiplier)
+        trackSpell(spellIds.agony, "mouseover", 36*durationMultiplier, 12*durationMultiplier)
+        trackSpell(spellIds.unstableAffliction, "mouseover", 21*durationMultiplier, 7*durationMultiplier)
     end
 end
 
@@ -436,8 +518,8 @@ end
 -- Parce Combat Log to update Spell Power Values on Targets
 function parseCombatLog(event,spellId,sourceGUID,destGUID)
     --print("sourceGUID " .. sourceGUID .. " event "..event)
-    if(sourceGUID ~= myGUID or (event ~= "SPELL_AURA_REFRESH" and event ~= "SPELL_AURA_APPLIED" and event ~= "SPELL_DAMAGE")) then 
-        return 
+    if(sourceGUID ~= myGUID or (event ~= "SPELL_AURA_REFRESH" and event ~= "SPELL_AURA_APPLIED" and event ~= "SPELL_DAMAGE")) then
+        return
     end
     if(event == "SPELL_AURA_APPLIED" or event == "SPELL_AURA_REFRESH") then
         if(spellId == spellIds.unstableAffliction) then
@@ -457,41 +539,41 @@ end
 function updateDotDamage()
     -- Get Damage multipliers
     local dmgBuff = 1
-    local fluidity              = UnitAura("player", spellNames.fluidity, nil, "HARMFUL")
-    local _,_,_,nutriment       = UnitAura("player", spellNames.nutriment)
-    local tricks                = UnitAura("player", spellNames.tricksOfTheTrade)
-    local fearless              = UnitAura("player", spellNames.fearless)
-    if fluidity         then dmgBuff = 1.4 end
-    if nutriment        then dmgBuff = 2 + (nutriment-1)*0.1 end
-    if fearless         then dmgBuff = 1.6 end
-    if tricks           then dmgBuff = dmgBuff * 1.15 end
-
-
+    local fluidity = UnitAura("player", spellNames.fluidity, nil, "HARMFUL")
+    local _,_,_,nutriment = UnitAura("player", spellNames.nutriment)
+    local tricks = UnitAura("player", spellNames.tricksOfTheTrade)
+    local fearless = UnitAura("player", spellNames.fearless)
+    if fluidity then dmgBuff = 1.4 end
+    if nutriment then dmgBuff = 2 + (nutriment-1)*0.1 end
+    if fearless then dmgBuff = 1.6 end
+    if tricks then dmgBuff = dmgBuff * 1.15 end
+    
+    
     -- Calc Damage for all dot's
     local mastery, haste, crit, spd = GetMastery(), GetRangedHaste(), GetSpellCritChance(6), GetSpellBonusDamage(6)
     if crit > 100 then crit = 100 end
-
-    damageBonus         = (1+crit/100)*(1+(mastery*3.1)/100)
-    tickEvery           = 2/(1+(haste/100))
-
+    
+    damageBonus = (1+crit/100)*(1+(mastery*3.1)/100)
+    tickEvery = 2/(1+(haste/100))
+    
     -- Agony
-    ticks               = round(24/tickEvery)
-    duration            = ticks * tickEvery
-    damage              = ticks*(280+spd*0.26)*damageBonus*dmgBuff
-    dps                 = round(damage/duration)
-    dotDamage[spellIds.agony]      = {round(dps/100)/10, tickEvery}
-
+    ticks = round(24/tickEvery)
+    duration = ticks * tickEvery
+    damage = ticks*(280+spd*0.26)*damageBonus*dmgBuff
+    dps = round(damage/duration)
+    dotDamage[spellIds.agony] = {round(dps/100)/10, tickEvery}
+    
     -- Corruption
-    ticks               = round(18/tickEvery)
-    duration            = ticks * tickEvery
-    damage              = (1926+ticks*spd*0.2)*damageBonus*dmgBuff
-    dps                 = round(damage/duration)
-    dotDamage[spellIds.corruption]      = {round(dps/100)/10, tickEvery}
-
+    ticks = round(18/tickEvery)
+    duration = ticks * tickEvery
+    damage = (1926+ticks*spd*0.2)*damageBonus*dmgBuff
+    dps = round(damage/duration)
+    dotDamage[spellIds.corruption] = {round(dps/100)/10, tickEvery}
+    
     -- Unstable Affliction
-    ticks               = round(14/tickEvery)
-    duration            = ticks * tickEvery
-    damage              = (1792+ticks*spd*0.24)*damageBonus*dmgBuff
-    dps                 = round(damage/duration)
-    dotDamage[spellIds.unstableAffliction]    = {round(dps/100)/10, tickEvery}
+    ticks = round(14/tickEvery)
+    duration = ticks * tickEvery
+    damage = (1792+ticks*spd*0.24)*damageBonus*dmgBuff
+    dps = round(damage/duration)
+    dotDamage[spellIds.unstableAffliction] = {round(dps/100)/10, tickEvery}
 end
