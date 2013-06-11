@@ -72,8 +72,8 @@ function dkUnholy()
 		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
 		-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
-    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
 
 		-- AOE
 		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget },

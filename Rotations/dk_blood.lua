@@ -49,8 +49,8 @@ function dk_blood()
 		{ "Blood Presence", not jps.buff("Blood Presence") },
 		
     	-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
-    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
 
 		-- Shift is pressed
 		{ "Death and Decay",		IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and not IsLeftAltKeyDown() },
