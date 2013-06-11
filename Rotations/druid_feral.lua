@@ -1,7 +1,10 @@
 --Ty to MEW Feral Sim
 -- jpganis
+local weaponId = GetInventoryItemID("player",16)
 function druid_feral(self)
-
+    if weaponId == nil then
+         weaponId = GetInventoryItemID("player",16)
+    end
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
 	local executePhase = jps.hp("target") <= .25
@@ -37,6 +40,16 @@ function druid_feral(self)
 	  { "Cat Form", 
 	  	not jps.buff("Cat Form") },
 
+    { {"macro","/script EquipItemByName(71466)"}, GetItemCount(71466) > 0 and not jps.buff("Druid of the Flames") },
+    { {"macro","/script EquipItemByName(69897)"}, GetItemCount(69897) > 0 and not jps.buff("Druid of the Flames") },
+    { {"macro","/script EquipItemByName("..weaponId..")"}, GetInventoryItemID("player",16) ~= weaponId },
+    
+
+--[[
+    { {"macro","/equipset STYLE"}, GetInventoryItemID("player",16) == weaponId and not jps.buff("Druid of the Flames") },
+    { {"macro","/equipset FERAL"}, GetInventoryItemID("player",16) ~= weaponId },
+        ]]
+        
 	  -- Bail if not in melee range.
     { nil, 
     	IsSpellInRange("Shred", "target") == 0 },

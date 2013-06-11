@@ -72,6 +72,7 @@ jps.UserInitiatedSpellsToIgnore = {
   	"Shadow Bolt",
   	-- Warlock Skills
   	"Burning Rush",
+  	"Fel Flame",
 }
 
 function jps.shouldSpellBeIgnored(spell)

@@ -4,18 +4,21 @@ end
 
 function warlock_destro(self)
     --latitude
-    local burningEmbers = UnitPower("player",14);   
-    local immolateDuration = jps.debuffDuration("immolate");
-    local focusImmolateDuration = jps.debuffDuration("immolate", "focus");
-    local rainOfFireDuration = jps.buffDuration("rain of fire");
-    local backdraftStacks = jps.buffStacks("backdraft");
-    local havocStacks = jps.buffStacks("Havoc");
-    local burnPhase = jps.hp("target") <= 0.20;
-    local attackFocus = false;
-    local spell = nil;
-    local immolateTarget = false;
-    local immolateFocus = false;
+    local burningEmbers = UnitPower("player",14)
+    local emberShards = UnitPower("player", 14, true)
+    local immolateDuration = jps.debuffDuration("immolate")
+    local focusImmolateDuration = jps.debuffDuration("immolate", "focus")
+    local rainOfFireDuration = jps.buffDuration("rain of fire")
+    local backdraftStacks = jps.buffStacks("backdraft")
+    local darkSoulActive = jps.buff("Dark Soul: Instability")
+    local havocStacks = jps.buffStacks("Havoc")
+    local burnPhase = jps.hp("target") <= 0.20
+    local attackFocus = false
+    local spell = nil
+    local immolateTarget = false
+    local immolateFocus = false
     local fireAndBrimstoneBuffed = jps.buff("Fire and Brimstone", "player")
+    local timeToBurst = jpsext.timeToLive("target", 0.2) or 0
     --local potionCount = GetItemCount("Potion of the Jade Serpent",0,1) 
 
     -- If focus exists and is not the same as target, consider attacking focus too
@@ -58,6 +61,8 @@ function warlock_destro(self)
     ]]
 
     -- Interrupt based on Pet
+    
+    --[[
     local interruptCondition = false
     local interruptTable = nil
     if UnitCreatureFamily("pet") == "Observer" then
@@ -65,22 +70,28 @@ function warlock_destro(self)
     elseif UnitCreatureFamily("pet") == "Felhunter" then
         _, interruptCondition, interruptTable = jpsext.interruptSpellTable("Spell Lock",20)
     end
+    ]]
     
     local avoidInterrupts = IsAltKeyDown() ~= nil
     if avoidInterrupts and jps.castTimeLeft("player") > 0 then
         SpellStopCasting()
     end
     
+    local maxIntCast = 2.8
     local singleTargetSpellTable = {
         -- Interrupts
-        {"nested", interruptCondition, interruptTable},
+        {"Optical blast", jps.Interrupts and jps.shouldKick("target") and jps.castTimeLeft("target") < maxIntCast, "target" },
+        {"Optical blast", jps.Interrupts and jps.shouldKick("focus") and jps.castTimeLeft("focus") < maxIntCast, "focus"},
+        {"Optical blast", jps.Interrupts and jps.shouldKick("mouseover") and jps.castTimeLeft("mouseover") < maxIntCast, "mouseover"},
         -- Resurrect Pet
         --{ summonSpell, summonPet},
+        { "fire and brimstone", fireAndBrimstoneBuffed },
         -- Soulstone Mouseover
         { "soulstone", IsControlKeyDown() ~= nil  and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("soulstone", "mouseover"), "mouseover" },
         -- Banish Mouseover
         { "banish", banishMouseover, "mouseover" },
         -- Rain of Fire
+        { "rain of fire", jps.Moving and rainOfFireDuration < 1 and UnitExists("target") and UnitGUID("target") == UnitGUID("mouseover") },
         { "rain of fire", IsShiftKeyDown() ~= nil and rainOfFireDuration < 1 and GetCurrentKeyBoardFocus() == nil and IsSpellInRange("Soulstone", "rain of fire") },
         { "rain of fire", IsShiftKeyDown() ~= nil and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and IsSpellInRange("Soulstone", "rain of fire")},
         -- COE Debuff
@@ -98,7 +109,9 @@ function warlock_destro(self)
         { "immolate", not avoidInterrupts and immolateTarget},
         { "immolate", not avoidInterrupts and immolateFocus, "focus"},
         { "conflagrate", "onCD" },
-        { "chaos bolt", not avoidInterrupts and burningEmbers >= 2 and backdraftStacks < 3 and jps.hp("target") >= 0.22 or not avoidInterrupts and burningEmbers == 4},
+        { "chaos bolt", not avoidInterrupts and darkSoulActive },
+        { "chaos bolt", not avoidInterrupts and timeToBurst > 5.0 and burningEmbers >= 3 and backdraftStacks < 3},
+        { "chaos bolt", not avoidInterrupts and emberShards >= 35},
         { "incinerate", not avoidInterrupts },
         { "fel flame"},
     }   
@@ -128,8 +141,8 @@ function warlock_destro(self)
         { "shadowburn", burnPhase and burningEmbers > 0  },
         { "fire and brimstone", burningEmbers > 0 and not fireAndBrimstoneBuffed },
         { "immolate", fireAndBrimstoneBuffed and immolateTarget},
-        { "conflagrate", fireAndBrimstoneBuffed },
         { "incinerate" },
+        { "conflagrate"},
     }   
 
     if jps.MultiTarget then
@@ -137,7 +150,7 @@ function warlock_destro(self)
     else
         spell = parseSpellTable( singleTargetSpellTable );
     end
-    if spell == "rain of fire" then 
+    if spell == "rain of fire" and jps.castTimeLeft("player") == 0 then 
         jps.Cast( spell ) 
         jps.groundClick() 
         spell = nil 

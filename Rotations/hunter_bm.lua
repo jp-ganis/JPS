@@ -122,7 +122,7 @@ local spellTable =
 		{ {"macro","/use Alchemist's Flask"}, 	canUseItemInBags(75525)	and not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") }, -- Alchemist's Flask -- useAlchemistsFlask
 		-- Revive pet
 		{ "Heart of the Phoenix",			UnitIsDead("pet") ~= nil and HasPetUI() ~= nil }, -- Instant revive pet (only some pets, Ferocity)
-		{ "Revive Pet",						((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving }, 
+		--{ "Revive Pet",						((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving }, 
 		-- Heal pet
 		{ "Mend Pet", 						jps.hp("pet") < 0.90 and not jps.buff("Mend Pet","pet") },
 		-- Set pet to passive (IMPORTANT!)
