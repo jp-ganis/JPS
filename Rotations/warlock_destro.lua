@@ -1,94 +1,147 @@
-function noSpamCotE () -- stop spam curse of the elements at invalid targets @ mop
-	 local table_noSpamCotE =
-	{		
-		"Twilight Sapper", 
-		"Burning Tendons",
-		"Corrupted Blood",
-		"Energy Charge",
-		"Celestial Protector",
-	}
-	 for i,j in pairs(table_noSpamCotE) do
-	 	if UnitName("target") == j then return true end
-	 end
-	 return false
+function isCotEBlacklisted(unit) -- stop spam curse of the elements at invalid targets @ mop
+    local table_noSpamCotE = {
+        "Twilight Sapper", 
+        "Burning Tendons",
+        "Corrupted Blood",
+        "Energy Charge",
+        "Celestial Protector",
+    }
+    for i,j in pairs(table_noSpamCotE) do
+        if UnitName(unit) == j then return true end
+    end
+    return false
 end
 
+function isCastingInterruptSpell(unit)
+    local interruptSpells = {
+        "Interrupting Jolt",
+    }
+    local spell, _, _, _, _, endTime = UnitCastingInfo(unit)
+    for i,j in pairs(interruptSpells) do
+        if spell == j then return true end
+    end
+    return false
+end
+
+function hasKilJaedensCunning()
+    local selected, talentIndex = GetTalentRowSelectionInfo(6)
+    return talentIndex == 17
+end
+
+
 function warlock_destro()
+    local burningEmbers = UnitPower("player",14)
+    local emberShards = UnitPower("player", 14, true)
+    local immolateDuration = jps.debuffDuration("immolate")
+    local focusImmolateDuration = jps.debuffDuration("immolate", "focus")
+    local rainOfFireDuration = jps.buffDuration("rain of fire")
+    local backdraftStacks = jps.buffStacks("backdraft")
+    local darkSoulActive = jps.buff("Dark Soul: Instability")
+    local havocStacks = jps.buffStacks("Havoc")
+    local burnPhase = jps.hp("target") <= 0.20
+    local attackFocus = false
+    local spell = nil
+    local immolateTarget = false
+    local immolateFocus = false
+    local fireAndBrimstoneBuffed = jps.buff("Fire and Brimstone", "player")
+    local timeToBurst = jpsext.timeToLive("target", 0.2) or 0
+    --local potionCount = GetItemCount("Potion of the Jade Serpent",0,1) 
 
-	 local burningEmbersStacks = UnitPower("player",14)
-	 local currentSpeed, _, _, _, _ = GetUnitSpeed("player")
-	 local imoDuration = jps.debuffDuration("immolate")
-	 local curDuration = jps.debuffDuration("curse of the elements")
-	 local focusHavoc = UnitExists("focus")
-	 local isCotEBlacklist = noSpamCotE ()
+    -- If focus exists and is not the same as target, consider attacking focus too
+    if UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus") then
+        attackFocus = true
+    end
+    
+    -- Immolate target, if duration is low, avoid double cast (necessary?)
+    if immolateDuration < 2 then
+        if jps.LastCast == "immolate" and jps.LastTarget ~= "target" or jps.LastCast ~= "immolate" then
+            immolateTarget = true
+        end
+    end
+    
+    -- Immolate focus, if duration is low, avoid double cast (necessary?)
+    if focusImmolateDuration < 2 then
+        if jps.LastCast == "immolate" and jps.LastTarget ~= "focus" or jps.LastCast ~= "immolate" then
+            immolateFocus = true
+        end
+    end
 
-	local	spell1,_,_,_,_,end1,_,_,_ = UnitCastingInfo("player")
-	if endtimeImo == nil then endtimeImo = 0 end
-	if spell1 == "Immolate" then endtimeImo = (end1/1000) end
+    local avoidInterrupts = isCastingInterruptSpell("target") or isCastingInterruptSpell("focus") or isCastingInterruptSpell("mouseover") 
+    if avoidInterrupts and jps.castTimeLeft("player") > 0 then
+        SpellStopCasting()
+    end
+    local maxIntCast = 2.8
+    
+    local spellTable = {}
+    
 
-------------------------
--- SPELL TABLE ---------
-------------------------
+    spellTable[1] = {
+    ["ToolTip"] = "Warlock Lx",
+        -- Interrupts
+        {"Optical blast", jps.Interrupts and jps.shouldKick("target") and jps.castTimeLeft("target") < maxIntCast, "target" },
+        {"Optical blast", jps.Interrupts and jps.shouldKick("focus") and jps.castTimeLeft("focus") < maxIntCast, "focus"},
+        {"Optical blast", jps.Interrupts and jps.shouldKick("mouseover") and jps.castTimeLeft("mouseover") < maxIntCast, "mouseover"},
 
-local spellTable = {}	 
-spellTable[1] =
-{	
-	["ToolTip"] = "Warlock Normal",
-	
-	{ "fel flame", currentSpeed > 0 },
-		
-	{ "curse of the elements", curDuration == 0 and not isCotEBlacklist	},
-	{ "rain of fire",		IsAltKeyDown() ~= nil },
-	--mise de la cible en focus --
-	
-	{ {"macro","/focus [target=mouseover,exists,nodead]"}, IsShiftKeyDown() ~= nil },
-	-- doomguard--
-	{ "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.bloodlusting() and jps.UseCDs},
-	{ "summon doomguard", jps.cooldown("summon doomguard") == 0 and jps.hp("target") < 0.25 and jps.UseCDs },
-	
-   { {"macro","/use Potion of the Jade Serpent"},  jps.itemCooldown(76093)==0 and jps.bloodlusting() and GetItemCount(76093) > 0 and jps.UseCDs },
+        { {"macro","/focus [target=mouseover,exists,nodead]"}, IsControlKeyDown() ~= nil },
+        
+        -- Def CD's
+        { {"macro","/use Healthstone"},  jps.hp("player") < 0.65 and canUseItemInBags(5512) },
+        { "ember tap", jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
 
-	{ jps.useTrinket(0), jps.UseCds },
-	{ jps.useTrinket(1), jps.UseCds },
-	
-	{ {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and	burningEmbersStacks > 3	},
-	{ {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and	jps.Opening	},
-	{ jps.DPSRacial },
-	
-	-- Requires engineerins
-	{ jps.useSynapseSprings(), jps.UseCDs },
-	
-	-- Requires herbalism
-	{ "Lifeblood", jps.UseCDs },
-	
-	--Survie cd --
-	{ "sacrificial pact", jps.hp() < 0.50 },
-	{ "mortal coil", jps.hp() < 0.6 },
-	{ "ember tap", jps.hp() <= 0.25 and burningEmbersStacks > 0 },
-	
-	--aoe--
-	{ "fire and brimstone", burningEmbersStacks > 0 and not jps.debuff("fire and brimstone") and jps.MultiTarget },
-	
-	-- 2 cible/avec 1 cible en focus--
-	{ "havoc",		focusHavoc == 1 and jps.cooldown("havoc") == 0, "focus"	},
-	
-	--mono--
-	{ "shadowburn", jps.hp("target") <= 0.20 and burningEmbersStacks > 0 },
-	{ "conflagrate", not jps.buff("backdraft") },
-	{ "immolate", imoDuration < 2 and endtimeImo+2 < GetTime() },
-	
-	{ "chaos bolt", lcChaosBolting and jps.hp("target") > 0.23 and not jps.debuff("chaos bolt") and jps.buffStacks("backdraft") < 3	},
-	{ "incinerate", jps.buff("backdraft") },
-	{ "incinerate" },
-}
- 
+        -- Rain of Fire
+        { "rain of fire", jps.Moving and rainOfFireDuration < 1 and UnitExists("target") and UnitGUID("target") == UnitGUID("mouseover") },
+        { "rain of fire", IsShiftKeyDown() ~= nil and rainOfFireDuration < 1 and GetCurrentKeyBoardFocus() == nil and IsSpellInRange("Soulstone", "rain of fire") },
+        { "rain of fire", IsShiftKeyDown() ~= nil and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and IsSpellInRange("Soulstone", "rain of fire")},
+        -- COE Debuff
+        { "curse of the elements", not jps.debuff("curse of the elements") and not isCotEBlacklisted("target") },
+        { "curse of the elements", attackFocus and not jps.debuff("curse of the elements", "focus") and not isCotEBlacklisted("focus"), "focus" },
+        
+        -- On the move
+        { "fel flame", currentSpeed > 0 and not hasKilJaedensCunning() },
+        
+        -- CD's
+        { {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and jps.UseCDs },
+        { jps.DPSRacial, jps.UseCDs },
+        { "Lifeblood", jps.UseCDs },
+        { {"macro","/use 10"}, jps.glovesCooldown() == 0 and jps.UseCDs },
+        { jps.useTrinket(0),       jps.UseCDs },
+        { jps.useTrinket(1),       jps.UseCDs },
+        { {"macro","/use Potion of the Jade Serpent"},  jps.itemCooldown(76093)==0 and jps.bloodlusting() and GetItemCount(76093) > 0 and jps.UseCDs },
+        
+        {"nested"}, not jps.MultiTarget, {
+            { "fire and brimstone", fireAndBrimstoneBuffed },
+            { "havoc", attackFocus, "focus" },
+            { "shadowburn", burnPhase and burningEmbers > 0  },
+            { "chaos bolt", not avoidInterrupts and burningEmbers >= 1 and  havocStacks>=3},
+            { "immolate", not avoidInterrupts and immolateTarget},
+            { "immolate", not avoidInterrupts and immolateFocus, "focus"},
+            { "conflagrate", "onCD" },
+            { "chaos bolt", not avoidInterrupts and darkSoulActive and emberShards >= 19 },
+            { "chaos bolt", not avoidInterrupts and timeToBurst > 5.0 and burningEmbers >= 3 and backdraftStacks < 3},
+            { "chaos bolt", not avoidInterrupts and emberShards >= 35},
+            { "incinerate", not avoidInterrupts },
+            { "fel flame"},
+        },        
+        {"nested"}, jps.MultiTarget, {
+            { "shadowburn", burnPhase and burningEmbers > 0  },
+            { "fire and brimstone", burningEmbers == 0 and fireAndBrimstoneBuffed },
+            { "fire and brimstone", burningEmbers > 0 and not fireAndBrimstoneBuffed },
+            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and immolateTarget},
+            { "incinerate", not avoidInterrupts },
+            { "conflagrate"},
+            { "fel flame"},
+        },
+    } 
 
-	if burningEmbersStacks == 1 or jps.hp("target") <= 0.20 then lcChaosBolting = false end
-	if burningEmbersStacks > 3 then lcChaosBolting = true end
-	if jps.buff("backdraft") then jps.Opening = false end
 
 	local spellTableActive = jps.RotationActive(spellTable)
 	local spell,target = parseSpellTable(spellTableActive)
 	
+    if spell == "rain of fire" and jps.castTimeLeft("player") == 0 then 
+        jps.Cast( spell ) 
+        jps.groundClick() 
+        spell = nil 
+    end
+    
 	return spell,target
 end
