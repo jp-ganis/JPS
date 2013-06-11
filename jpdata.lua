@@ -642,15 +642,29 @@ end
 ----------------------
 
 function jps.findMeAggroTank()
-	for unit, _ in pairs(jps.RaidStatus) do
-		if UnitGroupRolesAssigned(unit) == "TANK" then return unit end
+	local allTanks = jps.findTanksInRaid() 
+	local highestThreat = 0
+	local aggroTank = "player"
+	for possibleTankUnit, _ in pairs(allTanks) do
+		local unitThreat = UnitThreatSituation(possibleTankUnit)
+		if unitThreat > highestThreat then 
+			highestThreat = unitThreat
+			aggroTank = possibleTankUnit
+		end
 	end
-	return jpsName
+	
+	if jps.Debug then write("found Aggro Tank: "..aggroTank)
+	return aggroTank
 end
 
 function jps.findMeATank()
-	if jps.UnitExists("focus") then return "focus" end
-	return jps.findMeAggroTank()
+	local allTanks = jps.findTanksInRaid() 
+	if jps_tableLen(allTanks) == 0 then
+		if jps.UnitExists("focus") then return "focus" end
+	else
+		return allTanks[1] 
+	end
+	return "player"
 end
 
 function jps.targetTargetTank()
@@ -667,22 +681,22 @@ end
 
 function jps.findTanksInRaid() 
 	local myTanks = {}
-	for unit, _ in pairs(jps.RaidStatus) do
+	for unitName, _ in pairs(jps.RaidStatus) do
 		local foundTank = false
-		if UnitGroupRolesAssigned(unit) == "TANK" then
-			table.insert(myTanks, unit);
+		if UnitGroupRolesAssigned(unitName) == "TANK" then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
-		if foundTank == false and jps.buff("bear form",unit) then
-			table.insert(myTanks, unit);
+		if foundTank == false and jps.buff("bear form",unitName) then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
-		if foundTank == false and jps.buff("blood presence",unit) then
-			table.insert(myTanks, unit);
+		if foundTank == false and jps.buff("blood presence",unitName) then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
-		if foundTank == false and jps.buff("righteous fury",unit) then
-			table.insert(myTanks, unit);
+		if foundTank == false and jps.buff("righteous fury",unitName) then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
 	end
