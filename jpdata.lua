@@ -681,22 +681,22 @@ end
 
 function jps.findTanksInRaid() 
 	local myTanks = {}
-	for unit, _ in pairs(jps.RaidStatus) do
+	for unitName, _ in pairs(jps.RaidStatus) do
 		local foundTank = false
-		if UnitGroupRolesAssigned(unit) == "TANK" then
-			table.insert(myTanks, unit);
+		if UnitGroupRolesAssigned(unitName) == "TANK" then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
-		if foundTank == false and jps.buff("bear form",unit) then
-			table.insert(myTanks, unit);
+		if foundTank == false and jps.buff("bear form",unitName) then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
-		if foundTank == false and jps.buff("blood presence",unit) then
-			table.insert(myTanks, unit);
+		if foundTank == false and jps.buff("blood presence",unitName) then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
-		if foundTank == false and jps.buff("righteous fury",unit) then
-			table.insert(myTanks, unit);
+		if foundTank == false and jps.buff("righteous fury",unitName) then
+			table.insert(myTanks, unitName);
 			foundTank = true
 		end
 	end
