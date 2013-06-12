@@ -126,10 +126,12 @@ function jps_GetHarmSpell()
 				local minRange = select(8,GetSpellInfo(spellID))
 				local harmful =  IsHarmfulSpell(index, booktype)
 				
-				if (maxRange > 30) and (harmful == 1) and (minRange == 0) then
+				if (maxRange > 39) and (harmful == 1) and (minRange == 0) then
 					--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
 					HarmSpell = name
-				elseif (maxRange > 20) and (harmful == 1) and (minRange == 0) then
+				elseif (maxRange > 29) and (harmful == 1) and (minRange == 0) then
+					HarmSpell = name
+				elseif (maxRange > 19) and (harmful == 1) and (minRange == 0) then
 					HarmSpell = name
 				break end
 			end

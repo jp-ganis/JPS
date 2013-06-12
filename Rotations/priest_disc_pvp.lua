@@ -492,22 +492,11 @@ end
 -- TRINKETS -- OPENING -- CANCELAURA -- SPELLSTOPCASTING
 ----------------------------------------------------------
 
--- Avoid Overhealing with -- "Soins supérieurs" 2060
--- elseif jps.IsCastingSpell(2060,"player") and not jps.buffId(109964) and (health_pct_TANK > 0.95) then 
-	-- SpellStopCasting()
--- -- Avoid Overhealing with -- "Soins rapides" 2061
--- elseif jps.IsCastingSpell(2061,"player") and not jps.buffId(109964) and (health_pct_TANK > 0.95) then 
-	-- SpellStopCasting()
--- end
--- CancelUnitBuff("unit", spellname) -- spell & buff player Spirit Shell 109964
---if (health_pct_TANK < 0.60) and jps.buffId(109964) then
---	CancelUnitBuff(player,spiritshell)
---	print("CANCELBUFF SPIRIT")
---end
---	SpellStopCasting() with -- "Soins" 2050 if Health < 0.75
+--	SpellStopCasting() with "Soins" 2050 if Health < 0.75
 if jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) and (totalAbsorbTank == 0) then 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING HEAL",0, 0.5, 0.8)
+-- Avoid Overhealing 
 elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.Target == jps_TANK) then 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING OVERHEAL",0, 0.5, 0.8)

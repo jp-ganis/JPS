@@ -174,6 +174,7 @@ end
 		if jps.Spec then jps_createConfigFrame() end
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
+		--print("PLAYER_REGEN_DISABLED")
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
 		jps.SortRaidStatus()

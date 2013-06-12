@@ -24,14 +24,6 @@ function jps_removeKey(table, key)
     return element
 end
 
-function jps_tableCount(table,tableindex,array)
-	local count = 0
-	for unit,index in pairs(table) do
-		if array == index[tableindex] then count=count+1 end
-	end
-return count
-end
-
 --get table length
 function jps_tableLen(table)
 	if table == nil then return 0 end
@@ -122,33 +114,6 @@ local lowestHP = 1
 		if unit_Hpct < lowestHP then
 			lowestHP = unit_Hpct
 			mytarget = unit
-		end
-	end
-return mytarget
-end
-
--- ENEMY MOST TARGETED BY FRIENDS
--- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
-function jps.RaidEnemyTarget()
-	local table_RaidTarget = {}
-	for unit,index in pairs(jps.RaidTarget) do 
-		local enemyName = index["enemy"] -- "Jean" "Mark" "Fred"
-		local count = jps_tableCount(jps.RaidTarget , "enemy" , enemyName)
-		table_RaidTarget[enemyName] = { ["raidtarget"] = unit , ["count"] = count}
-	end
-	-- table_RaidTarget with the form
-	-- ["Mark"] = {["raidtarget"] = "Raid1target" , ["count"] = 4 },
-	-- ["Mark"] = {["raidtarget"] = "Raid2target" , ["count"] = 4 },
-	-- ["Jean"] = {["raidtarget"] = "Raid10target" , ["count"] = 2 },
-	--	for unit,index in pairs(table_RaidTarget) do
-	--		print("|cff0070ee-",unit,"|cff9d9d3F-",index.friend,"-",index.count)
-	--	end
-	local mytarget = "target"
-	local target_count = 0
-	for tar_unit,tar_index in pairs(table_RaidTarget) do
-		if tar_index.count > target_count then
-			target_count = tar_index.count
-			mytarget = tar_index.raidtarget
 		end
 	end
 return mytarget
