@@ -30,6 +30,7 @@ end
 
 
 function warlock_destro()
+    local currentSpeed, _, _, _, _ = GetUnitSpeed("player")
     local burningEmbers = UnitPower("player",14)
     local emberShards = UnitPower("player", 14, true)
     local immolateDuration = jps.debuffDuration("immolate")
@@ -108,7 +109,7 @@ function warlock_destro()
         { jps.useTrinket(1),       jps.UseCDs },
         { {"macro","/use Potion of the Jade Serpent"},  jps.itemCooldown(76093)==0 and jps.bloodlusting() and GetItemCount(76093) > 0 and jps.UseCDs },
         
-        {"nested"}, not jps.MultiTarget, {
+        {"nested", not jps.MultiTarget, {
             { "fire and brimstone", fireAndBrimstoneBuffed },
             { "havoc", attackFocus, "focus" },
             { "shadowburn", burnPhase and burningEmbers > 0  },
@@ -121,8 +122,8 @@ function warlock_destro()
             { "chaos bolt", not avoidInterrupts and emberShards >= 35},
             { "incinerate", not avoidInterrupts },
             { "fel flame"},
-        },        
-        {"nested"}, jps.MultiTarget, {
+        }},        
+        {"nested", jps.MultiTarget, {
             { "shadowburn", burnPhase and burningEmbers > 0  },
             { "fire and brimstone", burningEmbers == 0 and fireAndBrimstoneBuffed },
             { "fire and brimstone", burningEmbers > 0 and not fireAndBrimstoneBuffed },
@@ -130,14 +131,14 @@ function warlock_destro()
             { "incinerate", not avoidInterrupts },
             { "conflagrate"},
             { "fel flame"},
-        },
-    } 
+        }},
+    }
 
 
 	local spellTableActive = jps.RotationActive(spellTable)
 	local spell,target = parseSpellTable(spellTableActive)
 	
-    if spell == "rain of fire" and jps.castTimeLeft("player") == 0 then 
+    if spell == "rain of fire" and jps.CastTimeLeft("player") == 0 then 
         jps.Cast( spell ) 
         jps.groundClick() 
         spell = nil 
