@@ -32,7 +32,7 @@ jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = true
 
-jps.Fishing = true
+jps.Fishing = false
 jps.MultiTarget = false
 jps.Interrupts = false
 jps.UseCDs = false
@@ -123,7 +123,8 @@ combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
-combatFrame:RegisterEvent("BAG_UPDATE")
+combatFrame:RegisterEvent("LOOT_OPENED")
+combatFrame:RegisterEvent("LOOT_CLOSED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 combatFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
@@ -212,17 +213,28 @@ end
 		jps.PLuaFlag = true
       
 -- FISHES
-	elseif event == "BAG_UPDATE" and jps.Fishing then
-		for bag = 0,4,1 do
-			for slot = 1, GetContainerNumSlots(bag), 1 do
-				local name = GetContainerItemLink(bag,slot)
-				if name and (string.find(name,"ff9d9d9d") or string.find(name,L["Murglesnout"])) then -- or string.find(name,"Golden Carp"))
-					PickupContainerItem(bag,slot)
-					DeleteCursorItem()
-				end 
-		 	end 
+	elseif event == "LOOT_OPENED"  then
+		if (IsFishingLoot()) then
+			jps.Fishing = true
 		end
-      
+	elseif  event == "LOOT_CLOSED" then
+		if jps.Fishing
+			for bag = 0,4,1 do
+				for slot = 1, GetContainerNumSlots(bag), 1 do
+					local name = GetContainerItemLink(bag,slot)
+					local itemId = GetContainerItemID(bag, slot) 
+					if name and (string.find(name,"ff9d9d9d") or string.find(name,L["Murglesnout"])) then -- or string.find(name,"Golden Carp"))
+						local copper = select(11,GetItemInfo(itemId)) or 0;
+						if  copper < 100   then -- delete grey stuff worth less then 1 silver
+							PickupContainerItem(bag,slot)
+							DeleteCursorItem()
+						end
+					end 
+			 	end 
+			end
+			jps.Fishing = false
+		end
+	end
 -- UI ERROR
 	elseif (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
 		SaveView(2)
