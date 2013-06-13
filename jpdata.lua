@@ -413,6 +413,7 @@ end
 --------------------------
 
 function jps.shouldKick(unit)
+	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
     local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
@@ -427,6 +428,7 @@ function jps.shouldKick(unit)
 end
 
 function jps.shouldKickLag(unit)
+	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
     local target_spell, _, _, _, _, cast_endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, chanel_endTime, _, notInterruptible = UnitChannelInfo(unit)
