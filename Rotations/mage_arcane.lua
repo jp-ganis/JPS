@@ -16,7 +16,7 @@ function mage_arcane()
 		
 		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
 		
-		{ "mage armor",				 not jps.buff("frost mage") }, 
+		{ "mage armor",				 not jps.buff("mage armor") }, 
 		{ "ice barrier",				 not jps.buff("ice barrier") }, 
 		
 		{ "Ice Block", jps.hp() < 0.10  and not jps.buff("Ice Block","player") },
