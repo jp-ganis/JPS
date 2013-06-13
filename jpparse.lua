@@ -173,7 +173,7 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
-	if jps.Debug then jps_canCast_debug(spell,unit) end
+	---if jps.Debug then jps_canCast_debug(spell,unit) end
 
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
@@ -202,7 +202,17 @@ function jps.spell_need_select(spell)
 	-- "Light's Hammer" 114158 -- Paladin
 	-- "Healing Rain" 73921 -- Shaman
 	-- "wild mushroom" 88747 -- Druid
-	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747}  
+	-- "Explosive Trap" 13813 - Hunter
+	-- "Ice Trap" 13809 - Hunter
+	-- "Snake Trap" 34600 - Hunter
+	-- "Freezing Trap" 1499 - Hunter
+	-- "Summon Jade Serpent Statue" - 115313 Monk
+	-- "Healing Sphere" - 115460 Monk
+	-- "demoralizing banner" - 114203 warrior
+	-- "mocking banner" - 114192 warrior 
+	-- "heroic leap" - 6544 warrior
+
+	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544}
 	for i,j in ipairs (tableSelect) do
 		if spellname == tostring(select(1,GetSpellInfo(j))) then return true end 
 	end
@@ -216,12 +226,8 @@ function jps.Cast(spell)  -- "number" "string"
 	
 	if jps.Target==nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
-	--if not jps.UnitExists(jps.Target) then return end
 	
-	if jps.spell_need_select(spellname) then
-		jps.groundClick()
-	end
-	
+	if jps.spell_need_select(spellname) then jps.groundClick() end
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
 	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastCast) then
@@ -405,6 +411,7 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
+			if jps.isHealer then jps.Macro("/targetlasttarget") end
 			
 		-- MultiTarget List -- { { "func" , spell , function_unit }, function_conditions , table_unit , message }
 		elseif type(spell) == "table" and spell[1] == "func" and conditions then
@@ -424,8 +431,6 @@ function parseSpellTable( hydraTable )
 		-- Return spell if conditions are true and spell is castable.
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
 			-- if jps.Debug then print("|cffff8000Spell","|cffffffff",tostring(select(1,GetSpellInfo(spell)))) end 
-			-- jps.Target = target
-			-- jps.ThisCast = spell
 			return spell,target 
 		end
 	end

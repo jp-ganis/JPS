@@ -10,12 +10,13 @@ function dk_blood()
 	
 	-- Usage info:
 	-- Shift to DnD at mouse
-	-- Cooldowns: trinkets, raise dead, dancing rune weapon
+	-- left alt for anti magic zone
+	-- left ctrl for army of death
+	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
 
-	-- Todo:
-	-- Left Ctrl to use Army of the Dead
+	-- Cooldowns: trinkets, raise dead, dancing rune weapon, synapse springs, lifeblood 
 
-	-- Change: add UnitExists("pet") == nil for raise dead. In some rare situations the cooldown gets reset and it can try to cast it again (last boss in End of Time)
+	-- focus on other tank in raids !
 	
 	local spell = nil
 	local target = nil
@@ -47,9 +48,13 @@ function dk_blood()
 		-- Blood presence
 		{ "Blood Presence", not jps.buff("Blood Presence") },
 		
+    	-- Battle Rezz
+    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
+
 		-- Shift is pressed
-		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
-		{ "Anti-Magic Zone",		IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Death and Decay",		IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and not IsLeftAltKeyDown() },
+		{ "Anti-Magic Zone",		IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and not IsShiftKeyDown() },
 		
 		-- Cntrol is pressed
 		{ "Army of the Dead",		IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
@@ -71,14 +76,14 @@ function dk_blood()
 		{ "Raise Dead",		jps.UseCDs and UnitExists("pet") == nil },
 		{ "Dancing Rune Weapon",		jps.UseCDs },
 		
-		-- Death Siphon when we need a bit of healing. (talent based)
-		{ "Death Siphon",		jps.hp() < .8 },
-		
 		-- Requires engineering
 		{ jps.useSynapseSprings(),		jps.UseCDs },
 		
 		-- Requires herbalism
 		{ "Lifeblood",		jps.UseCDs },
+		
+		-- Racials
+    	{ jps.DPSRacial, 		jps.UseCDs },
 		
 		-- Buff
 		{ "Bone Shield",		not jps.buff("Bone Shield") },
@@ -99,6 +104,9 @@ function dk_blood()
 		{ "Death Strike", 	jps.hp() < .7 or jps.buffDuration("Blood Shield") < 3 },
 		{ "Rune Strike",		rp >= 80 and not two_fr and not two_ur },
 		{ "Death Strike" },
+
+		-- Death Siphon when we need a bit of healing. (talent based)
+		{ "Death Siphon",		jps.hp() < .6 }, -- moved here, because we heal often more with Death Strike than Death Siphon
 
 		{ "Heart Strike",		jps.debuff("Blood Plague") and jps.debuff("Frost Fever") },
 		
