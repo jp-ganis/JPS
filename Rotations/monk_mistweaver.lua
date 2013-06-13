@@ -144,10 +144,6 @@ function monk_mistweaver(self)
 	
 	local spell, target = parseSpellTable(spellTable)
 	
-	if spell == "Summon Jade Serpent Statue" or spell == "Healing Sphere" then
-		jps.groundClick()
-	end
-	
 	-- Debug
 	if IsAltKeyDown() ~= nil and spell then
 		print( string.format("Healing: %s, Health: %s, Spell: %s", healTarget, healTargetHP, spell) )

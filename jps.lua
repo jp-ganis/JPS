@@ -32,7 +32,7 @@ jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = true
 
-jps.Fishing = true
+jps.Fishing = false
 jps.MultiTarget = false
 jps.Interrupts = false
 jps.UseCDs = false
@@ -63,7 +63,7 @@ jps.SpellBookTable = {}
 -- Class
 jps.isNotBehind = false
 jps.isBehind = true
-jps.Healing = false
+jps.isHealer = false
 jps.DPSRacial = nil
 jps.DefRacial = nil
 jps.Lifeblood = nil
@@ -123,7 +123,8 @@ combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
-combatFrame:RegisterEvent("BAG_UPDATE")
+combatFrame:RegisterEvent("LOOT_OPENED")
+combatFrame:RegisterEvent("LOOT_CLOSED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 combatFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
@@ -174,6 +175,7 @@ end
 		if jps.Spec then jps_createConfigFrame() end
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
+		--print("PLAYER_REGEN_DISABLED")
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
 		jps.SortRaidStatus()
@@ -212,23 +214,32 @@ end
 		jps.PLuaFlag = true
       
 -- FISHES
-	elseif event == "BAG_UPDATE" and jps.Fishing then
-		for bag = 0,4,1 do
-			for slot = 1, GetContainerNumSlots(bag), 1 do
-				local name = GetContainerItemLink(bag,slot)
-				if name and (string.find(name,"ff9d9d9d") or string.find(name,L["Murglesnout"])) then -- or string.find(name,"Golden Carp"))
-					PickupContainerItem(bag,slot)
-					DeleteCursorItem()
-				end 
-		 	end 
+	elseif event == "LOOT_OPENED"  then
+		if (IsFishingLoot()) then
+			jps.Fishing = true
 		end
-      
+	elseif  event == "LOOT_CLOSED" then
+		if jps.Fishing
+			for bag = 0,4,1 do
+				for slot = 1, GetContainerNumSlots(bag), 1 do
+					local name = GetContainerItemLink(bag,slot)
+					local itemId = GetContainerItemID(bag, slot) 
+					if name and (string.find(name,"ff9d9d9d") or string.find(name,L["Murglesnout"])) then -- or string.find(name,"Golden Carp"))
+						local copper = select(11,GetItemInfo(itemId)) or 0;
+						if  copper < 100   then -- delete grey stuff worth less then 1 silver
+							PickupContainerItem(bag,slot)
+							DeleteCursorItem()
+						end
+					end 
+			 	end 
+			end
+			jps.Fishing = false
+		end
 -- UI ERROR
 	elseif (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
 		SaveView(2)
 		TurnLeftStop()
 		CameraOrSelectOrMoveStop()
-		--print("Facing_",jps.checkTimer("Facing"),"FacingBug_",jps.checkTimer("FacingBug"))
 
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then -- and jps.Combat
 	-- "UI_ERROR_MESSAGE" returns ONLY one arg1
@@ -302,15 +313,16 @@ end
 			jps_removeKey(jps.RaidStatus,unitname)
 			jps_removeKey(jps.FriendTable,unitname)
 		end
-		
+
 		if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
 			local enemyname = select(1,UnitName(unittarget))
 			local hpct_enemy = jps.hp(unittarget)
 			local unittarget_guid = UnitGUID(unittarget)
-			
+	
 			jps.RaidTarget[unittarget] = { 
 				["enemy"] = enemyname,
-				["hpct"] = hpct_enemy
+				["hpct"] = hpct_enemy,
+				["target"] = unittarget_guid
 			}
 		else
 			jps_removeKey(jps.RaidTarget,unittarget)
@@ -324,7 +336,7 @@ end
 		table.insert(raid_dataset, 1, {GetTime(), unit_health})
 		jps.RaidTimeToLive[unit_guid] = raid_dataset
 		--jps.RaidTimeToLive[unit_guid] = { [1] = {GetTime(), unit_health] },[2] = {GetTime(), unit_health },[3] = {GetTime(), unit_health } }
-	
+
 -- COMBAT_LOG_EVENT
 -- eventtable[4] == sourceGUID
 -- eventtable[5] == sourceName
@@ -427,14 +439,13 @@ function jps.detectSpec()
    else
       jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
    end
-   if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.Healing = true end
+   if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
        jps.isTank = true
        jps.gui_toggleDef(true) 
    end
    jps.HarmSpell = jps_GetHarmSpell()
    jps.SpellBookTable = jps_GetSpellBook()
-
    jps.setClassCooldowns()
    jps_VARIABLES_LOADED()
    if jps.initializedRotation == false then
@@ -483,8 +494,8 @@ function SlashCmdList.jps(cmd, editbox)
    	  jps.gui_toggleDef()
       write("Defensive set to",tostring(jps.Defensive))
 	elseif msg == "heal" then
-	  jps.Healing = not jps.Healing
-	  write("Healing set to", tostring(jps.Healing))
+	  jps.isHealer = not jps.isHealer
+	  write("Healing set to", tostring(jps.isHealer))
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
@@ -566,7 +577,7 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage() end
+		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage("collect") end
       	if jps.Combat and jps.Enabled then
          	jps_Combat() 
          	self.TimeSinceLastUpdate = 0

@@ -372,8 +372,6 @@ function warrior_arms_pvp()
 	}
 
 	spell,target = parseSpellTable(spellTable)
-	if spell == "demoralizing banner" then jps.groundClick() end
-	if spell == "mocking banner" then jps.groundClick() end
-	if spell == "heroic leap" then jps.groundClick() end
+
 	return spell,target
 end
