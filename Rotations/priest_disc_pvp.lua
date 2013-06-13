@@ -96,7 +96,7 @@ local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
 local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
 
 local Tanktable = {}
-if playerhealth_pct < 0.40 then 
+if playerhealth_pct < 0.40 then
 	jps_TANK = player
 elseif jps.canHeal("focus") and jps.Defensive then -- WARNING FOCUS RETURN FALSE IF NOT IN GROUP OR RAID BECAUSE OF UNITINRANGE(UNIT)
 	table.insert(Tanktable,"player")
@@ -287,7 +287,7 @@ end
 local function parse_dmg()
 local table=
 {
-	-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
+	-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
 	{ 32379, isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
 	{ 32379, jps.IsCastingPoly , EnemyUnit , "|cFFFF0000castDeath_Polymorph_"},
 	{ {"func", 32379 , jps.IsCastingPoly}, isInBG , EnemyUnit , "|cFFFF0000castDeath_Polymorph_Cond_Multi_" }, 
@@ -492,21 +492,15 @@ end
 -- TRINKETS -- OPENING -- CANCELAURA -- SPELLSTOPCASTING
 ----------------------------------------------------------
 
---	SpellStopCasting() with -- "Soins" 2050 if Health < 0.75
+--	SpellStopCasting() with "Soins" 2050 if Health < 0.75
 if jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) and (totalAbsorbTank == 0) then 
 	SpellStopCasting()
--- Avoid Overhealing with -- "Soins supérieurs" 2060
-elseif jps.IsCastingSpell(2060,"player") and not jps.buffId(109964) and (health_pct_TANK > 0.95) then 
+	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING HEAL",0, 0.5, 0.8)
+-- Avoid Overhealing 
+elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.Target == jps_TANK) then 
 	SpellStopCasting()
--- Avoid Overhealing with -- "Soins rapides" 2061
-elseif jps.IsCastingSpell(2061,"player") and not jps.buffId(109964) and (health_pct_TANK > 0.95) then 
-	SpellStopCasting()
+	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING OVERHEAL",0, 0.5, 0.8)
 end
--- CancelUnitBuff("unit", spellname) -- spell & buff player Spirit Shell 109964
---if (health_pct_TANK < 0.60) and jps.buffId(109964) then
---	CancelUnitBuff(player,spiritshell)
---	print("CANCELBUFF SPIRIT")
---end
 
 ------------------------
 -- SPELL TABLE ---------
@@ -532,11 +526,11 @@ local spellTable =
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236
-{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
+	{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+	{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 -- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
-{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },	
+	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },	
 -- AGGRO PLAYER
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
@@ -550,6 +544,10 @@ local spellTable =
 -- EMERGENCY TARGET
 	{ "nested", (health_pct_TANK < 0.60) and (groupToHeal == false) , parse_emergency_TANK() },
 	{ "nested", (health_pct_TANK < 0.60) and (groupToHeal == true) , parse_POH() },
+-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
+	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
+-- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
+	{ 2061, (player_IsInterrupt == 0) and jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 
 -- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
 	{ 17, UnitIsUnit(jps_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff(6788,"focustargettarget") and not jps.buff(17,"focustargettarget"), "focustargettarget"},
@@ -563,10 +561,6 @@ local spellTable =
 
 -- "Cascade" 121135 "Escalade"
 	{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 1) , jps_TANK , "Cascade_"..jps_TANK },
--- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
-	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
--- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
-	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Focal_MultiUnit_" },
 -- "Prière de guérison" 33076
 	{ "nested", true , parse_mending() },
@@ -624,9 +618,9 @@ local spellTable_moving =
 -- "Prière du désespoir" 19236
 	{ 19236, select(2,GetSpellBookItemInfo(desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+	{ 8122, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(114404,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 -- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
-{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
+	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 and not(unitLoseControl(rangedTarget)) , rangedTarget },
 
 -- AGGRO PLAYER
 	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
@@ -673,7 +667,7 @@ local spellTable_moving =
 -- parse_dispel
 	{ "nested", true , parse_dispel() },
 	
--- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
+-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
 	{ 32379, isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
 	{ 32379, jps.IsCastingPoly , EnemyUnit , "|cFFFF0000castDeath_Polymorph_"},
 	{ {"func", 32379 , jps.IsCastingPoly}, isInBG , EnemyUnit , "|cFFFF0000castDeath_Polymorph_Cond_Multi_" }, 
