@@ -203,10 +203,11 @@ function paladin_holy()
 		{ "Word of Glory", jps.buff("Divine Purpose") and (healTargetHPPct < 0.90), ourHealTarget }, 
 
 	-- Spells
-		{ "Cleanse", jps.DispelFriendlyTarget() ~= nil  , jps.DispelFriendlyTarget()  , "dispelling unit " },
+		{ "Cleanse", jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil  , jps.DispelFriendlyTarget()  , "dispelling unit " },
 		-- dispel ALL DEBUFF of FriendUnit
-		{ "Cleanse", jps.DispelMagicTarget() ~= nil , jps.DispelMagicTarget() , "dispelling unit" },
-		
+		{ "Cleanse", jps.dispelActive() and jps.DispelMagicTarget() ~= nil , jps.DispelMagicTarget() , "dispelling unit" },
+		{ "Cleanse", jps.dispelActive() and jps.DispelPoisonTarget() ~= nil , jps.DispelPoisonTarget() , "dispelling unit" },
+		{ "Cleanse", jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil , jps.DispelDiseaseTarget() , "dispelling unit" },
 		
 		-- tank + focus + target
 		{ "Flash of Light", lowestHP < 0.35 and ourHealTargetIsTank == true , ourHealTarget },
