@@ -41,10 +41,10 @@ function dk_frost()
 	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
 	local hasDiseases = jps.debuff("frost fever") and jps.debuff("blood plague")
 	local timeToDie = jps.TimeToDie("target")
+
 	------------------------
 	-- SPELL TABLE ---------
 	------------------------
-	
 	local spellTable = {}
 	spellTable[1] =
 	{	
@@ -53,17 +53,17 @@ function dk_frost()
     	{ "Horn of Winter",			not jps.buff("Horn of Winter")  },
     	
     	--AOE
-    	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and not IsLeftAltKeyDown()},
+    	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and IsLeftAltKeyDown == nil},
     	
     	-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "focus" },
-    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown() and IsLeftAltKeyDown() , "mouseover" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
+    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
     	
     	-- Self heal
     	{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
     	-- Self heals
-    	{ "Death Siphon",			jps.hp() < .8 and jps.Defensive},
-    	{ "Death Strike",			jps.hp() < .7 and jps.Defensive},
+    	{ "Death Siphon",			jps.Defensive and jps.hp() < .8 },
+    	{ "Death Strike",			jps.Defensive and jps.hp() < .7  },
     	
     	-- Interrupts
     	{ "mind freeze",				jps.shouldKick() },
@@ -75,8 +75,8 @@ function dk_frost()
     	
     	--CDs + Buffs
     	{ "Pillar of Frost",			jps.UseCDs },
-    	--{ "Potion of Mogu Power",			timeToDie <= 30 or (timetoDie <= 60 and jps.buff("pillar of frost))}
-    	{ jps.DPSRacial, 		jps.UseCDs },
+    	--{ jps.useBagItem("Potion of Mogu Power"),			timeToDie <= 30 or (timetoDie <= 60 and jps.buff("pillar of frost))},
+    	{ jps.DPSRacial,				jps.UseCDs },
 
     	{ "Raise Dead",			jps.UseCDs and UnitExists("pet") == nil },
     	-- On-use Trinkets.
@@ -113,7 +113,6 @@ function dk_frost()
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>=20},
     	{ "frost strike",			"onCD" },
     	{ "plague leech",			hasDiseases },
-    	{ "empower rune weapon",			jps.UseCDs},
 	}
 	
 	spellTable[2] =

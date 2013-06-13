@@ -32,7 +32,7 @@ function hunter_mm(self)
 		spell = "Feign Death"
 	elseif jps.checkTimer("feign") > 0 then
 		spell = nil
-	elseif ub("player", "Feign Death") and jps.checkTimer("feign") == 0 then
+	elseif jps.buff("Feign Death") and jps.checkTimer("feign") == 0 then
 		CancelUnitBuff("player", "Feign Death")
 		spell = nil
 	elseif UnitIsDead("pet") then

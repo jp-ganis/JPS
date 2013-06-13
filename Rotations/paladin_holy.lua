@@ -48,8 +48,7 @@ function paladin_holy()
 	--------------------------------------------------------------------------------------------
 	
 	-- left ALT key		- for beacon of light on mouseover
-	-- left Shift Key 		- for Light's Hammer
-	-- left Control Key	- for Light of Dawn
+	-- left Control Key 		- for Light's Hammer
 
 	--------------------------------------------------------------------------------------------
 	---- Declarations                    
@@ -63,7 +62,7 @@ function paladin_holy()
 	local mana = UnitPower(player,0)/UnitPowerMax(player,0) -- our mana
 	local hPower = UnitPower("player",9) -- SPELL_POWER_HOLY_POWER = 9 
 	local stance = GetShapeshiftForm() -- stance
-	local myLowestImportantUnit = jps.findMeATank() -- if not "focus" return "player" as default
+	local myLowestImportantUnit = jps.findMeATank() -- if not "tank" or  "focus" returns "player" as default
 	local myRaidTanks = jps.findTanksInRaid() -- get all players marked as tanks or with tank specific auras  
 	local importantHealTargets = myRaidTanks -- tanks / focus / target / player
 	local countInRaid = jps.CountInRaidStatus(0.8) -- number of players below 70% for AOE heals
@@ -97,11 +96,11 @@ function paladin_holy()
 	if jps.canHeal("target") then table.insert(importantHealTargets,"target") end
 	if jps.canHeal("focus") then table.insert(importantHealTargets,"focus") end
 	local lowestHP = 1
-	for i,j in ipairs(importantHealTargets) do
-		local thisHP = UnitHealth(j) / UnitHealthMax(j)
-		if jps.canHeal(j) and thisHP <= lowestHP then 
+	for unitName, _ in ipairs(importantHealTargets) do
+		local thisHP = jps.hp(unitName)
+		if jps.canHeal(unitName) and thisHP <= lowestHP then 
 				lowestHP = thisHP
-				myLowestImportantUnit = GetUnitName(j)
+				myLowestImportantUnit = unitName
 		end
 	end
 	
@@ -110,11 +109,11 @@ function paladin_holy()
 	--------------------------------------------------------------------------------------------
 	local lowestTankHP = 1
 	local myLowestTank = jps.findMeATank()
-	for i,j in ipairs(myRaidTanks) do
-		local thisHP = UnitHealth(j) / UnitHealthMax(j)
-		if jps.canHeal(j) and thisHP <= lowestTankHP then 
+	for unitName, _ in ipairs(myRaidTanks) do
+		local thisHP = jps.hp(unitName)
+		if jps.canHeal(unitName) and thisHP <= lowestTankHP then 
 				lowestTankHP = thisHP
-				myLowestTank = GetUnitName(j)
+				myLowestTank = unitName
 		end
 	end
 	
@@ -124,11 +123,6 @@ function paladin_holy()
 		ourHealTargetIsTank = true
 	end
 
-	--------------------------------------------------------------------------------------------
-	---- RAID HEAL                          
-	--------------------------------------------------------------------------------------------
-	
-	-- COUNTS THE NUMBER OF PARTY MEMBERS INRANGE HAVING A SIGNIFICANT HEALTH PCT LOSS by default % health loss = 0.80
 	----------------------
 	-- DAMAGE
 	----------------------
@@ -143,14 +137,12 @@ function paladin_holy()
 		rangedTarget = "focustarget"
 	elseif jps.canDPS("targettarget") then
 		rangedTarget = "targettarget"
-	elseif jps.canDPS(EnemyUnit[1]) then
-		rangedTarget = EnemyUnit[1]
 	end
 	
 	----------------------
 	-- dont change beacon everytime you heal another tank
 	----------------------
-	if not jps.beaconTarget then
+	if jps.beaconTarget == nil then
 		jps.beaconTarget = nil
 	end
 	local haveUnitWithBeacon = false
@@ -190,7 +182,7 @@ function paladin_holy()
 		-- Multi Heals
 
 		{ "Light's Hammer", IsShiftKeyDown() ~= nil  and jps.UseCDs, rangedTarget },
-		{ "Light of Dawn", IsLeftControlKeyDown() ~= nil and (hPower > 2 or jps.buff("Divine Purpose")) , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+		{ "Light of Dawn",  hPower > 2 or jps.buff("Divine Purpose") and jps.CountInRaidStatus(0.9) > 2 , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 		{ "Holy Radiance", jps.MultiTarget and countInRaid > 2 , ourHealTarget },  -- only here jps.MultiTarget since it is a mana inefficent spell
 		{ "Holy Shock", jps.buff("Daybreak") and healTargetHPPct < .9 , ourHealTarget }, -- heals with daybreak buff other targets
 
@@ -211,10 +203,11 @@ function paladin_holy()
 		{ "Word of Glory", jps.buff("Divine Purpose") and (healTargetHPPct < 0.90), ourHealTarget }, 
 
 	-- Spells
-		{ "Cleanse", jps.DispelFriendlyTarget() ~= nil  , jps.DispelFriendlyTarget()  , "dispelling unit " },
+		{ "Cleanse", jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil  , jps.DispelFriendlyTarget()  , "dispelling unit " },
 		-- dispel ALL DEBUFF of FriendUnit
-		{ "Cleanse", jps.DispelMagicTarget() ~= nil , jps.DispelMagicTarget() , "dispelling unit" },
-		
+		{ "Cleanse", jps.dispelActive() and jps.DispelMagicTarget() ~= nil , jps.DispelMagicTarget() , "dispelling unit" },
+		{ "Cleanse", jps.dispelActive() and jps.DispelPoisonTarget() ~= nil , jps.DispelPoisonTarget() , "dispelling unit" },
+		{ "Cleanse", jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil , jps.DispelDiseaseTarget() , "dispelling unit" },
 		
 		-- tank + focus + target
 		{ "Flash of Light", lowestHP < 0.35 and ourHealTargetIsTank == true , ourHealTarget },
@@ -237,8 +230,6 @@ function paladin_holy()
 	if spell == "Beacon of Light" and target == "mouseover" then
 		jps.beaconTarget = target
 	end
-	if jps.Debug then
-		write("Casting "..spell.. " at "..target)
-	end
+
    return spell,target 
 end
