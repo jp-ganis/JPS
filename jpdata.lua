@@ -73,6 +73,21 @@ function jps.DiseaseDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 	return false
 end
 
+function jps.PoisonDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
+   	if not jps.canHeal(unit) then return false end
+   	if debuffunit == nil then debuffunit = "Poison" end
+	local auraName, icon, count, debuffType, expirationTime, castBy
+	local i = 1
+	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
+	while auraName do
+		if debuffType==debuffunit then 
+		return true end
+		i = i + 1
+		auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
+	end
+	return false
+end
+
 function jps.DispelMagicTarget()
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.MagicDispel(unit) then return unit end
@@ -84,6 +99,13 @@ function jps.DispelDiseaseTarget()
 		if jps.DiseaseDispel(unit) then return unit end
 	end
 end 
+
+function jps.DispelPoisonTarget()
+	for unit,_ in pairs(jps.RaidStatus) do	 
+		if jps.PoisonDispel(unit) then return unit end
+	end
+end 
+
 
 --------------------------
 -- Dispel Functions TABLE
@@ -412,7 +434,13 @@ end
 -- COOLDOWN
 --------------------------
 
+function jps.dispelActive() 
+	if not jps.Interrupts then return false end
+	return true
+end
+
 function jps.shouldKick(unit)
+	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
     local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
@@ -427,6 +455,7 @@ function jps.shouldKick(unit)
 end
 
 function jps.shouldKickLag(unit)
+	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
     local target_spell, _, _, _, _, cast_endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, chanel_endTime, _, notInterruptible = UnitChannelInfo(unit)
