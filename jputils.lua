@@ -126,10 +126,12 @@ function jps_GetHarmSpell()
 				local minRange = select(8,GetSpellInfo(spellID))
 				local harmful =  IsHarmfulSpell(index, booktype)
 				
-				if (maxRange > 30) and (harmful == 1) and (minRange == 0) then
+				if (maxRange > 39) and (harmful == 1) and (minRange == 0) then
 					--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
 					HarmSpell = name
-				elseif (maxRange > 20) and (harmful == 1) and (minRange == 0) then
+				elseif (maxRange > 29) and (harmful == 1) and (minRange == 0) then
+					HarmSpell = name
+				elseif (maxRange > 19) and (harmful == 1) and (minRange == 0) then
 					HarmSpell = name
 				break end
 			end
@@ -646,3 +648,53 @@ ItemRefShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip1:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip2:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
+
+-----------------------
+-- FUNCTION LOOKUP RAID
+-----------------------
+
+function LookupSpec ()
+	local function printing()
+		print("All Rotations return no Lua Error")
+	end
+	local Table_Spec = 	{
+		druid_feral(),
+		druid_guardian(),
+		druid_balance(),
+		druid_resto() ,
+		dk_unholy(),
+		dk_blood( ),
+		dk_frost( ),  
+		shaman_enhancement( ),
+		shaman_elemental( ),
+		shaman_resto( ),
+		paladin_protadin( ),
+		paladin_ret( ),
+		paladin_holy( ),
+		warlock_affliction( ),
+		warlock_destro( ),
+		warlock_demo( ),
+		hunter_bm( ),
+		hunter_mm( ),
+		hunter_sv( ),
+		mage_fire( ),
+		mage_arcane( ),
+		mage_frost( ),
+		rogue_assass( ),
+		rogue_sub( ),
+		rogue_combat( ),
+		warrior_fury( ),
+		warrior_prot( ),
+		warrior_arms( ),
+		priest_shadow( ),
+		priest_holy( ),
+		priest_disc( ),
+		monk_brewmaster( ),
+		monk_windwalker( ),
+		monk_mistweaver( ),
+		printing( ),
+	}
+	for i, j in ipairs(Table_Spec) do
+		RunMacroText("/run "..j)
+	end
+end

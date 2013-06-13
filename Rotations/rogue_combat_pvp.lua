@@ -4,7 +4,7 @@ function rogue_combat_pvp()
 	local rupture_duration = jps.debuffDuration("target","rupture")
 	local snd_duration = jps.buffDuration("player","slice and dice")
 	local BFMacroText = "/cancelaura Blade Flurry"
-	local BFMacro = { "macro", BFMacroText, "Blade Flurry", defaultTarget }
+	local BFMacro = { "macro", BFMacroText, defaultTarget }
 	local energy = UnitPower("player")
 	local targetClass = UnitClass("target")
 	local shouldDisarm = targetClass == "warrior" or targetClass == "rogue" or targetClass == "death knight"
@@ -26,11 +26,9 @@ function rogue_combat_pvp()
 		{ "Eviscerate",		jps.debuff("revealing strike","target") or cp == 5 },
 		{ "Revealing Strike",	(cp == 3 or cp==4) and jps.buff("slice and dice") },
 		{ "Sinister Strike", 	cp < 3 },
-		
+
 	}
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
 end
-
-

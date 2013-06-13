@@ -196,13 +196,12 @@ function jps.StunEvents() -- ONLY FOR PLAYER
 	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
 	if (numEvents > 0) and (timeRemaining ~= nil) then
 		if 	locType == SCHOOL_INTERRUPT then
-			print("SPELL_FAILED_INTERRUPTED",locType)
+			--print("SPELL_FAILED_INTERRUPTED",locType)
 			jps.createTimer("Spell_Interrupt", 2 )
 		end
-		--print("|cFFFF0000numEvents: ",numEvents,"locType: ",locType,"text: ",text,"timeRemaining: ",timeRemaining)
 		for i,j in ipairs(locTypeTable) do
 			if locType == j and timeRemaining > 1 then
-			print("locType: ",locType,"timeRemaining: ",timeRemaining)
+			--print("locType: ",locType,"timeRemaining: ",timeRemaining)
 			return true end
 		end
 	end
@@ -460,11 +459,35 @@ end
 
 function jps.glovesCooldown()
 	local start, duration, enabled = GetInventoryItemCooldown("player", 10)
-	if enabled==0 then return 9001 end
+	if enabled==0 then return 999 end
 	local cd = start+duration-GetTime() -- jps.Lag
 	if cd < 0 then return 0 end
 	return cd
 end
+
+function jps.useBagItem(itemName)
+	if type(itemName) == number then
+		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
+	end
+	local count = GetItemCount(itemName, false, false)
+	if count == 0 then return nil end -- we doesn't have this item in our bag
+	for bag = 0,4 do
+		for slot = 1,GetContainerNumSlots(bag) do
+			local item = GetContainerItemLink(bag,slot)
+			if item and item:find(itemName) then -- item place found
+				itemId = GetContainerItemID(bag, slot)  -- get itemID for retrieving item Cooldown
+				local start, dur, isNotBlocked = GetItemCooldown(itemId) -- maybe we should use GetContainerItemCooldown() will test it
+				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
+				local hasNoCD = Ternary(dur == 0, true, false)
+				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
+					UseContainerItem(bag,slot) 
+				end
+			end
+		end
+	end
+	return nil
+end 
+
 
 function jps.bloodlusting()
 	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
@@ -540,29 +563,6 @@ function jps.useSynapseSprings()
 	local slotNum = GetInventorySlotInfo("HandsSlot")
 	return jps.useSlot(slotNum)
 end
-
-function jps.useBagItem(itemName)
-	if type(itemName) == number then
-		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
-	end
-	local count = GetItemCount(itemName, false, false)
-	if count == 0 then return nil end -- we doesn't have this item in our bag
-	for bag = 0,4 do
-		for slot = 1,GetContainerNumSlots(bag) do
-			local item = GetContainerItemLink(bag,slot)
-			if item and item:find(itemName) then -- item place found
-				itemId = GetContainerItemID(bag, slot)  -- get itemID for retrieving item Cooldown
-				local start, dur, isNotBlocked = GetItemCooldown(itemId) -- maybe we should use GetContainerItemCooldown() will test it
-				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
-				local hasNoCD = Ternary(dur == 0, true, false)
-				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
-					UseContainerItem(bag,slot) 
-				end
-			end
-		end
-	end
-	return nil
-end 
 
 ------------------------------
 -- HEALTH Functions
@@ -652,7 +652,6 @@ function jps.findMeAggroTank()
 			aggroTank = possibleTankUnit
 		end
 	end
-	
 	if jps.Debug then write("found Aggro Tank: "..aggroTank)
 	return aggroTank
 end
@@ -666,18 +665,6 @@ function jps.findMeATank()
 	end
 	return "player"
 end
-
-function jps.targetTargetTank()
-	if jps.buff("bear form","targettarget") then return true end
-	if jps.buff("blood presence","targettarget") then return true end
-	if jps.buff("righteous fury","targettarget") then return true end
-	
-	local _,_,_,_,_,_,_,caster,_,_ = UnitDebuff("target","Sunder Armor")
-	if caster ~= nil then
-		if UnitName("targettarget") == caster then return true end end
-	return false
-end
-
 
 function jps.findTanksInRaid() 
 	local myTanks = {}
@@ -702,6 +689,18 @@ function jps.findTanksInRaid()
 	end
 	return myTanks
 end
+
+function jps.targetTargetTank()
+	if jps.buff("bear form","targettarget") then return true end
+	if jps.buff("blood presence","targettarget") then return true end
+	if jps.buff("righteous fury","targettarget") then return true end
+	
+	local _,_,_,_,_,_,_,caster,_,_ = UnitDebuff("target","Sunder Armor")
+	if caster ~= nil then
+		if UnitName("targettarget") == caster then return true end end
+	return false
+end
+
 ------------------------------
 -- BenPhelps' Timer Functions
 ------------------------------
@@ -1030,4 +1029,3 @@ function jps_EnemySpec_BG(unit)
 		NotifyInspect(unit)
 	end
 end  
-
