@@ -8,7 +8,7 @@ function druid_balance()
 	local target = nil
 	
 	-- bpt virtual trackers
-	local Energy = UnitPower("player",SPELL_POWER_ECLIPSE)
+	local Energy = jps.eclipsePower()
 	local Direction = GetEclipseDirection()
 	
 	if Direction == "none" then Direction = "sun" end
@@ -20,17 +20,8 @@ function druid_balance()
 	-- Dot Durations
 	local mfDuration = jps.debuffDuration("moonfire") - jps.CastTimeLeft()
 	local sfDuration = jps.debuffDuration("sunfire") - jps.CastTimeLeft()
--	local datEclipse = sEclipse or lEclipse
+	local datEclipse = sEclipse or lEclipse
 
-	-- Focus dots
-	local focusDotting, focusIS, focusMF, focusSF
-	if UnitExists("focus") then focusDotting = true
-	else focusDotting = false end
-	
-	if focusDotting then
-		focusMF = jps.debuffDuration("moonfire","focus")
-		focusSF = jps.debuffDuration("sunfire","focus")
-	end
 	
 	local spellTable =
 	{

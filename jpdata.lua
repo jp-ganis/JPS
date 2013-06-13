@@ -681,7 +681,7 @@ function jps.findMeAggroTank()
 			aggroTank = possibleTankUnit
 		end
 	end
-	if jps.Debug then write("found Aggro Tank: "..aggroTank)
+	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
 	return aggroTank
 end
 

@@ -219,7 +219,7 @@ end
 			jps.Fishing = true
 		end
 	elseif  event == "LOOT_CLOSED" then
-		if jps.Fishing
+		if jps.Fishing then
 			for bag = 0,4,1 do
 				for slot = 1, GetContainerNumSlots(bag), 1 do
 					local name = GetContainerItemLink(bag,slot)
