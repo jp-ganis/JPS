@@ -95,6 +95,7 @@ function jps_createConfigFrame()
 	jps.resetTimeToDieFrame()
 	jps.resetRotationDropdownFrame()
 	jps.addRotationDropdownFrame()
+	jps.addSettingsFrame()
 	
 end
 
@@ -142,6 +143,50 @@ end
 	-- UIDropDownMenu_JustifyText(DropDownRotation, "LEFT")
 
 -- end
+
+---------------------------
+-- Settings Frame
+---------------------------s
+--[[
+A Frame for Settings that you only could change in the code:
+- deleting greys
+- dispel on / off
+- facing direction
+- use potions, use flasks
+- use trinekt 1 / 2
+- dismount when entering combat 
+- hide JPS ui due to screenshots !
+- button for reset DB / UI position
+
+what I need here:
+- one function where I can add a checkbox with titel + description , it should also care about saving current state in jpsDB and handle onClick
+- one function for reading settings e.g. jps.getConfigVal(str) and one for writing jps.setConfigVal()
+
+
+some of there we could change through jps.UseCDs , but this is to generally because the cooldowns are to different (we don't have to care about a 45 sec cooldown while fighting trash, but it would be useless to use a potion there :) 
+]]--
+
+function jps.addSettingsFrame()
+	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
+	jpsSettingsFrame.parent  = jpsConfigFrame.name
+	jpsSettingsFrame.name = "JPS Settings Panel"
+	local title = jpsSettingsFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 20, -10) 
+	title:SetText("JPS SETTINGS PANEL")
+	local settingsInfo = jpsSettingsFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	settingsInfo:SetHeight(32)
+	settingsInfo:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	settingsInfo:SetPoint("RIGHT", jpsSettingsFrame, -32, 0)
+	settingsInfo:SetNonSpaceWrap(true)
+	settingsInfo:SetJustifyH("LEFT")
+	settingsInfo:SetJustifyV("TOP")
+	settingsInfo:SetText("Work in Progress!")
+
+	
+	InterfaceOptions_AddCategory(jpsSettingsFrame)
+	jpsSettingsFrame:Hide()
+	
+end
 
 ---------------------------
 -- DROPDOWN SPELLS
@@ -221,7 +266,7 @@ function jps.resetRotationDropdownFrame()
 	initDropDown_CheckButton:SetPoint("TOPLEFT",20,-370)
 	initDropDown_CheckButton:RegisterForClicks("AnyUp")
 	
-	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	title:SetPoint("TOPLEFT", 30, -5) 
 	title:SetText("|cffffffffDROPDOWN ROTATION FRAME")
 	
@@ -248,7 +293,7 @@ function jps.resetTimeToDieFrame()
 	TimeToDie_CheckButton:SetPoint("TOPLEFT",20, -400)
 	TimeToDie_CheckButton:RegisterForClicks("AnyUp")
 	
-	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	title:SetPoint("TOPLEFT", 30, -5) 
 	title:SetText("|cffffffffTIMETODIE FRAME")
 	
