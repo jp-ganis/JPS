@@ -173,7 +173,7 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
---	if jps.Debug then jps_canCast_debug(spell,unit) end
+	---if jps.Debug then jps_canCast_debug(spell,unit) end
 
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
@@ -226,12 +226,8 @@ function jps.Cast(spell)  -- "number" "string"
 	
 	if jps.Target==nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
-	--if not jps.UnitExists(jps.Target) then return end
 	
-	if jps.spell_need_select(spellname) then
-		jps.groundClick()
-	end
-	
+	if jps.spell_need_select(spellname) then jps.groundClick() end
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
 	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastCast) then
@@ -415,6 +411,7 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
+			if jps.isHealer then jps.Macro("/targetlasttarget") end
 			
 		-- MultiTarget List -- { { "func" , spell , function_unit }, function_conditions , table_unit , message }
 		elseif type(spell) == "table" and spell[1] == "func" and conditions then
@@ -434,8 +431,6 @@ function parseSpellTable( hydraTable )
 		-- Return spell if conditions are true and spell is castable.
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
 			-- if jps.Debug then print("|cffff8000Spell","|cffffffff",tostring(select(1,GetSpellInfo(spell)))) end 
-			-- jps.Target = target
-			-- jps.ThisCast = spell
 			return spell,target 
 		end
 	end

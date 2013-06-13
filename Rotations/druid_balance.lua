@@ -1,36 +1,46 @@
 -- jpganis
 -- simcrafty
---TODO: add tab-dotting everything.
+-- TODO: add tab-dotting everything.
 
-function druid_balance(self)
-	-- Eclipse Stuff
+function druid_balance()
+	
+	local spell = nil
+	local target = nil
+	
+	-- bpt virtual trackers
 	local Energy = UnitPower("player",SPELL_POWER_ECLIPSE)
 	local Direction = GetEclipseDirection()
+	
 	if Direction == "none" then Direction = "sun" end
+	
+	-- Eclipse Buffs
 	local sEclipse = jps.buff("eclipse (solar)")
 	local lEclipse = jps.buff("eclipse (lunar)")
 	
-	-- bpt override
-	energy, direction, virtual_energy, virtual_direction, virtual_eclipse = LibBalancePowerTracker:GetEclipseEnergyInfo()
-	if (energy ~= nil) then
-		Energy = virtual_energy
-		Direction = virtual_direction
-		lEclipse = virtual_eclipse == "L"
-		sEclipse = virtual_eclipse == "S"
-	end
-
-	local datEclipse = sEclipse or lEclipse
-	
-	-- Insect Swarm and Moonfire /fastest/ tick times.
-	local isTick = 1.5
-	local mfTick = 1.5
-
 	-- Dot Durations
-	local mfDuration = jps.debuffDuration("moonfire") - jps.castTimeLeft()
-	local sfDuration = jps.debuffDuration("sunfire") - jps.castTimeLeft()
+	local mfDuration = jps.debuffDuration("moonfire") - jps.CastTimeLeft()
+	local sfDuration = jps.debuffDuration("sunfire") - jps.CastTimeLeft()
+-	local datEclipse = sEclipse or lEclipse
 
+	-- Focus dots
+	local focusDotting, focusIS, focusMF, focusSF
+	if UnitExists("focus") then focusDotting = true
+	else focusDotting = false end
+	
+	if focusDotting then
+		focusMF = jps.debuffDuration("moonfire","focus")
+		focusSF = jps.debuffDuration("sunfire","focus")
+	end
+	
 	local spellTable =
 	{
+		-- rebirth Ctrl-key + mouseover
+		{ "rebirth", 			IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
+		
+		-- Buffs
+		{ "mark of the wild",		 	not jps.buff("mark of the wild") , player },
+		
+		-- Rotation
 		{ "starfall" },
 		{ "force of nature", jps.buff("nature's grace") or jps.Moving },
 		{ "moonfire", jps.Moving and lEclipse },
@@ -50,11 +60,7 @@ function druid_balance(self)
 		{ "sunfire" , jps.Moving and mfDuration == 0 },
 	}
 
-	spell = parseSpellTable( spellTable )
-
-	if spell == "wild mushroom" then
-		jps.groundClick()
-	end
-
-	return spell
+	
+	spell,target = parseSpellTable(spellTable)
+	return spell,target
 end
