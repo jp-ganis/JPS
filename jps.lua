@@ -197,7 +197,7 @@ end
 		
 -- Raid Update		
 	elseif (event == "GROUP_ROSTER_UPDATE") or (event == "RAID_ROSTER_UPDATE") then
-		print("ROSTER_UPDATE")
+		if jps.Debug then  print("ROSTER_UPDATE") end
 		jps.SortRaidStatus()
 		
 -- Dual Spec Respec
@@ -248,13 +248,13 @@ end
 
 		local event_error = ...
 		if (event_error == SPELL_FAILED_NOT_BEHIND) then -- "You must be behind your target."
-			print("SPELL_FAILED_NOT_BEHIND",event_error)
+			if jps.Debug then  print("SPELL_FAILED_NOT_BEHIND",event_error) end
 			jps.isNotBehind = true
    			jps.isBehind = false
    			
 		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
 			-- if event_error == L["Target needs to be in front of you."] or event_error == L["You are facing the wrong way!"] then
-			print("ERR_BADATTACKFACING",event_error)			
+			if jps.Debug then  print("ERR_BADATTACKFACING",event_error)			 end
 			jps.createTimer("Facing",0.6)
 			jps.createTimer("FacingBug",1.2)
 			SetView(2)
@@ -263,7 +263,7 @@ end
 			
 		elseif (event_error == SPELL_FAILED_LINE_OF_SIGHT) or (event_error == SPELL_FAILED_VISION_OBSCURED) then
 			-- if (event_error == L["Target not in line of sight"]) or (event_error == L["Your vision of the target is obscured"]) then
-			print("SPELL_FAILED_LINE_OF_SIGHT",event_error)
+			if jps.Debug then print("SPELL_FAILED_LINE_OF_SIGHT",event_error) end
 			jps.BlacklistPlayer(jps.LastTarget)
 		end
 		
