@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
 -- Huge thanks to everyone who's helped out on this, <3
@@ -43,6 +43,7 @@ jps.Defensive = false
 jps.Class = nil
 jps.Spec = nil
 jps.Race = nil
+jps.Level = 1
 jps.IconSpell = nil
 jps.Message = nil
 jps.LastTarget = nil
@@ -129,6 +130,9 @@ combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 combatFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+if UnitLevel("player") < 10 then
+	combatFrame:RegisterEvent("PLAYER_LEVEL_UP")
+end
 
 --combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
 --combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
@@ -156,7 +160,7 @@ end
 
 	if event == "PLAYER_LOGIN" then
 		NotifyInspect("player")
-      
+	  
 	elseif event == "PLAYER_ENTERING_WORLD" then -- 2er fire > reloadui
 		--print("PLAYER_ENTERING_WORLD")
 		jps.detectSpec()
@@ -180,7 +184,7 @@ end
 		jps.gui_toggleCombat(true)
 		jps.SortRaidStatus()
 		start_time = GetTime()
-      
+	  
 	elseif (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UNGHOST") then -- or (event == "PLAYER_ALIVE")
 		--print("PLAYER_REGEN_ENABLED")
 		TurnLeftStop()
@@ -204,15 +208,15 @@ end
 	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then -- only fire when spec change no other event before
 		--print("ACTIVE_TALENT")
 		jps.detectSpec()
-      
+	  
 -- On Logout
 	elseif event == "PLAYER_LEAVING_WORLD" then
 		jps_SAVE_PROFILE()
-      
+	  
 -- "ADDON_ACTION_FORBIDDEN"
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		jps.PLuaFlag = true
-      
+	  
 -- FISHES
 	elseif event == "LOOT_OPENED"  then
 		if (IsFishingLoot()) then
@@ -337,6 +341,15 @@ end
 		jps.RaidTimeToLive[unit_guid] = raid_dataset
 		--jps.RaidTimeToLive[unit_guid] = { [1] = {GetTime(), unit_health] },[2] = {GetTime(), unit_health },[3] = {GetTime(), unit_health } }
 
+		-- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
+		elseif event == "PLAYER_LEVEL_UP" then
+			local eventtable =  {...}
+			if eventtable[1] == 10 then
+				jps.Level = eventtable[1]
+				jps.detectSpec()
+				jps.Enabled = true
+			end
+				
 -- COMBAT_LOG_EVENT
 -- eventtable[4] == sourceGUID
 -- eventtable[5] == sourceName
@@ -346,7 +359,7 @@ end
 -- eventtable[10] == destFlags
 -- eventtable[15] == amount if suffix is _DAMAGE or _HEAL
 
-    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled then
+	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled then
 		local eventtable =  {...}
 		
 		-- TIMER SHIELD FOR DISC PRIEST
@@ -395,8 +408,8 @@ end
 				local dataset = jps.RaidTimeToDie[unitGuid]
 				local data = table.getn(dataset)
 				if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
-    			table.insert(dataset, 1, {GetTime(), eventtable[15]})
-    			jps.RaidTimeToDie[unitGuid] = dataset
+				table.insert(dataset, 1, {GetTime(), eventtable[15]})
+				jps.RaidTimeToDie[unitGuid] = dataset
 				--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
 			end
 		end
@@ -420,37 +433,44 @@ function jps.detectSpec()
 
 	jps.Race = UnitRace("player")
 	jps.Class = UnitClass("player")
+	jps.Level = Ternary(jps.Level > 1, jps.Level, UnitLevel("player"))
 	if jps.Class then
-	  local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
-	  if not id then write("jps couldn't find your talent tree... One second please.") 
-	  else
-		 -- local id, name, description, icon, background, role = GetSpecializationInfo(specIndex [, isInspect [, isPet]])
-		 local _,name,_,_,_,_ = GetSpecializationInfo(id) -- patch 5.0.4 remplace GetTalentTabInfo( id )
-		 if name then
-			jps.Spec = name
-			if jps.Spec then 
-			   write("Online for your",jps.Spec,jps.Class)
+		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
+		if not id then 
+			if jps.Level < 10 then 
+				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
+				jps.Enabled = false
+			else
+				write("jps couldn't find your talent tree... One second please.") 
 			end
-		 end
-	  end
+		else
+		-- local id, name, description, icon, background, role = GetSpecializationInfo(specIndex [, isInspect [, isPet]])
+			local _,name,_,_,_,_ = GetSpecializationInfo(id) -- patch 5.0.4 remplace GetTalentTabInfo( id )
+			if name then
+				jps.Spec = name
+				if jps.Spec then 
+					write("Online for your",jps.Spec,jps.Class)
+				end
+			end
+		end
 	end
    if (GetLocale() == "frFR") then
-      jps.Rotation = jps_getCombatFunction_fr(jps.Class,jps.Spec)
+	  jps.Rotation = jps_getCombatFunction_fr(jps.Class,jps.Spec)
    else
-      jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
+	  jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
    end
    if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
-       jps.isTank = true
-       jps.gui_toggleDef(true) 
+	   jps.isTank = true
+	   jps.gui_toggleDef(true) 
    end
    jps.HarmSpell = jps_GetHarmSpell()
    jps.SpellBookTable = jps_GetSpellBook()
    jps.setClassCooldowns()
    jps_VARIABLES_LOADED()
    if jps.initializedRotation == false then
-       jps_Combat()
-    end
+	   jps_Combat()
+	end
 end
 
 ------------------------
@@ -466,33 +486,33 @@ function SlashCmdList.jps(cmd, editbox)
 	if msg == "config" then
 	  InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	elseif msg == "show" then
-      jpsIcon:Show()
-      write("Icon set to show")
+	  jpsIcon:Show()
+	  write("Icon set to show")
 	elseif msg == "hide" then
-      jpsIcon:Hide()
-      write("Icon set to hide")
+	  jpsIcon:Hide()
+	  write("Icon set to hide")
 	elseif msg== "disable" or msg == "d" then
-      jps.Enabled = false
-      jps.gui_toggleEnabled(false)
-      print "jps Disabled."
+	  jps.Enabled = false
+	  jps.gui_toggleEnabled(false)
+	  print "jps Disabled."
 	elseif msg== "enable" or msg == "e" then
-      jps.Enabled = true
-      jps.gui_toggleEnabled(true)
-      print "jps Enabled."
+	  jps.Enabled = true
+	  jps.gui_toggleEnabled(true)
+	  print "jps Enabled."
 	elseif msg == "respec" then
 	  jps.detectSpec()
 	elseif msg == "multi" or msg == "aoe" then
-      jps.gui_toggleMulti()
+	  jps.gui_toggleMulti()
 	elseif msg == "cds" then
-      jps.gui_toggleCDs()
+	  jps.gui_toggleCDs()
 	elseif msg == "int" then
-      jps.gui_toggleInt()
+	  jps.gui_toggleInt()
 	elseif msg == "pvp" then
 	  jps.togglePvP()
-      write("PvP mode is now set to",tostring(jps.PvP))
+	  write("PvP mode is now set to",tostring(jps.PvP))
 	elseif msg == "def" then
    	  jps.gui_toggleDef()
-      write("Defensive set to",tostring(jps.Defensive))
+	  write("Defensive set to",tostring(jps.Defensive))
 	elseif msg == "heal" then
 	  jps.isHealer = not jps.isHealer
 	  write("Healing set to", tostring(jps.isHealer))
@@ -500,14 +520,14 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
 	elseif msg == "fishing" or msg == "fish" then
-      jps.Fishing = not jps.Fishing
-      write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
+	  jps.Fishing = not jps.Fishing
+	  write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
 	elseif msg == "debug" then
-      jps.Debug = not jps.Debug
-      write("Debug mode set to",tostring(jps.Debug))
+	  jps.Debug = not jps.Debug
+	  write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "face" then
-    	jps.gui_toggleRot()
-    	write("jps.FaceTarget set to",tostring(jps.FaceTarget))
+		jps.gui_toggleRot()
+		write("jps.FaceTarget set to",tostring(jps.FaceTarget))
 	elseif msg == "db" then
    		jps.ResetDB = not jps.ResetDB
    		jps_VARIABLES_LOADED()
@@ -534,7 +554,7 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps db - cleares your local jps DB")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
-      	jps_Combat()
+	  	jps_Combat()
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
@@ -546,12 +566,12 @@ end
 
 --function JPS_OnUpdate(self)
 --   if (MyAddon_LastTime == nil) then
---      MyAddon_LastTime = GetTime()
+--	  MyAddon_LastTime = GetTime()
 --   else
---      if (GetTime() >= MyAddon_LastTime + jps.UpdateInterval) and jps.Combat and jps.Enabled then
---      jps_combat()
---      MyAddon_LastTime = GetTime()
---      end
+--	  if (GetTime() >= MyAddon_LastTime + jps.UpdateInterval) and jps.Combat and jps.Enabled then
+--	  jps_combat()
+--	  MyAddon_LastTime = GetTime()
+--	  end
 --   end
 --end
 
@@ -575,13 +595,13 @@ end
 JPSFrame = CreateFrame("Frame", "JPSFrame")
 JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
-    self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-    if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
+	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
 		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage("collect") end
-      	if jps.Combat and jps.Enabled then
-         	jps_Combat() 
-         	self.TimeSinceLastUpdate = 0
-        end
+	  	if jps.Combat and jps.Enabled then
+		 	jps_Combat() 
+		 	self.TimeSinceLastUpdate = 0
+		end
    	end
 end)
 
@@ -594,11 +614,11 @@ hooksecurefunc("UseAction", function(...)
 if jps.Enabled and (select(3, ...) ~= nil) and (InCombatLockdown()==1) and jps.IsCasting("player") then
    local stype,id,_ = GetActionInfo( select(1, ...) )
    if stype == "spell" then
-      local name = select(1,GetSpellInfo(id))
-      if jps.NextSpell[#jps.NextSpell] ~= name then -- # valable que pour table ipairs table[1]
-         table.insert(jps.NextSpell, name)
-         if jps.Combat then write("Set",name,"for next cast.") end
-      end
+	  local name = select(1,GetSpellInfo(id))
+	  if jps.NextSpell[#jps.NextSpell] ~= name then -- # valable que pour table ipairs table[1]
+		 table.insert(jps.NextSpell, name)
+		 if jps.Combat then write("Set",name,"for next cast.") end
+	  end
    end
 end
 end)
@@ -611,17 +631,17 @@ function jps_Combat()
    -- Check for the Rotation
    if not jps.Class then return end
    if not jps.Rotation then
-      write("JPS does not have a rotation for your",jps.Spec,jps.Class)
-      jps.Enabled = false
-      return 
+	  write("JPS does not have a rotation for your",jps.Spec,jps.Class)
+	  jps.Enabled = false
+	  return 
    end
    
    -- Check spell usability 
    jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
    if jps.firstInitializingLoop == true then
-       jps.firstInitializingLoop = false
+	   jps.firstInitializingLoop = false
 	   return nil
-    end
+	end
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
    
@@ -642,25 +662,25 @@ function jps_Combat()
    end
 
    if not jps.Casting and jps.ThisCast ~= nil then
-      if #jps.NextSpell >= 1 then
-         if jps.NextSpell[1] then
-            jps.Cast(jps.NextSpell[1])
-            table.remove(jps.NextSpell, 1)
-         else
-            jps.NextSpell[1] = nil
-         end
-      else
-         jps.Cast(jps.ThisCast)
-      end
+	  if #jps.NextSpell >= 1 then
+		 if jps.NextSpell[1] then
+			jps.Cast(jps.NextSpell[1])
+			table.remove(jps.NextSpell, 1)
+		 else
+			jps.NextSpell[1] = nil
+		 end
+	  else
+		 jps.Cast(jps.ThisCast)
+	  end
    end
    
 --   if jps.ThisCast ~= nil and not jps.Casting then
---      if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
---         jps.Cast(jps.NextCast)
---         jps.NextCast = nil
---       else
---          jps.Cast(jps.ThisCast)
---      end
+--	  if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
+--		 jps.Cast(jps.NextCast)
+--		 jps.NextCast = nil
+--	   else
+--		  jps.Cast(jps.ThisCast)
+--	  end
 --   end
    
    -- Hide Error
