@@ -86,6 +86,7 @@ function warlock_destro()
         { {"macro","/focus [target=mouseover,exists,nodead]"}, IsControlKeyDown() ~= nil },
         
         -- Def CD's
+        { "mortal coil", jps.Defensive and jps.hp() <= 0.80 },
         { {"macro","/use Healthstone"},  jps.hp("player") < 0.65 and canUseItemInBags(5512) },
         { "ember tap", jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
 
