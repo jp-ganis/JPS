@@ -28,6 +28,8 @@ Rotations\druid_guardian.lua
 Rotations\druid_resto.lua
 
 Rotations\hunter_bm.lua
+Rotations\hunter_bm_pvp.lua
+Rotations\hunter_bm_pve.lua
 Rotations\hunter_mm.lua
 Rotations\hunter_sv.lua
 
