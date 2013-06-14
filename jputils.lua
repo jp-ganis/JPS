@@ -140,6 +140,7 @@ function jps_GetHarmSpell()
 	return HarmSpell
 end
 
+
 ---------------------------
 -- GET CLASS COOLDOWNS
 ---------------------------

@@ -192,7 +192,7 @@ end
 
 function jps.spell_need_select(spell)
 	local spellname = nil
-	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "string" then spellname = string.lower(spell) end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	-- "Death and Decay" 43265 -- DK
 	-- "Mass Dispel" 32375 -- Priest
@@ -211,10 +211,12 @@ function jps.spell_need_select(spell)
 	-- "demoralizing banner" - 114203 warrior
 	-- "mocking banner" - 114192 warrior 
 	-- "heroic leap" - 6544 warrior
+	-- "Freeze" - 33395 Frost Mage
+	-- "Rune Of Power" 116011- Mage
 
-	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544}
+	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011}
 	for i,j in ipairs (tableSelect) do
-		if spellname == tostring(select(1,GetSpellInfo(j))) then return true end 
+		if spellname == string.lower(tostring(select(1,GetSpellInfo(j)))) then return true end 
 	end
 return false
 end
