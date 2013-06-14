@@ -384,7 +384,7 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 		jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
 		if jps.Spec then
-			jpsDB[jpsRealm][jpsName].spellConfig.spec[jps.Spec] = {} -- NEW
+			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
 		end
 		jpsDB[jpsRealm][jpsName].settings = {} -- NEW
 	else

@@ -296,7 +296,7 @@ function getSpellStatus(spell)
        jps.addSpellCheckboxToFrame(spell)
        return 1
     else
-       return jps.spellConfig[spell]
+       return jps.spellConfig[jps.Spec][spell]
     end
 end
 
