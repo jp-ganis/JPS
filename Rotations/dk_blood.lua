@@ -39,7 +39,19 @@ function dk_blood()
 	local two_fr = fr1 and fr2
 	local one_ur = ur1 or ur2
 	local two_ur = ur1 and ur2
-		
+
+	-- function for checking diseases on target for plague leech, because we need fresh dot time left
+	function canCastPlagueLeech(timeLeft)  
+		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
+		if jps.debuffDuration("Frost Fever") > timeLeft or jps.debuffDuration("Blood Plague") > timeLeft then
+			return false
+		end
+		if jps.debuffDuration("Frost Fever") == 0 or jps.debuffDuration("Blood Plague") == 0 then
+			return false
+		end
+		return true
+	end
+
 	local spellTable = {}
 	
 	spellTable[1] = {
@@ -94,7 +106,7 @@ function dk_blood()
 		{ "Plague Strike",			not jps.debuff("Blood Plague") },
 		{ "Icy Touch",			not jps.debuff("Frost Fever") },
 		
-		{ "Plague Leech",			ffDuration > 0	and bpDuration > 0 and ffDuration < 3 and bpDuration < 3},
+		{ "Plague Leech",			canCastPlagueLeech(3)},
 		
 		{ "Soul Reaper",			jps.hp("target") <= .35 },
 

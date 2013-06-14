@@ -29,6 +29,7 @@ function dk_unholy()
 	local twoFr = fr1 and fr2
 	local oneUr = ur1 or ur2
 	local twoUr = ur1 and ur2
+	local timeToDie = jps.TimeToDie("target")
 
 	-- Dark Simulacrum in raids and dungeons (+ misc. mainly PvP)
 	-- Hagara 			- Dragon Soul: 			Shattered Ice
@@ -54,6 +55,17 @@ function dk_unholy()
 	if spellBeingCastByTarget == "Shattered Ice" or spellBeingCastByTarget == "Hand of Ragnaros" or spellBeingCastByTarget == "Shadowflame" or spellBeingCastByTarget == "Curse of Mending" or spellBeingCastByTarget == "Pyroblast" or spellBeingCastByTarget == "Chain Lightning" or spellBeingCastByTarget == "Zanzili Fire" or spellBeingCastByTarget == "Polymorph" or spellBeingCastByTarget == "Hex" or spellBeingCastByTarget == "Mind Control" or spellBeingCastByTarget == "Cyclone" then
 		castDarkSim = true
 	end	
+	-- function for checking diseases on target for plague leech, because we need fresh dot time left
+	function canCastPlagueLeech(timeLeft)  
+		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
+		if jps.debuffDuration("Frost Fever") > timeLeft or jps.debuffDuration("Blood Plague") > timeLeft then
+			return false
+		end
+		if jps.debuffDuration("Frost Fever") == 0 or jps.debuffDuration("Blood Plague") == 0 then
+			return false
+		end
+		return true
+	end
 
 	
 	local spellTable =
@@ -109,9 +121,9 @@ function dk_unholy()
 		{ "plague strike",			bpDuration <= 0 },
 		
 		-- get Runes
-		{ "Plague Leech", (bpDuration < 1 or jps.cooldown("Outbreak") < 2) and ffDuration > 0  and bpDuration > 0 and (not twoDr or not twoFr or not twoUr) }, 		
+		{ "Plague Leech",			canCastPlagueLeech(3)}, 		
 		{ "summon gargoyle" },
-		{ "empower rune weapon" },
+    	{ "empower rune weapon",		(not twoDr and not twoFr and not twoUr)  and jps.UseCDs },
 		
 		{ "dark transformation",	siStacks >= 5 and not superPet },
 		
@@ -125,7 +137,7 @@ function dk_unholy()
 		{ "festering strike" },
 		{ "death coil", 			jps.cooldown("summon gargoyle") > 8 },
 		{ "horn of winter" },
-		{ "empower rune weapon" },
+		{ "empower rune weapon" , jps.UseCDs},
 	}
 
 	spell,target = parseSpellTable(spellTable) 
