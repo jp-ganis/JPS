@@ -564,33 +564,6 @@ function SlashCmdList.jps(cmd, editbox)
 	end
 end
 
---function JPS_OnUpdate(self)
---   if (MyAddon_LastTime == nil) then
---	  MyAddon_LastTime = GetTime()
---   else
---	  if (GetTime() >= MyAddon_LastTime + jps.UpdateInterval) and jps.Combat and jps.Enabled then
---	  jps_combat()
---	  MyAddon_LastTime = GetTime()
---	  end
---   end
---end
-
---function JPS_OnUpdate(self,elapsed)
--- if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
---	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
---	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
---		if jps.MacroSpam and not jps.Casting then
---			RunMacro(jps.Macro)
---			self.TimeSinceLastUpdate = 0
---		elseif jps.Combat and jps.Enabled then
---			jps_Combat()
---			self.TimeSinceLastUpdate = 0
---		end
---	end
---end
-
---combatFrame:SetScript("OnUpdate", JPS_OnUpdate)
-
 -- Create the frame that does all the work
 JPSFrame = CreateFrame("Frame", "JPSFrame")
 JPSFrame:SetScript("OnUpdate", function(self, elapsed)
