@@ -251,6 +251,7 @@ function jps.resetTimeToDieFrame()
 	TimeToDie_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
 	TimeToDie_CheckButton:SetPoint("TOPLEFT",370, -55)
 	TimeToDie_CheckButton:RegisterForClicks("AnyUp")
+	JPSEXTInfoFrame:Hide()
 	
 	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 30, -5) 
