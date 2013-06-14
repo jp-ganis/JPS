@@ -284,13 +284,13 @@ end
 
 function setSpellStatus(spell, status)
 	spell = string.lower(spell)
-    jps.spellConfig[spell] = status
+    jps.spellConfig[jps.Spec][spell] = status
 end
 
 function getSpellStatus(spell)
 
     spell = spell:lower() --spell = string.lower(spell)
-    local spellConfig = jps.spellConfig[spell]
+    local spellConfig = jps.spellConfig[jps.Spec][spell]
     if(spellConfig == nil) then
        setSpellStatus(spell, 1)
        jps.addSpellCheckboxToFrame(spell)

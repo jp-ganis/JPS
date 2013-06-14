@@ -218,7 +218,7 @@ function jps.addRotationDropdownFrame()
 	desc:SetJustifyV("TOP")
 	desc:SetText("Uncheck spells when you dont want to use them. Do a /jps db to reset the spells")
 
-	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig) do
+	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) do
 		rotationCount = rotationCount + 1
 		if rotationCount == 16 then 
 			rotationButtonPositionX = 220
@@ -383,9 +383,18 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 		jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		if jps.Spec then
+			jpsDB[jpsRealm][jpsName].spellConfig.spec[jps.Spec] = {} -- NEW
+		end
+		jpsDB[jpsRealm][jpsName].settings = {} -- NEW
 	else
 		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then -- NEW
-		  jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+			jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		end
+		if jps.Spec then
+			if ( not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) then -- NEW
+				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+			end	
 		end
 	end
 
