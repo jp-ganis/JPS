@@ -120,7 +120,6 @@ function jps.RaidTargetUnit()
 			enemyWithMostTargets = enemyName
 		end
 	end
-	jps.RaidTarget
 	return enemyWithMostTargets
 end
 
