@@ -90,33 +90,57 @@ end
 -----------------------
 -- RAID ENEMY COUNT 
 -----------------------
-
--- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
-function jps.RaidEnemyCount() 
-local enemycount = 0
-local targetcount = 0
-	for unit,index in pairs(jps.EnemyTable) do 
-		enemycount = enemycount + 1
-	end
-	for tar_unit,tar_index in pairs(jps.RaidTarget) do
-		targetcount = targetcount + 1 -- if CheckInteractDistance(tar_unit, 4) == 1
-	end
-return enemycount,targetcount
-end
-
--- ENEMY UNIT with LOWEST HEALTH
--- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
-function jps.RaidLowestEnemy() 
-local mytarget = "target"
-local lowestHP = 1 
-	for unit,index in pairs(jps.RaidTarget) do
-		local unit_Hpct = index.hpct
-		if unit_Hpct < lowestHP then
-			lowestHP = unit_Hpct
-			mytarget = unit
+-- enemy hp, enemy name, enenmy targetted by no of players
+function jps.getRaidTargets()
+	local enemies = {}
+	local countTargets = {}
+	for unit, _ in pairs(jps.RaidStatus) do
+		local enemy = unit.."target"
+		if	jps.canDPS(enemy) then
+			if enemies[enemy] == nil then
+				enemies[enemy] = {
+					["unit"] = enemy,
+					["hpct"] = jps.hp(enemy),
+					["count"] = 0
+				}
+			end
+			enemies[enemy]["count"] = enemies[enemy]["count"] + 1
 		end
 	end
-return mytarget
+end
+
+-- enemy unit we canDPS with the most targets by our raid
+function jps.RaidTargetUnit() 
+	local enemies = jps.getRaidTargets()
+	local maxTargets = 0
+	local enemyWithMostTargets = "target"
+	for enemyData, enemyName in pairs(enemies) do
+		if count >= enemyData["count"] then
+			count = enemyData["count"]
+			enemyWithMostTargets = enemyName
+		end
+	end
+	jps.RaidTarget
+	return enemyWithMostTargets
+end
+
+-- lowest enemy unit we canDPS
+function jps.RaidLowestEnemy() 
+	local enemies = jps.getRaidTargets()
+	local lowestHP = 1
+	local lowestEnemy = "target"
+	for enemyData, enemyName in pairs(enemies) do
+		if lowestHP >= enemyData["hpct"] then
+			lowestHP = enemyData["hpct"]
+			lowestEnemy = enemyName
+		end
+	end
+	return lowestEnemy
+end
+
+-- number units we canDPS 
+function jps.RaidEnemyCount()
+	return jps_tableLen(jps.getRaidTargets())
 end
 
 -- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
