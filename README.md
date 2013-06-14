@@ -45,12 +45,10 @@ HPS for your class and spec.
 
 * check/update Hunter rotations
 * check/update Priest rotations
-* useBagItem function (flask, pots, healthstone...)
-* remove all groundClicks from rotation files (moved to jpsParse line 240)
+* test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 * add "jps.RotationActive(spellTable)" to every rotation
 * add golden carp to jps fishing
 * turn off on toons with level < 10
-* test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 * BUG: JPS breaks the roll window for disenchant while infight & rejects invites
 
 ***tester***

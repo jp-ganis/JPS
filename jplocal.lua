@@ -75,7 +75,7 @@ do
 		["Incanter's Ward"] = "Protection de l’incantateur",
 		["Avenging Wrath"] = "Courroux vengeur",
 		["Predatory Swiftness"] = "Rapidité du prédateur",
-		["Ice Barrier"] = "Barrière de glace", -- Type de dissipation Magie
+		["Ice Barrier"] = "Barrière de glace",
 	-- Stun debuff
 		["Silenced Improved Counterspell"] = "Réduit au silence - Contresort amélioré",
 		["Fist of Justice"] = "Poing de la justice",

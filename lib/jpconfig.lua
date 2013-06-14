@@ -95,7 +95,7 @@ function jps_createConfigFrame()
 	jps.resetTimeToDieFrame()
 	jps.resetRotationDropdownFrame()
 	jps.addRotationDropdownFrame()
-	jps.addRotationDropdown()
+	jps.addSettingsFrame()
 	
 end
 
@@ -104,44 +104,88 @@ end
 -- DROPDOWN ROTATIONS
 ---------------------------------
 
-function jps.addRotationDropdown()
+-- function jps.addRotationDropdown()
 
-	DropDownRotation = CreateFrame("FRAME", "JPS Rotation", jpsConfigFrame, "UIDropDownMenuTemplate")
-	DropDownRotation:ClearAllPoints()
-	DropDownRotation:SetPoint("CENTER",150,120)
-	local title = DropDownRotation:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	title:SetPoint("TOPLEFT", 20, 20) 
-	title:SetText("JPS ROTATIONS")
+	-- DropDownRotation = CreateFrame("FRAME", "JPS Rotation", jpsConfigFrame, "UIDropDownMenuTemplate")
+	-- DropDownRotation:ClearAllPoints()
+	-- DropDownRotation:SetPoint("CENTER",150,120)
+	-- local title = DropDownRotation:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	-- title:SetPoint("TOPLEFT", 20, 20) 
+	-- title:SetText("JPS ROTATIONS")
 
-	local function Rotation_OnClick(self)
-	   UIDropDownMenu_SetSelectedID(DropDownRotation, self:GetID())
-	   jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
-	   jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
-	end
+	-- local function Rotation_OnClick(self)
+	   -- UIDropDownMenu_SetSelectedID(DropDownRotation, self:GetID())
+	   -- jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
+	   -- jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+	-- end
 
-	local function DropDown_Initialize(self, level)
-		local menuList = {
-		   jps.ToggleRotationName[1], -- will be {"No Rotations"} or spellTable[1]["ToolTip"]
-		   jps.ToggleRotationName[2],
-		   jps.ToggleRotationName[3],
-		   jps.ToggleRotationName[4],
-		   jps.ToggleRotationName[5],
-		}
-		local info = UIDropDownMenu_CreateInfo()
-		for k,v in pairs(menuList) do
-		  info = UIDropDownMenu_CreateInfo()
-		  info.text = v
-		  info.value = v
-		  info.func = Rotation_OnClick
-		  UIDropDownMenu_AddButton(info, level)
-		end
-	end
+	-- local function DropDown_Initialize(self, level)
+		-- local menuList = {
+		   -- jps.ToggleRotationName[1], -- will be {"No Rotations"} or spellTable[1]["ToolTip"]
+		   -- jps.ToggleRotationName[2],
+		   -- jps.ToggleRotationName[3],
+		   -- jps.ToggleRotationName[4],
+		   -- jps.ToggleRotationName[5],
+		-- }
+		-- local info = UIDropDownMenu_CreateInfo()
+		-- for k,v in pairs(menuList) do
+		  -- info = UIDropDownMenu_CreateInfo()
+		  -- info.text = v
+		  -- info.value = v
+		  -- info.func = Rotation_OnClick
+		  -- UIDropDownMenu_AddButton(info, level)
+		-- end
+	-- end
 	
-	UIDropDownMenu_Initialize(DropDownRotation, DropDown_Initialize)
-	UIDropDownMenu_SetWidth(DropDownRotation, 164)
-	UIDropDownMenu_SetSelectedID(DropDownRotation, 1)
-	UIDropDownMenu_JustifyText(DropDownRotation, "LEFT")
+	-- UIDropDownMenu_Initialize(DropDownRotation, DropDown_Initialize)
+	-- UIDropDownMenu_SetWidth(DropDownRotation, 164)
+	-- UIDropDownMenu_SetSelectedID(DropDownRotation, 1)
+	-- UIDropDownMenu_JustifyText(DropDownRotation, "LEFT")
 
+-- end
+
+---------------------------
+-- Settings Frame
+---------------------------s
+--[[
+A Frame for Settings that you only could change in the code:
+- deleting greys
+- dispel on / off
+- facing direction
+- use potions, use flasks
+- use trinekt 1 / 2
+- dismount when entering combat 
+- hide JPS ui due to screenshots !
+- button for reset DB / UI position
+
+what I need here:
+- one function where I can add a checkbox with titel + description , it should also care about saving current state in jpsDB and handle onClick
+- one function for reading settings e.g. jps.getConfigVal(str) and one for writing jps.setConfigVal()
+
+
+some of there we could change through jps.UseCDs , but this is to generally because the cooldowns are to different (we don't have to care about a 45 sec cooldown while fighting trash, but it would be useless to use a potion there :) 
+]]--
+
+function jps.addSettingsFrame()
+	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
+	jpsSettingsFrame.parent  = jpsConfigFrame.name
+	jpsSettingsFrame.name = "JPS Settings Panel"
+	local title = jpsSettingsFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 20, -10) 
+	title:SetText("JPS SETTINGS PANEL")
+	local settingsInfo = jpsSettingsFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	settingsInfo:SetHeight(32)
+	settingsInfo:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	settingsInfo:SetPoint("RIGHT", jpsSettingsFrame, -32, 0)
+	settingsInfo:SetNonSpaceWrap(true)
+	settingsInfo:SetJustifyH("LEFT")
+	settingsInfo:SetJustifyV("TOP")
+	settingsInfo:SetText("Work in Progress!")
+
+	
+	InterfaceOptions_AddCategory(jpsSettingsFrame)
+	jpsSettingsFrame:Hide()
+	
 end
 
 ---------------------------
@@ -219,20 +263,18 @@ end
 
 function jps.resetRotationDropdownFrame()
 	initDropDown_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
-	initDropDown_CheckButton:SetPoint("TOPLEFT",370,-25)
+	initDropDown_CheckButton:SetPoint("TOPLEFT",20,-370)
 	initDropDown_CheckButton:RegisterForClicks("AnyUp")
 	
-	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	title:SetPoint("TOPLEFT", 30, -5) 
-	title:SetText("|cffe5cc80DROPDOWN ROTATION")
+	title:SetText("|cffffffffDROPDOWN ROTATION FRAME")
 	
 	local function DropDown_Check_OnClick(self)
 		local checkbutton = initDropDown_CheckButton:GetChecked()
 		if checkbutton == 1 then
-			--JPSEXTInfoFrame:Show()
 			rotationDropdownHolder:Show()
 		else
-			--JPSEXTInfoFrame:Hide()
 			rotationDropdownHolder:Hide()
 		end
 	end
@@ -246,25 +288,22 @@ function jps.resetRotationDropdownFrame()
 
 end
 
-
 function jps.resetTimeToDieFrame()
 	TimeToDie_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
-	TimeToDie_CheckButton:SetPoint("TOPLEFT",370, -55)
+	TimeToDie_CheckButton:SetPoint("TOPLEFT",20, -400)
 	TimeToDie_CheckButton:RegisterForClicks("AnyUp")
 	JPSEXTInfoFrame:Hide()
 	
-	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	title:SetPoint("TOPLEFT", 30, -5) 
-	title:SetText("|cffe5cc80TIMETODIE FRAME")
+	title:SetText("|cffffffffTIMETODIE FRAME")
 	
 	local function DropDown_Check_OnClick(self)
 		local timecheckbutton = TimeToDie_CheckButton:GetChecked()
 		if timecheckbutton == 1 then
 			JPSEXTInfoFrame:Show()
-			--rotationDropdownHolder:Show()
 		else
 			JPSEXTInfoFrame:Hide()
-			--rotationDropdownHolder:Hide()
 		end
 	end
 	
