@@ -293,7 +293,7 @@ end
 -- "UNIT_HEALTH_FREQUENT" Same event as UNIT_HEALTH, but not throttled as aggressively by the client
 -- "UNIT_HEALTH_PREDICTION" arg1 unitId receiving the incoming heal
 
-	if event == "UNIT_HEALTH_FREQUENT" and jps.Enabled then
+	if event == "UNIT_HEALTH_FREQUENT" and jps.Enabled and jps.isHealer then
 		local unit = ...
 		local unitname = select(1,UnitName(unit))
 		local unittarget = unit.."target"

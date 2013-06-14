@@ -231,11 +231,14 @@ end)
 --JPSEXTFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 function jps.updateInfoText()
-    if infoTTL ~= nil or infoTTD ~= nil then
-        infoFrameText:SetText("TimeToLive: "..infoTTL.."\nTimeToDie: "..infoTTD)
-    else
-        infoFrameText:SetText("TTL: n/a\nTTD: n/a")
-    end
+	local infoTexts = ""
+	if infoTTL ~= nil and jps.isHealer then
+		infoTexts = infoTexts.."TimeToLive: "..infoTTL
+	end
+	if infoTTD ~= nil then
+		infoTexts = infoTexts.."\nTimeToDie: "..infoTTD
+	end	
+	infoFrameText:SetText(infoTexts)
 end
 
 function jps.updateTimeToLive(self, elapsed)
@@ -478,7 +481,7 @@ function jps.LowestInRaidStatus()
 	local lowestHP = 1
 	for unit, unitTable in pairs(jps.RaidStatus) do
 		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
-			lowestHP = unitTable["hpct"] -- thisHP
+			lowestHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
 			lowestUnit = unit
 		end
 	end
