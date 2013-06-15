@@ -136,7 +136,7 @@ function mage_frost()
 		{ "arcane brilliance", not jps.buff("arcane brilliance") }, 
 		{ "frost armor", not jps.buff("frost armor") }, 
 		{ "ice barrier", not jps.buff("ice barrier") }, 
-		{ "water elemental", }, 
+		{ "Freeze",	IsAltKeyDown() ~= nil },
 		{ "rune of power", not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil}, 
 		{ "mirror image", jps.UseCds}, 
 	
@@ -190,7 +190,7 @@ function mage_frost()
 		{ "counterspell", kick , rangedTarget },
 		{ "arcane brilliance", not jps.buff("arcane brilliance") }, 
 		{ "frost armor", not jps.buff("frost armor") }, 
-		{ "water elemental", }, 
+		{ "Freeze",	IsAltKeyDown() ~= nil },
 		{ "rune of power", not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, 
 		{ "mirror image", jps.UseCds}, 
 	

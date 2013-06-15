@@ -39,8 +39,19 @@ function dk_frost()
 
 	local frostFeverDuration = jps.debuffDuration("Frost Fever")
 	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
-	local hasDiseases = jps.debuff("frost fever") and jps.debuff("blood plague")
 	local timeToDie = jps.TimeToDie("target")
+
+	-- function for checking diseases on target for plague leech, because we need fresh dot time left
+	function canCastPlagueLeech(timeLeft)  
+		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
+		if jps.debuffDuration("Frost Fever") > timeLeft or jps.debuffDuration("Blood Plague") > timeLeft then
+			return false
+		end
+		if jps.debuffDuration("Frost Fever") == 0 or jps.debuffDuration("Blood Plague") == 0 then
+			return false
+		end
+		return true
+	end
 
 	------------------------
 	-- SPELL TABLE ---------
@@ -88,7 +99,7 @@ function dk_frost()
     	{ "Lifeblood",			jps.UseCDs },
     	
     	--simcraft 5.3 T14
-    	{ "plague leech",			(bloodPlagueDuration < 1 or frostFeverDuration <1  ) and hasDiseases},
+    	{ "plague leech",			canCastPlagueLeech(2)},
     	{ "outbreak",			not jps.debuff("frost fever") or not jps.debuff("blood plague")},
     	{ "unholy blight",			 not jps.debuff("frost fever") or not jps.debuff("blood plague")},
     	{ "howling blast",			not jps.debuff("frost fever")},
@@ -101,7 +112,7 @@ function dk_frost()
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>76},
     	{ "frost strike",			runicPower > 76},
     	{ "obliterate",			twoDr or twoFr or TwoUr},
-    	{ "plague leech",			 (bloodPlagueDuration < 3 or frostFeverDuration<3) and hasDiseases},
+    	{ "plague leech",			 canCastPlagueLeech(3)},
     	{ "outbreak",			frostFeverDuration<3 or bloodPlagueDuration <3},
     	{ "unholy blight",			 frostFeverDuration < 3 or bloodPlagueDuration < 3 },
     	{ "frost strike",			 not oneFr},
@@ -112,7 +123,7 @@ function dk_frost()
     	{ "empower rune weapon",			timeToDie<=60 and jps.buff("Potion of Mogu Power") and jps.UseCDs },
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>=20},
     	{ "frost strike",			"onCD" },
-    	{ "plague leech",			hasDiseases },
+    	{ "plague leech",			canCastPlagueLeech(2) },
 	}
 	
 	spellTable[2] =
@@ -127,7 +138,7 @@ function dk_frost()
 		{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
 		-- Rune Management
-		{ "Plague Leech",			hasDiseases and  (frostFeverDuration < 3 and bloodPlagueDuration < 3) }, 
+		{ "Plague Leech",			canCastPlagueLeech(3) }, 
 		
 		{ "Pillar of Frost",			jps.UseCDs },
 		{ jps.DPSRacial, jps.UseCDs },
@@ -181,7 +192,7 @@ function dk_frost()
 		{ "Frost Strike",			(not jps.buff("Killing Machine") and jps.cooldown("Obliterate") > 1 ) or (jps.buff("Killing Machine") and jps.cooldown("Obliterate") > 1 ) },
 		{ "Obliterate"},
 		{ "Frost Strike"},
-		{ "Plague Leech",			hasDiseases},
+		{ "Plague Leech",			canCastPlagueLeech(2)},
 		{ "Empower Rune Weapon",			jps.UseCDs and ((runicPower <= 25 and not twoDr and not twoFr and not twoUr) or (timeToDie < 60 and jps.buff("Potion of Mogu Power")) or jps.bloodlusting()) },
 				
 	}
