@@ -1,10 +1,11 @@
 jpsext = {}
 
-jpsext.timeToLiveData = {}
-jpsext.timeToLiveLastUpdate = 100
-jpsext.timeToLiveThrottle = 0.1
-jpsext.timeToLiveMinSamples = 20
-jpsext.timeToLiveMaxSamples = 30
+jpsext.timeToDieData = {}
+jpsext.timeToDieLastUpdate = 100
+jpsext.timeToDieThrottle = 0.1
+jpsext.timeToDieMinSamples = 20
+jpsext.timeToDieMaxSamples = 30
+
 
 
 local JPSEXTInfoFrame = CreateFrame("frame","JPSEXTInfoFrame")
@@ -43,49 +44,49 @@ function jpsext.updateInfoText()
 end
 
 
-function jpsext.updateTimeToLive(self, elapsed)
-    jpsext.timeToLiveLastUpdate = jpsext.timeToLiveLastUpdate + elapsed
-    if jps.Combat and jpsext.timeToLiveLastUpdate > jpsext.timeToLiveThrottle then
-        jpsext.timeToLiveLastUpdate = 0
+function jpsext.updatetimeToDie(self, elapsed)
+    jpsext.timeToDieLastUpdate = jpsext.timeToDieLastUpdate + elapsed
+    if jps.Combat and jpsext.timeToDieLastUpdate > jpsext.timeToDieThrottle then
+        jpsext.timeToDieLastUpdate = 0
         if UnitExists("target") then
-            jpsext.updateUnitTimeToLive("target")
+            jpsext.updateUnittimeToDie("target")
         end
         if UnitExists("focus") and UnitGUID("focus") ~= UnitGUID("target") then
-            jpsext.updateUnitTimeToLive("focus")
+            jpsext.updateUnittimeToDie("focus")
         end
         if UnitExists("mouseover") and UnitGUID("focus") ~= UnitGUID("mouseover") and UnitGUID("mouseover") ~= UnitGUID("target") then
-            jpsext.updateUnitTimeToLive("mouseover")
+            jpsext.updateUnittimeToDie("mouseover")
         end
-        infoTTL = jpsext.timeToLive("target")
-        infoTTLBurst = jpsext.timeToLive("target", 0.2)
+        infoTTL = jpsext.timeToDie("target")
+        infoTTLBurst = jpsext.timeToDie("target", 0.2)
         jpsext.updateInfoText()
     end
 end
 
 JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
 JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
-    jpsext.updateTimeToLive(self, elapsed)
+    jpsext.updatetimeToDie(self, elapsed)
 end)
 JPSEXTFrame:SetScript("OnEvent", function(self, event, ...) 
     if event == "PLAYER_REGEN_DISABLED" then
         -- Combat Start
     elseif event == "PLAYER_REGEN_ENABLED" then
         -- Out of Combat
-        jpsext.clearTimeToLive()
+        jpsext.cleartimeToDie()
     end
 end)
 JPSEXTFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 JPSEXTFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 
-function jpsext.updateUnitTimeToLive(unit)
+function jpsext.updateUnittimeToDie(unit)
     local guid = UnitGUID(unit)
-    if jpsext.timeToLiveData[guid] == nil then
-        jpsext.timeToLiveData[guid] = {}
+    if jpsext.timeToDieData[guid] == nil then
+        jpsext.timeToDieData[guid] = {}
     end
-    dataset = jpsext.timeToLiveData[guid]
-    if table.getn(dataset) >= jpsext.timeToLiveMaxSamples then
-        table.remove(dataset, jpsext.timeToLiveMaxSamples)
+    dataset = jpsext.timeToDieData[guid]
+    if table.getn(dataset) >= jpsext.timeToDieMaxSamples then
+        table.remove(dataset, jpsext.timeToDieMaxSamples)
     end
     local avgDps = nil
     if #dataset >= 2 then
@@ -94,11 +95,11 @@ function jpsext.updateUnitTimeToLive(unit)
         avgDps = hpDelta / timeDelta
     end
     table.insert(dataset, 1, {GetTime(), UnitHealth(unit), avgDps})
-    jpsext.timeToLiveData[guid] = dataset
+    jpsext.timeToDieData[guid] = dataset
 end
 
-function jpsext.clearTimeToLive()
-    jpsext.timeToLiveData = {}
+function jpsext.cleartimeToDie()
+    jpsext.timeToDieData = {}
 end
 
 function jpsext.calcDatasetDPS(dataset)
@@ -119,12 +120,12 @@ function jpsext.calcDatasetDPS(dataset)
     end
 end
 
-function jpsext.timeToLive(unit, percent)
+function jpsext.timeToDie(unit, percent)
     local guid = UnitGUID(unit)
     if percent ~= nil then targetHP = UnitHealthMax(unit) end
-    if guid ~= nil and jpsext.timeToLiveData[guid] ~= nil then
-        local dataset = jpsext.timeToLiveData[guid]
-        if #dataset <= jpsext.timeToLiveMinSamples then return nil end
+    if guid ~= nil and jpsext.timeToDieData[guid] ~= nil then
+        local dataset = jpsext.timeToDieData[guid]
+        if #dataset <= jpsext.timeToDieMinSamples then return nil end
 
         local avgDps = jpsext.calcDatasetDPS(dataset)
         if avgDps == nil then return nil end

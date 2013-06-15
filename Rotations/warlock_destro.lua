@@ -13,15 +13,24 @@ function isCotEBlacklisted(unit) -- stop spam curse of the elements at invalid t
 end
 
 function isCastingInterruptSpell(unit)
+    if unit == nil then
+        local tI,tF = isCastingInterruptSpell("target") 
+        local fI,fF = isCastingInterruptSpell("focus") 
+        local mI,mF = isCastingInterruptSpell("mouseover") 
+        
+        return tI or fI or mI, math.min(tF and tI or 10, fF and fI or 10, mF and mI or 10)
+    end
     local interruptSpells = {
         "Interrupting Jolt",
     }
     local spell, _, _, _, _, endTime = UnitCastingInfo(unit)
+    local finish = endtime and (endTime/1000 - GetTime()) or 0
     for i,j in pairs(interruptSpells) do
-        if spell == j then return true end
+        if spell == j then return true, finish end
     end
-    return false
+    return false, finish
 end
+
 
 function hasKilJaedensCunning()
     local selected, talentIndex = GetTalentRowSelectionInfo(6)
@@ -45,7 +54,7 @@ function warlock_destro()
     local immolateTarget = false
     local immolateFocus = false
     local fireAndBrimstoneBuffed = jps.buff("Fire and Brimstone", "player")
-    local timeToBurst = jpsext.timeToLive("target", 0.2) or 0
+    local timeToBurst = jpsext and jpsext.timeToDie("target", 0.2) or 0
     --local potionCount = GetItemCount("Potion of the Jade Serpent",0,1) 
 
     -- If focus exists and is not the same as target, consider attacking focus too
@@ -67,8 +76,8 @@ function warlock_destro()
         end
     end
 
-    local avoidInterrupts = isCastingInterruptSpell("target") or isCastingInterruptSpell("focus") or isCastingInterruptSpell("mouseover") 
-    if avoidInterrupts and jps.castTimeLeft("player") > 0 then
+    local avoidInterrupts, enemyCastLeft = isCastingInterruptSpell() 
+    if avoidInterrupts and jps.castTimeLeft("player") >= enemyCastLeft then
         SpellStopCasting()
     end
     local maxIntCast = 2.8
@@ -133,6 +142,14 @@ function warlock_destro()
             { "conflagrate"},
             { "fel flame"},
         }},
+    }
+    spellTable[2] = {
+    ["ToolTip"] = "Interrupt Only",
+        {"Optical blast", jps.Interrupts and jps.shouldKick("target") and jps.castTimeLeft("target") < maxIntCast, "target" },
+        {"Optical blast", jps.Interrupts and jps.shouldKick("focus") and jps.castTimeLeft("focus") < maxIntCast, "focus"},
+        {"Optical blast", jps.Interrupts and jps.shouldKick("mouseover") and jps.castTimeLeft("mouseover") < maxIntCast, "mouseover"},
+
+        { {"macro","/focus [target=mouseover,exists,nodead]"}, IsControlKeyDown() ~= nil },
     }
 
 
