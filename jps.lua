@@ -194,6 +194,7 @@ end
 	elseif (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UNGHOST") then -- or (event == "PLAYER_ALIVE")
 		if jps.Debug then print("PLAYER_REGEN_ENABLED") end
 		TurnLeftStop()
+		TurnRightStop()
 		CameraOrSelectOrMoveStop()
 		jps.Opening = true
 		jps.Combat = false
@@ -232,27 +233,36 @@ end
 			jps.Fishing = true
 		end
 	elseif  event == "LOOT_CLOSED" then
+		local deleteFish = false
 		if jps.Fishing then
-			for bag = 0,4,1 do
-				for slot = 1, GetContainerNumSlots(bag), 1 do
-					local name = GetContainerItemLink(bag,slot)
-					local itemId = GetContainerItemID(bag, slot) 
-					if name and (string.find(name,"ff9d9d9d") or string.find(name,L["Murglesnout"])) then -- or string.find(name,"Golden Carp"))
-						local copper = select(11,GetItemInfo(itemId)) or 0;
-						if  copper < 100   then -- delete grey stuff worth less then 1 silver
-							PickupContainerItem(bag,slot)
-							DeleteCursorItem()
-						end
-					end 
-			 	end 
-			end
+			deleteFish = true
 			jps.Fishing = false
 		end
+		for bag = 0,4,1 do
+			for slot = 1, GetContainerNumSlots(bag), 1 do
+				local name = GetContainerItemLink(bag,slot)
+				local itemId = GetContainerItemID(bag, slot) 
+				if name then -- or string.find(name,"Golden Carp"))
+					local copper = select(11,GetItemInfo(itemId)) or 0;
+					if string.find(name,"ff9d9d9d") and copper < 500  and jps.getConfigVal("Delete Grey loot worth less than 5 silver") == 1 then -- delete grey stuff worth less then 5 silver
+						write("Deleting "..name)
+						PickupContainerItem(bag,slot)
+						DeleteCursorItem()
+					elseif deleteFish and ((string.find(name,L["Murglesnout"]) and jps.getConfigVal("Delete Fish: Murglesnout") == 1) or (jps.getConfigVal("Delete Fish: Golden Carp") == 1 and string.find(name,L["Golden Carp"]))) then 
+						PickupContainerItem(bag,slot)
+						write("Deleting "..name)
+						DeleteCursorItem()
+					end					
+				end 
+		 	end 
+		end
+			
       
 -- UI ERROR
 	elseif (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
 		SaveView(2)
 		TurnLeftStop()
+		TurnRightStop()
 		CameraOrSelectOrMoveStop()
 
 	elseif event == "UI_ERROR_MESSAGE" and jps.Enabled then -- and jps.Combat
@@ -273,7 +283,13 @@ end
 			jps.createTimer("Facing",0.6)
 			jps.createTimer("FacingBug",1.2)
 			SetView(2)
-			TurnLeftStart()
+			if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 
+			then
+				TurnLeftStart()
+			else
+				TurnRightStart()
+			end
+			
 			CameraOrSelectOrMoveStart()
 			
 		elseif (event_error == SPELL_FAILED_LINE_OF_SIGHT) or (event_error == SPELL_FAILED_VISION_OBSCURED) then
@@ -283,7 +299,7 @@ end
 		end
 		
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and jps.Enabled then -- and jps.Combat
-		if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
+		--if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
 		jps.CurrentCast = {...}
 		
 		-- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
@@ -296,7 +312,11 @@ end
 		end
 		if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
 			SaveView(2)
-			TurnLeftStop()
+			if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then
+				TurnLeftStop()
+			else
+				TurnRightStop()
+			end
 			CameraOrSelectOrMoveStop()
 		end
 	end
@@ -371,7 +391,6 @@ end
 -- eventtable[15] == amount if suffix is _DAMAGE or _HEAL
 
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled and UnitAffectingCombat("player") == 1 then
-		if jps.Debug then print("COMBAT_LOG_EVENT_UNFILTERED") end
 		local eventtable =  {...}
 		
 		-- TIMER SHIELD FOR DISC PRIEST

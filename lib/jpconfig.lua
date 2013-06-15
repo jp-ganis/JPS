@@ -231,6 +231,7 @@ function jps.addSettingsFrame()
 	jps.onClickSettingEvents = {
 		["timetodie frame visible"] = jps.TimeToDieToggle,
 		["rotation dropdown visible"] = jps.DropdownRotationTogle,
+		["show jps window"] = jps.mainIconToggle,
 	}
 	
 	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
@@ -312,7 +313,7 @@ function jps.notifySettingChanged(key, status)
 	end
 end
 
-function jps.addSettingsCheckbox(setting)
+function jps.addSettingsCheckbox(settingName)
 	rotationCountSetting = rotationCountSetting + 1
 	if rotationCountSetting == 16 then 
 		settingButtonPositionX = 220
@@ -433,6 +434,14 @@ function jps.TimeToDieToggle(key, status)
 		JPSEXTInfoFrame:Show()
 	else
 		JPSEXTInfoFrame:Hide()
+	end
+end
+
+function jps.mainIconToggle(key, status) 
+	if status == 1 then
+		jpsIcon:Show()
+	else
+		jpsIcon:Hide()
 	end
 end
 

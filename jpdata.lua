@@ -89,18 +89,21 @@ function jps.PoisonDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 end
 
 function jps.DispelMagicTarget()
+	if jps.getConfigVal("Dispel Magic") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.MagicDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelDiseaseTarget()
+if jps.getConfigVal("Dispel Disease") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.DiseaseDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelPoisonTarget()
+if jps.getConfigVal("Dispel Poison") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.PoisonDispel(unit) then return unit end
 	end
@@ -581,6 +584,8 @@ function jps.useTrinket(trinketNum)
 	-- The index actually starts at 0
 	local slotName = "Trinket"..(trinketNum).."Slot" -- "Trinket0Slot" "Trinket1Slot"
 	-- Get the slot ID
+	
+	
 	local slotId  = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
 
 	return jps.useSlot(slotId)
