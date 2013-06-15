@@ -27,7 +27,7 @@ function priest_shadow()
 	local EnemyUnit = {}
 	for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
 	local enemyTargetingMe = jps.IstargetMe()
-	local lowestEnemy = jps.RaidLowestEnemy()
+	local lowestEnemy = jps.LowestInRaidTarget()
 
 	local rangedTarget = "target"
 	if jps.canDPS("target") then

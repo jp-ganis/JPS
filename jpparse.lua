@@ -173,7 +173,7 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
-	---if jps.Debug then jps_canCast_debug(spell,unit) end
+	--if jps.Debug then jps_canCast_debug(spell,unit) end
 
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
@@ -196,6 +196,7 @@ function jps.spell_need_select(spell)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	-- "Death and Decay" 43265 -- DK
 	-- "Mass Dispel" 32375 -- Priest
+	-- "Power Word: Barrier" 62618 -- Priest
 	-- "Flamestrike" 2120 -- Mage
 	-- "Rain of Fire" 104233 -- Mage
 	-- "Dizzying Haze" 118022 -- Brewmaster
@@ -213,8 +214,9 @@ function jps.spell_need_select(spell)
 	-- "heroic leap" - 6544 warrior
 	-- "Freeze" - 33395 Frost Mage
 	-- "Rune Of Power" 116011- Mage
+	-- "Rain of Fire" 5740 -- Warlock
 
-	local tableSelect = {32375,43265,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011}
+	local tableSelect = {32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
 	for i,j in ipairs (tableSelect) do
 		if spellname == string.lower(tostring(select(1,GetSpellInfo(j)))) then return true end 
 	end
