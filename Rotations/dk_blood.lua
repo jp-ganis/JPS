@@ -13,14 +13,10 @@ function dk_blood()
 	-- left alt for anti magic zone
 	-- left ctrl for army of death
 	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
-
-<<<<<<< local
-	-- Change: add UnitExists("pet") == nil for raise dead. In some rare situations the cooldown gets reset and it can try to cast it again (last boss in End of Time)
-=======
 	-- Cooldowns: trinkets, raise dead, dancing rune weapon, synapse springs, lifeblood 
 
 	-- focus on other tank in raids !
->>>>>>> other
+
 	
 	local spell = nil
 	local target = nil
