@@ -52,17 +52,37 @@ function jps_deepCopy(object)
     return _copy(object)
 end
 
+--------------------------
+-- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
+--------------------------
+
+function jps_stringTarget(unit,case)
+	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
+	local threatUnit = tostring(unit)
+	local playerName = threatUnit
+	local playerServer = "UnKnown"
+	
+	local stringLength = string.len(threatUnit)
+	local startPos, endPos = string.find(threatUnit,case)  -- "-" "%s" space
+	if ( startPos ) then
+		playerName = string.sub(threatUnit, 1, (startPos-1))
+		playerServer = string.sub(threatUnit, (startPos+1), stringLength)
+		--print("playerName_",playerName,"playerServer_",playerServer) 
+	else
+		playerName = threatUnit
+		playerServer = "UnKnown"
+		--print("playerName_",playerName,"playerServer_",playerServer)
+	end
+return playerName
+end
+
 -----------------------
 -- UPDATE TABLE
 -----------------------
 --[[
-jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy } 	-- ["raid1target"] = { ["enemy"] = "Bob", ["hpct"] = jps.hp(unittarget) }
-jps.FriendTable[enemyFriend] = { ["name"] = enemyName , ["enemy"] = enemyGuid } -- ["Fred-Ysondre"] = { ["name"] = "Bob-Garona" , ["enemy"] = enemyGuid } -- TABLE OF FRIEND TARGETED BY ENEMY
-jps.EnemyTable[enemyGuid] = { ["name"] = enemyName , ["friend"] = enemyFriend } -- [enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred-Ysondre" -- TABLE OF ENEMY TARGETING FRIEND
-
-enemyFriend in jps.FriendTable and jps.EnemyTable with jps_stringTarget is "Fred" and not ""Fred-Ysondre"
-jps.FriendTable is 	["Fred"] = { ["name"] = "Bob-Garona" , ["enemy"] = enemyGuid }
-jps.EnemyTable is 	[enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred"
+jps.RaidTarget[unittarget] = { ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid } 	-- ["raid1target"] = { ["hpct"] =  , ["guid"] =  }
+jps.FriendTable[enemyFriend] = { ["enemy"] = enemyGuid }  -- TABLE OF FRIEND TARGETED BY ENEMY
+jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend }  -- TABLE OF ENEMY TARGETING FRIEND
 ]]
 
 function jps.UpdateEnemyTable()
@@ -77,12 +97,11 @@ function jps.UpdateEnemyTable()
 	end
 -- Impossible to get infos on a unit enemy not targeted
 -- so take only canDPS on RaidTarget and remove of EnemyTable enemies I CAN'T DPS
--- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
+-- jps.RaidTarget[unittarget] = { ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid }
 	for unit,index in pairs(jps.RaidTarget) do
 		if not jps.canDPS(unit) then
 			jps_removeKey(jps.RaidTarget,unit)
-			local unittarget_guid =  UnitGUID(unit)
-			jps_removeKey(jps.EnemyTable,unittarget_guid)
+			jps_removeKey(jps.EnemyTable,index.guid)
 		end
 	end
 end
@@ -105,8 +124,8 @@ return enemycount,targetcount
 end
 
 -- ENEMY UNIT with LOWEST HEALTH
--- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
-function jps.RaidLowestEnemy() 
+-- jps.RaidTarget[unittarget] = { ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid }
+function jps.LowestInRaidTarget() 
 local mytarget = "target"
 local lowestHP = 1 
 	for unit,index in pairs(jps.RaidTarget) do
@@ -119,47 +138,23 @@ local lowestHP = 1
 return mytarget
 end
 
--- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
-function jps_stringTarget(unit,case)
-	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
-	local threatUnit = tostring(unit)
-	local playerName = threatUnit
-	local playerServer = "UnKnown"
-	
-	local stringLength = string.len(threatUnit)
-	local startPos, endPos = string.find(threatUnit,case)  -- "-" "%s" space
-	if ( startPos ) then
-		playerName = string.sub(threatUnit, 1, (startPos-1))
-		playerServer = string.sub(threatUnit, (startPos+1), stringLength)
-		--print("playerName_",playerName,"playerServer_",playerServer) 
-	else
-		playerName = threatUnit
-		playerServer = "UnKnown"
-		--print("playerName_",playerName,"playerServer_",playerServer)
-	end
-return playerName
-end
-
 -- ENEMY TARGETING THE PLAYER
--- jps.FriendTable[enemyFriend] = { ["name"] = enemyName , ["enemy"] = enemyGuid } -- ["Fred-Ysondre"] = { ["name"] = "Bob-Garona" , ["enemy"] = enemyGuid } -- TABLE OF FRIEND TARGETED BY ENEMY
--- jps.EnemyTable[enemyGuid] = { ["name"] = enemyName , ["friend"] = enemyFriend } -- [enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred-Ysondre" -- TABLE OF ENEMY TARGETING FRIEND
+-- jps.FriendTable[enemyFriend] = 	{  ["enemy"] = enemyGuid } 		-- TABLE OF FRIEND NAME TARGETED BY ENEMY GUID
+-- jps.RaidTarget[unittarget] = 	{ ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid }
 function jps.IstargetMe()
-	local threatUnit = nil
+	local enemy_guid = nil
 	for unit,index in pairs(jps.FriendTable) do 
 		if unit == GetUnitName("player") then
-			threatUnit = tostring(index.name)
+			enemy_guid = index.enemy
 		end
 	end
-	-- enemyname with "COMBAT_LOG_EVENT_UNFILTERED" is "Bob" or "Bob-Garona"
-	local enemyname = jps_stringTarget(threatUnit,"-") -- return "Bob" or "UnKnown"
-
-	-- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy } 	-- ["raid1target"] = { ["enemy"] = "Bob", ["hpct"] = jps.hp(unittarget) }
+	
 	for unit, index in pairs(jps.RaidTarget) do 
-		if  (index.enemy == enemyname) and (enemyname ~= "UnKnown") then 
+		if  (index.guid == enemy_guid) then 
 			return unit -- return "raid1target"
 		end 
 	end
-return enemyname
+	return nil
 end
 
 -----------------------
@@ -574,7 +569,7 @@ function jps.SortRaidStatus()
 	-- for k,v in pairs (jps.RaidStatus) do jps.RaidStatus[k]=nil end
 	-- The difference between wipe(table) and table={} is that wipe removes the contents of the table, but retains the variable's internal pointer.
 	
-	table.wipe(jps.RaidStatus)
+	table.wipe(jps.RaidRoster)
 	table.wipe(jps.RaidTarget)
 			
 	local group_type = nil
@@ -600,12 +595,13 @@ function jps.SortRaidStatus()
 		local subgroup = select(3,GetRaidRosterInfo(i))
 		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
 		local hpct_friend = jps.hp(unit)
-		-- if jps.canHeal(unit) then -- and jps.hpInc(unit,"abs") > 0
+		local unittarget = unit.."target"
 		
-			jps.RaidStatus[unitname] = {
+			jps.RaidRoster[unitname] = {
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
 				["hpct"] = hpct_friend,
 				["subgroup"] = subgroup,
+				["target"] = unittarget
 			}
 	end
 end
@@ -625,11 +621,11 @@ function jps_RaidTest()
 	end
 
 	for unit,index in pairs(jps.RaidTarget) do
-		print("|cffe5cc80JPS",unit,"unit:",index.enemy,"|cffa335ee","Hpct:", index.hpct,"target:",index.target)
+		print("|cffe5cc80JPS",unit,"|cffa335ee","Hpct: ",index.hpct,"Guid: ",index.guid)
 	end
 
 	local enemycount,targetcount = jps.RaidEnemyCount()
-	local enemytargeted = jps.RaidLowestEnemy() -- UNIT ENEMY TARGETED BY FRIENDS WITH LOWEST HEALTH
+	local enemytargeted = jps.LowestInRaidTarget() -- UNIT ENEMY TARGETED BY FRIENDS WITH LOWEST HEALTH
 	local enemytargetMe = jps.IstargetMe() -- UNIT ENEMY TARGETING THE PLAYER
 	print("|cFFFF0000","EnemyCount_","|cffffffff",enemycount,"|cFFFF0000","TargetCount_","|cffffffff",targetcount)
 	print("|cFFFF0000","EnemyTarget_","|cffffffff",enemytargeted,"|cFFFF0000","EnemyTargetMe_","|cffffffff",enemytargetMe)

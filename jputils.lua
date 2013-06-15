@@ -115,6 +115,9 @@ end
 
 function jps_GetHarmSpell()
 	local HarmSpell = nil
+	local HarmSpell40 = {}
+	local HarmSpell30 = {}
+	local HarmSpell20 = {}
 	local _, _, offset, numSpells, _ = GetSpellTabInfo(2)
 	local booktype = "spell"
 			for index = offset+1, numSpells+offset do
@@ -125,16 +128,23 @@ function jps_GetHarmSpell()
 				local maxRange = select(9,GetSpellInfo(spellID))
 				local minRange = select(8,GetSpellInfo(spellID))
 				local harmful =  IsHarmfulSpell(index, booktype)
-				
+				--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
 				if (maxRange > 39) and (harmful == 1) and (minRange == 0) then
-					--print("Index",index,"spellID",spellID,"name",name,"harmful",harmful)
-					HarmSpell = name
+					table.insert(HarmSpell40,name)
 				elseif (maxRange > 29) and (harmful == 1) and (minRange == 0) then
-					HarmSpell = name
+					table.insert(HarmSpell30,name)
 				elseif (maxRange > 19) and (harmful == 1) and (minRange == 0) then
-					HarmSpell = name
-				break end
+					table.insert(HarmSpell20,name)
+				end
 			end
+	if HarmSpell40[1] then
+		HarmSpell = HarmSpell40[1]
+	elseif HarmSpell30[1] then
+		HarmSpell = HarmSpell30[1]
+	else 
+		HarmSpell = HarmSpell20[1]
+	end
+	
 	return HarmSpell
 end
 

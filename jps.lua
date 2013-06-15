@@ -80,6 +80,7 @@ jps.RipBuffed = false
 jps.BlacklistTimer = 2
 jps.RaidStatus = {}
 jps.RaidTarget = {}
+jps.RaidRoster = {}
 jps.HealerBlacklist = {}
 jps.Timers = {}
 Healtable = {}
@@ -197,7 +198,7 @@ end
 		
 -- Raid Update		
 	elseif (event == "GROUP_ROSTER_UPDATE") or (event == "RAID_ROSTER_UPDATE") then
-		print("ROSTER_UPDATE")
+		if jps.Debug then  print("ROSTER_UPDATE") end
 		jps.SortRaidStatus()
 		
 -- Dual Spec Respec
@@ -235,6 +236,7 @@ end
 			end
 			jps.Fishing = false
 		end
+      
 -- UI ERROR
 	elseif (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
 		SaveView(2)
@@ -248,13 +250,13 @@ end
 
 		local event_error = ...
 		if (event_error == SPELL_FAILED_NOT_BEHIND) then -- "You must be behind your target."
-			print("SPELL_FAILED_NOT_BEHIND",event_error)
+			if jps.Debug then  print("SPELL_FAILED_NOT_BEHIND",event_error) end
 			jps.isNotBehind = true
    			jps.isBehind = false
    			
 		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
 			-- if event_error == L["Target needs to be in front of you."] or event_error == L["You are facing the wrong way!"] then
-			print("ERR_BADATTACKFACING",event_error)			
+			if jps.Debug then  print("ERR_BADATTACKFACING",event_error)	end
 			jps.createTimer("Facing",0.6)
 			jps.createTimer("FacingBug",1.2)
 			SetView(2)
@@ -263,7 +265,7 @@ end
 			
 		elseif (event_error == SPELL_FAILED_LINE_OF_SIGHT) or (event_error == SPELL_FAILED_VISION_OBSCURED) then
 			-- if (event_error == L["Target not in line of sight"]) or (event_error == L["Your vision of the target is obscured"]) then
-			print("SPELL_FAILED_LINE_OF_SIGHT",event_error)
+			if jps.Debug then print("SPELL_FAILED_LINE_OF_SIGHT",event_error) end
 			jps.BlacklistPlayer(jps.LastTarget)
 		end
 		
@@ -300,14 +302,15 @@ end
 		local unit_guid = UnitGUID(unit)
 		local unit_health = jps.hp(unit) 
 		
-		if jps.canHeal(unit) and UnitIsPlayer(unit) then
-			local subgroup = jps.FindSubGroupUnit(unit)
+		if jps.canHeal(unit) and jps.RaidRoster[unitname] then
+			local subgroup = jps.RaidRoster[unitname].subgroup
 			local hpct_friend = jps.hp(unit) 
 			
 			jps.RaidStatus[unitname] = {
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
 				["hpct"] = hpct_friend,
 				["subgroup"] = subgroup,
+				["target"] = unittarget
 			}
 		else
 			jps_removeKey(jps.RaidStatus,unitname)
@@ -315,14 +318,12 @@ end
 		end
 
 		if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
-			local enemyname = select(1,UnitName(unittarget))
 			local hpct_enemy = jps.hp(unittarget)
 			local unittarget_guid = UnitGUID(unittarget)
 	
 			jps.RaidTarget[unittarget] = { 
-				["enemy"] = enemyname,
 				["hpct"] = hpct_enemy,
-				["target"] = unittarget_guid
+				["guid"] = unittarget_guid
 			}
 		else
 			jps_removeKey(jps.RaidTarget,unittarget)
@@ -379,8 +380,8 @@ end
 			local enemyFriend = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 			local enemyName = eventtable[5] -- eventtable[5] == sourceName
 			local enemyGuid = eventtable[4] -- eventtable[4] == sourceGUID
-			jps.FriendTable[enemyFriend] = { ["name"] = enemyName , ["enemy"] = enemyGuid } -- TABLE OF FRIEND TARGETED BY ENEMY
-			jps.EnemyTable[enemyGuid] = { ["name"] = enemyName , ["friend"] = enemyFriend } -- TABLE OF ENEMY TARGETING FRIEND
+			jps.FriendTable[enemyFriend] = { ["enemy"] = enemyGuid } -- TABLE OF FRIEND NAME TARGETED BY ENEMY GUID
+			jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
 -- TABLE DAMAGE
 		elseif (eventtable[8] ~= nil) and eventtable[2] == "SPELL_DAMAGE" and eventtable[15] > 0 then
 			if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
@@ -543,33 +544,6 @@ function SlashCmdList.jps(cmd, editbox)
 		end
 	end
 end
-
---function JPS_OnUpdate(self)
---   if (MyAddon_LastTime == nil) then
---      MyAddon_LastTime = GetTime()
---   else
---      if (GetTime() >= MyAddon_LastTime + jps.UpdateInterval) and jps.Combat and jps.Enabled then
---      jps_combat()
---      MyAddon_LastTime = GetTime()
---      end
---   end
---end
-
---function JPS_OnUpdate(self,elapsed)
--- if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
---	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
---	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
---		if jps.MacroSpam and not jps.Casting then
---			RunMacro(jps.Macro)
---			self.TimeSinceLastUpdate = 0
---		elseif jps.Combat and jps.Enabled then
---			jps_Combat()
---			self.TimeSinceLastUpdate = 0
---		end
---	end
---end
-
---combatFrame:SetScript("OnUpdate", JPS_OnUpdate)
 
 -- Create the frame that does all the work
 JPSFrame = CreateFrame("Frame", "JPSFrame")
