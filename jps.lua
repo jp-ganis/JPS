@@ -103,6 +103,7 @@ jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
 jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
 rotationDropdownHolder = nil
+jps.customRotationFunc = ""
 
 -- IN COMBAT
 local start_time = 0
@@ -610,7 +611,11 @@ function jps_Combat()
    end
    
    -- Check spell usability 
-   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+   if string.len(jps.customRotationFunc) >10 then
+	   jps.ThisCast,jps.Target = jps.customRotation() 
+   else
+	   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+   end
    if jps.firstInitializingLoop == true then
 	   jps.firstInitializingLoop = false
 	   return nil
