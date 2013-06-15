@@ -117,7 +117,7 @@ function dk_frost()
     	{ "horn of winter"},
     	{ "frost strike",			 not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")},
     	{ "obliterate",			"onCD"},
-    	{ "empower rune weapon", (jps.bloodlusting() or jps.buff("Potion of Mogu Power")) and not twoDr and not twoUr and not twoFr and rp < 60 and jps.UseCDs },
+    	{ "empower rune weapon", (jps.bloodlusting() or jps.buff("Potion of Mogu Power")) and not twoDr and not twoUr and not twoFr and runicPower < 60 and jps.UseCDs },
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>=20},
     	{ "frost strike",			"onCD" },
     	{ "plague leech",			canCastPlagueLeech(2) },
