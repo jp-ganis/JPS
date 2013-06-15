@@ -520,9 +520,50 @@ function jps.useBagItem(itemName)
 	return nil
 end 
 
+-- returns seconds in combat or if out of combat 0
+function jps.combatTime()
+	return GetTime() - jps.combatStart
+end
 
 function jps.bloodlusting()
 	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
+end
+
+function jps.targetIsRaidBoss(target) 
+	if target == nil then target = "target" end
+	local dungeon = jps.raid.getInstanceInfo()
+	if inArray(dungeon.difficulty, {"normal10","normal25","hereoic10","heroic25","lfr25", "normal40"}) then		
+		if UnitLevel(target) == -1 and UnitPlayerControlled(target) == false then
+			return true
+		end
+	end
+	return false
+end
+
+function jps.playerInLFR()
+	local dungeon = jps.raid.getInstanceInfo()
+	if dungeon.difficulty == "lfr25" then return true end
+	return false
+end
+
+function jps.raid.getInstanceInfo()
+    local name, instanceType , difficultyID = GetInstanceInfo()
+    local targetName = UnitName("target")
+    local diffTable = {}
+    diffTable[0] = "none"
+    diffTable[1] = "normal5"
+    diffTable[2] = "heroic5"
+    diffTable[3] = "normal10"
+    diffTable[4] = "normal25"
+    diffTable[5] = "heroic10"
+    diffTable[6] = "heroic25"
+    diffTable[7] = "lfr25"
+    diffTable[8] = "challenge"
+    diffTable[9] = "normal40"
+    diffTable[10] = "none"
+    diffTable[11] = "normal3"
+    diffTable[12] = "heroic3" 
+    return {instance = name , enemy = targetName, difficulty = diffTable[difficultyID]}
 end
 
 --------------------------
@@ -767,6 +808,19 @@ end
 
 function Ternary(condition, doIt, notDo)
 	if condition then return doIt else return notDo end
+end
+
+function inArray(needle, haystack)
+	if type(haystack) ~= "table" then return false end
+	for key, value in pairs(haystack) do 
+		local valType = type(value)
+		if valType == "string" or valType == "number" or valType == "boolean" then
+			if value == needle then 
+				return true
+			end
+		end
+	end
+	return false
 end
 
 ------------------------------

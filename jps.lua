@@ -75,6 +75,7 @@ jps.isTank = false
 cast = CastSpellByName
 
 -- Misc
+jps.raid = {}
 jps.Opening = true
 jps.RakeBuffed = false
 jps.RipBuffed = false
@@ -92,6 +93,7 @@ jps.RaidTimeToLive = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
 jps.settings = {}
+jps.combatStart = 0
 
 -- Config.
 jps.Configged = false
@@ -190,6 +192,7 @@ end
 		if jps.getConfigVal("timetodie frame visible") == 1 then
 			JPSEXTInfoFrame:Show()
 		end
+		jps.combatStart = GetTime()
 	  
 	elseif (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UNGHOST") then -- or (event == "PLAYER_ALIVE")
 		if jps.Debug then print("PLAYER_REGEN_ENABLED") end
@@ -207,6 +210,7 @@ end
 		if jps.getConfigVal("timetodie frame visible") == 1 then
 			JPSEXTInfoFrame:Hide()
 		end
+		jps.combatStart = 0
 		collectgarbage("collect")
 		
 -- Raid Update		

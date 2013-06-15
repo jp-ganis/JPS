@@ -10,10 +10,7 @@ function dk_frost()
 	-- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
 	
 	-- Usage info:
-	-- Shift to DnD at mouse
-	-- left alt for anti magic zone
-	-- left ctrl for army of death
-	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
+	-- left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
 
 	-- Cooldowns: trinkets, raise dead, synapse springs, lifeblood, pillar of frost, racials
 	
@@ -64,8 +61,8 @@ function dk_frost()
     	{ "Death and Decay",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and IsLeftAltKeyDown == nil},
     	
     	-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
-    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
+    	{ "Raise Ally",			UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") == true and jps.UseCds and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
+    	{ "Raise Ally",			UnitIsDeadOrGhost("mouseover") == 1 and UnitPlayerControlled("mouseover") == true and jps.UseCds and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
     	
     	-- Self heal
     	{ "Death Pact",			jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
@@ -83,7 +80,8 @@ function dk_frost()
     	
     	--CDs + Buffs
     	{ "Pillar of Frost",			jps.UseCDs },
-    	--{ jps.useBagItem("Potion of Mogu Power"),			timeToDie <= 30 or (timetoDie <= 60 and jps.buff("pillar of frost))},
+    	{ jps.useBagItem("Flask of Winter's Bite"),			jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter's Bite")},
+    	{ jps.useBagItem("Potion of Mogu Power"),			jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()},
     	{ jps.DPSRacial,				jps.UseCDs },
 
     	{ "Raise Dead",			jps.UseCDs and UnitExists("pet") == nil },
@@ -117,7 +115,7 @@ function dk_frost()
     	{ "horn of winter"},
     	{ "frost strike",			 not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")},
     	{ "obliterate",			"onCD"},
-    	{ "empower rune weapon",			timeToDie<=60 and jps.buff("Potion of Mogu Power") and jps.UseCDs },
+    	{ "empower rune weapon", (jps.bloodlusting() or jps.buff("Potion of Mogu Power")) and not twoDr and not twoUr and not twoFr and rp < 60 and jps.UseCDs },
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>=20},
     	{ "frost strike",			"onCD" },
     	{ "plague leech",			canCastPlagueLeech(2) },
