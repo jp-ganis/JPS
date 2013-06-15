@@ -316,15 +316,15 @@ end
 function jps.addSettingsCheckbox(settingName)
 	rotationCountSetting = rotationCountSetting + 1
 	if rotationCountSetting == 16 then 
-		settingButtonPositionX = 220
-		settingButtonPositionY = - 90
+		settingsButtonPositionX = 220
+		settingsButtonPositionY = - 90
 	elseif rotationCountSetting == 31 then
-		settingButtonPositionX = 420
-		settingButtonPositionY = - 90
+		settingsButtonPositionX = 420
+		settingsButtonPositionY = - 90
 	end
 
     local settingsJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_Settings_"..settingName, jpsSettingsFrame, "OptionsCheckButtonTemplate");
-    settingsJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",settingButtonPositionX,settingButtonPositionY);
+    settingsJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",settingsButtonPositionX,settingsButtonPositionY);
     getglobal(settingsJPS_IconOptions_CheckButton:GetName().."Text"):SetText(settingName);
     
     local function settingsJPS_IconOptions_CheckButton_OnClick()
@@ -346,7 +346,7 @@ function jps.addSettingsCheckbox(settingName)
     settingsJPS_IconOptions_CheckButton:SetScript("OnClick", settingsJPS_IconOptions_CheckButton_OnClick);
     settingsJPS_IconOptions_CheckButton:SetScript("OnShow", settingsJPS_IconOptions_CheckButton_OnShow);
 
-    settingButtonPositionY = settingButtonPositionY - 30;
+    settingsButtonPositionY = settingsButtonPositionY - 30;
 end
 ---------------------------
 -- DROPDOWN SPELLS
