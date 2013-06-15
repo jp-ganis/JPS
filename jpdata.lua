@@ -512,7 +512,7 @@ function jps.useBagItem(itemName)
 				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
 				local hasNoCD = Ternary(dur == 0, true, false)
 				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
-					UseContainerItem(bag,slot) 
+					return { "macro", "/use "..itemName }
 				end
 			end
 		end
