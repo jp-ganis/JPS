@@ -96,8 +96,6 @@ function jps_createConfigFrame()
 	jpsConfigFrame:Hide()
 	
 	-- DROPDOWN ROTATION
-	jps.resetTimeToDieFrame()
-	jps.resetRotationDropdownFrame()
 	jps.addRotationDropdownFrame()
 	jps.addSettingsFrame()
 	jps.addcustomRotationFrame()
@@ -225,26 +223,16 @@ end
 ---------------------------
 -- Settings Frame
 ---------------------------
---[[
-A Frame for Settings that you only could change in the code:
-- deleting greys
-- dispel on / off
-- facing direction
-- use potions, use flasks
-- use trinekt 1 / 2
-- dismount when entering combat 
-- hide JPS ui due to screenshots !
-- button for reset DB / UI position
-
-what I need here:
-- one function where I can add a checkbox with titel + description , it should also care about saving current state in jpsDB and handle onClick
-- one function for reading settings e.g. jps.getConfigVal(str) and one for writing jps.setConfigVal()
-
-
-some of there we could change through jps.UseCDs , but this is to generally because the cooldowns are to different (we don't have to care about a 45 sec cooldown while fighting trash, but it would be useless to use a potion there :) 
-]]--
 
 function jps.addSettingsFrame()
+	
+	-- Custom Event Handlers which are called after a Setting checkbox is clicked
+	-- key = name of checkbox, value = function to call
+	jps.onClickSettingEvents = {
+		["timetodie frame visible"] = jps.TimeToDieToggle,
+		["rotation dropdown visible"] = jps.DropdownRotationTogle,
+	}
+	
 	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
 	jpsSettingsFrame.parent  = jpsConfigFrame.name
 	jpsSettingsFrame.name = "JPS Settings Panel"
@@ -261,6 +249,8 @@ function jps.addSettingsFrame()
 	settingsInfo:SetText("Work in Progress!")
 
 	for settingsKey,settingsVal in pairs (jpsDB[jpsRealm][jpsName].settings) do
+		jps.notifySettingChanged(settingsKey, jps.getConfigVal(settingsKey))
+
 		rotationCountSetting = rotationCountSetting + 1
 		if rotationCountSetting == 16 then 
 			settingsButtonPositionX = 220
@@ -281,6 +271,7 @@ function jps.addSettingsFrame()
             else 
                 settingsStatus = 1 
             end
+            jps.notifySettingChanged(settingsKey, settingsStatus)
             jps.setConfigVal(settingsKey, settingsStatus)
 		end  
 		
@@ -300,20 +291,25 @@ function jps.addSettingsFrame()
 	
 end
 
-
-function jps.getConfigVal(val)
-	local setting = jps.settings[string.lower(val)]
+function jps.getConfigVal(key)
+	local setting = jps.settings[string.lower(key)]
 	if setting == nil then
-		jps.setConfigVal(val, 1)
-		jps.addSettingsCheckbox(val)
+		jps.setConfigVal(key, 1)
+		jps.addSettingsCheckbox(key)
 		return 1
 	else 
 		return setting
 	end
 end
 
-function jps.setConfigVal(val,status)
-	jps.settings[string.lower(val)] = status
+function jps.setConfigVal(key,status)
+	jps.settings[string.lower(key)] = status
+end
+
+function jps.notifySettingChanged(key, status) 
+	if jps.onClickSettingEvents[string.lower(key)] ~= nil then
+		jps.onClickSettingEvents[string.lower(key)](key, status)
+	end
 end
 
 function jps.addSettingsCheckbox(setting)
@@ -337,6 +333,7 @@ function jps.addSettingsCheckbox(setting)
         else 
             settingStatus = 1 
         end
+        jps.notifySettingChanged(settingsKey, settingsStatus)
         setsettingStatus(settingName, settingStatus)
     end  
     
@@ -420,64 +417,23 @@ function jps.addRotationDropdownFrame()
 end
 
 ---------------------------
--- RESET DROPDOWN SPELLS
+-- HIDE/SHOP DROPDOWN SPELLS
 ---------------------------
 
-function jps.resetRotationDropdownFrame()
-	initDropDown_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
-	initDropDown_CheckButton:SetPoint("TOPLEFT",20,-370)
-	initDropDown_CheckButton:RegisterForClicks("AnyUp")
-	
-	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	title:SetPoint("TOPLEFT", 30, -5) 
-	title:SetText("|cffffffffDROPDOWN ROTATION FRAME")
-	
-	local function DropDown_Check_OnClick(self)
-		local checkbutton = initDropDown_CheckButton:GetChecked()
-		jps.setConfigVal("Rotation Dropdown Visible", checkbutton)
-		if checkbutton == 1 then
-			rotationDropdownHolder:Show()
-		else
-			rotationDropdownHolder:Hide()
-		end
-			
+function jps.DropdownRotationTogle(key, status)
+	if status == 1 then
+		rotationDropdownHolder:Show()
+	else
+		rotationDropdownHolder:Hide()
 	end
-	
-	-- local function DropDown_Check_OnShow(self)
-		-- initDropDown_CheckButton:SetChecked(checkbutton)
-	-- end
-	
-	--initDropDown_CheckButton:SetScript("OnShow", DropDown_Check_OnShow);
-	initDropDown_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
-
 end
 
-function jps.resetTimeToDieFrame()
-	TimeToDie_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
-	TimeToDie_CheckButton:SetPoint("TOPLEFT",20, -400)
-	TimeToDie_CheckButton:RegisterForClicks("AnyUp")
-	
-	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	title:SetPoint("TOPLEFT", 30, -5) 
-	title:SetText("|cffffffffTIMETODIE FRAME")
-	
-	local function DropDown_Check_OnClick(self)
-		local timecheckbutton = TimeToDie_CheckButton:GetChecked()
-		jps.setConfigVal("TimeToDie Frame Visible", timecheckbutton)
-		if timecheckbutton == 1 then
-			JPSEXTInfoFrame:Show()
-		else
-			JPSEXTInfoFrame:Hide()
-		end
+function jps.TimeToDieToggle(key, status)
+	if status == 1 and UnitAffectingCombat("player") ~= nil then
+		JPSEXTInfoFrame:Show()
+	else
+		JPSEXTInfoFrame:Hide()
 	end
-	
-	-- local function DropDown_Check_OnShow(self)
-		-- initDropDown_CheckButton:SetChecked(checkbutton)
-	-- end
-	
-	--initDropDown_CheckButton:SetScript("OnShow", DropDown_Check_OnShow);
-	TimeToDie_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
-
 end
 
 ---------------------------

@@ -91,6 +91,7 @@ jps.RaidTimeToDie = {}
 jps.RaidTimeToLive = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
+jps.settings = {}
 
 -- Config.
 jps.Configged = false
@@ -164,31 +165,34 @@ end
 		NotifyInspect("player")
 	  
 	elseif event == "PLAYER_ENTERING_WORLD" then -- 2er fire > reloadui
-		--print("PLAYER_ENTERING_WORLD")
+		if jps.Debug then print("PLAYER_ENTERING_WORLD") end
 		jps.detectSpec()
 		reset_healtable()
 
 	elseif event == "INSPECT_READY" then -- 3er fire > reloadui
-		--print("INSPECT_READY")
+		if jps.Debug then  print("INSPECT_READY") end
 		if not jps.Spec then 
 			jps.detectSpec() 
 		end
 		if jps_variablesLoaded and not jps.Configged then jps_createConfigFrame() end
 
 	elseif event == "VARIABLES_LOADED" then -- 1er fire > reloadui
-		--print("VARIABLES_LOADED")
+		if jps.Debug then print("VARIABLES_LOADED") end
 		jps_VARIABLES_LOADED()
 		if jps.Spec then jps_createConfigFrame() end
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
-		--print("PLAYER_REGEN_DISABLED")
+		if jps.Debug then print("PLAYER_REGEN_DISABLED") end
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
 		jps.SortRaidStatus()
 		start_time = GetTime()
+		if jps.getConfigVal("timetodie frame visible") == 1 then
+			JPSEXTInfoFrame:Show()
+		end
 	  
 	elseif (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UNGHOST") then -- or (event == "PLAYER_ALIVE")
-		--print("PLAYER_REGEN_ENABLED")
+		if jps.Debug then print("PLAYER_REGEN_ENABLED") end
 		TurnLeftStop()
 		CameraOrSelectOrMoveStop()
 		jps.Opening = true
@@ -199,6 +203,9 @@ end
 		jps.EnemyTable = {}
 		jps.FriendTable = {}
 		jps.clearTimeToLive()
+		if jps.getConfigVal("timetodie frame visible") == 1 then
+			JPSEXTInfoFrame:Hide()
+		end
 		collectgarbage("collect")
 		
 -- Raid Update		
@@ -276,7 +283,7 @@ end
 		end
 		
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and jps.Enabled then -- and jps.Combat
-	
+		if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
 		jps.CurrentCast = {...}
 		
 		-- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
@@ -302,6 +309,7 @@ end
 -- "UNIT_HEALTH_PREDICTION" arg1 unitId receiving the incoming heal
 
 	if event == "UNIT_HEALTH_FREQUENT" and jps.Enabled and jps.isHealer then
+		if jps.Debug then print("UNIT_HEALTH_FREQUENT") end
 		local unit = ...
 		local unitname = select(1,UnitName(unit))
 		local unittarget = unit.."target"
@@ -362,7 +370,8 @@ end
 -- eventtable[10] == destFlags
 -- eventtable[15] == amount if suffix is _DAMAGE or _HEAL
 
-	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled then
+	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and jps.Enabled and UnitAffectingCombat("player") == 1 then
+		if jps.Debug then print("COMBAT_LOG_EVENT_UNFILTERED") end
 		local eventtable =  {...}
 		
 		-- TIMER SHIELD FOR DISC PRIEST
@@ -598,6 +607,8 @@ if jps.Enabled and (select(3, ...) ~= nil) and (InCombatLockdown()==1) and jps.I
    end
 end
 end)
+
+
 
 ------------------------
 -- COMBAT

@@ -205,15 +205,17 @@ JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing()
 JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal") -- "OVERLAY"
 infoFrameText:SetJustifyH("LEFT")
-infoFrameText:SetPoint("LEFT", 10, 0)
+infoFrameText:SetPoint("LEFT", 15, 0)
+infoFrameText:SetFont('Fonts\\ARIALN.ttf', 11, 'THINOUTLINE')
 local infoTTL = 60
 local infoTTD = 60
 
 JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
+
 JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
     jps.updateTimeToLive(self, elapsed)
 end)
-
+JPSEXTInfoFrame:Hide()
 --JPSEXTFrame:SetScript("OnEvent", function(self, event, ...)
 --    if event == "PLAYER_REGEN_DISABLED" then
 --        -- Combat Start
@@ -228,15 +230,20 @@ end)
 function jps.updateInfoText()
 	local infoTexts = ""
 	if infoTTL ~= nil and jps.isHealer then
-		infoTexts = infoTexts.."TimeToLive: "..infoTTL
+		local minutesLive = math.floor(infoTTL / 60)
+		local secondsLive = infoTTL - (minutesLive*60)	
+		infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
 	end
 	if infoTTD ~= nil then
-		infoTexts = infoTexts.."\nTimeToDie: "..infoTTD
+		local minutesDie = math.floor(infoTTD / 60)
+		local secondsDie = infoTTD - (minutesDie*60)
+		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec"
 	end	
 	infoFrameText:SetText(infoTexts)
 end
 
 function jps.updateTimeToLive(self, elapsed)
+	if UnitAffectingCombat("player") == nil then return end
 	if self.TimeToLiveSinceLastUpdate == nil then self.TimeToLiveSinceLastUpdate = 0 end
     self.TimeToLiveSinceLastUpdate = self.TimeToLiveSinceLastUpdate + elapsed
     if (self.TimeToLiveSinceLastUpdate > jps.UpdateInterval) then
