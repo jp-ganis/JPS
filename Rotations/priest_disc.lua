@@ -7,4 +7,4 @@ local isArena, isRegistered = IsActiveBattlefieldArena()
 	else
 		return priest_disc_pve()
 end
-
+end
