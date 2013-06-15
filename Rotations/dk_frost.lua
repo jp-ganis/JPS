@@ -83,7 +83,7 @@ function dk_frost()
     	{ "Pillar of Frost",			jps.UseCDs },
     	{ jps.useBagItem("Flask of Winter's Bite"), jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter's Bite") },
     	{ jps.useBagItem("Potion of Mogu Power"), jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()}, 
-    	},
+
     	{ jps.DPSRacial,				jps.UseCDs },
 
     	{ "Raise Dead",			jps.UseCDs and UnitExists("pet") == nil },
@@ -121,7 +121,7 @@ function dk_frost()
     	{ "blood tap",			 jps.buffStacks("blood charge")>10 and runicPower>=20},
     	{ "frost strike",			"onCD" },
     	{ "plague leech",			canCastPlagueLeech(2) },
-    	{ "empower rune weapon",	jps.targetIsRaidBoss() and jps.combatTime() < 20 } -- so it will be ready at the end of most Raid fights
+    	{ "empower rune weapon",	jps.targetIsRaidBoss() and jps.combatTime() < 35 }, -- so it will be ready at the end of most Raid fights
 	}
 	
 	spellTable[2] =
