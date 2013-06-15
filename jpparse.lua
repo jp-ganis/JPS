@@ -173,7 +173,7 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
-	---if jps.Debug then jps_canCast_debug(spell,unit) end
+	--if jps.Debug then jps_canCast_debug(spell,unit) end
 
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
