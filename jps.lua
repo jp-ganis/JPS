@@ -430,20 +430,24 @@ end
 			jps.FriendTable[enemyFriend] = { ["enemy"] = enemyGuid } -- TABLE OF FRIEND NAME TARGETED BY ENEMY GUID
 			jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
 -- TABLE DAMAGE
-		elseif (eventtable[8] ~= nil) and eventtable[2] == "SPELL_DAMAGE" and eventtable[15] > 0 then
+		elseif (eventtable[8] ~= nil) and ((eventtable[2] == "SPELL_DAMAGE") or (eventtable[2] == "SWING_DAMAGE")) then
+			local dmg_TTD = 0
+			jps.Combat = true
+			jps.gui_toggleCombat(true)
+			-- end_time = GetTime()
+			-- total_time = math.max(end_time - start_time, 1)
+			if (eventtable[2] == "SPELL_DAMAGE") and (eventtable[15] > 0) then
+				dmg_TTD = eventtable[15]
+			elseif (eventtable[2] == "SWING_DAMAGE") and (eventtable[12] > 0) then
+				dmg_TTD = eventtable[12]
+			end
 			if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
-				jps.Combat = true
-				jps.gui_toggleCombat(true)
-				end_time = GetTime()
-				total_time = math.max(end_time - start_time, 1)
-				local unitName = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 				local unitGuid = eventtable[8] -- eventtable[8] == destGUID
-				
 				if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
 				local dataset = jps.RaidTimeToDie[unitGuid]
 				local data = table.getn(dataset)
 				if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
-				table.insert(dataset, 1, {GetTime(), eventtable[15]})
+				table.insert(dataset, 1, {GetTime(), dmg_TTD})
 				jps.RaidTimeToDie[unitGuid] = dataset
 				--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
 			end
