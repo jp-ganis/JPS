@@ -34,9 +34,6 @@ function dk_frost()
 	local oneUr = ur1 or ur2
 	local twoUr = ur1 and ur2
 
-	
-	local enemyTargetingMe = jps.IstargetMe()
-
 	local frostFeverDuration = jps.debuffDuration("Frost Fever")
 	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
 	local timeToDie = jps.TimeToDie("target")
@@ -44,13 +41,13 @@ function dk_frost()
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
 		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
-		if jps.debuffDuration("Frost Fever") > timeLeft or jps.debuffDuration("Blood Plague") > timeLeft then
-			return false
+		if jps.debuffDuration("Frost Fever") <= timeLeft then
+			return true
 		end
-		if jps.debuffDuration("Frost Fever") == 0 or jps.debuffDuration("Blood Plague") == 0 then
-			return false
+		if jps.debuffDuration("Blood Plague") <= timeLeft then
+			return true
 		end
-		return true
+		return false
 	end
 
 	------------------------
