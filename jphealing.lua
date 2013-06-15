@@ -301,7 +301,7 @@ function jps.TimeToLive(unit)
 end
 
 -- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
-function jps.TimeToDie(unit)
+function jps.TimeToDie(unit, percent)
 	if unit == nil then return 60 end
 	local guid = UnitGUID(unit)
 	local health_unit = UnitHealth(unit)
@@ -320,7 +320,14 @@ function jps.TimeToDie(unit)
 			end
         	incomingDps = math.ceil(totalDmg / totalTime)
         end
-        timetodie = math.ceil(health_unit / incomingDps)
+        local targetHP = 0
+        if percent ~= nil then targetHP = UnitHealthMax(unit) * percent end
+        local hpLeft = UnitHealth(unit) - targetHP
+        if hpLeft <= 0 then
+            timetodie = 0
+        else
+            timetodie = math.ceil(hpLeft / incomingDps)
+        end
     end
 	return timetodie
 end
