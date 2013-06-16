@@ -60,7 +60,7 @@ function warlock_destro()
     local immolateTarget = false
     local immolateFocus = false
     local fireAndBrimstoneBuffed = jps.buff("Fire and Brimstone", "player")
-    local timeToBurst = jpsext and jpsext.timeToDie("target", 0.2) or 0
+    local timeToBurst = jps.TimeToDie("target", 0.2) or 0
     --local potionCount = GetItemCount("Potion of the Jade Serpent",0,1) 
 
     -- If focus exists and is not the same as target, consider attacking focus too
