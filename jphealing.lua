@@ -229,15 +229,21 @@ JPSEXTInfoFrame:Hide()
 
 function jps.updateInfoText()
 	local infoTexts = ""
-	if infoTTL ~= nil and jps.isHealer then
+	if infoTTL ~= nil and jps.isHealer and infoTTL < 200000 then
 		local minutesLive = math.floor(infoTTL / 60)
 		local secondsLive = infoTTL - (minutesLive*60)	
-		infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
+		if infoTTL < 200000 then
+			infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
+		else 
+			infoTexts = "TimeToLive: n/a"
+		end
 	end
-	if infoTTD ~= nil then
+	if infoTTD ~= nil and infoTTD < 200000 then
 		local minutesDie = math.floor(infoTTD / 60)
 		local secondsDie = infoTTD - (minutesDie*60)
 		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec"
+	else
+		infoTexts = infoTexts.."TimeToDie: n/a"
 	end	
 	infoFrameText:SetText(infoTexts)
 end
@@ -331,34 +337,24 @@ end
 
 -- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
 function jps.TimeToDie(unit, percent)
-	if unit == nil then return 60 end
-	local guid = UnitGUID(unit)
-	local health_unit = UnitHealth(unit)
-	local timetodie = 60 -- e.g. 60 seconds
-	local totalDmg = 1 -- to avoid 0/0
-	local incomingDps = 1
-
-	if jps.RaidTimeToDie[guid] ~= nil then
-		local dataset = jps.RaidTimeToDie[guid]
-        local data = table.getn(dataset)
-        if #dataset > 1 then
-        	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
-        	local totalTime = math.max(timeDelta, 1)
-			for i,j in ipairs(dataset) do
-				totalDmg = totalDmg + j[2]
-			end
-        	incomingDps = math.ceil(totalDmg / totalTime)
-        end
-        local targetHP = 0
-        if percent ~= nil then targetHP = UnitHealthMax(unit) * percent end
-        local hpLeft = UnitHealth(unit) - targetHP
-        if hpLeft <= 0 then
-            timetodie = 0
-        else
-            timetodie = math.ceil(hpLeft / incomingDps)
-        end
-    end
-	return timetodie
+	local unitGuid = UnitGUID(unit)
+	local health = UnitHealth(unit)
+	if health == UnitHealthMax(unit) then
+		return nil
+	end
+	local time = GetTime()
+    local timeToDie = jps.timeToDieFunctions[jps.timeToDieFunction][1](jps.RaidTimeToDie[unitGuid],health,time)
+    
+	if percent ~= nil and timeToDie ~= nil then
+		curPercent = health/UnitHealthMax(unit)
+		if curPercent > percent then
+			timeToDie = (curPercent-percent)/(curPercent/timeToDie)
+		else
+			timeToDie = 0
+		end
+	end
+	
+	if timeToDie ~= nil then return math.ceil(timeToDie) else return 100000 end
 end
 
 -- FRIEND UNIT WITH THE LOWEST TIMETODIE -- USAGE FOR HEALING TO SHIELD INCOMING DAMAGE
