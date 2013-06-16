@@ -249,7 +249,7 @@ function jps.addSettingsFrame()
 	settingsInfo:SetJustifyV("TOP")
 	settingsInfo:SetText("Work in Progress!")
 
-	for settingsKey,settingsVal in pairs (jpsDB[jpsRealm][jpsName].settings) do
+	for settingsKey,settingsVal in pairs (jps.settings) do
 		jps.notifySettingChanged(settingsKey, jps.getConfigVal(settingsKey))
 
 		rotationCountSetting = rotationCountSetting + 1
@@ -521,6 +521,10 @@ function jps_VARIABLES_LOADED()
 		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then -- NEW
 			jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
 		end
+		if ( not jpsDB[jpsRealm][jpsName].settings) then -- NEW
+			jpsDB[jpsRealm][jpsName].settings = {} -- NEW
+		end		
+		
 		if jps.Spec then
 			if ( not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) then -- NEW
 				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
