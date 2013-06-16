@@ -1,4 +1,4 @@
---[[
+""""--[[
 	 JPS - WoW Protected Lua DPS AddOn
 	Copyright (C) 2011 Jp Ganis
 
@@ -108,7 +108,7 @@ jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
 rotationDropdownHolder = nil
 jps.customRotationFunc = ""
-jps.timeToDieAlgorithm= "WeightedLeastSquares"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
+jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 
 -- IN COMBAT
 local start_time = 0
