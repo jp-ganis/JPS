@@ -429,31 +429,142 @@ end
 			local enemyGuid = eventtable[4] -- eventtable[4] == sourceGUID
 			jps.FriendTable[enemyFriend] = { ["enemy"] = enemyGuid } -- TABLE OF FRIEND NAME TARGETED BY ENEMY GUID
 			jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
--- TABLE DAMAGE
-		elseif (eventtable[8] ~= nil) and ((eventtable[2] == "SPELL_DAMAGE") or (eventtable[2] == "SWING_DAMAGE")) then
-			local dmg_TTD = 0
-			jps.Combat = true
-			jps.gui_toggleCombat(true)
-			-- end_time = GetTime()
-			-- total_time = math.max(end_time - start_time, 1)
-			if (eventtable[2] == "SPELL_DAMAGE") and (eventtable[15] > 0) then
-				dmg_TTD = eventtable[15]
-			elseif (eventtable[2] == "SWING_DAMAGE") and (eventtable[12] > 0) then
-				dmg_TTD = eventtable[12]
-			end
-			if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
-				local unitGuid = eventtable[8] -- eventtable[8] == destGUID
-				if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
-				local dataset = jps.RaidTimeToDie[unitGuid]
-				local data = table.getn(dataset)
-				if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
-				table.insert(dataset, 1, {GetTime(), dmg_TTD})
-				jps.RaidTimeToDie[unitGuid] = dataset
-				--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
-			end
 		end
 	end
 end
+
+function updateTimeToDie(unit)
+	if not unit then
+			updateTimeToDie("target")
+			updateTimeToDie("focus")
+			updateTimeToDie("mouseover")
+			for id = 1, 4 do
+				updateTimeToDie("boss" .. id)
+			end
+			if jps.isHealer then
+				for id = 1, 4 do
+					updateTimeToDie("party" .. id)
+					updateTimeToDie("partypet" .. id)
+				end
+				for id = 1, 5 do
+					updateTimeToDie("arena" .. id)
+					updateTimeToDie("arenapet" .. id)
+				end
+				for id = 1, 40 do
+					updateTimeToDie("raid" .. id)
+					updateTimeToDie("raidpet" .. id)
+				end
+			end
+		return
+	end
+	if not UnitExists(unit) then return end
+
+	local unitGuid = UnitGUID(unit)
+	local health = UnitHealth(unit)
+
+	if health == UnitHealthMax(unit) then
+		jps.RaidTimeToDie[unitGuid] = nil
+		return
+	end
+
+	local time = GetTime()
+
+	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieFunction][0](jps.RaidTimeToDie[unitGuid],health,time)
+end
+
+jps.timeToDieFunctions = {}
+jps.timeToDieFunctions["InitialMidpoints"] = { 
+	[0] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			dataset = {}
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth, dataset.mtime = time, health
+		else
+			dataset.mhealth = (dataset.mhealth + health) * .5
+			dataset.mtime = (dataset.mtime + time) * .5
+			if dataset.mhealth > dataset.health0 then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			return nil
+		else
+			return health * (dataset.time0 - dataset.mtime) / (dataset.mhealth - dataset.health0)
+		end
+	end 
+}
+jps.timeToDieFunctions["LeastSquared"] = { 
+	[0] = function(dataset, health, time)	
+		if not dataset or not dataset.n then
+			dataset = {}
+			dataset.n = 1
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth = time * health
+			dataset.mtime = time * time
+		else
+			dataset.n = dataset.n + 1
+			dataset.time0 = dataset.time0 + time
+			dataset.health0 = dataset.health0 + health
+			dataset.mhealth = dataset.mhealth + time * health
+			dataset.mtime = dataset.mtime + time * time
+			local timeToDie = jps.timeToDieFunctions["LeastSquared"][1](dataset,health,time)
+			if not timeToDie then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.n then
+			return nil
+		else
+			local timeToDie = (dataset.health0 * dataset.mtime - dataset.mhealth * dataset.time0) / (dataset.health0 * dataset.time0 - dataset.mhealth * dataset.n) - time
+			if timeToDie < 0 then
+				return nil
+			else
+				return timeToDie
+			end
+		end
+	end 
+}
+jps.timeToDieFunctions["WeightedLeastSquares"] = { 
+	[0] = function(dataset, health, time)	
+		if not dataset or not dataset.health0 then
+			dataset = {}
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth = time * health
+			dataset.mtime = time * time
+		else
+			dataset.time0 = (dataset.time0 + time) * .5
+			dataset.health0 = (dataset.health0 + health) * .5
+			dataset.mhealth = (dataset.mhealth + time * health) * .5
+			dataset.mtime = (dataset.mtime + time * time) * .5
+			local timeToDie = jps.timeToDieFunctions["WeightedLeastSquares"][1](dataset,health,time)
+			if not timeToDie then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			return nil
+		else
+		
+			local timeToDie = (dataset.mtime * dataset.health0 - dataset.time0 * dataset.mhealth) / (dataset.time0 * dataset.health0 - dataset.mhealth) - time
+			if timeToDie < 0 then
+				return nil
+			else
+				return timeToDie
+			end
+		end
+	end 
+}
+
+jps.timeToDieFunction = "WeightedLeastSquares"
 
 combatFrame:SetScript("OnEvent", jps_combatEventHandler)
 
@@ -610,6 +721,7 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
 		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage("collect") end
+		updateTimeToDie()
 	  	if jps.Combat and jps.Enabled then
 		 	jps_Combat() 
 		 	self.TimeSinceLastUpdate = 0
