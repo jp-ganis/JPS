@@ -154,6 +154,8 @@ local ArenaUnit = {"arena1","arena2","arena3"}
 -- JPS.CANDPS NE MARCHE QUE POUR PARTYn et RAIDn..TARGET PAS POUR UNITNAME..TARGET
 local EnemyUnit = {}
 for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
+local enemyTargetingMe = jps.IstargetMe()
+local lowestEnemy = jps.LowestInRaidTarget()
 
 local rangedTarget = "target"
 if jps.canDPS("target") then
@@ -162,6 +164,8 @@ elseif jps.canDPS("focustarget") then
 rangedTarget = "focustarget"
 elseif jps.canDPS("targettarget") then
 rangedTarget = "targettarget"
+elseif jps.canDPS(lowestEnemy) then
+rangedTarget = lowestEnemy
 end
 
 local isboss = UnitLevel(rangedTarget) == -1 or UnitClassification(rangedTarget) == "elite"
@@ -273,13 +277,13 @@ local table=
 {
 	-- "Leap of Faith" 73325 -- "Saut de foi" -- "Leap of Faith" with Glyph dispel Stun
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Leap_LoseControl__Cond_Multi_" },
-	-- OFFENSIVE DISPELL -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
+	-- OFFENSIVE Dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
-	-- DISPELL "Purifier" 527 -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
-	{ 527, jps.MagicDispel , {player,jps_TANK,jps_FriendTTD} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition
+	-- Dispel "Purifier" 527 -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
+	{ 527, jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition
 	{ 527, jps.DispelFriendly , FriendUnit , "dispelFriendly_MultiUnit_" }, -- jps.DispelFriendly is a function must be alone in condition
-	{ {"func",527,jps.MagicDispel}, jps.MultiTarget and isInBG , FriendUnit , "dispelMagic_Cond_Multi_" }, -- Dispell all Magic debuff
+	{ {"func",527,jps.MagicDispel}, jps.MultiTarget and isInBG , FriendUnit , "dispelMagic_Cond_Multi_" }, -- Dispel all Magic debuff
 }
 return table
 end
@@ -287,7 +291,7 @@ end
 local function parse_dmg()
 local table=
 {
-	-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
+	-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
 	{ 32379, isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
 	{ 32379, jps.IsCastingPoly , EnemyUnit , "|cFFFF0000castDeath_Polymorph_"},
 	{ {"func", 32379 , jps.IsCastingPoly}, isInBG , EnemyUnit , "|cFFFF0000castDeath_Polymorph_Cond_Multi_" }, 

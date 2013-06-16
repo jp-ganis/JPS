@@ -52,74 +52,10 @@ function jps_deepCopy(object)
     return _copy(object)
 end
 
------------------------
--- UPDATE TABLE
------------------------
---[[
-jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy } 	-- ["raid1target"] = { ["enemy"] = "Bob", ["hpct"] = jps.hp(unittarget) }
-jps.FriendTable[enemyFriend] = { ["name"] = enemyName , ["enemy"] = enemyGuid } -- ["Fred-Ysondre"] = { ["name"] = "Bob-Garona" , ["enemy"] = enemyGuid } -- TABLE OF FRIEND TARGETED BY ENEMY
-jps.EnemyTable[enemyGuid] = { ["name"] = enemyName , ["friend"] = enemyFriend } -- [enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred-Ysondre" -- TABLE OF ENEMY TARGETING FRIEND
-
-enemyFriend in jps.FriendTable and jps.EnemyTable with jps_stringTarget is "Fred" and not ""Fred-Ysondre"
-jps.FriendTable is 	["Fred"] = { ["name"] = "Bob-Garona" , ["enemy"] = enemyGuid }
-jps.EnemyTable is 	[enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred"
-]]
-
-function jps.UpdateEnemyTable()
--- remove all friends I CAN'T HEAL
--- FriendTable & RaidStatus ont pour index UnitName
--- jps.RaidStatus[unitname] = {["unit"] = unit, ["hpct"] = hpct,["subgroup"] = subgroup}
-	for unit,index in pairs(jps.RaidStatus) do
-		if not jps.canHeal(unit) then
-			jps_removeKey(jps.RaidStatus,unit)
-			jps_removeKey(jps.FriendTable,unit)
-		end
-	end
--- Impossible to get infos on a unit enemy not targeted
--- so take only canDPS on RaidTarget and remove of EnemyTable enemies I CAN'T DPS
--- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
-	for unit,index in pairs(jps.RaidTarget) do
-		if not jps.canDPS(unit) then
-			jps_removeKey(jps.RaidTarget,unit)
-			local unittarget_guid =  UnitGUID(unit)
-			jps_removeKey(jps.EnemyTable,unittarget_guid)
-		end
-	end
-end
-
------------------------
--- RAID ENEMY COUNT 
------------------------
-
--- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
-function jps.RaidEnemyCount() 
-local enemycount = 0
-local targetcount = 0
-	for unit,index in pairs(jps.EnemyTable) do 
-		enemycount = enemycount + 1
-	end
-	for tar_unit,tar_index in pairs(jps.RaidTarget) do
-		targetcount = targetcount + 1 -- if CheckInteractDistance(tar_unit, 4) == 1
-	end
-return enemycount,targetcount
-end
-
--- ENEMY UNIT with LOWEST HEALTH
--- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy }
-function jps.RaidLowestEnemy() 
-local mytarget = "target"
-local lowestHP = 1 
-	for unit,index in pairs(jps.RaidTarget) do
-		local unit_Hpct = index.hpct
-		if unit_Hpct < lowestHP then
-			lowestHP = unit_Hpct
-			mytarget = unit
-		end
-	end
-return mytarget
-end
-
+--------------------------
 -- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
+--------------------------
+
 function jps_stringTarget(unit,case)
 	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
 	local threatUnit = tostring(unit)
@@ -140,26 +76,109 @@ function jps_stringTarget(unit,case)
 return playerName
 end
 
--- ENEMY TARGETING THE PLAYER
--- jps.FriendTable[enemyFriend] = { ["name"] = enemyName , ["enemy"] = enemyGuid } -- ["Fred-Ysondre"] = { ["name"] = "Bob-Garona" , ["enemy"] = enemyGuid } -- TABLE OF FRIEND TARGETED BY ENEMY
--- jps.EnemyTable[enemyGuid] = { ["name"] = enemyName , ["friend"] = enemyFriend } -- [enemyGuid] = { ["name"] = "Bob-Garona" , ["friend"] = "Fred-Ysondre" -- TABLE OF ENEMY TARGETING FRIEND
-function jps.IstargetMe()
-	local threatUnit = nil
-	for unit,index in pairs(jps.FriendTable) do 
-		if unit == GetUnitName("player") then
-			threatUnit = tostring(index.name)
+-----------------------
+-- UPDATE TABLE
+-----------------------
+--[[
+jps.RaidTarget[unittarget] = { ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid } 	-- ["raid1target"] = { ["hpct"] =  , ["guid"] =  }
+jps.FriendTable[enemyFriend] = { ["enemy"] = enemyGuid }  -- TABLE OF FRIEND TARGETED BY ENEMY
+jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend }  -- TABLE OF ENEMY TARGETING FRIEND
+]]
+
+function jps.UpdateEnemyTable()
+-- remove all friends I CAN'T HEAL
+-- FriendTable & RaidStatus ont pour index UnitName
+-- jps.RaidStatus[unitname] = {["unit"] = unit, ["hpct"] = hpct,["subgroup"] = subgroup}
+	for unit,index in pairs(jps.RaidStatus) do
+		if not jps.canHeal(unit) then
+			jps_removeKey(jps.RaidStatus,unit)
+			jps_removeKey(jps.FriendTable,unit)
 		end
 	end
-	-- enemyname with "COMBAT_LOG_EVENT_UNFILTERED" is "Bob" or "Bob-Garona"
-	local enemyname = jps_stringTarget(threatUnit,"-") -- return "Bob" or "UnKnown"
+-- Impossible to get infos on a unit enemy not targeted
+-- so take only canDPS on RaidTarget and remove of EnemyTable enemies I CAN'T DPS
+-- jps.RaidTarget[unittarget] = { ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid }
+	for unit,index in pairs(jps.RaidTarget) do
+		if not jps.canDPS(unit) then
+			jps_removeKey(jps.RaidTarget,unit)
+			jps_removeKey(jps.EnemyTable,index.guid)
+		end
+	end
+end
 
-	-- jps.RaidTarget[unittarget] = { ["enemy"] = enemyname, ["hpct"] = hpct_enemy } 	-- ["raid1target"] = { ["enemy"] = "Bob", ["hpct"] = jps.hp(unittarget) }
+-----------------------
+-- RAID ENEMY COUNT 
+-----------------------
+-- enemy hp, enemy name, enenmy targetted by no of players
+function jps.getRaidTargets()
+	local enemies = {}
+	local countTargets = {}
+	for unit, _ in pairs(jps.RaidStatus) do
+		local enemy = unit.."target"
+		if	jps.canDPS(enemy) then
+			if enemies[enemy] == nil then
+				enemies[enemy] = {
+					["unit"] = enemy,
+					["hpct"] = jps.hp(enemy),
+					["count"] = 0
+				}
+			end
+			enemies[enemy]["count"] = enemies[enemy]["count"] + 1
+		end
+	end
+end
+
+-- enemy unit we canDPS with the most targets by our raid
+function jps.RaidTargetUnit() 
+	local enemies = jps.getRaidTargets()
+	local maxTargets = 0
+	local enemyWithMostTargets = "target"
+	for enemyData, enemyName in pairs(enemies) do
+		if count >= enemyData["count"] then
+			count = enemyData["count"]
+			enemyWithMostTargets = enemyName
+		end
+	end
+	return enemyWithMostTargets
+end
+
+
+-- lowest enemy unit we canDPS
+function jps.LowestInRaidTarget() 
+	local enemies = jps.getRaidTargets()
+	local lowestHP = 1
+	local lowestEnemy = "target"
+	for enemyData, enemyName in pairs(enemies) do
+		if lowestHP >= enemyData["hpct"] then
+			lowestHP = enemyData["hpct"]
+			lowestEnemy = enemyName
+		end
+	end
+	return lowestEnemy
+end
+
+-- number units we canDPS 
+function jps.RaidEnemyCount()
+	return jps_tableLen(jps.getRaidTargets())
+end
+
+-- ENEMY TARGETING THE PLAYER
+-- jps.FriendTable[enemyFriend] = 	{  ["enemy"] = enemyGuid } 		-- TABLE OF FRIEND NAME TARGETED BY ENEMY GUID
+-- jps.RaidTarget[unittarget] = 	{ ["hpct"] = hpct_enemy, ["guid"] = unittarget_guid }
+function jps.IstargetMe()
+	local enemy_guid = nil
+	for unit,index in pairs(jps.FriendTable) do 
+		if unit == GetUnitName("player") then
+			enemy_guid = index.enemy
+		end
+	end
+	
 	for unit, index in pairs(jps.RaidTarget) do 
-		if  (index.enemy == enemyname) and (enemyname ~= "UnKnown") then 
+		if  (index.guid == enemy_guid) then 
 			return unit -- return "raid1target"
 		end 
 	end
-return enemyname
+	return nil
 end
 
 -----------------------
@@ -186,15 +205,17 @@ JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing()
 JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal") -- "OVERLAY"
 infoFrameText:SetJustifyH("LEFT")
-infoFrameText:SetPoint("LEFT", 10, 0)
+infoFrameText:SetPoint("LEFT", 15, 0)
+infoFrameText:SetFont('Fonts\\ARIALN.ttf', 11, 'THINOUTLINE')
 local infoTTL = 60
 local infoTTD = 60
 
 JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
+
 JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
     jps.updateTimeToLive(self, elapsed)
 end)
-
+JPSEXTInfoFrame:Hide()
 --JPSEXTFrame:SetScript("OnEvent", function(self, event, ...)
 --    if event == "PLAYER_REGEN_DISABLED" then
 --        -- Combat Start
@@ -207,14 +228,22 @@ end)
 --JPSEXTFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 function jps.updateInfoText()
-    if infoTTL ~= nil or infoTTD ~= nil then
-        infoFrameText:SetText("TimeToLive: "..infoTTL.."\nTimeToDie: "..infoTTD)
-    else
-        infoFrameText:SetText("TTL: n/a\nTTD: n/a")
-    end
+	local infoTexts = ""
+	if infoTTL ~= nil and jps.isHealer then
+		local minutesLive = math.floor(infoTTL / 60)
+		local secondsLive = infoTTL - (minutesLive*60)	
+		infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
+	end
+	if infoTTD ~= nil then
+		local minutesDie = math.floor(infoTTD / 60)
+		local secondsDie = infoTTD - (minutesDie*60)
+		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec"
+	end	
+	infoFrameText:SetText(infoTexts)
 end
 
 function jps.updateTimeToLive(self, elapsed)
+	if UnitAffectingCombat("player") == nil then return end
 	if self.TimeToLiveSinceLastUpdate == nil then self.TimeToLiveSinceLastUpdate = 0 end
     self.TimeToLiveSinceLastUpdate = self.TimeToLiveSinceLastUpdate + elapsed
     if (self.TimeToLiveSinceLastUpdate > jps.UpdateInterval) then
@@ -301,7 +330,7 @@ function jps.TimeToLive(unit)
 end
 
 -- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
-function jps.TimeToDie(unit)
+function jps.TimeToDie(unit, percent)
 	if unit == nil then return 60 end
 	local guid = UnitGUID(unit)
 	local health_unit = UnitHealth(unit)
@@ -320,7 +349,14 @@ function jps.TimeToDie(unit)
 			end
         	incomingDps = math.ceil(totalDmg / totalTime)
         end
-        timetodie = math.ceil(health_unit / incomingDps)
+        local targetHP = 0
+        if percent ~= nil then targetHP = UnitHealthMax(unit) * percent end
+        local hpLeft = UnitHealth(unit) - targetHP
+        if hpLeft <= 0 then
+            timetodie = 0
+        else
+            timetodie = math.ceil(hpLeft / incomingDps)
+        end
     end
 	return timetodie
 end
@@ -454,7 +490,7 @@ function jps.LowestInRaidStatus()
 	local lowestHP = 1
 	for unit, unitTable in pairs(jps.RaidStatus) do
 		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
-			lowestHP = unitTable["hpct"] -- thisHP
+			lowestHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
 			lowestUnit = unit
 		end
 	end
@@ -574,7 +610,7 @@ function jps.SortRaidStatus()
 	-- for k,v in pairs (jps.RaidStatus) do jps.RaidStatus[k]=nil end
 	-- The difference between wipe(table) and table={} is that wipe removes the contents of the table, but retains the variable's internal pointer.
 	
-	table.wipe(jps.RaidStatus)
+	table.wipe(jps.RaidRoster)
 	table.wipe(jps.RaidTarget)
 			
 	local group_type = nil
@@ -600,12 +636,13 @@ function jps.SortRaidStatus()
 		local subgroup = select(3,GetRaidRosterInfo(i))
 		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
 		local hpct_friend = jps.hp(unit)
-		-- if jps.canHeal(unit) then -- and jps.hpInc(unit,"abs") > 0
+		local unittarget = unit.."target"
 		
-			jps.RaidStatus[unitname] = {
+			jps.RaidRoster[unitname] = {
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
 				["hpct"] = hpct_friend,
 				["subgroup"] = subgroup,
+				["target"] = unittarget
 			}
 	end
 end
@@ -625,11 +662,11 @@ function jps_RaidTest()
 	end
 
 	for unit,index in pairs(jps.RaidTarget) do
-		print("|cffe5cc80JPS",unit,"unit:",index.enemy,"|cffa335ee","Hpct:", index.hpct,"target:",index.target)
+		print("|cffe5cc80JPS",unit,"|cffa335ee","Hpct: ",index.hpct,"Guid: ",index.guid)
 	end
 
 	local enemycount,targetcount = jps.RaidEnemyCount()
-	local enemytargeted = jps.RaidLowestEnemy() -- UNIT ENEMY TARGETED BY FRIENDS WITH LOWEST HEALTH
+	local enemytargeted = jps.LowestInRaidTarget() -- UNIT ENEMY TARGETED BY FRIENDS WITH LOWEST HEALTH
 	local enemytargetMe = jps.IstargetMe() -- UNIT ENEMY TARGETING THE PLAYER
 	print("|cFFFF0000","EnemyCount_","|cffffffff",enemycount,"|cFFFF0000","TargetCount_","|cffffffff",targetcount)
 	print("|cFFFF0000","EnemyTarget_","|cffffffff",enemytargeted,"|cFFFF0000","EnemyTargetMe_","|cffffffff",enemytargetMe)

@@ -89,18 +89,21 @@ function jps.PoisonDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 end
 
 function jps.DispelMagicTarget()
+	if jps.getConfigVal("Dispel Magic") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.MagicDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelDiseaseTarget()
+if jps.getConfigVal("Dispel Disease") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.DiseaseDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelPoisonTarget()
+if jps.getConfigVal("Dispel Poison") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
 		if jps.PoisonDispel(unit) then return unit end
 	end
@@ -509,7 +512,7 @@ function jps.useBagItem(itemName)
 				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
 				local hasNoCD = Ternary(dur == 0, true, false)
 				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
-					UseContainerItem(bag,slot) 
+					return { "macro", "/use "..itemName }
 				end
 			end
 		end
@@ -517,9 +520,50 @@ function jps.useBagItem(itemName)
 	return nil
 end 
 
+-- returns seconds in combat or if out of combat 0
+function jps.combatTime()
+	return GetTime() - jps.combatStart
+end
 
 function jps.bloodlusting()
 	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria")
+end
+
+function jps.targetIsRaidBoss(target) 
+	if target == nil then target = "target" end
+	local dungeon = jps.raid.getInstanceInfo()
+	if inArray(dungeon.difficulty, {"normal10","normal25","hereoic10","heroic25","lfr25", "normal40"}) then		
+		if UnitLevel(target) == -1 and UnitPlayerControlled(target) == false then
+			return true
+		end
+	end
+	return false
+end
+
+function jps.playerInLFR()
+	local dungeon = jps.raid.getInstanceInfo()
+	if dungeon.difficulty == "lfr25" then return true end
+	return false
+end
+
+function jps.raid.getInstanceInfo()
+    local name, instanceType , difficultyID = GetInstanceInfo()
+    local targetName = UnitName("target")
+    local diffTable = {}
+    diffTable[0] = "none"
+    diffTable[1] = "normal5"
+    diffTable[2] = "heroic5"
+    diffTable[3] = "normal10"
+    diffTable[4] = "normal25"
+    diffTable[5] = "heroic10"
+    diffTable[6] = "heroic25"
+    diffTable[7] = "lfr25"
+    diffTable[8] = "challenge"
+    diffTable[9] = "normal40"
+    diffTable[10] = "none"
+    diffTable[11] = "normal3"
+    diffTable[12] = "heroic3" 
+    return {instance = name , enemy = targetName, difficulty = diffTable[difficultyID]}
 end
 
 --------------------------
@@ -581,6 +625,8 @@ function jps.useTrinket(trinketNum)
 	-- The index actually starts at 0
 	local slotName = "Trinket"..(trinketNum).."Slot" -- "Trinket0Slot" "Trinket1Slot"
 	-- Get the slot ID
+	
+	
 	local slotId  = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
 
 	return jps.useSlot(slotId)
@@ -762,6 +808,19 @@ end
 
 function Ternary(condition, doIt, notDo)
 	if condition then return doIt else return notDo end
+end
+
+function inArray(needle, haystack)
+	if type(haystack) ~= "table" then return false end
+	for key, value in pairs(haystack) do 
+		local valType = type(value)
+		if valType == "string" or valType == "number" or valType == "boolean" then
+			if value == needle then 
+				return true
+			end
+		end
+	end
+	return false
 end
 
 ------------------------------

@@ -65,46 +65,6 @@ if trapKEY_combo == 6 then allInOneTraps_KEY 	= true 	else allInOneTraps_KEY 	= 
 -- Pots
 local autoUseVirminsBite = true -- Increases your Agility by 4000 for 25 sec. (1 Min Cooldown)
 
---------------------------
--- Equipped items usage --
---------------------------
--- Intelligent Slots (trinkets, engineering gloves and other usable items you can equip)
-function canUseEquippedItem(Slot)							-- e.g. "Trinket0Slot", "Trinket1Slot", "HandsSlot"
-	local slotNumber = GetInventorySlotInfo(Slot)					-- get slot number
-			if GetInventoryItemTexture("player", slotNumber) ~= nil then	-- if an item is equipped in the slot then check for "use" effect
-			itemID = GetInventoryItemID("player", slotNumber)		-- retrieve item id
-			canUseItem,_ = GetItemSpell(itemID)				-- check if item has "use" effect
-			_,itemIsReady,_ = GetItemCooldown(itemID)			-- get "use" effect cooldown
-			if canUseItem ~= nil and itemIsReady == 0 then			-- 0 => no CD => item is ready
-			return true	
-		end
-	end
-	return false
-end
-
-------------------------
--- Bagged items usage --
-------------------------
--- E.g. 5512 for "Healthstone", 75525 for "Alchemist's Flask"
-function canUseItemInBags(itemID)										
-	local itemID = itemID
-	if GetItemCount(itemID, false, false) > 0 and select(2,GetItemCooldown(itemID)) == 0 then return true end
-	return false
-end
-
-----------
--- Pots --
-----------
--- Virmen's Bite: Increases your Agility by 4000 for 25 sec. (1 Min Cooldown)
-local VirmensBitePotIsReady = false					-- default "ready" to false
-if autoUseVirminsBite 							-- check auto use true/false at top of file
-	and not jps.buff("Virmen's Bite") 
-	and UnitLevel("target") == -1 					-- Target is a boss (-1 == raid boss / ??)
-	and GetItemCount(76089, false, false) > 0 
-	and select(2,GetItemCooldown(76089)) == 0 then
-	VirmensBitePotIsReady = true
-end
-
 ---------------------------------------------------------
 -- Pet target check - force pet to attack playertarget --
 ---------------------------------------------------------
@@ -128,10 +88,11 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 -- Spell Table --
 -----------------
 
-local spellTable = 
-	{
+	local spellTable =  {}
+	spellTable[1] = {
+		["ToolTip"] = "SV Hunter PVE 5.3",
 		-- Preparation (flasks)
-		{ {"macro","/use Alchemist's Flask"},	canUseItemInBags(75525)	and not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") }, -- Alchemist's Flask -- useAlchemistsFlask
+		{ jps.useBagItem("Alchemist's Flask") , not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") and jps.UseCDs},
 		-- Revive pet
 		{ "Heart of the Phoenix",		UnitIsDead("pet") ~= nil and HasPetUI() ~= nil }, -- Instant revive pet (only some pets, Ferocity)
 		{ "Revive Pet",				((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving }, 
@@ -146,22 +107,23 @@ local spellTable =
 		{ "Misdirection", 			not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
 		{ "Misdirection", 			not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },
 		-- Healthstone
-		{ {"macro","/use Healthstone"}, 	jps.hp("player") < 0.50 and canUseItemInBags(5512) }, -- restores 20% of total health
+		{ jps.useBagItem("Healthstone") , 	jps.hp("player") < 0.50 }, -- restores 20% of total health
 		-- 
 		{ "Silencing Shot", 			jps.shouldKick() and jps.CastTimeLeft("target") < 1.4 }, -- Tier 2 talent
 		-- Trinkets and Engineering Gloves
-		{ {"macro","/use 10"}, 			jps.UseCDs and canUseEquippedItem("HandsSlot") },
-		{ {"macro","/use 13"}, 			jps.UseCDs and canUseEquippedItem("Trinket0Slot") },
-		{ {"macro","/use 14"}, 			jps.UseCDs and canUseEquippedItem("Trinket1Slot") }, 		
+		{ jps.useTrinket(0), jps.UseCDs },
+		{ jps.useTrinket(1), jps.UseCDs },
+		-- Requires engineerins
+		{ jps.useSynapseSprings(), jps.UseCDs },
+		-- Requires herbalism
+		{ "Lifeblood",			jps.UseCDs },	
 		-- Use pot
-		{ {"macro","/use Virmen's Bite"}, 	jps.UseCDs and VirmensBitePotIsReady and (jps.buff("Rapid Fire") or jps.buff("Heroism") or jps.buff("Time Warp") or jps.buff("Ancient Hysteria") or jps.buff("Bloodlust")) }, 		
-		-- CDs
-		{ "Lifeblood", 				jps.UseCDs }, -- Herbalism
+		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.bloodlusting()) }, 	
 --		{ "Readiness", 				jps.UseCDs }, -- Resets all cooldowns except Stampede. Use to chain DPS cooldowns.
 		{ "A Murder of Crows", 			jps.UseCDs and not jps.mydebuff("A Murder of Crows")}, -- Tier 5 talent
 		{ "Dire Beast", 			"onCD" }, -- Tier 4 talents
 --		{ "Rabid", 				jps.UseCDs }, -- Pet ability
-		{ "Rapid Fire", 			jps.UseCDs and not jps.buff("Rapid Fire") and not jps.buff("Heroism") and not jps.buff("Time Warp") and not jps.buff("Ancient Hysteria") and not jps.buff("Bloodlust") },
+		{ "Rapid Fire", 			jps.UseCDs and not jps.buff("Rapid Fire") and not jps.bloodlusting() },
 		{ "Stampede", 				jps.UseCDs },
 		-- Traps
 		{ "Trap Launcher", 			not jps.buff("Trap Launcher") },
@@ -187,8 +149,8 @@ local spellTable =
 
 	jps.petIsDead = false
 
-	spell,target = parseSpellTable(spellTable)	
-
+	local spellTableActive = jps.RotationActive(spellTable)
+	spell,target = parseSpellTable(spellTableActive)
 	return spell,target
 	
 end

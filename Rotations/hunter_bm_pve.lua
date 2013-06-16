@@ -109,7 +109,7 @@ function hunter_bm_pve()
 		-- Requires herbalism
 		{ "Lifeblood",			jps.UseCDs },	
 		-- Use pot
-		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.buff("Heroism") or jps.buff("Time Warp") or jps.buff("Ancient Hysteria") or jps.buff("Bloodlust")) }, 		
+		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.bloodlusting()) }, 		
 		-- CDs
 		{ "Lifeblood", 						jps.UseCDs }, -- Herbalism
 		-- Traps

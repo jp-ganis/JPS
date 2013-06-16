@@ -21,6 +21,10 @@ local rotationButtonPositionX = 20; -- NEW
 local jpsRotationFrame = nil; -- NEW
 local rotationCount = 0
 
+local rotationCountSetting = 0
+local settingsButtonPositionY = -90;
+local settingsButtonPositionX = 20;
+
 function jps_createConfigFrame()
 	jpsConfigFrame = CreateFrame("Frame", "jpsConfigFrame", UIParent)
 
@@ -92,81 +96,144 @@ function jps_createConfigFrame()
 	jpsConfigFrame:Hide()
 	
 	-- DROPDOWN ROTATION
-	jps.resetTimeToDieFrame()
-	jps.resetRotationDropdownFrame()
 	jps.addRotationDropdownFrame()
 	jps.addSettingsFrame()
+	jps.addcustomRotationFrame()
+	
+end
+
+---------------------------
+-- Custom Rotation Frame
+---------------------------
+function jps.addcustomRotationFrame()
+	jpsCustomRotationFrame = CreateFrame("Frame", "jpsCustomRotationFrame", jpsConfigFrame)
+	jpsCustomRotationFrame.parent  = jpsConfigFrame.name
+	jpsCustomRotationFrame.name = "JPS Custom Rotation Panel"
+	local title = jpsCustomRotationFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 20, -10) 
+	title:SetText("JPS CUSTOM ROTATION PANEL")
+	local customRotationInfo = jpsCustomRotationFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	customRotationInfo:SetHeight(46)
+	customRotationInfo:SetWidth(570)
+	customRotationInfo:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	customRotationInfo:SetPoint("RIGHT", jpsCustomRotationFrame, -32, 0)
+	customRotationInfo:SetNonSpaceWrap(true)
+	customRotationInfo:SetJustifyH("LEFT")
+	customRotationInfo:SetJustifyV("TOP")
+	customRotationInfo:SetText('Here you can test your rotations or change them without reloading the WoW Interface.\nEach Rotation posted here doesn\'t require the Wrapper like. "function dk_frost() ... end",\nbut you need to write the content that is used inside a normal rotation function. Like "return parseSpellTable(spellTable)" etc.')
+
+
+	local jpsCustomRotation = CreateFrame('Frame', 'nChatCopy', jpsCustomRotationFrame)
+	jpsCustomRotation:SetWidth(500)
+	jpsCustomRotation:SetHeight(400)
+	jpsCustomRotation:SetPoint('CENTER')
+	jpsCustomRotation:SetFrameStrata('DIALOG')
+	jpsCustomRotation:SetBackdrop({
+		bgFile = [[Interface\Buttons\WHITE8x8]],
+		insets = {left = 3, right = 3, top = 4, bottom = 3
+	}})
+	jpsCustomRotation:SetBackdropColor(0, 0, 0, 0.7)
+	
+	
+	jpsCustomRotationBox = CreateFrame('EditBox', 'nChatCopyBox', jpsCustomRotation)
+	jpsCustomRotationBox:SetMultiLine(true)
+	jpsCustomRotationBox:SetAutoFocus(true)
+	jpsCustomRotationBox:EnableMouse(true)
+	jpsCustomRotationBox:SetMaxLetters(99999)
+	jpsCustomRotationBox:SetFont('Fonts\\ARIALN.ttf', 13, 'THINOUTLINE')
+	jpsCustomRotationBox:SetWidth(590)
+	jpsCustomRotationBox:SetHeight(590)
+
+	local Scroll = CreateFrame('ScrollFrame', 'nChatCopyScroll', jpsCustomRotation, 'UIPanelScrollFrameTemplate')
+	Scroll:SetPoint('TOPLEFT', jpsCustomRotation, 'TOPLEFT', 8, -30)
+	Scroll:SetPoint('BOTTOMRIGHT', jpsCustomRotation, 'BOTTOMRIGHT', -30, 8)
+	Scroll:SetScrollChild(jpsCustomRotationBox)	
+
+	
+	local jpsOpenHelpFrameButton = CreateFrame('Button', 'jpsOpenHelpFrameButton', jpsCustomRotationFrame , 'UIPanelButtonTemplate')
+	jpsOpenHelpFrameButton:SetText("show help")
+	jpsOpenHelpFrameButton:SetPoint("BOTTOM",jpsCustomRotationFrame,"BOTTOM", 0, 20)
+	jpsOpenHelpFrameButton:SetScript("OnClick", function()  helpFrame:Show();Scroll:Hide() end)
+	jpsOpenHelpFrameButton:SetSize(145,25)
+	
+	
+	local jpsCustomRotationRemove = CreateFrame('Button', 'resetRotation', jpsCustomRotationFrame , 'UIPanelButtonTemplate')
+	jpsCustomRotationRemove:SetText("Reset Rotation")
+	jpsCustomRotationRemove:SetPoint("BOTTOM",jpsOpenHelpFrameButton,"BOTTOM", 150, 0)
+	jpsCustomRotationRemove:SetScript("OnClick", function()jps.customRotationFunc = ""; jpsCustomRotationBox:SetText("") end)
+	jpsCustomRotationRemove:SetSize(145,25)
+
+	
+	local jpsCustomRotationButton = CreateFrame('Button', 'submitRotation', jpsCustomRotationFrame , 'UIPanelButtonTemplate')
+	jpsCustomRotationButton:SetText("Activate This Rotation")
+	jpsCustomRotationButton:SetPoint("BOTTOM",jpsOpenHelpFrameButton,"BOTTOM", -150, 0)
+	jpsCustomRotationButton:SetScript("OnClick", function()
+		if string.len(jpsCustomRotationBox:GetText()) > 10 then 
+			jps.customRotationFunc = jpsCustomRotationBox:GetText();
+			assert(loadstring('function jps.customRotation() '.. jps.customRotationFunc..' end'))() 
+		end
+	end)
+	jpsCustomRotationButton:SetSize(145,25)
+
+
+	local helpFrame = CreateFrame('Frame', 'helpFrame', jpsCustomRotationFrame)
+	helpFrame:SetSize(550,450)
+	helpFrame:SetPoint("CENTER", jpsCustomRotationFrame)
+	helpFrame:SetFrameStrata('DIALOG')
+	helpFrame:SetBackdrop({
+		bgFile = [[Interface\Buttons\WHITE8x8]],
+		edgeFile="Interface\\DialogFrame\\UI-DialogBox-Border", 
+		insets = {left = 3, right = 3, top = 4, bottom = 3
+	}})
+	helpFrame:SetBackdropColor(0, 0, 0, 1)
+	helpFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+	
+	local customRotationHelp = helpFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	customRotationHelp:SetFont('Fonts\\ARIALN.ttf', 13, 'THINOUTLINE')
+	customRotationHelp:SetHeight(550)
+	customRotationHelp:SetWidth(430)
+	customRotationHelp:SetPoint("TOPLEFT", helpFrame, "TOPLEFT", 20 ,-40)
+	customRotationHelp:SetNonSpaceWrap(true)
+	customRotationHelp:SetJustifyH("LEFT")
+	customRotationHelp:SetJustifyV("TOP")
+	
+	local helpText = red("Required")..'\n- a spellTable e.g. "local spellTable = {}"\n- the function call local spell,target = parseSpellTable(spellTable)\n- your rotation should return a spell and a target, e.g. "return spell, target"\n\n'..red("Example Rotation")..'\nlocal spell = nil\;\nlocal target = nil\;\nlocal spellTable = {\n     { "Frost Presence",        not jps.buff("Frost Presence") },\n     { "frost strike",        "onCD"},\n     { "obliterate",        "onCD"},\n };\n\nspell,target = parseSpellTable(spellTable)\;\nreturn spell,target\n\n'..red("Functions / Know How")..'\nvalid targets are: "player","target","focus","mouseover","pet","raidN" (N = 1-40), "partyN" (N=1-4) and many more\n\n- jps.buff("buffName", "target") -- returns true or false whether a buff is applied, buffName is required\n- jps.debuff("debuffName", "target") -- returns true or false whether a debuff is applied, buffName is required\n- jps.buffDuration("buffName","target") -- returns the duration of a buff in seconds\n- jps.debuffDuration("debuffName","target") -- returns the duration of a debuff in seconds\n- jps.UseCDs -- Usage of CDs enabled or disabled\n- jps.MultiTarget -- Multitarget enabled or disabled\n- jps.hp("target") -- return decimal hp of a target ( 1 = 100% health, 0.5 = 50% health )'
+	
+	customRotationHelp:SetText(helpText)	
+
+	local jpsCustomRotationRemove = CreateFrame('Button', 'closeHelp', helpFrame , 'UIPanelButtonTemplate')
+	jpsCustomRotationRemove:SetText("close")
+	jpsCustomRotationRemove:SetPoint("TOP",helpFrame,"TOP", 0, -10)
+	jpsCustomRotationRemove:SetScript("OnClick", function()helpFrame:Hide();Scroll:Show() end)
+	jpsCustomRotationRemove:SetSize(75,25)	
+	jpsCustomRotationRemove:Show()
+
+	InterfaceOptions_AddCategory(jpsCustomRotationFrame)
+	jpsCustomRotation:Show()
+	Scroll:Show()
+	jpsCustomRotationBox:Show()
+	jpsCustomRotationButton:Show()
+	jpsCustomRotationRemove:Show()
+	helpFrame:Hide()
 	
 end
 
 
----------------------------------
--- DROPDOWN ROTATIONS
----------------------------------
-
--- function jps.addRotationDropdown()
-
-	-- DropDownRotation = CreateFrame("FRAME", "JPS Rotation", jpsConfigFrame, "UIDropDownMenuTemplate")
-	-- DropDownRotation:ClearAllPoints()
-	-- DropDownRotation:SetPoint("CENTER",150,120)
-	-- local title = DropDownRotation:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	-- title:SetPoint("TOPLEFT", 20, 20) 
-	-- title:SetText("JPS ROTATIONS")
-
-	-- local function Rotation_OnClick(self)
-	   -- UIDropDownMenu_SetSelectedID(DropDownRotation, self:GetID())
-	   -- jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
-	   -- jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
-	-- end
-
-	-- local function DropDown_Initialize(self, level)
-		-- local menuList = {
-		   -- jps.ToggleRotationName[1], -- will be {"No Rotations"} or spellTable[1]["ToolTip"]
-		   -- jps.ToggleRotationName[2],
-		   -- jps.ToggleRotationName[3],
-		   -- jps.ToggleRotationName[4],
-		   -- jps.ToggleRotationName[5],
-		-- }
-		-- local info = UIDropDownMenu_CreateInfo()
-		-- for k,v in pairs(menuList) do
-		  -- info = UIDropDownMenu_CreateInfo()
-		  -- info.text = v
-		  -- info.value = v
-		  -- info.func = Rotation_OnClick
-		  -- UIDropDownMenu_AddButton(info, level)
-		-- end
-	-- end
 	
-	-- UIDropDownMenu_Initialize(DropDownRotation, DropDown_Initialize)
-	-- UIDropDownMenu_SetWidth(DropDownRotation, 164)
-	-- UIDropDownMenu_SetSelectedID(DropDownRotation, 1)
-	-- UIDropDownMenu_JustifyText(DropDownRotation, "LEFT")
-
--- end
-
 ---------------------------
 -- Settings Frame
----------------------------s
---[[
-A Frame for Settings that you only could change in the code:
-- deleting greys
-- dispel on / off
-- facing direction
-- use potions, use flasks
-- use trinekt 1 / 2
-- dismount when entering combat 
-- hide JPS ui due to screenshots !
-- button for reset DB / UI position
-
-what I need here:
-- one function where I can add a checkbox with titel + description , it should also care about saving current state in jpsDB and handle onClick
-- one function for reading settings e.g. jps.getConfigVal(str) and one for writing jps.setConfigVal()
-
-
-some of there we could change through jps.UseCDs , but this is to generally because the cooldowns are to different (we don't have to care about a 45 sec cooldown while fighting trash, but it would be useless to use a potion there :) 
-]]--
+---------------------------
 
 function jps.addSettingsFrame()
+	
+	-- Custom Event Handlers which are called after a Setting checkbox is clicked
+	-- key = name of checkbox, value = function to call
+	jps.onClickSettingEvents = {
+		["timetodie frame visible"] = jps.TimeToDieToggle,
+		["rotation dropdown visible"] = jps.DropdownRotationTogle,
+		["show jps window"] = jps.mainIconToggle,
+	}
+	
 	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
 	jpsSettingsFrame.parent  = jpsConfigFrame.name
 	jpsSettingsFrame.name = "JPS Settings Panel"
@@ -182,12 +249,105 @@ function jps.addSettingsFrame()
 	settingsInfo:SetJustifyV("TOP")
 	settingsInfo:SetText("Work in Progress!")
 
+	for settingsKey,settingsVal in pairs (jpsDB[jpsRealm][jpsName].settings) do
+		jps.notifySettingChanged(settingsKey, jps.getConfigVal(settingsKey))
+
+		rotationCountSetting = rotationCountSetting + 1
+		if rotationCountSetting == 16 then 
+			settingsButtonPositionX = 220
+			settingsButtonPositionY = - 90
+		elseif rotationCountSetting == 31 then
+			settingsButtonPositionX = 420
+			settingsButtonPositionY = - 90
+		end
+
+		local settingsJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_Settings_"..settingsKey, jpsSettingsFrame, "OptionsCheckButtonTemplate");
+		settingsJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",settingsButtonPositionX,settingsButtonPositionY);
+		getglobal(settingsJPS_IconOptions_CheckButton:GetName().."Text"):SetText(settingsKey);
+
+		local function settingsJPS_IconOptions_CheckButton_OnClick()
+            local settingsStatus = nil
+            if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+                settingsStatus = 0 
+            else 
+                settingsStatus = 1 
+            end
+            jps.notifySettingChanged(settingsKey, settingsStatus)
+            jps.setConfigVal(settingsKey, settingsStatus)
+		end  
+		
+		local function settingsJPS_IconOptions_CheckButton_OnShow()
+			settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingsKey));
+		end  
+
+		settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+		settingsJPS_IconOptions_CheckButton:SetScript("OnClick", settingsJPS_IconOptions_CheckButton_OnClick);
+		settingsJPS_IconOptions_CheckButton:SetScript("OnShow", settingsJPS_IconOptions_CheckButton_OnShow);
+		
+		settingsButtonPositionY = settingsButtonPositionY - 30;
+	end
 	
 	InterfaceOptions_AddCategory(jpsSettingsFrame)
 	jpsSettingsFrame:Hide()
 	
 end
 
+function jps.getConfigVal(key)
+	local setting = jps.settings[string.lower(key)]
+	if setting == nil then
+		jps.setConfigVal(key, 1)
+		jps.addSettingsCheckbox(key)
+		return 1
+	else 
+		return setting
+	end
+end
+
+function jps.setConfigVal(key,status)
+	jps.settings[string.lower(key)] = status
+end
+
+function jps.notifySettingChanged(key, status) 
+	if jps.onClickSettingEvents[string.lower(key)] ~= nil then
+		jps.onClickSettingEvents[string.lower(key)](key, status)
+	end
+end
+
+function jps.addSettingsCheckbox(settingName)
+	rotationCountSetting = rotationCountSetting + 1
+	if rotationCountSetting == 16 then 
+		settingsButtonPositionX = 220
+		settingsButtonPositionY = - 90
+	elseif rotationCountSetting == 31 then
+		settingsButtonPositionX = 420
+		settingsButtonPositionY = - 90
+	end
+
+    local settingsJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_Settings_"..settingName, jpsSettingsFrame, "OptionsCheckButtonTemplate");
+    settingsJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",settingsButtonPositionX,settingsButtonPositionY);
+    getglobal(settingsJPS_IconOptions_CheckButton:GetName().."Text"):SetText(settingName);
+    
+    local function settingsJPS_IconOptions_CheckButton_OnClick()
+        local settingStatus = nil
+        if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+            settingStatus = 0 
+        else 
+            settingStatus = 1 
+        end
+        jps.notifySettingChanged(settingsKey, settingsStatus)
+        setsettingStatus(settingName, settingStatus)
+    end  
+    
+    local function settingsJPS_IconOptions_CheckButton_OnShow()
+        settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingName));
+    end  
+    
+    settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+    settingsJPS_IconOptions_CheckButton:SetScript("OnClick", settingsJPS_IconOptions_CheckButton_OnClick);
+    settingsJPS_IconOptions_CheckButton:SetScript("OnShow", settingsJPS_IconOptions_CheckButton_OnShow);
+
+    settingsButtonPositionY = settingsButtonPositionY - 30;
+end
 ---------------------------
 -- DROPDOWN SPELLS
 ---------------------------
@@ -218,7 +378,7 @@ function jps.addRotationDropdownFrame()
 	desc:SetJustifyV("TOP")
 	desc:SetText("Uncheck spells when you dont want to use them. Do a /jps db to reset the spells")
 
-	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig) do
+	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) do
 		rotationCount = rotationCount + 1
 		if rotationCount == 16 then 
 			rotationButtonPositionX = 220
@@ -258,62 +418,31 @@ function jps.addRotationDropdownFrame()
 end
 
 ---------------------------
--- RESET DROPDOWN SPELLS
+-- HIDE/SHOP DROPDOWN SPELLS
 ---------------------------
 
-function jps.resetRotationDropdownFrame()
-	initDropDown_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
-	initDropDown_CheckButton:SetPoint("TOPLEFT",20,-370)
-	initDropDown_CheckButton:RegisterForClicks("AnyUp")
-	
-	local title = initDropDown_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	title:SetPoint("TOPLEFT", 30, -5) 
-	title:SetText("|cffffffffDROPDOWN ROTATION FRAME")
-	
-	local function DropDown_Check_OnClick(self)
-		local checkbutton = initDropDown_CheckButton:GetChecked()
-		if checkbutton == 1 then
-			rotationDropdownHolder:Show()
-		else
-			rotationDropdownHolder:Hide()
-		end
+function jps.DropdownRotationTogle(key, status)
+	if status == 1 then
+		rotationDropdownHolder:Show()
+	else
+		rotationDropdownHolder:Hide()
 	end
-	
-	-- local function DropDown_Check_OnShow(self)
-		-- initDropDown_CheckButton:SetChecked(checkbutton)
-	-- end
-	
-	--initDropDown_CheckButton:SetScript("OnShow", DropDown_Check_OnShow);
-	initDropDown_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
-
 end
 
-function jps.resetTimeToDieFrame()
-	TimeToDie_CheckButton = CreateFrame("CheckButton","", jpsConfigFrame, "OptionsCheckButtonTemplate");
-	TimeToDie_CheckButton:SetPoint("TOPLEFT",20, -400)
-	TimeToDie_CheckButton:RegisterForClicks("AnyUp")
-	JPSEXTInfoFrame:Hide()
-	
-	local title = TimeToDie_CheckButton:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	title:SetPoint("TOPLEFT", 30, -5) 
-	title:SetText("|cffffffffTIMETODIE FRAME")
-	
-	local function DropDown_Check_OnClick(self)
-		local timecheckbutton = TimeToDie_CheckButton:GetChecked()
-		if timecheckbutton == 1 then
-			JPSEXTInfoFrame:Show()
-		else
-			JPSEXTInfoFrame:Hide()
-		end
+function jps.TimeToDieToggle(key, status)
+	if status == 1 and UnitAffectingCombat("player") ~= nil then
+		JPSEXTInfoFrame:Show()
+	else
+		JPSEXTInfoFrame:Hide()
 	end
-	
-	-- local function DropDown_Check_OnShow(self)
-		-- initDropDown_CheckButton:SetChecked(checkbutton)
-	-- end
-	
-	--initDropDown_CheckButton:SetScript("OnShow", DropDown_Check_OnShow);
-	TimeToDie_CheckButton:SetScript("OnClick", DropDown_Check_OnClick);
+end
 
+function jps.mainIconToggle(key, status) 
+	if status == 1 then
+		jpsIcon:Show()
+	else
+		jpsIcon:Hide()
+	end
 end
 
 ---------------------------
@@ -384,9 +513,18 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 		jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		if jps.Spec then
+			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+		end
+		jpsDB[jpsRealm][jpsName].settings = {} -- NEW
 	else
 		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then -- NEW
-		  jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+			jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		end
+		if jps.Spec then
+			if ( not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) then -- NEW
+				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+			end	
 		end
 	end
 
@@ -422,4 +560,13 @@ function jps_SAVE_PROFILE()
 	for varName, _ in pairs( jpsDB[jpsRealm][jpsName] ) do
 		jpsDB[jpsRealm][jpsName][varName] = jps[varName]
 	end
+end
+
+
+---------------------------
+-- HELPER FUNCTIONS
+---------------------------
+
+function red(str)
+	return "|cFFFF0000"..str.."|r"
 end

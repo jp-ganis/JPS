@@ -173,7 +173,7 @@ function jps.canCast(spell,unit)
 	if spellname == nil then  return false end
 	spellname = string.lower(spellname)
 
-	---if jps.Debug then jps_canCast_debug(spell,unit) end
+	--if jps.Debug then jps_canCast_debug(spell,unit) end
 
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
@@ -288,19 +288,19 @@ end
 
 function setSpellStatus(spell, status)
 	spell = string.lower(spell)
-    jps.spellConfig[spell] = status
+    jps.spellConfig[jps.Spec][spell] = status
 end
 
 function getSpellStatus(spell)
 
     spell = spell:lower() --spell = string.lower(spell)
-    local spellConfig = jps.spellConfig[spell]
+    local spellConfig = jps.spellConfig[jps.Spec][spell]
     if(spellConfig == nil) then
        setSpellStatus(spell, 1)
        jps.addSpellCheckboxToFrame(spell)
        return 1
     else
-       return jps.spellConfig[spell]
+       return jps.spellConfig[jps.Spec][spell]
     end
 end
 
@@ -457,7 +457,7 @@ function jps.RotationActive(spellTable)
 	end
 
 	if jps.initializedRotation == false then
-		if countRotations > 1 then 
+		if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
 			rotationDropdownHolder:Show()
 			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
 		else  
