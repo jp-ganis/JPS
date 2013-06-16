@@ -242,17 +242,19 @@ end
 			deleteFish = true
 			jps.Fishing = false
 		end
+		local deleteCarp = jps.getConfigVal("Delete Fish: Golden Carp")
+		local deleteMurgle = jps.getConfigVal("Delete Fish: Murglesnout")
 		for bag = 0,4,1 do
 			for slot = 1, GetContainerNumSlots(bag), 1 do
 				local name = GetContainerItemLink(bag,slot)
 				local itemId = GetContainerItemID(bag, slot) 
-				if name then -- or string.find(name,"Golden Carp"))
+				if name then
 					local copper = select(11,GetItemInfo(itemId)) or 0;
 					if string.find(name,"ff9d9d9d") and copper < 500  and jps.getConfigVal("Delete Grey loot worth less than 5 silver") == 1 then -- delete grey stuff worth less then 5 silver
-						write("Deleting "..name)
+						write("Deleting "..name.." reason: to low price")
 						PickupContainerItem(bag,slot)
 						DeleteCursorItem()
-					elseif deleteFish and ((string.find(name,L["Murglesnout"]) and jps.getConfigVal("Delete Fish: Murglesnout") == 1) or (jps.getConfigVal("Delete Fish: Golden Carp") == 1 and string.find(name,L["Golden Carp"]))) then 
+					elseif deleteFish and ((string.find(name,L["Murglesnout"]) and deleteMurgle ) or (deleteCarp == 1 and string.find(name,L["Golden Carp"]))) then 
 						PickupContainerItem(bag,slot)
 						write("Deleting "..name)
 						DeleteCursorItem()
