@@ -172,8 +172,8 @@ end
 function jpsext.checkForInterrupt(target, kickCastLeft)
 --  IsSpellInRange("Pummel", "target")==1 !!!!
     local canAttack = UnitCanAttack("player", target)
-    local playerCastTimeLeft = jps.castTimeLeft("player") + 1
-    local enemyCastTimeLeft = jps.castTimeLeft(target)
+    local playerCastTimeLeft = jps.CastTimeLeft("player") + 1
+    local enemyCastTimeLeft = jps.CastTimeLeft(target)
     local targetIsCasting = playerCastTimeLeft > 0
     local _, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(target)
     local needStopCast = not unInterruptable and canAttack and targetIsCasting and enemyCastTimeLeft-kickCastLeft < playerCastTimeLeft

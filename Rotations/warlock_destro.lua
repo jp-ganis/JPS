@@ -12,6 +12,12 @@ function isCotEBlacklisted(unit) -- stop spam curse of the elements at invalid t
     return false
 end
 
+function canUseItemInBags(itemID)
+    local itemID = itemID
+    if GetItemCount(itemID, false, false) > 0 and select(2,GetItemCooldown(itemID)) == 0 then return true end
+    return false
+end
+
 function isCastingInterruptSpell(unit)
     if unit == nil then
         local tI,tF = isCastingInterruptSpell("target") 
@@ -76,7 +82,9 @@ function warlock_destro()
         end
     end
 
-    local avoidInterrupts, enemyCastLeft = isCastingInterruptSpell() 
+    local avoidInterrupts = IsAltKeyDown()
+    local enemyCastLeft = 0
+    --local avoidInterrupts, enemyCastLeft = isCastingInterruptSpell() 
     if avoidInterrupts and jps.castTimeLeft("player") >= enemyCastLeft then
         SpellStopCasting()
     end
@@ -88,11 +96,11 @@ function warlock_destro()
     spellTable[1] = {
     ["ToolTip"] = "Warlock Lx",
         -- Interrupts
-        {"Optical blast", jps.Interrupts and jps.shouldKick("target") and jps.castTimeLeft("target") < maxIntCast, "target" },
-        {"Optical blast", jps.Interrupts and jps.shouldKick("focus") and jps.castTimeLeft("focus") < maxIntCast, "focus"},
-        {"Optical blast", jps.Interrupts and jps.shouldKick("mouseover") and jps.castTimeLeft("mouseover") < maxIntCast, "mouseover"},
+        {"Optical blast", jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < maxIntCast, "target" },
+        {"Optical blast", jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < maxIntCast, "focus"},
+        {"Optical blast", jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCast, "mouseover"},
 
-        { {"macro","/focus [target=mouseover,exists,nodead]"}, IsControlKeyDown() ~= nil },
+        --{ {"macro","/focus [target=mouseover,exists,nodead]"}, IsControlKeyDown() ~= nil },
         
         -- Def CD's
         { "mortal coil", jps.Defensive and jps.hp() <= 0.80 },
@@ -117,7 +125,6 @@ function warlock_destro()
         { {"macro","/use 10"}, jps.glovesCooldown() == 0 and jps.UseCDs },
         { jps.useTrinket(0),       jps.UseCDs },
         { jps.useTrinket(1),       jps.UseCDs },
-        { {"macro","/use Potion of the Jade Serpent"},  jps.itemCooldown(76093)==0 and jps.bloodlusting() and GetItemCount(76093) > 0 and jps.UseCDs },
         
         {"nested", not jps.MultiTarget, {
             { "fire and brimstone", fireAndBrimstoneBuffed },
