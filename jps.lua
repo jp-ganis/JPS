@@ -108,6 +108,7 @@ jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
 rotationDropdownHolder = nil
 jps.customRotationFunc = ""
+jps.timeToDieAlgorithm= "WeightedLeastSquares"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 
 -- IN COMBAT
 local start_time = 0
@@ -471,7 +472,7 @@ function updateTimeToDie(unit)
 
 	local time = GetTime()
 
-	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieFunction][0](jps.RaidTimeToDie[unitGuid],health,time)
+	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieAlgorithm][0](jps.RaidTimeToDie[unitGuid],health,time)
 end
 
 jps.timeToDieFunctions = {}
@@ -565,8 +566,6 @@ jps.timeToDieFunctions["WeightedLeastSquares"] = {
 		end
 	end 
 }
-
-jps.timeToDieFunction = "WeightedLeastSquares"
 
 combatFrame:SetScript("OnEvent", jps_combatEventHandler)
 
