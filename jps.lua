@@ -20,8 +20,8 @@
 -- Universal
 
 jps = {}
-jps.Version = "1.2.0"
-jps.Revision = "r543"
+jps.Version = "1.3.0"
+jps.Revision = "r545"
 jps.NextSpell = {}
 jps.Rotation = nil
 jps.UpdateInterval = 0.2
@@ -684,8 +684,8 @@ function SlashCmdList.jps(cmd, editbox)
    		jps_VARIABLES_LOADED()
    		write("jps.ResetDB set to",tostring(jps.ResetDB))
    		jps.Macro("/reload")
-	elseif msg == "version" or msg == "revision" or msg == "v" then
-		write("You have JPS revision",tostring(jps.Revision))
+	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
+		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
