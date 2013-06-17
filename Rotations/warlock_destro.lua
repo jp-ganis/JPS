@@ -149,7 +149,7 @@ function warlock_destro()
         { {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and jps.UseCDs },
         { jps.DPSRacial, jps.UseCDs },
         { "Lifeblood", jps.UseCDs },
-        { jps.useSynapseSprings(), jps.UseCDs },s
+        { jps.useSynapseSprings(), jps.UseCDs },
         { jps.useTrinket(0),       jps.UseCDs },
         { jps.useTrinket(1),       jps.UseCDs },
         
