@@ -16,10 +16,7 @@ Known Bugs:
  * [ADDON_ACTION_FORBIDDEN] AddOn "JPS" tried to call the protected function "CameraOrSelectOrMoveStop()".
     This will occur regulary if you cast Rain of Fire while moving...still works so it's just annoying
 
-
 ]]--
-
-
 
 local function debugPrint(msg)
     --print(msg)
@@ -77,21 +74,14 @@ function isCotEBlacklisted(unit)
     return false
 end
 
--- checks if item is in bag and not on cd 
-
-
 function hasKilJaedensCunning()
     local selected, talentIndex = GetTalentRowSelectionInfo(6)
     return talentIndex == 17
 end
 
-
-
-
 function warlock_destro()
     initializeDotTracker()
     
-    local currentSpeed, _, _, _, _ = GetUnitSpeed("player")
     local burningEmbers = UnitPower("player",14)
     local emberShards = UnitPower("player", 14, true)
     local immolateDuration = jps.debuffDuration("immolate")
@@ -153,13 +143,13 @@ function warlock_destro()
         { "curse of the elements", attackFocus and not jps.debuff("curse of the elements", "focus") and not isCotEBlacklisted("focus"), "focus" },
         
         -- On the move
-        { "fel flame", currentSpeed > 0 and not hasKilJaedensCunning() },
+        { "fel flame", jps.Moving and not hasKilJaedensCunning() },
         
         -- CD's
         { {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and jps.UseCDs },
         { jps.DPSRacial, jps.UseCDs },
         { "Lifeblood", jps.UseCDs },
-        { {"macro","/use 10"}, jps.glovesCooldown() == 0 and jps.UseCDs },
+        { jps.useSynapseSprings(), jps.UseCDs },s
         { jps.useTrinket(0),       jps.UseCDs },
         { jps.useTrinket(1),       jps.UseCDs },
         
@@ -193,7 +183,6 @@ function warlock_destro()
         {"Spell lock", jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCastLength, "mouseover"},
     }
 
-
 	local spellTableActive = jps.RotationActive(spellTable)
 	local spell,target = parseSpellTable(spellTableActive)
 
@@ -209,7 +198,6 @@ local myGUID
 local dotDamage, targets, trackedSpells = {},{},{}
 local isInitialized = false
 local destroLock = CreateFrame("Frame", "destroLock", UIParent)
-
 
 function canCastImmolate(unit)
     if not unit then
@@ -270,7 +258,6 @@ local function handleUpdate(self,elapsed)
         end
 end
 
-
 -- OnEvent Handler
 local function handleEvent(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -290,7 +277,6 @@ local function handleEvent(self, event, ...)
     end
 end
 
-
 -- Helper method to round up
 local function round(num) return math.floor(num+.5) end
 
@@ -308,7 +294,6 @@ function trackSpell(id,target,duration)
     spell.data = {strength=0, pandemicSafe=true}
     tinsert(trackedSpells, spell)
 end
-
 
 -- Register Events and sets OnUpdate/OnEvent Handler
 function registerEvents()
@@ -379,7 +364,6 @@ function initializeDotTracker()
         registerEvents()
     end
 end
-
 
 function updateDotDamage()
     -- Get Damage multipliers
