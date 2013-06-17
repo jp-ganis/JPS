@@ -1,4 +1,4 @@
-""""--[[
+--[[
 	 JPS - WoW Protected Lua DPS AddOn
 	Copyright (C) 2011 Jp Ganis
 
