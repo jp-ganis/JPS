@@ -21,7 +21,7 @@
 
 jps = {}
 jps.Version = "1.3.0"
-jps.Revision = "r545"
+jps.Revision = "r546"
 jps.NextSpell = {}
 jps.Rotation = nil
 jps.UpdateInterval = 0.2
