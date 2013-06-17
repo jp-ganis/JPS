@@ -79,11 +79,6 @@ function isCotEBlacklisted(unit)
 end
 
 -- checks if item is in bag and not on cd 
-function canUseItemInBags(itemID)
-    local itemID = itemID
-    if GetItemCount(itemID, false, false) > 0 and select(2,GetItemCooldown(itemID)) == 0 then return true end
-    return false
-end
 
 
 function hasKilJaedensCunning()
@@ -146,8 +141,9 @@ function warlock_destro()
 
         -- Def CD's
         { "mortal coil", jps.Defensive and jps.hp() <= 0.80 },
-        {"create healthstone", jps.Defensive and GetItemCount(5512, false, false) == 0},
-        { {"macro","/use Healthstone"},  jps.hp("player") < 0.65 and canUseItemInBags(5512) },
+        { "create healthstone", jps.Defensive and GetItemCount(5512, false, false) == 0},
+
+        { jps.useBagItem("Healthstone"), jps.hp("player") < 0.65 },
         { "ember tap", jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
 
         -- Rain of Fire
@@ -204,11 +200,6 @@ function warlock_destro()
 
 	return spell,target
 end
-
-
-
-
-
 
 --[[
 DANGER HERE BE DRAGONS!
