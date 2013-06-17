@@ -1,4 +1,4 @@
-function hunter_bm()
+function hunter_bm_pvp()
 -- valve
 	local player = jpsName
 	local pet = "pet"
@@ -48,9 +48,9 @@ function hunter_bm()
 		local mousehealth_pct = jps.hp("mouseover")
 		local spiritMendTarget = nil
 	local function shouldSpiritMend()
-			if focushealth_pct < 0.30 and UnitIsFriend("focus") then spiritMendTarget = "focus" return true end
+			if focushealth_pct < 0.30 and UnitIsFriend("player","focus") then spiritMendTarget = "focus" return true end
 			if playerhealth_pct < 0.30 then spiritMendTarget = player return true end
-			if mousehealth_pct < 0.30 and UnitIsFriend("mouseover") then spiritMendTarget = "mouseover" return true end
+			if mousehealth_pct < 0.30 and UnitIsFriend("player","mouseover") then spiritMendTarget = "mouseover" return true end
 			return false
 		end
 	

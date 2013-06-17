@@ -20,8 +20,8 @@
 -- Universal
 
 jps = {}
-jps.Version = "1.2.0"
-jps.Revision = "r543"
+jps.Version = "1.3.0"
+jps.Revision = "r546"
 jps.NextSpell = {}
 jps.Rotation = nil
 jps.UpdateInterval = 0.2
@@ -181,7 +181,6 @@ end
 	elseif event == "VARIABLES_LOADED" then -- 1er fire > reloadui
 		if jps.Debug then print("VARIABLES_LOADED") end
 		jps_VARIABLES_LOADED()
-		if jps.Spec then jps_createConfigFrame() end
 
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		if jps.Debug then print("PLAYER_REGEN_DISABLED") end

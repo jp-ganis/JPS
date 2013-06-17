@@ -92,7 +92,8 @@ function hunter_bm_pve()
 		{ {"macro","/script PetPassiveMode()"},		petIsPassive == nil }, -- Set pet to passive
 		-- Misc
 		{ {"macro","/petattack"}, 			petShouldAttackMyTarget },
-		{ "Aspect of the Hawk", 			not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") }, -- Tier 3 talent
+		{ "Aspect of the Hawk", 			not jps.buff("Aspect of the Hawk") }, 
+		{ "Aspect of the Iron Hawk", 		not jps.buff("Aspect of the Iron Hawk") }, -- Tier 3 talent
 		-- Misdirect to pet if no "focus" -- for farming, best with Glyph of Misdirection
 		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
 		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },
