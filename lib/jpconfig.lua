@@ -378,7 +378,7 @@ function jps.addRotationDropdownFrame()
 	desc:SetJustifyV("TOP")
 	desc:SetText("Uncheck spells when you dont want to use them. Do a /jps db to reset the spells")
 
-	for spellKey,spellVal in pairs (jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) do
+	for spellKey,spellVal in pairs (jps.spellConfig[jps.Spec]) do
 		rotationCount = rotationCount + 1
 		if rotationCount == 16 then 
 			rotationButtonPositionX = 220
@@ -489,6 +489,24 @@ end
 -- LOAD_PROFILE
 ---------------------------
 
+function jps.loadDefaultSettings() 
+	
+	local settingsTable = {}
+	settingsTable["rotation dropdown visible"] = 1
+	settingsTable["timetodie frame visible"] = 1
+	settingsTable["delete fish: golden carp"] = 0
+	settingsTable["delete fish: murglesnout"] = 1
+	settingsTable["delete grey loot worth less than 5 silver"] = 0
+	settingsTable["facetarget rotate direction. checked = left, unchecked = right"] = 1
+
+	for key,val in pairs(settingsTable) do 
+		if jps.settings[string.lower(key)] == nil then
+			jps.settings[string.lower(key)] = val
+		end
+	end
+end
+
+
 function jps_VARIABLES_LOADED()
 	if jps.ResetDB then 
 		jpsDB = {}
@@ -533,6 +551,8 @@ function jps_VARIABLES_LOADED()
 	end
 
 	jps_LOAD_PROFILE()
+	jps_SAVE_PROFILE()
+	jps.loadDefaultSettings()
 	jps_variablesLoaded = true
 end
 
