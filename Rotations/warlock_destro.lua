@@ -20,7 +20,6 @@ Known Bugs:
 ]]--
 
 
-warlockDestro = {}
 
 local function debugPrint(msg)
     --print(msg)
@@ -106,7 +105,7 @@ function warlock_destro()
     local spell = nil
     local fireAndBrimstoneBuffed = jps.buff("Fire and Brimstone", "player")
     local timeToBurst = jps.TimeToDie("target", 0.2) or 0
-    local immolate, immolateTarget = warlockDestro.canCastImmolate()
+    local immolate, immolateTarget = canCastImmolate()
     local avoidInterrupts = IsAltKeyDown()
     local maxIntCastLength = 2.8
 
@@ -178,7 +177,7 @@ function warlock_destro()
         }},        
         {"nested", jps.MultiTarget, {
             { "shadowburn", burnPhase and burningEmbers > 0  },
-            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and warlockDestro.canCastImmolate("target")},
+            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and canCastImmolate("target")},
             { "incinerate", not avoidInterrupts },
             { "conflagrate"},
             { "fel flame"},
@@ -208,15 +207,14 @@ DANGER HERE BE DRAGONS!
 local timer, throttle = 0, 0.1
 local myGUID
 local dotDamage, targets, trackedSpells = {},{},{}
-local inCombat = false
 local isInitialized = false
 local destroLock = CreateFrame("Frame", "destroLock", UIParent)
 
 
-function warlockDestro.canCastImmolate(unit)
+function canCastImmolate(unit)
     if not unit then
         for i, dottableUnit in ipairs(dottableUnits) do
-            cast, unit = warlockDestro.canCastImmolate(dottableUnit)
+            cast, unit = canCastImmolate(dottableUnit)
             if cast then
                 if jps.LastCast ~= spellNames.immolate or jps.LastCast == spellNames.immolate and jps.LastTarget ~= unit then 
                     return cast, unit
@@ -273,20 +271,6 @@ local function handleUpdate(self,elapsed)
 end
 
 
--- Disable Comat
-function warlockDestro.setCombatEnded()
-    inCombat = false
-    local t = GetTime()
-    for k,v in pairs(targets) do
-        if targets[k][2] < t-120 then targets[k]=nil end
-    end
-end
-
--- Enable Combat
-function warlockDestro.setCombatStarted()
-    inCombat = true
-end
-
 -- OnEvent Handler
 local function handleEvent(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -298,15 +282,11 @@ local function handleEvent(self, event, ...)
         ]]
         --local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = ...
         local _, type, _, sourceGUID, _, _, _, destGUID, _, _, _, spellId = ...
-        warlockDestro.updateDotsOnTarget(type,spellId,sourceGUID,destGUID)
+        updateDotsOnTarget(type,spellId,sourceGUID,destGUID)
     elseif event == "COMBAT_RATING_UPDATE" or event == "SPELL_POWER_CHANGED" or event == "UNIT_STATS" or event == "PLAYER_DAMAGE_DONE_MODS" then
-        warlockDestro.updateDotDamage()
-    elseif event == "PLAYER_REGEN_DISABLED" then
-        warlockDestro.setCombatStarted()
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        warlockDestro.setCombatEnded()
+        updateDotDamage()
     elseif event == "PLAYER_TALENT_UPDATE" then
-        warlockDestro.registerEvents()
+        registerEvents()
     end
 end
 
@@ -315,7 +295,7 @@ end
 local function round(num) return math.floor(num+.5) end
 
 -- Add Spell to watched List
-function warlockDestro.trackSpell(id,target,duration)
+function trackSpell(id,target,duration)
     local spell = {}
     if id > 0 then
         local n,r,_ = GetSpellInfo(id)
@@ -331,7 +311,7 @@ end
 
 
 -- Register Events and sets OnUpdate/OnEvent Handler
-function warlockDestro.registerEvents()
+function registerEvents()
     myGUID = UnitGUID("player")
     destroLock:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     destroLock:UnregisterEvent("COMBAT_RATING_UPDATE")
@@ -368,7 +348,7 @@ function warlockDestro.registerEvents()
 end
 
 -- Updates the Tracked Spell with current Spell Power Values
-function warlockDestro.updateTrackedSpell(trackedSpell)
+function updateTrackedSpell(trackedSpell)
     local guid = UnitGUID(trackedSpell.target)
     local _,_,_,_,_,duration,expires = UnitDebuff(trackedSpell.target,trackedSpell.name,trackedSpell.rank,"player")
     if duration and guid and targets[guid] then
@@ -392,16 +372,16 @@ function warlockDestro.updateTrackedSpell(trackedSpell)
 end
 
 -- Initialize DotTracker, will only be executed once
-function warlockDestro.initializeDotTracker()
+function initializeDotTracker()
     if not isInitialized then
         isInitialized = true
         destroLock:RegisterEvent("PLAYER_TALENT_UPDATE")
-        warlockDestro.registerEvents()
+        registerEvents()
     end
 end
 
 
-function warlockDestro.updateDotDamage()
+function updateDotDamage()
     -- Get Damage multipliers
     local dmgBuff = 1
     local fluidity = UnitAura("player", spellNames.fluidity, nil, "HARMFUL")
@@ -434,7 +414,7 @@ function warlockDestro.updateDotDamage()
 end
 
 -- Parce Combat Log to update Spell Power Values on Targets
-function warlockDestro.updateDotsOnTarget(event,spellId,sourceGUID,destGUID)
+function updateDotsOnTarget(event,spellId,sourceGUID,destGUID)
     if sourceGUID ~= myGUID then return end
     if(event == "SPELL_AURA_APPLIED" or event == "SPELL_AURA_REFRESH") then
         if(spellId == spellIds.immolate) then
