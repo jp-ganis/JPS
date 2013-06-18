@@ -19,6 +19,8 @@ Known Bugs:
 
 ]]--
 
+
+
 local function debugPrint(msg)
     --print(msg)
 end
@@ -53,7 +55,7 @@ local spellNames = {
 local dottableUnits = {
     "target",
     "focus",
-    "mouseover",
+--    "mouseover",
     "boss1",
     "boss2",
     "boss3",
@@ -75,14 +77,6 @@ function isCotEBlacklisted(unit)
     return false
 end
 
--- checks if item is in bag and not on cd 
-function canUseItemInBags(itemID)
-    local itemID = itemID
-    if GetItemCount(itemID, false, false) > 0 and select(2,GetItemCooldown(itemID)) == 0 then return true end
-    return false
-end
-
-
 function hasKilJaedensCunning()
     local selected, talentIndex = GetTalentRowSelectionInfo(6)
     return talentIndex == 17
@@ -94,7 +88,6 @@ end
 function warlock_destro()
     initializeDotTracker()
     
-    local currentSpeed, _, _, _, _ = GetUnitSpeed("player")
     local burningEmbers = UnitPower("player",14)
     local emberShards = UnitPower("player", 14, true)
     local immolateDuration = jps.debuffDuration("immolate")
@@ -118,8 +111,9 @@ function warlock_destro()
     end
     
 
-    if avoidInterrupts and jps.CastTimeLeft("player") >= enemyCastLeft then
+    if avoidInterrupts and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
+        jps.NextSpell = {}
     end
     
     local spellTable = {}
@@ -143,8 +137,9 @@ function warlock_destro()
 
         -- Def CD's
         { "mortal coil", jps.Defensive and jps.hp() <= 0.80 },
-        {"create healthstone", jps.Defensive and GetItemCount(5512, false, false) == 0},
-        { {"macro","/use Healthstone"},  jps.hp("player") < 0.65 and canUseItemInBags(5512) },
+        { "create healthstone", jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= "create healthstone"},
+
+        { jps.useBagItem("Healthstone"), jps.hp("player") < 0.65 },
         { "ember tap", jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
 
         -- Rain of Fire
@@ -155,13 +150,13 @@ function warlock_destro()
         { "curse of the elements", attackFocus and not jps.debuff("curse of the elements", "focus") and not isCotEBlacklisted("focus"), "focus" },
         
         -- On the move
-        { "fel flame", currentSpeed > 0 and not hasKilJaedensCunning() },
+        { "fel flame", jps.Moving and not hasKilJaedensCunning() },
         
         -- CD's
         { {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and jps.UseCDs },
         { jps.DPSRacial, jps.UseCDs },
         { "Lifeblood", jps.UseCDs },
-        { {"macro","/use 10"}, jps.glovesCooldown() == 0 and jps.UseCDs },
+        { jps.useSynapseSprings(), jps.UseCDs },
         { jps.useTrinket(0),       jps.UseCDs },
         { jps.useTrinket(1),       jps.UseCDs },
         
@@ -179,7 +174,7 @@ function warlock_destro()
         }},        
         {"nested", jps.MultiTarget, {
             { "shadowburn", burnPhase and burningEmbers > 0  },
-            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and canCastImmolate("target")},
+            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and jps.debuffDuration("immolate") and jps.LastCast ~= "immolate"},
             { "incinerate", not avoidInterrupts },
             { "conflagrate"},
             { "fel flame"},
@@ -202,20 +197,13 @@ function warlock_destro()
 	return spell,target
 end
 
-
-
-
-
-
 --[[
 DANGER HERE BE DRAGONS!
 ]]--
 
-
 local timer, throttle = 0, 0.1
 local myGUID
 local dotDamage, targets, trackedSpells = {},{},{}
-local inCombat = false
 local isInitialized = false
 local destroLock = CreateFrame("Frame", "destroLock", UIParent)
 
@@ -225,7 +213,7 @@ function canCastImmolate(unit)
         for i, dottableUnit in ipairs(dottableUnits) do
             cast, unit = canCastImmolate(dottableUnit)
             if cast then
-                if jps.LastCast ~= spellNames.immolate or jps.LastCast == spellNames.immolate and jps.LastTarget ~= unit then 
+                if jps.LastCast ~= spellNames.immolate or jps.LastCast == spellNames.immolate and UnitGUID(jps.LastTarget) ~= UnitGUID(unit) then 
                     return cast, unit
                 end
             end 
@@ -242,7 +230,10 @@ function canCastImmolate(unit)
     if duration and guid and targets[guid] then
         local timeLeft = expires - GetTime()
         if targets[guid][4].pandemicSafe then
-            if targets[guid][4].strength > 100 then
+            if targets[guid][4].strength > 150 then
+                debugPrint("Recasting: "..name.."@ "..unit.." (Pandemic Safe @ "..targets[guid][4].strength.."% with "..timeLeft.." sec left)")
+                castImmolate = true
+            elseif targets[guid][4].strength > 100 and timeLeft < 7 then
                 debugPrint("Recasting: "..name.."@ "..unit.." (Pandemic Safe @ "..targets[guid][4].strength.."% with "..timeLeft.." sec left)")
                 castImmolate = true
             else
@@ -255,7 +246,7 @@ function canCastImmolate(unit)
             end
         else
             --TODO: Be more specific when to clip dots...20% increase is nice, but a better logic might increse dps further
-            if targets[guid][4].strength > 120 then
+            if targets[guid][4].strength > 150 then
                 debugPrint("Recasting: "..name.."@ "..unit.." (NOT Pandemic Safe @ "..targets[guid][4].strength.."% with "..timeLeft.." sec left)")
                 castImmolate = true
             else
@@ -294,28 +285,11 @@ local function handleEvent(self, event, ...)
         updateDotsOnTarget(type,spellId,sourceGUID,destGUID)
     elseif event == "COMBAT_RATING_UPDATE" or event == "SPELL_POWER_CHANGED" or event == "UNIT_STATS" or event == "PLAYER_DAMAGE_DONE_MODS" then
         updateDotDamage()
-    elseif event == "PLAYER_REGEN_DISABLED" then
-        setCombatStarted()
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        setCombatEnded()
     elseif event == "PLAYER_TALENT_UPDATE" then
         registerEvents()
     end
 end
 
--- Disable Comat
-local function setCombatEnded()
-    inCombat = false
-    local t = GetTime()
-    for k,v in pairs(targets) do
-        if targets[k][2] < t-120 then targets[k]=nil end
-    end
-end
-
--- Enable Combat
-local function setCombatStarted()
-    inCombat = true
-end
 
 -- Helper method to round up
 local function round(num) return math.floor(num+.5) end

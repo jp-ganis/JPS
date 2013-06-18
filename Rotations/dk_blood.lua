@@ -13,10 +13,10 @@ function dk_blood()
 	-- left alt for anti magic zone
 	-- left ctrl for army of death
 	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
+
 	-- Cooldowns: trinkets, raise dead, dancing rune weapon, synapse springs, lifeblood 
 
 	-- focus on other tank in raids !
-
 	
 	local spell = nil
 	local target = nil
@@ -132,7 +132,6 @@ function dk_blood()
 	
 	spellTable[2] = {
 		["ToolTip"] = "DK Diseases",			
-
 
 		-- Kicks
 		{ "mind freeze",			jps.shouldKick() },

@@ -23,7 +23,7 @@ function rogue_assass()
 		{ "envenom", cp > 4 },
 		{ "envenom", cp >= 2 and snd_duration < 3 },
 		{ "dispatch", cp < 5 },
-		{ "tricks of the trade", "onCD", "focus"},
+		{ "tricks of the trade" },
 		{ "mutilate" },
 	}
 

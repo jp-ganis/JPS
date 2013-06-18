@@ -242,6 +242,7 @@ function jps.updateInfoText()
 			infoTexts = "TimeToLive: n/a"
 		end
 	end
+
 	if infoTTD ~= nil and infoTTD < 200000 then
 		local minutesDie = math.floor(infoTTD / 60)
 		local secondsDie = infoTTD - (minutesDie*60)
@@ -347,7 +348,7 @@ function jps.TimeToDie(unit, percent)
 		return 100000
 	end
 	local time = GetTime()
-    local timeToDie = jps.timeToDieFunctions[jps.timeToDieFunction][1](jps.RaidTimeToDie[unitGuid],health,time)
+    local timeToDie = jps.timeToDieFunctions[jps.timeToDieAlgorithm][1](jps.RaidTimeToDie[unitGuid],health,time)
     
 	if percent ~= nil and timeToDie ~= nil then
 		curPercent = health/UnitHealthMax(unit)

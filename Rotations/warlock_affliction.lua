@@ -577,3 +577,4 @@ function updateDotDamage()
     dps = round(damage/duration)
     dotDamage[spellIds.unstableAffliction] = {round(dps/100)/10, tickEvery}
 end
+

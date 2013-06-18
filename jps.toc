@@ -10,7 +10,6 @@ jputils.lua
 jphealing.lua
 jpparse.lua
 jpdata.lua
-jpsext.lua
 jptips.lua
 
 Lib\jpgui.lua
