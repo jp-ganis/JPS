@@ -16,7 +16,10 @@ Known Bugs:
  * [ADDON_ACTION_FORBIDDEN] AddOn "JPS" tried to call the protected function "CameraOrSelectOrMoveStop()".
     This will occur regulary if you cast Rain of Fire while moving...still works so it's just annoying
 
+
 ]]--
+
+
 
 local function debugPrint(msg)
     --print(msg)
@@ -52,7 +55,7 @@ local spellNames = {
 local dottableUnits = {
     "target",
     "focus",
-    "mouseover",
+--    "mouseover",
     "boss1",
     "boss2",
     "boss3",
@@ -78,6 +81,9 @@ function hasKilJaedensCunning()
     local selected, talentIndex = GetTalentRowSelectionInfo(6)
     return talentIndex == 17
 end
+
+
+
 
 function warlock_destro()
     initializeDotTracker()
@@ -105,8 +111,9 @@ function warlock_destro()
     end
     
 
-    if avoidInterrupts and jps.CastTimeLeft("player") >= enemyCastLeft then
+    if avoidInterrupts and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
+        jps.NextSpell = {}
     end
     
     local spellTable = {}
@@ -130,7 +137,7 @@ function warlock_destro()
 
         -- Def CD's
         { "mortal coil", jps.Defensive and jps.hp() <= 0.80 },
-        { "create healthstone", jps.Defensive and GetItemCount(5512, false, false) == 0},
+        { "create healthstone", jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= "create healthstone"},
 
         { jps.useBagItem("Healthstone"), jps.hp("player") < 0.65 },
         { "ember tap", jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
@@ -149,7 +156,7 @@ function warlock_destro()
         { {"macro","/cast Dark Soul: Instability"}, jps.cooldown("Dark Soul: Instability") == 0 and jps.UseCDs },
         { jps.DPSRacial, jps.UseCDs },
         { "Lifeblood", jps.UseCDs },
-        { jps.useSynapseSprings(), jps.UseCDs },s
+        { jps.useSynapseSprings(), jps.UseCDs },
         { jps.useTrinket(0),       jps.UseCDs },
         { jps.useTrinket(1),       jps.UseCDs },
         
@@ -167,7 +174,7 @@ function warlock_destro()
         }},        
         {"nested", jps.MultiTarget, {
             { "shadowburn", burnPhase and burningEmbers > 0  },
-            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and canCastImmolate("target")},
+            { "immolate", not avoidInterrupts and fireAndBrimstoneBuffed and jps.debuffDuration("immolate") and jps.LastCast ~= "immolate"},
             { "incinerate", not avoidInterrupts },
             { "conflagrate"},
             { "fel flame"},
@@ -182,6 +189,7 @@ function warlock_destro()
         {"Spell lock", jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < maxIntCastLength, "focus"},
         {"Spell lock", jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCastLength, "mouseover"},
     }
+
 
 	local spellTableActive = jps.RotationActive(spellTable)
 	local spell,target = parseSpellTable(spellTableActive)
@@ -199,12 +207,13 @@ local dotDamage, targets, trackedSpells = {},{},{}
 local isInitialized = false
 local destroLock = CreateFrame("Frame", "destroLock", UIParent)
 
+
 function canCastImmolate(unit)
     if not unit then
         for i, dottableUnit in ipairs(dottableUnits) do
             cast, unit = canCastImmolate(dottableUnit)
             if cast then
-                if jps.LastCast ~= spellNames.immolate or jps.LastCast == spellNames.immolate and jps.LastTarget ~= unit then 
+                if jps.LastCast ~= spellNames.immolate or jps.LastCast == spellNames.immolate and UnitGUID(jps.LastTarget) ~= UnitGUID(unit) then 
                     return cast, unit
                 end
             end 
@@ -221,7 +230,10 @@ function canCastImmolate(unit)
     if duration and guid and targets[guid] then
         local timeLeft = expires - GetTime()
         if targets[guid][4].pandemicSafe then
-            if targets[guid][4].strength > 100 then
+            if targets[guid][4].strength > 150 then
+                debugPrint("Recasting: "..name.."@ "..unit.." (Pandemic Safe @ "..targets[guid][4].strength.."% with "..timeLeft.." sec left)")
+                castImmolate = true
+            elseif targets[guid][4].strength > 100 and timeLeft < 7 then
                 debugPrint("Recasting: "..name.."@ "..unit.." (Pandemic Safe @ "..targets[guid][4].strength.."% with "..timeLeft.." sec left)")
                 castImmolate = true
             else
@@ -234,7 +246,7 @@ function canCastImmolate(unit)
             end
         else
             --TODO: Be more specific when to clip dots...20% increase is nice, but a better logic might increse dps further
-            if targets[guid][4].strength > 120 then
+            if targets[guid][4].strength > 150 then
                 debugPrint("Recasting: "..name.."@ "..unit.." (NOT Pandemic Safe @ "..targets[guid][4].strength.."% with "..timeLeft.." sec left)")
                 castImmolate = true
             else
@@ -258,6 +270,7 @@ local function handleUpdate(self,elapsed)
         end
 end
 
+
 -- OnEvent Handler
 local function handleEvent(self, event, ...)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -277,6 +290,7 @@ local function handleEvent(self, event, ...)
     end
 end
 
+
 -- Helper method to round up
 local function round(num) return math.floor(num+.5) end
 
@@ -294,6 +308,7 @@ function trackSpell(id,target,duration)
     spell.data = {strength=0, pandemicSafe=true}
     tinsert(trackedSpells, spell)
 end
+
 
 -- Register Events and sets OnUpdate/OnEvent Handler
 function registerEvents()
@@ -364,6 +379,7 @@ function initializeDotTracker()
         registerEvents()
     end
 end
+
 
 function updateDotDamage()
     -- Get Damage multipliers
