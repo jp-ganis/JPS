@@ -111,7 +111,7 @@ end
 -----------------------
 -- enemy hp, enemy name, enenmy targetted by no of players
 function jps.getRaidTargets()
-	local enemies = {}
+	local enemies = nil
 	local countTargets = {}
 	for unit, _ in pairs(jps.RaidStatus) do
 		local enemy = unit.."target"
@@ -131,6 +131,7 @@ end
 -- enemy unit we canDPS with the most targets by our raid
 function jps.RaidTargetUnit() 
 	local enemies = jps.getRaidTargets()
+	if enemies == nil then return "target" end
 	local maxTargets = 0
 	local enemyWithMostTargets = "target"
 	for enemyData, enemyName in pairs(enemies) do
@@ -146,6 +147,7 @@ end
 -- lowest enemy unit we canDPS
 function jps.LowestInRaidTarget() 
 	local enemies = jps.getRaidTargets()
+	if enemies == nil then return "target" end
 	local lowestHP = 1
 	local lowestEnemy = "target"
 	for enemyData, enemyName in pairs(enemies) do
@@ -159,7 +161,9 @@ end
 
 -- number units we canDPS 
 function jps.RaidEnemyCount()
-	return jps_tableLen(jps.getRaidTargets())
+	local length = jps_tableLen(jps.getRaidTargets())
+	if length == nil or length == 0 then return 1 end
+	return length
 end
 
 -- ENEMY TARGETING THE PLAYER
@@ -340,7 +344,7 @@ function jps.TimeToDie(unit, percent)
 	local unitGuid = UnitGUID(unit)
 	local health = UnitHealth(unit)
 	if health == UnitHealthMax(unit) then
-		return nil
+		return 100000
 	end
 	local time = GetTime()
     local timeToDie = jps.timeToDieFunctions[jps.timeToDieFunction][1](jps.RaidTimeToDie[unitGuid],health,time)
