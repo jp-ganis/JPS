@@ -791,7 +791,7 @@ function jps_Combat()
    else jps.Casting = false
    end
 
-   if not jps.Casting and jps.ThisCast ~= nil then
+   if not jps.Casting and jps.ThisCast ~= nil or jps.castTimeLeft("player") <= jps.Lag then
 	  if #jps.NextSpell >= 1 then
 		 if jps.NextSpell[1] then
 			jps.Cast(jps.NextSpell[1])
