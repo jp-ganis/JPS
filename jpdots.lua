@@ -32,6 +32,7 @@ dotTracker.spells = {}
     dotTracker.spells["corruption"] = dotTracker.toSpell(172, true, 87389) -- Corruption from Seed of Corruption
     dotTracker.spells["agony"] = dotTracker.toSpell(980, true)
     dotTracker.spells["unstableAffliction"] = dotTracker.toSpell(30108)
+    dotTracker.spells["doom"] = dotTracker.toSpell(603)
 
 -- Buff Table
 function dotTracker.toBuff(id,increase,increasePerStack,filter) return { id = id, name = GetSpellInfo(id), filter = filter or "HELPFUL", increase = increase, increasePerStack = increasePerStack or 0} end
@@ -45,8 +46,48 @@ dotTracker.buffs = {}
 function dotTracker.toClass(fn,...) return { updateFunction = fn, spells = {...} } end
 dotTracker.supportedClasses = {}
 dotTracker.supportedClasses["WARLOCK"] = {
-    false,
-    false,
+    dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)
+        local damageBonus = (1+crit/100)*(1+(mastery*3.1)/100)
+        local tickEvery = 2/(1+(haste/100))
+        
+        local ticks = math.floor(24/tickEvery)
+        local duration = ticks * tickEvery
+        local damage = ((280 + spellDamage * 0.26) * ticks)*damageBonus*damageBuff
+        local dps = damage / duration
+        dotTracker.toDotDamage(dotTracker.spells.agony.id, dps, duration, tickEvery)
+        
+        local ticks = math.floor(18/tickEvery)
+        local duration = ticks * tickEvery
+        local damage = (1440 + spellDamage * 0.15 * ticks)*damageBonus*damageBuff
+        local dps = damage / duration
+        dotTracker.toDotDamage(dotTracker.spells.corruption.id, dps, duration, tickEvery)
+        
+        local ticks = math.floor(14/tickEvery)
+        local duration = ticks * tickEvery
+        local damage = (1792 + spellDamage * 0.24 * ticks)*damageBonus*damageBuff
+        local dps = damage / duration
+        dotTracker.toDotDamage(dotTracker.spells.unstableAffliction.id, dps, duration, tickEvery)
+    end, 
+    dotTracker.spells.agony,dotTracker.spells.corruption,dotTracker.spells.unstableAffliction),
+    
+    dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)
+        local damageBonus = (1+crit/100)*(1+(mastery)/100)
+        local tickEvery = 2/(1+(haste/100))
+        local ticks = math.floor(24/tickEvery)
+        local duration = ticks * tickEvery
+        local damage = (1440 + spellDamage * 0.15 * ticks)*damageBonus*damageBuff
+        local dps = damage / duration
+        dotTracker.toDotDamage(dotTracker.spells.corruption.id, dps, duration, tickEvery)
+        
+        local damageBonus = (1+crit/100)*(1+(mastery*3)/100)
+        local tickEvery = 15/(1+(haste/100))
+        local ticks = math.floor(60/tickEvery)
+        local duration = ticks * tickEvery
+        local damage = (4004/ticks+spellDamage*1.25*ticks)*damageBonus*damageBuff
+        local dps = damage / duration
+        dotTracker.toDotDamage(dotTracker.spells.doom.id, dps, duration, tickEvery)
+    end, 
+    dotTracker.spells.corruption,dotTracker.spells.doom),
     dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)
         local damageBonus = (1+crit/100)*(1+(mastery+1)/100)
         
