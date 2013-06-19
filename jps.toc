@@ -11,6 +11,8 @@ jphealing.lua
 jpparse.lua
 jpdata.lua
 jptips.lua
+jplogging.lua
+jpdots.lua
 
 Lib\jpgui.lua
 Lib\jpconfig.lua
