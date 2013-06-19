@@ -24,14 +24,12 @@ dotTracker.dotDamage = {}
 function dotTracker.toTarget(guid, spellid) dotTracker.targets[guid..spellid] = { dps = dotTracker.dotDamage[spellid].dps, age = GetTime(), strength = 100, pandemicSafe = false} end
 dotTracker.targets = {}
 -- Spell Table
-function dotTracker.toSpell(id,r) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r} end
+function dotTracker.toSpell(id,r,altId) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r, alternativeId = altId} end
 dotTracker.spells = {}
     -- Warlock Spells
-    dotTracker.spells["immolate"] = dotTracker.toSpell(348, true)
-    dotTracker.spells["fnbImmolate"] = dotTracker.toSpell(108686) -- Immolate + Fire and Brimstone
+    dotTracker.spells["immolate"] = dotTracker.toSpell(348, true, 108686) -- Immolate + Fire and Brimstone
     dotTracker.spells["felFlame"] = dotTracker.toSpell(77799)
-    dotTracker.spells["corruption"] = dotTracker.toSpell(172, true)
-    dotTracker.spells["socCorruption"] = dotTracker.toSpell(87389) -- Corruption from Seed of Corruption
+    dotTracker.spells["corruption"] = dotTracker.toSpell(172, true, 87389) -- Corruption from Seed of Corruption
     dotTracker.spells["agony"] = dotTracker.toSpell(980, true)
     dotTracker.spells["unstableAffliction"] = dotTracker.toSpell(30108)
 
@@ -94,7 +92,7 @@ function dotTracker.handleEvent(self, event, ...)
         if sourceGUID ~= dotTracker.myGUID then return end
         if eventType == "SPELL_AURA_APPLIED" or eventType == "SPELL_AURA_REFRESH"  then
             for k,spell in pairs(dotTracker.classSpecificSpells) do
-                if spellId == spell.id then
+                if spellId == spell.id or spellId == spell.alternativeId then
                     LOG.warn("%s casted on Target: %s", spell.name, destGUID)
                     dotTracker.toTarget(destGUID, spell.id)
                 end
@@ -103,14 +101,14 @@ function dotTracker.handleEvent(self, event, ...)
         elseif eventType == "SPELL_DAMAGE" and spellId == dotTracker.spells.felFlame.id then
             -- Warlock specific - FelFlame enhances DoT Duration..
             for k,spell in pairs(dotTracker.classSpecificSpells) do
-                if spell.refreshedByFelFlame then
+                if spell.refreshedByFelFlame and dotTracker.targets[destGUID..spell.id] then
                     LOG.warn("%s refreshed with Fel Flame on Target: %s", spell.name, destGUID)
                     dotTracker.toTarget(destGUID, spell.id)
                 end
             end
         elseif eventType=="SPELL_AURA_REMOVED" then
             for k,spell in pairs(dotTracker.classSpecificSpells) do
-                if spellId == spell.id then
+                if spellId == spell.id or spellId == spell.alternativeId then
                     LOG.warn("%s faded from Target: %s", spell.name, destGUID)
                     dotTracker.targets[destGUID..spell.id] = nil
                 end
