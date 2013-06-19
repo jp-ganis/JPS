@@ -20,7 +20,7 @@ Known Bugs:
 ]]--
 
 -- stop spam curse of the elements at invalid targets @ mop
-function isCotEBlacklisted(unit) 
+local function isCotEBlacklisted(unit) 
     local table_noSpamCotE = {
         "Twilight Sapper", 
         "Burning Tendons",
@@ -34,7 +34,7 @@ function isCotEBlacklisted(unit)
     return false
 end
 
-function hasKilJaedensCunning()
+local function hasKilJaedensCunning()
     local selected, talentIndex = GetTalentRowSelectionInfo(6)
     return talentIndex == 17
 end
@@ -95,8 +95,8 @@ function warlock_destro()
         { "ember tap", jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
 
         -- Rain of Fire
-        { "rain of fire", IsShiftKeyDown() ~= nil and rainOfFireDuration < 1 and GetCurrentKeyBoardFocus() == nil and IsSpellInRange("Soulstone", "rain of fire") },
-        { "rain of fire", IsShiftKeyDown() ~= nil and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and IsSpellInRange("Soulstone", "rain of fire")},
+        { "rain of fire", IsShiftKeyDown() ~= nil and rainOfFireDuration < 1 and GetCurrentKeyBoardFocus() == nil  },
+        { "rain of fire", IsShiftKeyDown() ~= nil and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
         -- COE Debuff
         { "curse of the elements", not jps.debuff("curse of the elements") and not isCotEBlacklisted("target") },
         { "curse of the elements", attackFocus and not jps.debuff("curse of the elements", "focus") and not isCotEBlacklisted("focus"), "focus" },
@@ -113,6 +113,7 @@ function warlock_destro()
         { jps.useTrinket(1),       jps.UseCDs },
         
         {"nested", not jps.MultiTarget and not avoidInterrupts, {
+            { "havoc", not IsShiftKeyDown() and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil, "mouseover" },
             { "havoc", attackFocus, "focus" },
             { "shadowburn", burnPhase and burningEmbers > 0  },
             { "chaos bolt", burningEmbers >= 1 and  havocStacks>=3},
@@ -130,7 +131,7 @@ function warlock_destro()
         }},
         {"nested", jps.MultiTarget, {
             { "shadowburn", burnPhase and burningEmbers > 0  },
-            { "immolate", fireAndBrimstoneBuffed and jps.debuffDuration("immolate") and jps.LastCast ~= "immolate"},
+            { "immolate", fireAndBrimstoneBuffed and jps.myDebuffDuration("immolate") <= 2.0 and jps.LastCast ~= "immolate"},
             { "incinerate", },
             { "conflagrate"},
             { "fel flame"},
