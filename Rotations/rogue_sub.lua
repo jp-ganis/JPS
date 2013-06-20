@@ -21,6 +21,12 @@ function rogue_sub()
 		-- Ambush
 		{ 8676	 , jps.buff(1784,"player")	, rangedTarget },
 		
+		-- Interrupts
+		{ "Kick",  jps.shouldKick() },
+		{ "Blind", jps.shouldKick() },
+		{ "Kick",  jps.shouldKick("focus"),"focus" },
+		{ "Blind", jps.shouldKick("focus"),"focus" },
+		
 		-- Slice and Dice
 		{ 5171	 , (snd_duration < 4) and (cp > 3)	, rangedTarget , "SND_SpellID" },
 		{ 5171	 , (snd_duration < 4) or (snd_duration < 15 and jps.buffStacks("Bandit's Guile") == 11 and cp > 3) , rangedTarget , "SND_SpellID_Bandit"},
