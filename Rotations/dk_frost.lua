@@ -31,17 +31,17 @@ function dk_frost()
 	local oneUr = ur1 or ur2
 	local twoUr = ur1 and ur2
 
-	local frostFeverDuration = jps.debuffDuration("Frost Fever")
-	local bloodPlagueDuration = jps.debuffDuration("Blood Plague")
+	local frostFeverDuration = jps.myDebuffDuration("Frost Fever")
+	local bloodPlagueDuration = jps.myDebuffDuration("Blood Plague")
 	local timeToDie = jps.TimeToDie("target")
 
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
-		if jps.debuffDuration("Frost Fever") <= timeLeft then
+		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
+		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end
-		if jps.debuffDuration("Blood Plague") <= timeLeft then
+		if jps.myDebuffDuration("Blood Plague") <= timeLeft then
 			return true
 		end
 		return false
@@ -97,10 +97,10 @@ function dk_frost()
     	
     	--simcraft 5.3 T14
     	{ "plague leech",			canCastPlagueLeech(2)},
-    	{ "outbreak",			not jps.debuff("frost fever") or not jps.debuff("blood plague")},
-    	{ "unholy blight",			 not jps.debuff("frost fever") or not jps.debuff("blood plague")},
-    	{ "howling blast",			not jps.debuff("frost fever")},
-    	{ "plague strike",			not jps.debuff("blood plague")},
+    	{ "outbreak",			bloodPlagueDuration == 0 or frostFeverDuration == 0},
+    	{ "unholy blight",			 bloodPlagueDuration == 0 or frostFeverDuration == 0},
+    	{ "howling blast",			frostFeverDuration == 0},
+    	{ "plague strike",			bloodPlagueDuration == 0},
     	{ "soul reaper",			jps.hp("target") <= .35},
     	{ "blood tap",			 jps.hp("target") <= .35 and jps.cooldown("soul reaper") == 0},
     	{ "howling blast",			jps.buff("Freezing Fog")},
@@ -170,7 +170,7 @@ function dk_frost()
 		{ "Lifeblood",			jps.UseCDs },
 		
 		-- Diseases
-		{ "Necrotic Strike",			not jps.debuff("Necrotic Strike",target)},
+		{ "Necrotic Strike",			not jps.mydebuff("Necrotic Strike",target)},
 		{ "Howling Blast",			frostFeverDuration <= 1 or (jps.buff("Freezing Fog") and runicPower < 88) },
 		{ "Plague Strike",			bloodPlagueDuration <= 1 },
 		

@@ -16,9 +16,6 @@ function monk_windwalker(self)
 	local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Zen Meditation") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
 	local tigerPowerDuration = jps.buffDuration("Tiger Power")
 
-	-- Need to use the Tigereye Brew buff ID because it shares it's name with the stacks.
-	local tigereyeActive = jps.buffID(116740)
-
 	local possibleSpells = {
 		-- Defensive Cooldowns.
 		-- { "Zen Meditation", 

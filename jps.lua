@@ -381,7 +381,7 @@ end
 		-- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 		elseif event == "PLAYER_LEVEL_UP" then
 			local eventtable =  {...}
-			if eventtable[1] == 10 then
+			if eventtable[1] == "10" then
 				jps.Level = eventtable[1]
 				jps.detectSpec()
 				jps.Enabled = true
@@ -747,8 +747,6 @@ if jps.Enabled and (select(3, ...) ~= nil) and (InCombatLockdown()==1) and jps.I
 end
 end)
 
-
-
 ------------------------
 -- COMBAT
 ------------------------
@@ -761,6 +759,9 @@ function jps_Combat()
 	  jps.Enabled = false
 	  return 
    end
+   
+   -- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
+   if (IsMounted() == 1 and jps.getConfigVal("dismount in combat") == 0) or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
    
    -- Check spell usability 
    if string.len(jps.customRotationFunc) >10 then
@@ -778,9 +779,6 @@ function jps_Combat()
    -- Movement
    jps.Moving = GetUnitSpeed("player") > 0
    jps.MovingTarget = GetUnitSpeed("target") > 0
-   
-   -- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
-   if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
    
    -- LagWorld
    jps.Lag = select(4,GetNetStats()) -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()

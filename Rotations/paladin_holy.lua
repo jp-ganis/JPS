@@ -6,7 +6,7 @@ function shouldInterruptCasting(spellsToCheck)
 	if spellCasting == nil then return false end
 	if not jps.canHeal(jps.LastTarget) then return true end
 
-	for healSpellTable, _ in pairs(spellsToCheck) do
+	for key, healSpellTable  in pairs(spellsToCheck) do
 		local breakpoint = healSpellTable[2]
 		local spellName = healSpellTable[1]
 		if spellName == spellCasting then
@@ -156,17 +156,18 @@ function paladin_holy()
 	------------------------
 	-- SPELL TABLE -----
 	------------------------
-	local spellTable =
-	{
-	-- Kicks                    
-	
+	local spellTable = {}
+	spellTable = {
+    	["ToolTip"] = "Holy Paladin PVE Full",
+		-- Kicks                    
 		{ "Rebuke", jps.shouldKick(rangedTarget) , rangedTarget },
 		{ "Rebuke", jps.shouldKick("focus"), "focus" },
 		{ "Fist of Justice", jps.shouldKick(rangedTarget) and jps.cooldown("Rebuke")~=0 , rangedTarget },
 		
 	-- Cooldowns                     
 		{ "Lay on Hands", lowestHP < 0.20 and jps.UseCDs , myLowestImportantUnit, "casted lay on hands!" },
-		{ "Divine Plea", mana < 0.60 , player },
+		{ "Divine Plea", mana < 0.60 and jps.glyphInfo(45745) == false , player },
+		
 		{ "Avenging Wrath", jps.UseCDs , player },
 		{ "Divine Favor", jps.UseCDs , player },
 		{ "Guardian of Ancient Kings", jps.UseCDs , rangedTarget },
@@ -221,15 +222,13 @@ function paladin_holy()
 		{ "Holy Shock", healTargetHPPct < 0.92 , ourHealTarget },
 		{ "Holy Light", healTargetHPPct < 0.90 , ourHealTarget },
 		{ "Word of Glory", (hPower > 2) and (healTargetHPPct < 0.90) , ourHealTarget },
-		
-		
+		{ "Divine Plea", mana < 0.60, player },
 	}
-	
-	spell,target = parseSpellTable(spellTable)
 
+	local spellTableActive = jps.RotationActive(spellTable)
+	spell,target = parseSpellTable(spellTableActive)
 	if spell == "Beacon of Light" and target == "mouseover" then
 		jps.beaconTarget = target
 	end
-
-   return spell,target 
+	return spell,target
 end
