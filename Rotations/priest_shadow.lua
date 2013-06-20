@@ -20,7 +20,7 @@ function priest_shadow()
 		{ "shadowfiend", 	jps.cooldown("shadowfiend") == 0 and jps.UseCDs },
 		{ "devouring plague", 	sorbs > 2 },
 		{ "mind blast", jps.cooldown("mind blast") == 0 and sorbs < 3 },
-		{ "shadow word: death", 	jps.hp("target") <= 0.2 },
+		{ "shadow word: death", 	jps.hp("target") < 0.2 },
 		{ {"macro","/cast mind flay"}, jps.cooldown("mind flay") == 0 and not jps.Casting and jps.debuff("devouring plague","target")},
 		{ "shadow word: pain", 	not jps.debuff("shadow word: pain") or swpDuration < 3 },
 		{ "vampiric touch", 	endtimevt+2 < GetTime() and (not jps.debuff("vampiric touch") or vtDuration < 4) },

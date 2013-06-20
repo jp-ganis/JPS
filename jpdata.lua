@@ -375,7 +375,7 @@ function jps.CastTimeLeft(unit)
 	return (endTime - (GetTime() * 1000 ) )/1000
 end
 
-function jps.ChanelTimeLeft(unit)
+function jps.ChannelTimeLeft(unit)
 	if unit == nil then unit = "player" end
 	local _,_,_,_,_,endTime,_,_,_ = UnitChannelInfo(unit)
 	if endTime == nil then return 0 end
@@ -390,7 +390,7 @@ function jps.IsCasting(unit)
 	if jps.CastTimeLeft(unit) > 0 then
 		enemycasting = true
 		enemyspell = name
-	elseif (jps.CastTimeLeft(unit) > 0) or (jps.ChanelTimeLeft(unit) > 0) then
+	elseif (jps.CastTimeLeft(unit) > 0) or (jps.ChannelTimeLeft(unit) > 0) then
 		enemycasting = true
 	end
 	return enemycasting,enemyspell
@@ -471,7 +471,7 @@ function jps.shouldKickLag(unit)
 		if jps.CastTimeLeft(unit) < 1 then 
 		return true end
 	elseif channelling and notInterruptible == false then
-		if jps.ChanelTimeLeft(unit) < 1 then
+		if jps.ChannelTimeLeft(unit) < 1 then
 		return true end
 	end 
 	return false
