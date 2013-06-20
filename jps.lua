@@ -761,7 +761,14 @@ function jps_Combat()
 	  jps.Enabled = false
 	  return 
    end
+
+   -- Movement
+   jps.Moving = GetUnitSpeed("player") > 0
+   jps.MovingTarget = GetUnitSpeed("target") > 0
    
+   -- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
+   if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
+      
    -- Check spell usability 
    if string.len(jps.customRotationFunc) >10 then
 	   jps.ThisCast,jps.Target = jps.customRotation() 
@@ -774,13 +781,6 @@ function jps_Combat()
 	end
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
-   
-   -- Movement
-   jps.Moving = GetUnitSpeed("player") > 0
-   jps.MovingTarget = GetUnitSpeed("target") > 0
-   
-   -- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
-   if IsMounted() or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
    
    -- LagWorld
    jps.Lag = select(4,GetNetStats()) -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
