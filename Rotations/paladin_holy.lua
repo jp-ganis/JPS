@@ -128,7 +128,7 @@ function paladin_holy()
 	----------------------
 	-- JPS.CANDPS IS WORKING ONLY FOR PARTYN..TARGET AND RAIDN..TARGET NOT FOR UNITNAME..TARGET
 	local EnemyUnit = {}
-	for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
+	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
 	
 	local rangedTarget = "target"
 	if jps.canDPS("target") then
@@ -157,7 +157,7 @@ function paladin_holy()
 	-- SPELL TABLE -----
 	------------------------
 	local spellTable = {}
-	spellTable = {
+	spellTable[1] = {
     	["ToolTip"] = "Holy Paladin PVE Full",
 		-- Kicks                    
 		{ "Rebuke", jps.shouldKick(rangedTarget) , rangedTarget },

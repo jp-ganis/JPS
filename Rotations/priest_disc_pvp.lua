@@ -153,7 +153,7 @@ local ArenaUnit = {"arena1","arena2","arena3"}
 
 -- JPS.CANDPS NE MARCHE QUE POUR PARTYn et RAIDn..TARGET PAS POUR UNITNAME..TARGET
 local EnemyUnit = {}
-for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
+for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end -- EnemyUnit[1]
 local enemyTargetingMe = jps.IstargetMe()
 local lowestEnemy = jps.LowestInRaidTarget()
 
@@ -262,7 +262,7 @@ end
 local function parse_dispel()
 	-- "Purifier" 527 Purify -- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
 	-- function jps.DispelFriendlyTarget() returns same unit & condition as jps.DispelFriendly(unit) 
-	-- These two functions dispel SOME DEBUFF of FriendUnit according to a debuff table jps_DebuffToDispell_Name 
+	-- These two functions dispel SOME DEBUFF of FriendUnit according to a debuff table jps_DebuffToDispel_Name 
 	-- EXCEPT if unit is affected by some debuffs "Unstable Affliction" , "Lifebloom" , "Vampiric Touch"
 	-- we can add others cond like UnitIsPVP(player)==1 with jps.DispelFriendlyTarget() -- { "Purify", jps.canHeal(dispelFriendly_Target) and (UnitIsPVP(player) == 1) , dispelFriendly_Target },
 	-- jps.DispelFriendly(unit) is a function must be alone in condition but the target can be a table 
@@ -351,9 +351,9 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.60
 		-- "Penance" 47540
 		{ 47540, true , jps_TANK , "Emergency_Penance_"..jps_TANK },
 		-- "Soins rapides" 2061 -- "Sursis" 59889 "Borrowed"
-		{ 2061, (player_Aggro > 0) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Rapides_Borrowed_"..jps_TANK },
+		{ 2061, (health_pct_TANK < 0.25) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Rapides_Borrowed_"..jps_TANK },
 		-- "Soins supérieurs" 2060 -- "Sursis" 59889 "Borrowed"
-		{ 2060, (player_Aggro == 0) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Sup_Borrowed_"..jps_TANK },
+		{ 2060, (health_pct_TANK > 0.40) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Sup_Borrowed_"..jps_TANK },
 		-- "Cascade" 121135
 		{ 121135, (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
 		-- "Soins de lien"
@@ -373,7 +373,7 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.60
 		-- "Renew"
 		{ 139, not jps.buff(139,jps_TANK) , jps_TANK , "Emergency_Renew_"..jps_TANK },
 		-- "Soins supérieurs" 2060 
-		{ 2060, (player_Aggro == 0) , jps_TANK , "Emergency_Soins Sup_"..jps_TANK },
+		{ 2060, (player_IsInterrupt == 0) , jps_TANK , "Emergency_Soins Sup_"..jps_TANK },
 	}
 return table
 end
@@ -424,7 +424,7 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 	
 	-- OTHERS	
 		-- "Soins Rapides" 2061 -- 4P PvP mana cost flash heal 50%
-		{ 2061, unitFor_Shell_Flash , FriendUnit , "Carapace_Soins Rapides_Friend_" },
+		--{ 2061, unitFor_Shell_Flash , FriendUnit , "Carapace_Soins Rapides_Friend_" },
 		-- "Soins" 2050
 		{ 2050, unitFor_Shell , FriendUnit , "Carapace_Soins_Friend_" },
 		-- "Cascade" 121135
@@ -551,7 +551,7 @@ local spellTable =
 -- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
 -- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
-	{ 2061, (player_IsInterrupt == 0) and jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
+	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 
 -- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
 	{ 17, UnitIsUnit(jps_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff(6788,"focustargettarget") and not jps.buff(17,"focustargettarget"), "focustargettarget"},

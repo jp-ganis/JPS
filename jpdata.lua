@@ -39,7 +39,7 @@ end
 
 function jps.FindMeDispelTarget(dispeltypes) -- jps.FindMeDispelTarget({"Magic"}, {"Poison"}, {"Disease"})
      for unit, _ in pairs(jps.RaidStatus) do
-		if jps.canDispel( unit, dispeltypes ) then return unit end
+		if jps.canHeal(unit) and jps.canDispel( unit, dispeltypes ) then return unit end
 	end
 end
 
@@ -91,21 +91,21 @@ end
 function jps.DispelMagicTarget()
 	if jps.getConfigVal("Dispel Magic") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.MagicDispel(unit) then return unit end
+		if jps.canHeal(unit) and jps.MagicDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelDiseaseTarget()
 if jps.getConfigVal("Dispel Disease") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.DiseaseDispel(unit) then return unit end
+		if jps.canHeal(unit) and jps.DiseaseDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelPoisonTarget()
 if jps.getConfigVal("Dispel Poison") == 0 then return false end
 	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.PoisonDispel(unit) then return unit end
+		if jps.canHeal(unit) and jps.PoisonDispel(unit) then return unit end
 	end
 end 
 
@@ -142,7 +142,7 @@ end
 
 function jps.DispelFriendlyTarget()
 	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.DispelFriendly(unit) then 
+		if jps.canHeal(unit) and jps.DispelFriendly(unit) then 
 		return unit end
 	end
 end
@@ -355,7 +355,7 @@ end
 
 function jps.buffTracker(buff)
 	for unit,_ in pairs(jps.RaidStatus) do
-		if jps.myBuffDuration(buff,unit) > 0 then
+		if jps.canHeal(unit) and jps.myBuffDuration(buff,unit) > 0 then
 		return true end
 	end
 	return false
@@ -624,9 +624,8 @@ end
 function jps.useTrinket(trinketNum)
 	-- The index actually starts at 0
 	local slotName = "Trinket"..(trinketNum).."Slot" -- "Trinket0Slot" "Trinket1Slot"
+	
 	-- Get the slot ID
-	
-	
 	local slotId  = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
 
 	return jps.useSlot(slotId)

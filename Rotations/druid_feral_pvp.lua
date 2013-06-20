@@ -45,7 +45,7 @@ function druid_feral_pvp()
 	local mousehealth_pct = jps.hp("mouseover")
 
 	local EnemyUnit = {}
-		for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
+		for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
 
 	local rangedTarget = "target"
 		if jps.canDPS("target") then rangedTarget = "target"
