@@ -22,8 +22,8 @@ function dk_blood()
 	local target = nil
 	
 	local rp = jps.runicPower();
-	local ffDuration = jps.debuffDuration("frost fever")
-	local bpDuration = jps.debuffDuration("blood plague")
+	local ffDuration = jps.myDebuffDuration("frost fever")
+	local bpDuration = jps.myDebuffDuration("blood plague")
 	local bcStacks = jps.buffStacks("blood charge") --Blood Stacks
 	local haveGhoul, _, _, _, _ = GetTotemInfo(1) --Information about Ghoul pet
 	
@@ -42,14 +42,14 @@ function dk_blood()
 
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
-		if jps.debuffDuration("Frost Fever") > timeLeft or jps.debuffDuration("Blood Plague") > timeLeft then
-			return false
+		if not jps.debuff("Frost Fever") or not jps.debuff("Blood Plague") then return false end
+		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
+			return true
 		end
-		if jps.debuffDuration("Frost Fever") == 0 or jps.debuffDuration("Blood Plague") == 0 then
-			return false
+		if jps.myDebuffDuration("Blood Plague") <= timeLeft then
+			return true
 		end
-		return true
+		return false
 	end
 
 	local spellTable = {}
