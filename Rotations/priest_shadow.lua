@@ -12,7 +12,7 @@ function priest_shadow()
 		{ "Dispersion", IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs },
 		{ "inner fire", not jps.buff("inner fire") },
 		{ "Power Word: Shield", jps.Moving or jps.hp() < 0.5 },
-		{ "Arcane Torrent", jps.mana < .9 },
+		{ "Arcane Torrent", jps.mana() < .9 },
 		{ "Power Infusion", jps.UseCDs },
 		{ "mind spike", jps.buff("surge of darkness") },
 		{ "mind blast", jps.buff("divine insight") },
