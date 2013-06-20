@@ -37,7 +37,7 @@ function dk_frost()
 
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.debuff("frost fever") or not jps.debuff("blood plague") then return false end
+		if not jps.debuff("Frost Fever") or not jps.debuff("Blood Plague") then return false end
 		if jps.debuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end
@@ -97,10 +97,10 @@ function dk_frost()
     	
     	--simcraft 5.3 T14
     	{ "plague leech",			canCastPlagueLeech(2)},
-    	{ "outbreak",			not jps.debuff("frost fever") or not jps.debuff("blood plague")},
-    	{ "unholy blight",			 not jps.debuff("frost fever") or not jps.debuff("blood plague")},
-    	{ "howling blast",			not jps.debuff("frost fever")},
-    	{ "plague strike",			not jps.debuff("blood plague")},
+    	{ "outbreak",			bloodPlagueDuration == 0 or frostFeverDuration == 0},
+    	{ "unholy blight",			 bloodPlagueDuration == 0 or frostFeverDuration == 0},
+    	{ "howling blast",			frostFeverDuration == 0},
+    	{ "plague strike",			bloodPlagueDuration == 0},
     	{ "soul reaper",			jps.hp("target") <= .35},
     	{ "blood tap",			 jps.hp("target") <= .35 and jps.cooldown("soul reaper") == 0},
     	{ "howling blast",			jps.buff("Freezing Fog")},
