@@ -334,7 +334,7 @@ function jps.addSettingsCheckbox(settingName)
         else 
             settingStatus = 1 
         end
-        jps.notifySettingChanged(settingsKey, settingsStatus)
+        jps.notifySettingChanged(settingName, settingsStatus)
         setsettingStatus(settingName, settingStatus)
     end  
     
