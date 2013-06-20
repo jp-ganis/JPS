@@ -498,6 +498,7 @@ function jps.loadDefaultSettings()
 	settingsTable["delete fish: murglesnout"] = 1
 	settingsTable["delete grey loot worth less than 5 silver"] = 0
 	settingsTable["facetarget rotate direction. checked = left, unchecked = right"] = 1
+	settingsTable["dismount in combat"] = 0
 
 	for key,val in pairs(settingsTable) do 
 		if jps.settings[string.lower(key)] == nil then
