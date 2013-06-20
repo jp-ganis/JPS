@@ -37,7 +37,7 @@ function dk_frost()
 
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.debuff("Frost Fever") or not jps.debuff("Blood Plague") then return false end
+		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end
@@ -170,7 +170,7 @@ function dk_frost()
 		{ "Lifeblood",			jps.UseCDs },
 		
 		-- Diseases
-		{ "Necrotic Strike",			not jps.debuff("Necrotic Strike",target)},
+		{ "Necrotic Strike",			not jps.mydebuff("Necrotic Strike",target)},
 		{ "Howling Blast",			frostFeverDuration <= 1 or (jps.buff("Freezing Fog") and runicPower < 88) },
 		{ "Plague Strike",			bloodPlagueDuration <= 1 },
 		

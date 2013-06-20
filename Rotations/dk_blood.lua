@@ -42,7 +42,7 @@ function dk_blood()
 
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.debuff("Frost Fever") or not jps.debuff("Blood Plague") then return false end
+		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end
@@ -103,8 +103,8 @@ function dk_blood()
 				
 		-- Diseases
 		{ "Outbreak",			ffDuration <= 2 or bpDuration <= 2 },
-		{ "Plague Strike",			not jps.debuff("Blood Plague") },
-		{ "Icy Touch",			not jps.debuff("Frost Fever") },
+		{ "Plague Strike",			not jps.mydebuff("Blood Plague") },
+		{ "Icy Touch",			not jps.mydebuff("Frost Fever") },
 		
 		{ "Plague Leech",			canCastPlagueLeech(3)},
 		
@@ -121,7 +121,7 @@ function dk_blood()
 		-- Death Siphon when we need a bit of healing. (talent based)
 		{ "Death Siphon",			jps.hp() < .6 }, -- moved here, because we heal often more with Death Strike than Death Siphon
 
-		{ "Heart Strike",			jps.debuff("Blood Plague") and jps.debuff("Frost Fever") },
+		{ "Heart Strike",			jps.mydebuff("Blood Plague") and jps.mydebuff("Frost Fever") },
 		
 		{ "Rune Strike",			rp >= 40 and jps.hp() > 0.5 and not jps.buff("lichborne") }, -- stop casting Rune Strike if Lichborne is up
 		
@@ -148,8 +148,8 @@ function dk_blood()
 		{ "Unholy Blight",			 ffDuration < 2 or bpDuration < 2 },
 		
 		-- Diseases
-		{ "Plague Strike",			not jps.debuff("Blood Plague") },
-		{ "Icy Touch",			not jps.debuff("Frost Fever") },
+		{ "Plague Strike",			not jps.mydebuff("Blood Plague") },
+		{ "Icy Touch",			not jps.mydebuff("Frost Fever") },
 		
 	}
 

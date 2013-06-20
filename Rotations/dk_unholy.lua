@@ -57,7 +57,7 @@ function dk_unholy()
 	end	
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.debuff("Frost Fever") or not jps.debuff("Blood Plague") then return false end
+		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end
