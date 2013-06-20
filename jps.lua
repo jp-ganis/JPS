@@ -381,7 +381,7 @@ end
 		-- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 		elseif event == "PLAYER_LEVEL_UP" then
 			local eventtable =  {...}
-			if eventtable[1] == 10 then
+			if eventtable[1] == "10" then
 				jps.Level = eventtable[1]
 				jps.detectSpec()
 				jps.Enabled = true
