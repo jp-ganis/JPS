@@ -114,7 +114,7 @@ function mage_frost()
 -- Enemy Tracking
 	local enemycount,targetcount = jps.RaidEnemyCount()
 	local EnemyUnit = {}
-		for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
+		for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
 	local rangedTarget = "target"
 		if jps.canDPS("target") then rangedTarget = "target"
 		elseif jps.canDPS("focustarget") then rangedTarget = "focustarget"

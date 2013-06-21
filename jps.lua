@@ -87,7 +87,6 @@ jps.HealerBlacklist = {}
 jps.Timers = {}
 Healtable = {}
 jps.EnemyTable =  {}
-jps.FriendTable = {}
 jps.RaidTimeToDie = {}
 jps.RaidTimeToLive = {}
 jps.initializedRotation = false
@@ -171,6 +170,8 @@ end
 		if jps.Debug then print("PLAYER_ENTERING_WORLD") end
 		jps.detectSpec()
 		reset_healtable()
+		jps.SortRaidStatus()
+		jps.UpdateRaidStatus()	
 
 	elseif event == "INSPECT_READY" then -- 3er fire > reloadui
 		if jps.Debug then  print("INSPECT_READY") end
@@ -188,6 +189,7 @@ end
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
 		jps.SortRaidStatus()
+		jps.UpdateRaidStatus()
 		start_time = GetTime()
 		if jps.getConfigVal("timetodie frame visible") == 1 then
 			JPSEXTInfoFrame:Show()
@@ -205,7 +207,6 @@ end
 		jps.RaidStatus = {}
 		jps.RaidTarget = {}
 		jps.EnemyTable = {}
-		jps.FriendTable = {}
 		jps.clearTimeToLive()
 		if jps.getConfigVal("timetodie frame visible") == 1 then
 			JPSEXTInfoFrame:Hide()
@@ -284,8 +285,8 @@ end
    			
 		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
 			-- if event_error == L["Target needs to be in front of you."] or event_error == L["You are facing the wrong way!"] then
-
 			if jps.Debug then  print("ERR_BADATTACKFACING",event_error)	end
+			
 			jps.createTimer("Facing",0.6)
 			jps.createTimer("FacingBug",1.2)
 			SetView(2)
@@ -334,39 +335,50 @@ end
 -- "UNIT_HEALTH_FREQUENT" Same event as UNIT_HEALTH, but not throttled as aggressively by the client
 -- "UNIT_HEALTH_PREDICTION" arg1 unitId receiving the incoming heal
 
-	if event == "UNIT_HEALTH_FREQUENT" and jps.Enabled and jps.isHealer then
-		if jps.Debug then print("UNIT_HEALTH_FREQUENT") end
+	if event == "UNIT_HEALTH_FREQUENT" and jps.Enabled then
 		local unit = ...
 		local unitname = select(1,UnitName(unit))
 		local unittarget = unit.."target"
 		local unit_guid = UnitGUID(unit)
 		local unit_health = jps.hp(unit) 
 		
-		if jps.canHeal(unit) and jps.RaidRoster[unitname] then
-			local subgroup = jps.RaidRoster[unitname].subgroup
-			local hpct_friend = jps.hp(unit) 
-			
-			jps.RaidStatus[unitname] = {
-				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-				["hpct"] = hpct_friend,
-				["subgroup"] = subgroup,
-				["target"] = unittarget
-			}
+		local calculate = true -- first time event fires
+		if event_dataset == nil then event_dataset = {} end
+		table.insert( event_dataset,1, GetTime() )
+		local raid_data = jps_tableLen(event_dataset)
+
+		if raid_data == 1 or raid_data == 0 then calculate = true
 		else
-			jps_removeKey(jps.RaidStatus,unitname)
-			jps_removeKey(jps.FriendTable,unitname)
+			if (event_dataset[1] - event_dataset[raid_data]) < jps.UpdateInterval then
+				calculate = false
+			else
+				calculate = true
+				table.wipe(event_dataset)
+			end
+			 
+		end 
+
+		if calculate and jps.isHealer then
+			jps.UpdateRaidStatus()	
 		end
 
-		if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
+		if calculate and jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
 			local hpct_enemy = jps.hp(unittarget)
 			local unittarget_guid = UnitGUID(unittarget)
+			
+			local countTargets = 0
+			if jps.RaidTarget[unittarget_guid] ~= nil then
+				countTargets = jps.RaidTarget[unittarget_guid]["count"]
+			end
 	
-			jps.RaidTarget[unittarget] = { 
+			jps.RaidTarget[unittarget_guid] = { 
+				["unit"] = unittarget,
 				["hpct"] = hpct_enemy,
-				["guid"] = unittarget_guid
+				["count"] = countTargets + 1
 			}
+			
 		else
-			jps_removeKey(jps.RaidTarget,unittarget)
+			jps_removeKey(jps.RaidTarget,unittarget_guid)
 			jps_removeKey(jps.EnemyTable,unittarget_guid)
 		end
 
@@ -376,7 +388,6 @@ end
 		if raid_data > jps.timeToLiveMaxSamples then table.remove(raid_dataset, jps.timeToLiveMaxSamples) end
 		table.insert(raid_dataset, 1, {GetTime(), unit_health})
 		jps.RaidTimeToLive[unit_guid] = raid_dataset
-		--jps.RaidTimeToLive[unit_guid] = { [1] = {GetTime(), unit_health] },[2] = {GetTime(), unit_health },[3] = {GetTime(), unit_health } }
 
 		-- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 		elseif event == "PLAYER_LEVEL_UP" then
@@ -410,17 +421,18 @@ end
 		end
 	
 		-- AGGRO PLAYER replace event == "UNIT_COMBAT"
-		if eventtable[9] == GetUnitName("player") and (eventtable[2] == "SPELL_DAMAGE" or eventtable[2] == "SPELL_PERIODIC_DAMAGE") and eventtable[15] > 0 then
+		if eventtable[9] == GetUnitName("player") and (eventtable[2] == "SWING_DAMAGE" or eventtable[2] == "SPELL_DAMAGE") then
 			jps.createTimer("Player_Aggro", 4 )
 		end	
 
 -- REMOVE DIED UNIT OR OUT OF RANGE UNIT OF TABLES
-		if  eventtable[2] == "UNIT_DIED" and (eventtable[8] ~= nil) then
+		if eventtable[2] == "UNIT_DIED" and (eventtable[8] ~= nil) then
 			local mobName = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 			local mobGuid = eventtable[8] -- eventtable[8] == destGUID 
-			jps_removeKey(jps.FriendTable,mobName)
+			jps_removeKey(jps.RaidTimeToDie,mobGuid)
+			jps_removeKey(jps.RaidTarget,mobGuid)
 			jps_removeKey(jps.EnemyTable,mobGuid)
-			jps_removeKey(jps.RaidTimeToDie,mobGuid)	
+
 -- TABLE ENEMIES IN COMBAT
 		elseif eventtable[6] and (bit.band(eventtable[6],COMBATLOG_OBJECT_REACTION_HOSTILE) > 0) 
 		and (bit.band(eventtable[6],COMBATLOG_OBJECT_AFFILIATION_OUTSIDER) > 0)
@@ -429,8 +441,30 @@ end
 			local enemyFriend = jps_stringTarget(eventtable[9],"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
 			local enemyName = eventtable[5] -- eventtable[5] == sourceName
 			local enemyGuid = eventtable[4] -- eventtable[4] == sourceGUID
-			jps.FriendTable[enemyFriend] = { ["enemy"] = enemyGuid } -- TABLE OF FRIEND NAME TARGETED BY ENEMY GUID
 			jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
+-- TABLE DAMAGE
+--[[		elseif (eventtable[8] ~= nil) and ((eventtable[2] == "SPELL_PERIODIC_DAMAGE") or (eventtable[2] == "SPELL_DAMAGE") or (eventtable[2] == "SWING_DAMAGE")) then
+			local dmg_TTD = 0
+			jps.Combat = true
+			jps.gui_toggleCombat(true)
+			-- end_time = GetTime()
+			-- total_time = math.max(end_time - start_time, 1)
+			if (eventtable[2] == "SPELL_DAMAGE" or eventtable[2] == "SPELL_PERIODIC_DAMAGE") and (eventtable[15] > 0) then
+				dmg_TTD = eventtable[15]
+			elseif (eventtable[2] == "SWING_DAMAGE") and (eventtable[12] > 0) then
+				dmg_TTD = eventtable[12]
+			end
+			if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
+				local unitGuid = eventtable[8] -- eventtable[8] == destGUID
+				if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
+				local dataset = jps.RaidTimeToDie[unitGuid]
+				local data = table.getn(dataset)
+				if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
+				table.insert(dataset, 1, {GetTime(), dmg_TTD})
+				jps.RaidTimeToDie[unitGuid] = dataset
+				--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
+			end
+]]
 		end
 	end
 end
@@ -615,7 +649,7 @@ function jps.detectSpec()
 	   jps.gui_toggleDef(true) 
    end
    jps.HarmSpell = jps_GetHarmSpell()
-   jps.SpellBookTable = jps_GetSpellBook()
+   --write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
    jps.setClassCooldowns()
    jps_VARIABLES_LOADED()
    if jps.initializedRotation == false then
@@ -764,7 +798,7 @@ function jps_Combat()
    if (IsMounted() == 1 and jps.getConfigVal("dismount in combat") == 0) or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
    
    -- Check spell usability 
-   if string.len(jps.customRotationFunc) >10 then
+   if string.len(jps.customRotationFunc) > 10 then
 	   jps.ThisCast,jps.Target = jps.customRotation() 
    else
 	   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE

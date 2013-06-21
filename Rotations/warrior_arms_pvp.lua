@@ -241,7 +241,7 @@ function warrior_arms_pvp()
 	
 	-- Enemy Tracking
 	local EnemyUnit = {}
-	for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
+	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end -- EnemyUnit[1]
 		local enemyTargetingMe = jps.IstargetMe()
 		local enemycount,targetcount = jps.RaidEnemyCount()
 		

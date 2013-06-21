@@ -1,3 +1,16 @@
+
+function priest_shadow()
+local isArena, isRegistered = IsActiveBattlefieldArena()
+	if jps.PvP then
+		return priest_shadow_pvp() 
+	elseif isArena == 1 then
+		return priest_shadow_pvp()
+	else
+		return priest_shadow_pve()
+	end
+end
+
+--[[
 function priest_shadow()
 	local swpDuration = jps.debuffDuration("shadow word: pain")
 	local plagueDuration = jps.debuffDuration("devouring plague")
@@ -30,3 +43,4 @@ function priest_shadow()
 
 	return parseSpellTable(spellTable)
 end
+]]

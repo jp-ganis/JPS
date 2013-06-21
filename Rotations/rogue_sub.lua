@@ -42,7 +42,7 @@ function rogue_sub()
 		{ 13750	 , (energy < 35 or jps.buff(121471)) and jps.useCDs	, player },
 		
 		-- Rupture
-		{ 1943	 , rupt_duration < 4 and cp == 5	and jps.debuff(84617), randedTarget },
+		{ 1943	 , rupt_duration < 4 and cp == 5	and jps.debuff(84617), rangedTarget },
 		
 		-- Eviscerate
 		{ 2098	 , cp == 5 and jps.debuff(84617)	, rangedTarget },
