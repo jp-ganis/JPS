@@ -21,7 +21,7 @@ function hunter_bm_pvp()
 	local isSpellHarmful = IsHarmfulSpell("target")
 
 	local EnemyUnit = {}
-	for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end
+	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
 
 	local rangedTarget = "target"
 	if jps.canDPS("target") then

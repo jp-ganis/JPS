@@ -49,7 +49,6 @@ local function hasKilJaedensCunning()
     return talentIndex == 17
 end
 
-
 function warlock_destro()
     local burningEmbers = UnitPower("player",14)
     local emberShards = UnitPower("player", 14, true)

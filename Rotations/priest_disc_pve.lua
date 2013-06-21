@@ -85,12 +85,12 @@ local spell = nil
 local target = nil
 local player = jpsName
 local playerhealth_deficiency =  UnitHealthMax(player) - UnitHealth(player)
-local playerhealth_pct = jps.hp(player)
+local playerhealth_pct = jps.hpInc(player)
 local manapool = UnitPower(player,0)/UnitPowerMax (player,0)
 
 local jps_Target = jps.LowestInRaidStatus()
 local health_deficiency = UnitHealthMax(jps_Target) - UnitHealth(jps_Target)
-local health_pct = jps.hp(jps_Target)
+local health_pct = jps.hpInc(jps_Target)
 
 local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
 local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
@@ -106,7 +106,7 @@ elseif jps.canHeal("focus") and jps.Defensive then -- WARNING FOCUS RETURN FALSE
 	if jps.canHeal("mouseover") then table.insert(Tanktable,"mouseover") end
 	local lowestHP = 1
 	for _,name in ipairs(Tanktable) do
-		local thisHP = jps.hp(name)
+		local thisHP = jps.hpInc(name)
 		if thisHP <= lowestHP then 
 				lowestHP = thisHP
 				jps_TANK = GetUnitName(name)
@@ -117,7 +117,7 @@ else
 end
 
 local health_deficiency_TANK = UnitHealthMax(jps_TANK) - UnitHealth(jps_TANK)
-local health_pct_TANK = jps.hp(jps_TANK)
+local health_pct_TANK = jps.hpInc(jps_TANK)
 
 ---------------------
 -- TIMER
@@ -153,7 +153,7 @@ local ArenaUnit = {"arena1","arena2","arena3"}
 
 -- JPS.CANDPS NE MARCHE QUE POUR PARTYn et RAIDn..TARGET PAS POUR UNITNAME..TARGET
 local EnemyUnit = {}
-for name, _ in pairs(jps.RaidTarget) do table.insert(EnemyUnit,name) end -- EnemyUnit[1]
+for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end -- EnemyUnit[1]
 local enemyTargetingMe = jps.IstargetMe()
 local lowestEnemy = jps.LowestInRaidTarget()
 
@@ -246,12 +246,12 @@ local function unitFor_Shell(unit)
 end
 
 local function unitFor_Shell_Flash(unit)
-	if not jps.buff(114908,unit) and (jps.hp(unit,"abs") > average_flashheal) then return true end
+	if not jps.buff(114908,unit) and (jps.hpInc(unit,"abs") > average_flashheal) then return true end
 	return false
 end
 
 local function unitFor_Foca_Flash(unit)
-	if jps.buffId(89485) and (jps.hp(unit,"abs") > average_flashheal) then return true end
+	if jps.buffId(89485) and (jps.hpInc(unit,"abs") > average_flashheal) then return true end
 	return false
 end
 
@@ -351,9 +351,9 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.60
 		-- "Penance" 47540
 		{ 47540, true , jps_TANK , "Emergency_Penance_"..jps_TANK },
 		-- "Soins rapides" 2061 -- "Sursis" 59889 "Borrowed"
-		{ 2061, (player_Aggro > 0) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Rapides_Borrowed_"..jps_TANK },
+		{ 2061, (health_pct_TANK < 0.25) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Rapides_Borrowed_"..jps_TANK },
 		-- "Soins supérieurs" 2060 -- "Sursis" 59889 "Borrowed"
-		{ 2060, (player_Aggro == 0) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Sup_Borrowed_"..jps_TANK },
+		{ 2060, (health_pct_TANK > 0.40) and jps.buff(59889,player) , jps_TANK , "Emergency_Soins Sup_Borrowed_"..jps_TANK },
 		-- "Cascade" 121135
 		{ 121135, (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
 		-- "Soins de lien"
@@ -373,7 +373,7 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.60
 		-- "Renew"
 		{ 139, not jps.buff(139,jps_TANK) , jps_TANK , "Emergency_Renew_"..jps_TANK },
 		-- "Soins supérieurs" 2060 
-		{ 2060, (player_Aggro == 0) , jps_TANK , "Emergency_Soins Sup_"..jps_TANK },
+		{ 2060, (player_IsInterrupt == 0) , jps_TANK , "Emergency_Soins Sup_"..jps_TANK },
 	}
 return table
 end
@@ -418,13 +418,9 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		-- POH
 		{ 596, (jps.LastCast~=prayerofhealing) and jps.canHeal(Shell_Target) , Shell_Target , "Carapace_POH_Target" },
 		-- "Soins supérieurs" 2060
-		{ 2060, jps.buff(114908,jps_TANK) and (totalAbsorbTank < (0.6*totalAbsorbSS)) and (player_Aggro == 0) , jps_TANK , "Carapace_Soins Sup_"..jps_TANK },
-		-- "Soins Rapides" 2061 -- 4P PvP mana cost flash heal 50%
-		{ 2061, jps.buff(114908,jps_TANK) and (totalAbsorbTank < totalAbsorbSS) , jps_TANK , "Carapace_Soins Rapides_"..jps_TANK },
+		{ 2060, jps.buff(114908,jps_TANK) and (totalAbsorbTank < (0.6*totalAbsorbSS)) , jps_TANK , "Carapace_Soins Sup_"..jps_TANK },
 	
-	-- OTHERS	
-		-- "Soins Rapides" 2061 -- 4P PvP mana cost flash heal 50%
-		{ 2061, unitFor_Shell_Flash , FriendUnit , "Carapace_Soins Rapides_Friend_" },
+	-- OTHERS
 		-- "Soins" 2050
 		{ 2050, unitFor_Shell , FriendUnit , "Carapace_Soins_Friend_" },
 		-- "Cascade" 121135
@@ -526,7 +522,7 @@ local spellTable =
 	--{ jps.useTrinket(1), jps.UseCDs , player },
 	{ jps.useTrinket(1), isInBG and jps.UseCDs and stunMe , player },
 -- "Passage dans le Vide" -- "Void Shift" 108968
-	{ 108968, (health_pct_TANK < 0.40) and (player_Aggro == 0) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Void Shift_"..jps_TANK  },
+	{ 108968, (health_pct_TANK < 0.40) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Void Shift_"..jps_TANK  },
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236
@@ -551,7 +547,7 @@ local spellTable =
 -- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
 -- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
-	{ 2061, (player_IsInterrupt == 0) and jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
+	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 
 -- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
 	{ 17, UnitIsUnit(jps_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff(6788,"focustargettarget") and not jps.buff(17,"focustargettarget"), "focustargettarget"},
@@ -616,7 +612,7 @@ local spellTable_moving =
 -- TRINKETS -- jps.useTrinket(0) est "Trinket0Slot" est slotId  13 -- "jps.useTrinket(1) est "Trinket1Slot" est slotId  14
 	{ jps.useTrinket(1), isInBG and jps.UseCDs and stunMe , player },
 -- "Passage dans le Vide" -- "Void Shift" 108968
-	{ 108968, (health_pct_TANK < 0.40) and (player_Aggro == 0) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Moving_Void Shift_"..jps_TANK  },
+	{ 108968, (health_pct_TANK < 0.40) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Moving_Void Shift_"..jps_TANK  },
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236

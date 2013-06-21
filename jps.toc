@@ -56,6 +56,8 @@ Rotations\priest_disc_pve.lua
 Rotations\priest_disc_pvp.lua
 Rotations\priest_holy.lua
 Rotations\priest_shadow.lua
+Rotations\priest_shadow_pvp.lua
+Rotations\priest_shadow_pve.lua
 
 Rotations\rogue_assass.lua
 Rotations\rogue_combat.lua
