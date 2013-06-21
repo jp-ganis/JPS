@@ -132,7 +132,7 @@ local function cancelChannelingIfNecessary(targetTimeToDie)
             -- Clip last tick...
             local haste = GetRangedHaste()
             local tickEvery = 1/(1+(haste/100))
-            if jps.ChanelTimeLeft("player") < tickEvery then
+            if jps.ChannelTimeLeft("player") < tickEvery then
                 cancelChanneling()
             end
         end
