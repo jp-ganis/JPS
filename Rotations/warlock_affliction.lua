@@ -53,6 +53,12 @@ local function isRecast(spell,target)
     return jps.LastCast == spell and jps.LastTarget == target
 end
 
+
+local function hasKilJaedensCunning()
+    local selected, talentIndex = GetTalentRowSelectionInfo(6)
+    return talentIndex == 17
+end
+
 -- Returns the status of the three dots on the given unit - returns: oneDotMissing, allDotsMissing
 local function getDotStatus(unit)
     local dotTracker = jps.dotTracker()
@@ -84,25 +90,29 @@ local function canCastSoulburnSoulSwap(unit)
 
     
     local oneDotMissing, allDotsMissing = getDotStatus(unit)
-    
+    local castSoulburn = false
     if unit == "target" and burnPhase then
         -- if we're in the burn phase, and at least 1 needs to refreshed do it - but only on the target
         if oneDotMissing and shards >= 1 then
-            return true, unit
+            castSoulburn = true
         end
     elseif allDotsMissing then
         -- since soulburn mouseover is a bit risky, only do it at 4 shards
         if unit == "mouseover" then
             if shards > 3 then
-                return true, unit
+            castSoulburn = true
             end
         -- every other target can be recasted with at least 2 shards left
         elseif shards >= 2 then
-            return true, unit
+            castSoulburn = true
         end
     end
+    
+    if castSoulburn and isRecast(spells.soulSwap, unit) then
+        castSoulburn = false
+    end
 
-    return false, unit
+    return castSoulburn, unit
 end
 
 -- Aborts spell cast
@@ -113,30 +123,32 @@ end
 
 -- aborts channeling spells, if necessary
 local function cancelChannelingIfNecessary(targetTimeToDie)
+    local stopChanneling = false
     local burnPhase = jps.hp("target") <= 0.20
     if UnitChannelInfo("player") ~= nil and burnPhase and targetTimeToDie > 10 then
         local hauntDuration = jps.myDebuffDuration(spells.haunt, "target")
         local shards = UnitPower("player", 7)
         if hauntDuration < 1.5 and shards >= 1 and not isRecast(spells.haunt,"target") then
-            cancelChanneling()
-        else
+            stopChanneling = true
+        elseif shards >= 1 then
             local _, allDotsMissing = getDotStatus("target")
-            if allDotsMissing then cancelChanneling() end
+            if allDotsMissing then stopChanneling = true end
         end
     elseif UnitChannelInfo("player") == spells.maleficGrasp then
         if targetTimeToDie <= 10 then
-            cancelChanneling()
-        elseif UnitClassification("target") == "worldboss" then
+            stopChanneling = true
+        elseif UnitClassification("target") == "worldboss" or UnitClassification("target") == "elite" then
             local oneDotMissing, allDotsMissing = getDotStatus("target")
-            if oneDotMissing then cancelChanneling() end
-            -- Clip last tick...
-            local haste = GetRangedHaste()
-            local tickEvery = 1/(1+(haste/100))
-            if jps.ChannelTimeLeft("player") < tickEvery then
-                cancelChanneling()
-            end
+            if oneDotMissing then stopChanneling = true end
+        end
+        -- Clip last tick...
+        local haste = GetRangedHaste()
+        local tickEvery = 1/(1+(haste/100))
+        if jps.ChannelTimeLeft("player") < tickEvery then
+            stopChanneling = true
         end
     end
+    if stopChanneling then cancelChanneling() end
 end
 
 -- checks whether a unit has seed of curruption or soulburned seed of corruption
@@ -173,13 +185,19 @@ function warlock_affliction(self)
     local darkSoulActive = jps.buff(spells.darkSoulMisery)
     local avoidInterrupts = IsAltKeyDown()
     local maxIntCastLength = 2.8
+    local attackFocus = false
 
     local castSoulburn, soulSwapTarget = canCastSoulburnSoulSwap()
     cancelChannelingIfNecessary(targetTimeToDie)
 
     local targetHasSoc, targetDurationSoC, targetHasSoulburnSoC, targetDurationSoulburnSoC = unitHasSeedOfCorruption("target")
     local mouseoverHasSoc, mouseoverDurationSoC, mouseoverHasSoulburnSoC, mouseoverDurationSoulburnSoC = unitHasSeedOfCorruption("mouseover")
-
+    
+    -- If focus exists and is not the same as target, consider attacking focus too
+    if UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus") then
+        attackFocus = true
+    end
+    
     local spellTable = {}
     spellTable[1] = {
     ["ToolTip"] = "Warlock PvE",
@@ -197,7 +215,7 @@ function warlock_affliction(self)
         { jps.useBagItem(5512), jps.hp("player") < 0.65 }, -- Healthstone
 
         -- COE Debuff
-        {"nested", not jps.MultiTarget, {
+        {"nested", not jps.MultiTarget and soulburnDuration == 0, {
             { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) },
             { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus"), "focus" },
         }},
@@ -211,6 +229,8 @@ function warlock_affliction(self)
         { jps.useTrinket(1),       jps.UseCDs },
 
         {"nested", not jps.MultiTarget and not avoidInterrupts, {
+            -- On the move
+            { spells.felFlame, jps.Moving and not hasKilJaedensCunning() and jps.mana() > 0.5 },
             -- Life Tap
             {spells.lifeTap, jps.mana() < 0.4 and jps.mana() < jps.hp("player") },
             {spells.soulSwap, soulburnDuration > 0, soulSwapTarget},
@@ -218,6 +238,7 @@ function warlock_affliction(self)
             {spells.drainSoul, burnPhase and targetTimeToDie <= 10 },
             -- Haunt
             {spells.haunt, hauntDuration < 1.5 and burnPhase and shards >= 1 and not isRecast(spells.haunt,"target")},
+            {spells.haunt, hauntDuration < 1.5 and shards == 4 and not isRecast(spells.haunt,"target")},
             {spells.haunt, hauntDuration == 0 and shards >= 2 and not isRecast(spells.haunt,"target")},
             {spells.haunt, hauntDuration == 0 and darkSoulActive and shards >= 1 and not isRecast(spells.haunt,"target")},
             -- DoT's
@@ -229,6 +250,8 @@ function warlock_affliction(self)
             {spells.maleficGrasp},
         }},
         {"nested", not jps.MultiTarget and avoidInterrupts, {
+            -- On the move
+            { spells.felFlame, jps.Moving and not hasKilJaedensCunning() and jps.mana() > 0.5 },
             {spells.soulSwap, soulburnDuration > 0, soulSwapTarget},
             {spells.soulburn, castSoulburn},
             -- DoT's

@@ -78,13 +78,6 @@ function warlock_destro()
     
     local spellTable = {}
     
-    --- JPS doesn't seem to react fast enough so you might get stuck with fire and brimstone and no embers...
-    if (fireAndBrimstoneBuffed and not jps.MultiTarget) or
-       (burningEmbers == 0 and fireAndBrimstoneBuffed) or
-       (burningEmbers > 1 and not fireAndBrimstoneBuffed and jps.MultiTarget) then 
-        jps.Cast( "fire and brimstone" ) 
-    end
-    
     spellTable[1] = {
     ["ToolTip"] = "Warlock PvE",
         -- Interrupts
@@ -108,6 +101,9 @@ function warlock_destro()
         -- COE Debuff
         { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) },
         { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus"), "focus" },
+        
+        { spells.fireAndBrimstone, burningEmbers > 0 and not fireAndBrimstoneBuffed and jps.MultiTarget },
+        { {"macro","/cancelaura "..spells.fireAndBrimstone}, fireAndBrimstoneBuffed and (burningEmbers == 0 or not jps.MultiTarget) },
         
         -- On the move
         { spells.felFlame, jps.Moving and not hasKilJaedensCunning() },
