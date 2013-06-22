@@ -15,6 +15,14 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
+---------------------------
+-- HELPER FUNCTIONS
+---------------------------
+
+function jps.redColor(str)
+	return "|cFFFF0000"..str.."|r"
+end
+
 
 local rotationButtonPositionY = -90; -- NEW
 local rotationButtonPositionX = 20; -- NEW
@@ -197,7 +205,7 @@ function jps.addcustomRotationFrame()
 	customRotationHelp:SetJustifyH("LEFT")
 	customRotationHelp:SetJustifyV("TOP")
 	
-	local helpText = red("Required")..'\n- a spellTable e.g. "local spellTable = {}"\n- the function call local spell,target = parseSpellTable(spellTable)\n- your rotation should return a spell and a target, e.g. "return spell, target"\n\n'..red("Example Rotation")..'\nlocal spell = nil\;\nlocal target = nil\;\nlocal spellTable = {\n     { "Frost Presence",        not jps.buff("Frost Presence") },\n     { "frost strike",        "onCD"},\n     { "obliterate",        "onCD"},\n };\n\nspell,target = parseSpellTable(spellTable)\;\nreturn spell,target\n\n'..red("Functions / Know How")..'\nvalid targets are: "player","target","focus","mouseover","pet","raidN" (N = 1-40), "partyN" (N=1-4) and many more\n\n- jps.buff("buffName", "target") -- returns true or false whether a buff is applied, buffName is required\n- jps.debuff("debuffName", "target") -- returns true or false whether a debuff is applied, buffName is required\n- jps.buffDuration("buffName","target") -- returns the duration of a buff in seconds\n- jps.debuffDuration("debuffName","target") -- returns the duration of a debuff in seconds\n- jps.UseCDs -- Usage of CDs enabled or disabled\n- jps.MultiTarget -- Multitarget enabled or disabled\n- jps.hp("target") -- return decimal hp of a target ( 1 = 100% health, 0.5 = 50% health )'
+	local helpText = jps.redColor("Required")..'\n- a spellTable e.g. "local spellTable = {}"\n- the function call local spell,target = parseSpellTable(spellTable)\n- your rotation should return a spell and a target, e.g. "return spell, target"\n\n'..jps.redColor("Example Rotation")..'\nlocal spell = nil\;\nlocal target = nil\;\nlocal spellTable = {\n     { "Frost Presence",        not jps.buff("Frost Presence") },\n     { "frost strike",        "onCD"},\n     { "obliterate",        "onCD"},\n };\n\nspell,target = parseSpellTable(spellTable)\;\nreturn spell,target\n\n'..jps.redColor("Functions / Know How")..'\nvalid targets are: "player","target","focus","mouseover","pet","raidN" (N = 1-40), "partyN" (N=1-4) and many more\n\n- jps.buff("buffName", "target") -- returns true or false whether a buff is applied, buffName is required\n- jps.debuff("debuffName", "target") -- returns true or false whether a debuff is applied, buffName is required\n- jps.buffDuration("buffName","target") -- returns the duration of a buff in seconds\n- jps.debuffDuration("debuffName","target") -- returns the duration of a debuff in seconds\n- jps.UseCDs -- Usage of CDs enabled or disabled\n- jps.MultiTarget -- Multitarget enabled or disabled\n- jps.hp("target") -- return decimal hp of a target ( 1 = 100% health, 0.5 = 50% health )'
 	
 	customRotationHelp:SetText(helpText)	
 
@@ -588,10 +596,3 @@ function jps_SAVE_PROFILE()
 end
 
 
----------------------------
--- HELPER FUNCTIONS
----------------------------
-
-function red(str)
-	return "|cFFFF0000"..str.."|r"
-end
