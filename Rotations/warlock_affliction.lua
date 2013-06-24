@@ -48,6 +48,22 @@ local dottableUnits = {
     "boss4",
 }
 
+
+-- stop spam curse of the elements at invalid targets @ mop
+local function isCotEBlacklisted(unit) 
+    local table_noSpamCotE = {
+        56923, -- Twilight Sapper
+        56341, 56575, -- Burning Tendons 4.3.0/5.2.0
+        53889, -- Corrupted Blood
+        60913, -- Energy Charge
+        60793, -- Celestial Protector
+    }
+    for i,j in pairs(table_noSpamCotE) do
+        if npcId(unit) == j then return true end
+    end
+    return false
+end
+
 -- Helper to prevent Recasts
 local function isRecast(spell,target)
     return jps.LastCast == spell and jps.LastTarget == target
@@ -135,7 +151,7 @@ local function cancelChannelingIfNecessary(targetTimeToDie)
             if allDotsMissing then stopChanneling = true end
         end
     elseif UnitChannelInfo("player") == spells.maleficGrasp then
-        if targetTimeToDie <= 10 then
+        if targetTimeToDie <= 5 then
             stopChanneling = true
         elseif UnitClassification("target") == "worldboss" or UnitClassification("target") == "elite" then
             local oneDotMissing, allDotsMissing = getDotStatus("target")
@@ -149,6 +165,12 @@ local function cancelChannelingIfNecessary(targetTimeToDie)
         end
     end
     if stopChanneling then cancelChanneling() end
+end
+
+local function isTrivial(unit)
+    local minHp = 1000000
+    if IsInGroup() or IsInRaid() then minHp = minHp * GetNumGroupMembers() end
+    return  UnitHealth(unit) <= minHp
 end
 
 -- checks whether a unit has seed of curruption or soulburned seed of corruption
@@ -216,8 +238,8 @@ function warlock_affliction(self)
 
         -- COE Debuff
         {"nested", not jps.MultiTarget and soulburnDuration == 0, {
-            { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) },
-            { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus"), "focus" },
+            { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) and not isTrivial("target") and not isCotEBlacklisted("target")},
+            { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus") and not isTrivial("focus") and not isCotEBlacklisted("focus"), "focus" },
         }},
 
         -- CD's
@@ -247,7 +269,8 @@ function warlock_affliction(self)
             dotTracker.castTable("unstableAffliction"),
             -- Filler
             {spells.drainSoul, burnPhase },
-            {spells.maleficGrasp},
+            {spells.maleficGrasp, targetTimeToDie > 5},
+            {spells.drainSoul },
         }},
         {"nested", not jps.MultiTarget and avoidInterrupts, {
             -- On the move
