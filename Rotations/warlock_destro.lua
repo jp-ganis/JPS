@@ -49,6 +49,30 @@ local function hasKilJaedensCunning()
     return talentIndex == 17
 end
 
+local function npcId(unit)
+    return tonumber(UnitGUID(unit):sub(7, 10), 16)
+end
+
+-- stop spam curse of the elements at invalid targets @ mop
+local function isCotEBlacklisted(unit) 
+    local table_noSpamCotE = {
+        56923, -- Twilight Sapper
+        56341, 56575, -- Burning Tendons 4.3.0/5.2.0
+        53889, -- Corrupted Blood
+        60913, -- Energy Charge
+        60793, -- Celestial Protector
+    }
+    for i,j in pairs(table_noSpamCotE) do
+        if npcId(unit) == j then return true end
+    end
+    return false
+end
+
+local function isTrivial(unit)
+    local minHp = 1000000
+    if IsInGroup() or IsInRaid() then minHp = minHp * GetNumGroupMembers() end
+    return  UnitHealth(unit) <= minHp
+end
 
 function warlock_destro()
     local burningEmbers = UnitPower("player",14)
@@ -99,8 +123,8 @@ function warlock_destro()
         { spells.rainOfFire, IsShiftKeyDown() ~= nil and rainOfFireDuration < 1 and GetCurrentKeyBoardFocus() == nil  },
         { spells.rainOfFire, IsShiftKeyDown() ~= nil and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
         -- COE Debuff
-        { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) },
-        { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus"), "focus" },
+        { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) and not isTrivial("target") and not isCotEBlacklisted("target") },
+        { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus") and not isTrivial("focus") and not isCotEBlacklisted("focus") , "focus" },
         
         { spells.fireAndBrimstone, burningEmbers > 0 and not fireAndBrimstoneBuffed and jps.MultiTarget },
         { {"macro","/cancelaura "..spells.fireAndBrimstone}, fireAndBrimstoneBuffed and (burningEmbers == 0 or not jps.MultiTarget) },
@@ -115,6 +139,9 @@ function warlock_destro()
         { jps.useSynapseSprings(), jps.UseCDs },
         { jps.useTrinket(0),       jps.UseCDs },
         { jps.useTrinket(1),       jps.UseCDs },
+        
+        -- Shadowburn mouseover!
+        { spells.shadowburn, jps.hp("mouseover") < 0.20 and burningEmbers > 0 and jps.myDebuffDuration(spells.shadowburn, "mouseover")<=0.5, "mouseover"  },
         
         {"nested", not jps.MultiTarget and not avoidInterrupts, {
             { spells.havoc, not IsShiftKeyDown() and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil, "mouseover" },
