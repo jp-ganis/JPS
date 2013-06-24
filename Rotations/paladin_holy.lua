@@ -84,7 +84,7 @@ function paladin_holy()
 			{.....},
 		} 
 	]]--
-	if shouldInterruptCasting({{"Holy Radiance", 0.9, 2}, {"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.95}}) then
+	if shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.95}}) then
 		print("interrupt cast, unit "..jps.LastTarget.. " has enough hp!");
 		SpellStopCasting()
 	end
