@@ -149,7 +149,11 @@ function mage_frost()
 		{ {"macro","/cast icy veins\n/cast evocation"}, jps.hp() <= .4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0 , player },
 		{ "Healthstone",		jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
 		
-		-- Rotation
+		-- Rotation AoE
+		{ "flamestrike", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
+		{},
+		
+		-- Rotation Single
 		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, 
 		{ "rune of power", jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil}, 
 		{ "mirror image",jps.UseCds}, 
@@ -159,7 +163,56 @@ function mage_frost()
 		{ "jade serpent potion", jps.buff("icy veins") or jps.TimeToDie("target") <45}, 
 		{ "presence of mind", jps.buff("icy veins") or jps.cooldown("icy veins") >15 or jps.TimeToDie("target") <15}, 
 		{ "alter time", not jps.buff("alter time") and jps.buff("icy veins") and jps.UseCds}, 
+		{ "frostfire bolt", jps.buff("alter time") and jps.buff("brain freeze") }, 
+		{ "ice lance", jps.buff("alter time") and jps.buff("fingers of frost") }, 
+		{ "frost bomb", jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving},
+		{ "frostbolt", jps.debuffStacks("frostbolt") < 3 and not jps.Moving }, 
+		{ "frostfire bolt", jps.buff("brain freeze") and jps.cooldown("icy veins") > 2 }, 
+		{ "ice lance", jps.buff("fingers of frost") }, 
+		{ "frostbolt" , not jps.Moving }, 
+		{ "fire blast", jps.Moving}, 
+		{ "ice lance", jps.Moving}, 
+	}
+	spellTable[2] = {
+		["ToolTip"] = "Noxxic PVE",
+		-- Noxxic
+		-- pre fight
+		{ "slow fall", isFalling and not jps.buff("slow fall") , player },
+		{ "arcane brilliance", not jps.buff("arcane brilliance") }, 
+		{ "frost armor", not jps.buff("frost armor") }, 
+		{ "ice barrier", not jps.buff("ice barrier") }, 
+		{ "Freeze",	IsAltKeyDown() ~= nil },
+		{ "rune of power", not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil}, 
+		{ "mirror image", jps.UseCds}, 
+	
+		-- Remove Snares, Roots, Loss of Control, etc.
+		{ "every man for himself", jps.LoseControl(player,"CC") , player },
+		-- Kicks, Crowd Control, etc.
+		{ "counterspell", kick , rangedTarget },
+		
+		{ {"macro","/use Mana Gem"}, mana < 0.70 and GetItemCount("Mana Gem", 0, 1) > 0 , player }, 
+		{ {"macro","/cast icy veins\n/cast evocation"}, jps.hp() <= .4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0 , player },
+		{ "Healthstone",		jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
+		
+		-- Rotation ALL
+		{ "nether tempest", jps.myDebuffDuration("nether tempest", "target") < 1 }, 
+		
+		-- Rotation AoE
+		{ "freeze", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
 		{ "flamestrike", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
+		{ "frozen orb", jps.MultiTarget }, 
+		{ "arcane explosion", jps.MultiTarget }, 
+		
+		-- Rotation Single
+		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, 
+		{ "rune of power", jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil}, 
+		{ "mirror image",jps.UseCds}, 
+		{ "frozen orb", not jps.buff("fingers of frost")}, 
+		{ "icy veins", (jps.debuffStacks("frostbolt") >= 3 and (jps.buff("brain freeze") or jps.buff("fingers of frost"))) or jps.TimeToDie("target") <22 and not jps.Moving}, 
+		{ "berserking", jps.buff("icy veins") or jps.TimeToDie("target") < 18 and jps.UseCds}, 
+		{ "jade serpent potion", jps.buff("icy veins") or jps.TimeToDie("target") <45}, 
+		{ "presence of mind", jps.buff("icy veins") or jps.cooldown("icy veins") >15 or jps.TimeToDie("target") <15}, 
+		{ "alter time", not jps.buff("alter time") and jps.buff("icy veins") and jps.UseCds}, 
 		{ "frostfire bolt", jps.buff("alter time") and jps.buff("brain freeze") }, 
 		{ "ice lance", jps.buff("alter time") and jps.buff("fingers of frost") }, 
 		{ "frost bomb", jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving},
@@ -171,7 +224,7 @@ function mage_frost()
 		{ "ice lance", jps.Moving}, 
 	}
 	
-	spellTable[2] = {
+	spellTable[3] = {
 		["ToolTip"] = "Frost Mage PVP",
 		{ "slow fall", isFalling and not jps.buff("slow fall") , player },
 		{ "nested", targetClass=="Death Knight" , parse_vsDK() },
