@@ -1,17 +1,23 @@
 function paladin_ret_pve(self)
 
-	local holyPower = UnitPower("player", "9")
+	local holyPower = jps.holyPower()
+	local stance = GetShapeshiftForm() -- stance
 	
-	local spellTable = {  
+	local spellTable = {}
+	spellTable[1] = {
+		["ToolTip"] = "Retribution Paladin PVE",
+
+		-- Paladin stance ( Seal)
+		{ "Seal of Truth", stance ~= 1 and stance ~=  2 , player },  --allows to switch between seal of truth or seal of Righteousness
 		
 		-- Might
 		{ "Blessing of Might", not jps.buff("Blessing of Might") }, 
 	
 		-- Oh shit button
-		{ "Lay on Hands", jps.UseCDs and jps.hp() < .2 }, 
+		{ "Lay on Hands", jps.UseCDs and jps.hp() < .2 and jps.Defensive }, 
 	
 		-- Bubble
-		{ "Divine Shield", jps.UseCDs and jps.hp() < .2 }, 
+		{ "Divine Shield", jps.UseCDs and jps.hp() < .2 and jps.Defensive }, 
 	
 		-- Big Heal
 		{ "Flash of Light", jps.hp() < .75 and jps.buff("The Art of War") }, 
@@ -23,16 +29,17 @@ function paladin_ret_pve(self)
 		{ "Guardian of Ancient Kings", jps.UseCDs }, 
 	
 		-- Avenging Wrath
-		{ "Avenging Wrath", jps.UseCDs and jps.hp() < .8 }, 
+		{ "Avenging Wrath", jps.UseCDs }, 
 	
 		-- Holy Avenger
-		{ "Holy Avenger", jps.UseCDs and jps.hp() < .7 }, 	
+		{ "Holy Avenger", jps.UseCDs and jps.hp() < .7 and jps.Defensive}, 	
 		-- Heal
-		{ "Word of Glory", jps.hp() < .7 }, 
+		{ "Word of Glory", jps.hp() < .6 and jps.Defensive }, 
 	
 		-- Interrupts
-		{ "Rebuke", jps.Interrupts  and jps.shouldKick() }, 
-	
+		{ "Rebuke",  jps.shouldKick() },
+		{ "Rebuke", jps.shouldKick("focus"), "focus" }, 
+		
 		-- Trinket CDs.
 		{ jps.useTrinket(0), jps.UseCDs }, 
 		{ jps.useTrinket(1), jps.UseCDs }, 
@@ -50,11 +57,11 @@ function paladin_ret_pve(self)
 		{ "Inquisition", jps.buffDuration("Inquisition") < 5  and (holyPower > 2 or jps.buff("Divine Purpose")) }, 
 		
 		-- Damage
-		{ "Templar's Verdict", holyPower == 5 }, 
+		{ "Divine Storm", jps.MultiTarget and holyPower > 2 },  -- AOE
+		{ "Templar's Verdict", holyPower == 5 },   -- Single Target
 	
 		-- Execute
-		{ "Hammer of Wrath", jps.buff("Avenging Wrath") 
-		or jps.hp("target") <= .2 }, 
+		{ "Hammer of Wrath", jps.buff("Avenging Wrath") or jps.hp("target") <= .2 }, 
 	
 		-- Exorcism proc
 		{ "Exorcism", jps.buff("The Art of War") }, 
@@ -63,11 +70,13 @@ function paladin_ret_pve(self)
 		{ "Judgment" }, 
 	
 		-- Damage
+		{ "Hammer of the Righteous", jps.MultiTarget },
 		{ "Crusader Strike" },
 		 -- Damage
 		{ "Exorcism" },
 	}
 	
-	local spell, target = parseSpellTable(spellTable)
-	return spell, target
+	local spellTableActive = jps.RotationActive(spellTable)
+	spell,target = parseSpellTable(spellTableActive)
+	return spell,target
 end
