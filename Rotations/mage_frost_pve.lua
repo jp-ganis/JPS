@@ -29,7 +29,7 @@ end
 
 local spellTable ={}
 
-spellTable[1] = jps.compileSpellTable({
+spellTable[1] = {
 	["ToolTip"] = "Frost Mage PVE",
 	-- SIMCRAFT 5.3
 	-- pre fight
@@ -71,8 +71,8 @@ spellTable[1] = jps.compileSpellTable({
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "fire blast", 'jps.Moving'}, 
 	{ "ice lance", 'jps.Moving'}, 
-})
-spellTable[2] = jps.compileSpellTable({
+}
+spellTable[2] = {
 	["ToolTip"] = "Noxxic PVE",
 	-- Noxxic
 	-- pre fight
@@ -123,7 +123,7 @@ spellTable[2] = jps.compileSpellTable({
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "fire blast", 'jps.Moving'}, 
 	{ "ice lance", 'jps.Moving'}, 
-})
+}
 
 
 
