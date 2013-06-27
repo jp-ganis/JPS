@@ -196,7 +196,7 @@ end
 
 local function ERROR(condition,msg)
     return function()
-        print("Your rotation has an error in " .. condition .. ": " ..msg)
+        print("Your rotation has an error in " .. tostring(condition) .. ": " ..tostring(msg))
         return false
     end
 end
@@ -415,9 +415,9 @@ function jps.conditionParser(str)
     if not retOK then
         return ERROR(str,fn)
     end
-    local retOK, error = pcall(fn)
+    local retOK, err = pcall(fn)
     if not retOK then
-        return ERROR(str,val)
+        return ERROR(str,err)
     end
     return fn
 end
