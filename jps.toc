@@ -40,6 +40,8 @@ Rotations\hunter_sv.lua
 Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
 Rotations\mage_frost.lua
+Rotations\mage_frost_pve.lua
+Rotations\mage_frost_pvp.lua
 
 Rotations\monk_brewmaster.lua
 Rotations\monk_mistweaver.lua
