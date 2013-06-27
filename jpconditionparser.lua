@@ -13,6 +13,7 @@ function fnConditionsMatched(spell,conditions)
     end
 end
 
+
 -- Pick a spell from a priority table.
 function parseStaticSpellTable( hydraTable )
     if jps.firstInitializingLoop == true then return nil,"target" end
@@ -271,14 +272,14 @@ function parser.condition(tokens)
     if t == "keyword" and v == "not" then
         parser.pop(tokens)
         return NOT(parser.condition(tokens))
-    elseif t == '('
+    elseif t == '(' then
         parser.pop(tokens)
         local conditions = parser.conditions(tokens)
         t, v = parser.pop(tokens)
         if t == ')' then
             return conditions
         else
-            error("Missing ')'!)
+            error("Missing ')'!")
         end
     else
         return parser.comparison(tokens)
@@ -440,6 +441,6 @@ function jps.compileSpellTable(unparsedTable)
             end
         end
     end
-    
+    return unparsedTable
 end
 

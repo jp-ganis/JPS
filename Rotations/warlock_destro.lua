@@ -112,7 +112,7 @@ wld.spellTable[1] = jps.compileSpellTable({
     { spells.emberTap, 'jps.Defensive and jps.hp() <= 0.30 and wld.burningEmbers() > 0' },
 
     -- Rain of Fire
-    { spells.rainOfFire, 'IsShiftKeyDown() and rainOfFireDuration < 1 and not GetCurrentKeyBoardFocus()'  },
+    { spells.rainOfFire, 'IsShiftKeyDown() and jps.buffDuration(wld.spells.rainOfFire) < 1 and not GetCurrentKeyBoardFocus()'  },
     { spells.rainOfFire, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
     -- COE Debuff
     { spells.curseOfTheElements, 'not jps.debuff(wld.spells.curseOfTheElements) and not wld.isTrivial("target") and not wld.isCotEBlacklisted("target")' },
@@ -138,7 +138,7 @@ wld.spellTable[1] = jps.compileSpellTable({
     { spells.shadowburn, 'jps.hp("mouseover") < 0.20 and wld.burningEmbers() > 0 and jps.myDebuffDuration(spells.shadowburn, "mouseover")<=0.5', "mouseover"  },
 
     {"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
-        { spells.havoc, 'not IsShiftKeyDown() and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "mouseover" },
+        { spells.havoc, 'not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
         { spells.havoc, 'wld.attackFocus()', "focus" },
         { spells.shadowburn, 'jps.hp("target") <= 0.20 and wld.burningEmbers() > 0'  },
         { spells.chaosBolt, 'wld.burningEmbers() > 0 and  jps.buffStacks(wld.spells.havoc)>=3'},
@@ -172,29 +172,11 @@ wld.spellTable[2] = jps.compileSpellTable({
     {spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wld.maxIntCastLength', "mouseover"},
 })
 
-
-
-
-
-
-
-
-
-
---wld.init = false
-
 function warlock_destro()   
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
         jps.NextSpell = {}
     end
-    --[[
-    if not wld.init then 
-        wld.init = true
-        jps.compileSpellTable(wld.spellTable[1])
-        jps.compileSpellTable(wld.spellTable[2])
-    end
-    ]]
     
     return parseStaticSpellTable(wld.spellTable[1])
 end

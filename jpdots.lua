@@ -300,9 +300,9 @@ end
 
 dotTracker.results = {}
 
-function dotTracker.setResult(spellId, condition, unit)
+function dotTracker.setResult(spellId, name, condition, unit)
     if not dotTracker.results[spellId] then dotTracker.results[spellId] = {} end
-    dotTracker.results[spellId][1] = spellId
+    dotTracker.results[spellId][1] = name
     dotTracker.results[spellId][2] = condition
     dotTracker.results[spellId][3] = unit
 end
@@ -319,6 +319,7 @@ function dotTracker.updateResults(spellId, unit)
             LOG.error("Can't check spell: %s", tostring(spellId))
         end
     end
+    local name,rank,_ = GetSpellInfo(spellId)
     -- if no unit is given, try all of them
     if not unit then
         for i, dottableUnit in ipairs(dotTracker.dottableUnits) do
@@ -327,15 +328,17 @@ function dotTracker.updateResults(spellId, unit)
                 return
             end 
         end
-        dotTracker.setResult(spellId, false)
+        dotTracker.setResult(spellId, name, false)
     end
     
     -- check if we can attack
-    if not jps.canDPS(unit) then return dotTracker.setResult(spellId, false, unit) end
+    if not jps.canDPS(unit) then 
+        dotTracker.setResult(spellId, name, false, unit) 
+        return
+    end
     
     -- here's the actual logic
     local guid = UnitGUID(unit)
-    local name,rank,_ = GetSpellInfo(spellId)
     local _,_,_,_,_,duration,expires = UnitDebuff(unit,name,rank,"player")
     local castSpell = false
     
@@ -361,7 +364,7 @@ function dotTracker.updateResults(spellId, unit)
                     damageDelta = (dotTracker.dotDamage[spellId].dps * dotTracker.dotDamage[spellId].duration) - (target.dps * timeLeft)
                     -- assume 150k dps - if you waste 1.5 seconds for gcd (or immolate cast) you should get an increase of at least 225k to compensate
                     if damageDelta >= 225000  then
-                        castImmolate = true
+                        castSpell = true
                         LOG.info("Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
                     else
                         LOG.debug("NOT Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
@@ -380,9 +383,9 @@ function dotTracker.updateResults(spellId, unit)
     -- avoid double casts!
     local wasLastCast = jps.LastCast == name and UnitGUID(jps.LastTarget) == UnitGUID(unit)
     if not wasLastCast then 
-        dotTracker.setResult(name, castSpell, unit)
+        dotTracker.setResult(spellId, name, castSpell, unit)
     else
-        dotTracker.setResult(name, false)
+        dotTracker.setResult(spellId, name, false)
     end
 end
 
@@ -444,7 +447,7 @@ function dotTracker.castTable(spellId, unit)
                     damageDelta = (dotTracker.dotDamage[spellId].dps * dotTracker.dotDamage[spellId].duration) - (target.dps * timeLeft)
                     -- assume 150k dps - if you waste 1.5 seconds for gcd (or immolate cast) you should get an increase of at least 225k to compensate
                     if damageDelta >= 225000  then
-                        castImmolate = true
+                        castSpell = true
                         LOG.info("Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
                     else
                         LOG.debug("NOT Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
