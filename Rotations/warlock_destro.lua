@@ -56,7 +56,8 @@ end
 
 
 local function npcId(unit)
-    return tonumber(UnitGUID(unit):sub(7, 10), 16)
+    if UnitExists(unit) then return tonumber(UnitGUID(unit):sub(7, 10), 16) end
+    return -1
 end
 
 -- stop spam curse of the elements at invalid targets @ mop
@@ -94,7 +95,7 @@ end
 
 
 wld.spellTable = {}
-wld.spellTable[1] = jps.compileSpellTable({
+wld.spellTable[1] = {
 ["ToolTip"] = "Warlock PvE",
     -- Interrupts
     {spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wld.maxIntCastLength', "target" },
@@ -135,7 +136,7 @@ wld.spellTable[1] = jps.compileSpellTable({
     { jps.useTrinket(1),       'jps.UseCDs' },
     
     -- Shadowburn mouseover!
-    { spells.shadowburn, 'jps.hp("mouseover") < 0.20 and wld.burningEmbers() > 0 and jps.myDebuffDuration(spells.shadowburn, "mouseover")<=0.5', "mouseover"  },
+    { spells.shadowburn, 'jps.hp("mouseover") < 0.20 and wld.burningEmbers() > 0 and jps.myDebuffDuration(wld.spells.shadowburn, "mouseover")<=0.5', "mouseover"  },
 
     {"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
         { spells.havoc, 'not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
@@ -145,7 +146,7 @@ wld.spellTable[1] = jps.compileSpellTable({
        jps.dotTracker().castTableStatic("immolate"),
         { spells.conflagrate },
         { spells.chaosBolt, 'jps.buff(wld.spells.darkSoulInstability) and wld.emberShards() >= 19' },
-        { spells.chaosBolt, 'jps.TimeToDie("target", 0.2) > 5.0 and wld.burningEmbers() >= 3 and jps.buffStacks(spells.backdraft) < 3'},
+        { spells.chaosBolt, 'jps.TimeToDie("target", 0.2) > 5.0 and wld.burningEmbers() >= 3 and jps.buffStacks(wld.spells.backdraft) < 3'},
         { spells.chaosBolt, 'wld.emberShards() >= 35'},
         { spells.incinerate },
     }},
@@ -157,12 +158,12 @@ wld.spellTable[1] = jps.compileSpellTable({
     }},
     {"nested", 'jps.MultiTarget', {
         { spells.shadowburn, 'jps.hp("target") <= 0.20 and wld.burningEmbers() > 0'  },
-        { spells.immolate , 'jps.buff(wld.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(spells.immolate) <= 2.0 and jps.LastCast ~= wld.spells.immolate'},
+        { spells.immolate , 'jps.buff(wld.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(wld.spells.immolate) <= 2.0 and jps.LastCast ~= wld.spells.immolate'},
         { spells.conflagrate, 'jps.buff(wld.spells.fireAndBrimstone, "player")' },
         { spells.incinerate },
     }},
-})
-wld.spellTable[2] = jps.compileSpellTable({
+}
+wld.spellTable[2] = {
 ["ToolTip"] = "Interrupt Only",
     {spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wld.maxIntCastLength', "target" },
     {spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wld.maxIntCastLength', "focus"},
@@ -170,7 +171,7 @@ wld.spellTable[2] = jps.compileSpellTable({
     {spells.spellLock, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wld.maxIntCastLength', "target" },
     {spells.spellLock, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wld.maxIntCastLength', "focus"},
     {spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wld.maxIntCastLength', "mouseover"},
-})
+}
 
 function warlock_destro()   
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then

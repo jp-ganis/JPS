@@ -1,4 +1,5 @@
-
+local parser = {}
+parser.testMode = false
 function fnConditionsMatched(spell,conditions)
     -- nil
     if spell == nil then
@@ -13,10 +14,15 @@ function fnConditionsMatched(spell,conditions)
     end
 end
 
+parser.compiledTables = {}
 
 -- Pick a spell from a priority table.
 function parseStaticSpellTable( hydraTable )
     if jps.firstInitializingLoop == true then return nil,"target" end
+    if not parser.compiledTables[tostring(hydraTable)] then 
+        jps.compileSpellTable(hydraTable)
+        parser.compiledTables[tostring(hydraTable)] = true
+    end
     local spell = nil
     local conditions = nil
     local target = nil
@@ -120,7 +126,7 @@ local function AND(...)
     local functions = {...}
     return function()
         for _,fn in pairs(functions) do
-            if not fn() then return false end
+            if not fn() then if not parser.testMode then return false end end
         end
         return true
     end
@@ -130,7 +136,7 @@ local function OR(...)
     local functions = {...}
     return function()
         for _,fn in pairs(functions) do
-            if fn() then return true end
+            if fn() then if not parser.testMode then return true end end
         end
         return false
     end
@@ -199,7 +205,7 @@ end
 
 local function ERROR(condition,msg)
     return function()
-        print("Your rotation has an error in " .. tostring(condition) .. ": " ..tostring(msg))
+        print("Your rotation has an error in: \n" .. tostring(condition) .. "\n---" ..tostring(msg))
         return false
     end
 end
@@ -219,7 +225,6 @@ end
     parameterlist = <value> | <value> ',' <parameterlist>
 ]]
 
-local parser = {}
 
 function parser.pop(tokens)
     local t,v = unpack(tokens[1])
@@ -420,7 +425,9 @@ function jps.conditionParser(str)
     if not retOK then
         return ERROR(str,fn)
     end
+    parser.testMode = true
     local retOK, err = pcall(fn)
+    parser.testMode = false
     if not retOK then
         return ERROR(str,err)
     end
