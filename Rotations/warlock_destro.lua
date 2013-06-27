@@ -177,6 +177,6 @@ function warlock_destro()
         SpellStopCasting()
         jps.NextSpell = {}
     end
-    
-    return parseStaticSpellTable(wld.spellTable[1])
+
+    return parseStaticSpellTable(jps.RotationActive(wld.spellTable))
 end
