@@ -245,7 +245,7 @@ function parser.lookaheadData(tokens)
 end
 
 -- conditions = <condition> | <condition> 'and' <conditions> | <condition> 'or' <conditions>
-function parser.conditions(tokens) 
+function parser.conditions(tokens, expectBracket) 
     local condition1 = parser.condition(tokens)
     
     if tokens[1] then
@@ -259,11 +259,19 @@ function parser.conditions(tokens)
                 local condition2 = parser.conditions(tokens)
                 return OR(condition1, condition2)
             else
-                error("Conditions must be combined using keywords 'and' or 'or'!")
+                error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " conditions must be combined using keywords 'and' or 'or'!")
+            end
+        elseif expectBracket then
+            if t == ")" then
+                return condition1
+            else
+                error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " missing ')'!")
             end
         else
-            error("Conditions must be combined using 'and' or 'or'!")
+            error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " conditions must be combined using keywords 'and' or 'or'!")
         end
+    elseif expectBracket then
+        error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " missing ')'!")
     else
         return condition1
     end
@@ -275,15 +283,9 @@ function parser.condition(tokens)
     if t == "keyword" and v == "not" then
         parser.pop(tokens)
         return NOT(parser.condition(tokens))
-    elseif t == '(' then
+    elseif t == "(" then
         parser.pop(tokens)
-        local conditions = parser.conditions(tokens)
-        t, v = parser.pop(tokens)
-        if t == ')' then
-            return conditions
-        else
-            error("Missing ')'!")
-        end
+        return parser.conditions(tokens, true)
     else
         return parser.comparison(tokens)
     end
