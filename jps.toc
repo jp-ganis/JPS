@@ -13,6 +13,8 @@ jpdata.lua
 jptips.lua
 jplogging.lua
 jpdots.lua
+jplexer.lua
+jpconditionparser.lua
 
 Lib\jpgui.lua
 Lib\jpconfig.lua
