@@ -76,7 +76,7 @@ function dk_blood()
 		{ "Lichborne",			jps.UseCDs and jps.hp() < 0.5 and rp >= 40 and jps.IsSpellKnown("Lichborne") },
 		{ "Death Coil",			 		jps.hp() < 0.5 and rp >= 40 and jps.buff("lichborne"), "player" }, 
 		{ "Rune Tap",			jps.hp() < .8 },
-		{ "Icebound Fortitude",			jps.UseCDs and jps.hp() < .3 and jps.UseCDs},
+		{ "Icebound Fortitude",			jps.UseCDs and jps.hp() < .3},
 		{ "Vampiric Blood",			jps.UseCDs and jps.hp() < .4 },
 		
 		-- Interrupts
@@ -99,7 +99,7 @@ function dk_blood()
     	{ jps.DPSRacial, 		jps.UseCDs },
 		
 		-- Buff
-		{ "Bone Shield",			jps.UseCDs and not jps.buff("Bone Shield") },
+		{ "Bone Shield",			not jps.buff("Bone Shield") },
 				
 		-- Diseases
 		{ "Outbreak",			ffDuration <= 2 or bpDuration <= 2 },
