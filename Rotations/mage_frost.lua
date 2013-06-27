@@ -149,11 +149,7 @@ function mage_frost()
 		{ {"macro","/cast icy veins\n/cast evocation"}, jps.hp() <= .4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0 , player },
 		{ "Healthstone",		jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
 		
-		-- Rotation AoE
-		{ "flamestrike", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
-		{},
-		
-		-- Rotation Single
+		-- Rotation
 		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, 
 		{ "rune of power", jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil}, 
 		{ "mirror image",jps.UseCds}, 
