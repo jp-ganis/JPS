@@ -46,6 +46,7 @@ function parseStaticSpellTable( hydraTable )
         elseif type(spell) == "table" and spell[1] == "macro" and conditions() then
             local macroText = spell[2]
             local macroTarget = spell[3]
+            if type(macroTarget)=="function" then macroTarget = macroTarget() end
             -- Workaround for TargetUnit is still PROTECTED despite goblin active
              if jps.UnitExists(macroTarget) then jps.Macro("/target "..macroTarget) end
              
@@ -80,6 +81,8 @@ function parseStaticSpellTable( hydraTable )
         -- If not already assigned, assign target now.
         if not target and type(spellTable[3]) == "string" then
             target = spellTable[3]
+        elseif not target and type(spellTable[3]) == "function" then
+            target = spellTable[3]()
         end
 
         -- Return spell if conditions are true and spell is castable.
