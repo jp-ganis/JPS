@@ -117,11 +117,11 @@ local LOG = dotTracker.log
 -- Initialize DotTracker (will only be executed once) and return dotTracker Object
 function jps.dotTracker() 
     if not dotTracker.isInitialized then
-        LOG.debug("Initializing DoT Tracker...")
+        LOG.warn("Initializing DoT Tracker...")
         dotTracker.frame:RegisterEvent("PLAYER_TALENT_UPDATE")
         dotTracker.registerEvents()
         dotTracker.isInitialized = true
-        LOG.debug("...DoT Tracker initialized!")
+        LOG.warn("...DoT Tracker initialized!")
     end
     return dotTracker
 end
@@ -281,7 +281,6 @@ end
 
 
 function dotTracker.castTableStatic(spellId, unit)
-    return function()
     if not tonumber(spellId) then
         if tonumber(spellId.id) then 
             spellId = spellId.id
@@ -292,8 +291,9 @@ function dotTracker.castTableStatic(spellId, unit)
             LOG.error("Can't check spell: %s", tostring(spellId))
         end
     end
-        dotTracker.updateResults(spellId, unit)
-        return dotTracker.results[spellId]
+    return function()
+        jps.dotTracker().updateResults(spellId, unit)
+        return jps.dotTracker().results[spellId]
     end
 end
 
