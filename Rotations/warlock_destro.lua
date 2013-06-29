@@ -20,138 +20,91 @@ Known Bugs:
 
 ]]--
 
-local function toSpellName(id) name = GetSpellInfo(id); return name end
-local spells = {}
-spells["immolate"] = toSpellName(348)
-spells["felFlame"] = toSpellName(77799)
-spells["backdraft"] = toSpellName(117896)
-spells["rainOfFire"] = toSpellName(5740)
-spells["darkSoulInstability"] = toSpellName(113858)
-spells["havoc"] = toSpellName(80240)
-spells["fireAndBrimstone"] = toSpellName(108683)
-spells["opticalBlast"] = toSpellName(119911)
-spells["spellLock"] = toSpellName(19647)
-spells["mortalCoil"] = toSpellName(6789)
-spells["createHealthstone"] = toSpellName(6201)
-spells["emberTap"] = toSpellName(114635)
-spells["curseOfTheElements"] = toSpellName(1490)
-spells["felFlame"] = toSpellName(77799)
-spells["shadowburn"] = toSpellName(17877)
-spells["chaosBolt"] = toSpellName(116858)
-spells["incinerate"] = toSpellName(29722)
-spells["conflagrate"] = toSpellName(17962)
+local spellTable = {}
+spellTable[1] = {
+["ToolTip"] = "Warlock PvE",
+    -- Interrupts
+    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wl.maxIntCastLength', "target" },
+    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wl.maxIntCastLength', "focus"},
+    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
+    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wl.maxIntCastLength', "target" },
+    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wl.maxIntCastLength', "focus"},
+    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
 
-spells["lifeblood"] = toSpellName(121279)
+    -- Def CD's
+    {wl.spells.mortalCoil, 'jps.Defensive and jps.hp() <= 0.80' },
+    {wl.spells.createHealthstone, 'jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= wl.spells.createHealthstone'},
+    {jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
+    {wl.spells.emberTap, 'jps.Defensive and jps.hp() <= 0.30 and jps.burningEmbers() > 0' },
 
-
-local function hasKilJaedensCunning()
-    local selected, talentIndex = GetTalentRowSelectionInfo(6)
-    return talentIndex == 17
-end
-
-function warlock_destro()
-    local burningEmbers = UnitPower("player",14)
-    local emberShards = UnitPower("player", 14, true)
-    local rainOfFireDuration = jps.buffDuration(spells.rainOfFire)
-    local backdraftStacks = jps.buffStacks(spells.backdraft)
-    local darkSoulActive = jps.buff(spells.darkSoulInstability)
-    local havocStacks = jps.buffStacks(spells.havoc)
-    local burnPhase = jps.hp("target") <= 0.20
-    local attackFocus = false
-    local spell = nil
-    local fireAndBrimstoneBuffed = jps.buff(spells.fireAndBrimstone, "player")
-    local timeToBurst = jps.TimeToDie("target", 0.2) or 0
-    local avoidInterrupts = IsAltKeyDown()
-    local maxIntCastLength = 2.8
-
-    -- If focus exists and is not the same as target, consider attacking focus too
-    if UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus") then
-        attackFocus = true
-    end
+    -- Rain of Fire
+    {wl.spells.rainOfFire, 'IsShiftKeyDown() and jps.buffDuration(wl.spells.rainOfFire) < 1 and not GetCurrentKeyBoardFocus()'  },
+    {wl.spells.rainOfFire, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
+    -- COE Debuff
+    {wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
+    {wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
     
+    {wl.spells.fireAndBrimstone, 'jps.burningEmbers() > 0 and not jps.buff(wl.spells.fireAndBrimstone, "player") and jps.MultiTarget' },
+    { {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.burningEmbers() == 0' },
+    
+    { {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and not jps.MultiTarget' },
+    
+    -- On the move
+    {wl.spells.felFlame, 'jps.Moving and not wl.hasKilJaedensCunning()' },
+    
+    -- CD's
+    { {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and jps.UseCDs' },
+    { jps.DPSRacial, 'jps.UseCDs' },
+    {wl.spells.lifeblood, 'jps.UseCDs' },
+    { jps.useSynapseSprings(), 'jps.UseCDs' },
+    { jps.useTrinket(0),       'jps.UseCDs' },
+    { jps.useTrinket(1),       'jps.UseCDs' },
+    
+    -- Shadowburn mouseover!
+    {wl.spells.shadowburn, 'jps.hp("mouseover") < 0.20 and jps.burningEmbers() > 0 and jps.myDebuffDuration(wl.spells.shadowburn, "mouseover")<=0.5', "mouseover"  },
 
-    if avoidInterrupts and jps.CastTimeLeft("player") >= 0 then
+    {"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
+        {wl.spells.havoc, 'not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
+        {wl.spells.havoc, 'wl.attackFocus()', "focus" },
+        {wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
+        {wl.spells.chaosBolt, 'jps.burningEmbers() > 0 and  jps.buffStacks(wl.spells.havoc)>=3'},
+        jps.dotTracker.castTableStatic("immolate"),
+        {wl.spells.conflagrate },
+        {wl.spells.chaosBolt, 'jps.buff(wl.spells.darkSoulInstability) and jps.emberShards() >= 19' },
+        {wl.spells.chaosBolt, 'jps.TimeToDie("target", 0.2) > 5.0 and jps.burningEmbers() >= 3 and jps.buffStacks(wl.spells.backdraft) < 3'},
+        {wl.spells.chaosBolt, 'jps.emberShards() >= 35'},
+        {wl.spells.incinerate },
+    }},
+    
+    {"nested", 'not jps.MultiTarget and IsAltKeyDown()', {
+        {wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
+        {wl.spells.conflagrate },
+        {wl.spells.felFlame },
+    }},
+    {"nested", 'jps.MultiTarget', {
+        {wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
+        {wl.spells.immolate , 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(wl.spells.immolate) <= 2.0 and jps.LastCast ~= wl.spells.immolate'},
+        {wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player")' },
+        {wl.spells.incinerate },
+    }},
+}
+spellTable[2] = {
+["ToolTip"] = "Interrupt Only",
+    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wl.maxIntCastLength', "target" },
+    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wl.maxIntCastLength', "focus"},
+    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
+    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wl.maxIntCastLength', "target" },
+    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wl.maxIntCastLength', "focus"},
+    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
+}
+
+
+
+function warlock_destro()   
+    if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
         jps.NextSpell = {}
     end
-    
-    local spellTable = {}
-    
-    spellTable[1] = {
-    ["ToolTip"] = "Warlock PvE",
-        -- Interrupts
-        {spells.opticalBlast, jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < maxIntCastLength, "target" },
-        {spells.opticalBlast, jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < maxIntCastLength, "focus"},
-        {spells.opticalBlast, jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCastLength, "mouseover"},
-        {spells.spellLock, jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < maxIntCastLength, "target" },
-        {spells.spellLock, jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < maxIntCastLength, "focus"},
-        {spells.spellLock, jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCastLength, "mouseover"},
 
-        -- Def CD's
-        {spells.mortalCoil, jps.Defensive and jps.hp() <= 0.80 },
-        {spells.createHealthstone, jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= "create healthstone"},
-
-        { jps.useBagItem(5512), jps.hp("player") < 0.65 }, -- Healthstone
-        { spells.emberTap, jps.Defensive and jps.hp() <= 0.30 and burningEmbers > 0 },
-
-        -- Rain of Fire
-        { spells.rainOfFire, IsShiftKeyDown() ~= nil and rainOfFireDuration < 1 and GetCurrentKeyBoardFocus() == nil  },
-        { spells.rainOfFire, IsShiftKeyDown() ~= nil and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
-        -- COE Debuff
-        { spells.curseOfTheElements, not jps.debuff(spells.curseOfTheElements) },
-        { spells.curseOfTheElements, attackFocus and not jps.debuff(spells.curseOfTheElements, "focus"), "focus" },
-        
-        { spells.fireAndBrimstone, burningEmbers > 0 and not fireAndBrimstoneBuffed and jps.MultiTarget },
-        { {"macro","/cancelaura "..spells.fireAndBrimstone}, fireAndBrimstoneBuffed and (burningEmbers == 0 or not jps.MultiTarget) },
-        
-        -- On the move
-        { spells.felFlame, jps.Moving and not hasKilJaedensCunning() },
-        
-        -- CD's
-        { {"macro","/cast " .. spells.darkSoulInstability}, jps.cooldown(spells.darkSoulInstability) == 0 and jps.UseCDs },
-        { jps.DPSRacial, jps.UseCDs },
-        { spells.lifeblood, jps.UseCDs },
-        { jps.useSynapseSprings(), jps.UseCDs },
-        { jps.useTrinket(0),       jps.UseCDs },
-        { jps.useTrinket(1),       jps.UseCDs },
-        
-        {"nested", not jps.MultiTarget and not avoidInterrupts, {
-            { spells.havoc, not IsShiftKeyDown() and IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil, "mouseover" },
-            { spells.havoc, attackFocus, "focus" },
-            { spells.shadowburn, burnPhase and burningEmbers > 0  },
-            { spells.chaosBolt, burningEmbers >= 1 and  havocStacks>=3},
-            jps.dotTracker().castTable("immolate"),
-            { spells.conflagrate, "onCD" },
-            { spells.chaosBolt, darkSoulActive and emberShards >= 19 },
-            { spells.chaosBolt, timeToBurst > 5.0 and burningEmbers >= 3 and backdraftStacks < 3},
-            { spells.chaosBolt, emberShards >= 35},
-            { spells.incinerate },
-        }},
-        {"nested", not jps.MultiTarget and avoidInterrupts, {
-            { spells.shadowburn, burnPhase and burningEmbers > 0  },
-            { spells.conflagrate, "onCD" },
-            { "fel flame"},
-        }},
-        {"nested", jps.MultiTarget, {
-            { spells.shadowburn, burnPhase and burningEmbers > 0  },
-            { spells.immolate , fireAndBrimstoneBuffed and jps.myDebuffDuration(spells.immolate) <= 2.0 and jps.LastCast ~= spells.immolate},
-            { spells.conflagrate, fireAndBrimstoneBuffed },
-            { spells.incinerate },
-        }},
-    }
-    spellTable[2] = {
-    ["ToolTip"] = "Interrupt Only",
-        {spells.opticalBlast, jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < maxIntCastLength, "target" },
-        {spells.opticalBlast, jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < maxIntCastLength, "focus"},
-        {spells.opticalBlast, jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCastLength, "mouseover"},
-        {spells.spellLock, jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < maxIntCastLength, "target" },
-        {spells.spellLock, jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < maxIntCastLength, "focus"},
-        {spells.spellLock, jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < maxIntCastLength, "mouseover"},
-    }
-
-
-    local spellTableActive = jps.RotationActive(spellTable)
-    local spell,target = parseSpellTable(spellTableActive)
-
-    return spell,target
+    return parseStaticSpellTable(jps.RotationActive(spellTable))
 end

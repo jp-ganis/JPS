@@ -215,8 +215,10 @@ function jps.spell_need_select(spell)
 	-- "Freeze" - 33395 Frost Mage
 	-- "Rune Of Power" 116011- Mage
 	-- "Rain of Fire" 5740 -- Warlock
+	-- "Lightwell" 724 - Priest
+	-- "Holy Word: Sanctuary" 88685 - Priest
 
-	local tableSelect = {32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
+	local tableSelect = {88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
 	for i,j in ipairs (tableSelect) do
 		if spellname == string.lower(tostring(select(1,GetSpellInfo(j)))) then return true end 
 	end
@@ -240,11 +242,21 @@ function jps.Cast(spell)  -- "number" "string"
 	end
 	
 	jps.LastTarget = jps.Target
+	jps.LastTargetGUID = UnitGUID(jps.Target)
 	jps.Target = nil
 	jps.Message = nil
 	jps.ThisCast = nil
 end
 
+function jps.isRecast(spell,unit)
+	local spellname = nil
+	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+	
+	if unit==nil then unit = "target" end
+	
+	return jps.LastCast==spellname and UnitGUID(unit)==jps.LastTargetGUID
+end
 ----------------------
 -- DEBUG MODE
 ----------------------`

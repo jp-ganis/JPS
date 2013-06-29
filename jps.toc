@@ -13,6 +13,8 @@ jpdata.lua
 jptips.lua
 jplogging.lua
 jpdots.lua
+jplexer.lua
+jpconditionparser.lua
 
 Lib\jpgui.lua
 Lib\jpconfig.lua
@@ -38,6 +40,8 @@ Rotations\hunter_sv.lua
 Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
 Rotations\mage_frost.lua
+Rotations\mage_frost_pve.lua
+Rotations\mage_frost_pvp.lua
 
 Rotations\monk_brewmaster.lua
 Rotations\monk_mistweaver.lua
@@ -72,7 +76,7 @@ Rotations\shaman_resto_arena.lua
 Rotations\shaman_resto_pve.lua
 Rotations\shaman_resto_pvp.lua
 
-
+Rotations\warlock.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
 Rotations\warlock_destro.lua

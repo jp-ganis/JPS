@@ -105,7 +105,7 @@ dotTracker.supportedClasses["WARLOCK"] = {
 dotTracker.dottableUnits = { 
     "target",
     "focus",
---    "mouseover",
+    "mouseover",
     "boss1",
     "boss2",
     "boss3",
@@ -115,16 +115,7 @@ dotTracker.dottableUnits = {
 local LOG = dotTracker.log
 
 -- Initialize DotTracker (will only be executed once) and return dotTracker Object
-function jps.dotTracker() 
-    if not dotTracker.isInitialized then
-        LOG.debug("Initializing DoT Tracker...")
-        dotTracker.frame:RegisterEvent("PLAYER_TALENT_UPDATE")
-        dotTracker.registerEvents()
-        dotTracker.isInitialized = true
-        LOG.debug("...DoT Tracker initialized!")
-    end
-    return dotTracker
-end
+jps.dotTracker = dotTracker
 
 -- OnEvent Handler
 function dotTracker.handleEvent(self, event, ...)
@@ -279,10 +270,19 @@ function dotTracker.updateDotDamage()
     dotTracker.classSpecificUpdateDotDamage(mastery, haste, crit, spellDamage, damageBuff)
 end
 
+dotTracker.results = {}
 
--- Core Logic - responds whether to cast a spell at a give unit (or any possible unit if none given) or not
-function dotTracker.castTable(spellId, unit)
-    -- Let's be generous about the spell id...
+function dotTracker.setStaticResult(spellId, name, condition, unit)
+    if not dotTracker.results[spellId] then dotTracker.results[spellId] = {} end
+    dotTracker.results[spellId][1] = name
+    dotTracker.results[spellId][2] = condition
+    dotTracker.results[spellId][3] = unit
+    return dotTracker.results[spellId]
+end
+
+
+function dotTracker.castTableStatic(spellId, unit)
+    -- find actual spell id, it was given as spell table key or spell table entry
     if not tonumber(spellId) then
         if tonumber(spellId.id) then 
             spellId = spellId.id
@@ -291,22 +291,54 @@ function dotTracker.castTable(spellId, unit)
         else
             -- nothing left to try...
             LOG.error("Can't check spell: %s", tostring(spellId))
-            return { spellId, false}
+            return nil
         end
     end
-    -- if no unit is given, try all of them
-    if not unit then
-        for i, dottableUnit in ipairs(dotTracker.dottableUnits) do
-            local spellTable = dotTracker.castTable(spellId, dottableUnit)
-            if spellTable[2] then
-                return spellTable
-            end 
+    return function()
+        -- Init if not already done
+        if not dotTracker.isInitialized then
+            LOG.warn("Initializing DoT Tracker...")
+            dotTracker.frame:RegisterEvent("PLAYER_TALENT_UPDATE")
+            dotTracker.registerEvents()
+            dotTracker.isInitialized = true
+            LOG.warn("...DoT Tracker initialized!")
         end
-        return {spellId, false}
+        local name,rank,_ = GetSpellInfo(spellId)
+        -- if no unit is given, try all of them
+        if not unit then
+            for i, dottableUnit in ipairs(dotTracker.dottableUnits) do
+                if dotTracker.shouldSpellBeCast(spellId, dottableUnit) then
+                    return dotTracker.setStaticResult(spellId, name, true, dottableUnit)
+                end 
+            end        
+            return dotTracker.setStaticResult(spellId, name, false)
+        else
+            return dotTracker.setStaticResult(spellId, name, dotTracker.shouldSpellBeCast(spellId, unit), unit)
+        end
     end
-    
+end
+
+
+function dotTracker.castTable(spellId, unit)
+    return dotTracker.castTableStatic(spellId, unit)()
+end
+
+function dotTracker.shouldSpellBeCast(spellId, unit)
+    if not tonumber(spellId) then
+        if tonumber(spellId.id) then 
+            spellId = spellId.id
+        elseif dotTracker.spells[spellId] then 
+            spellId = dotTracker.spells[spellId].id
+        else
+            -- nothing left to try...
+            LOG.error("Can't check spell: %s", tostring(spellId))
+            return false
+        end
+    end
     -- check if we can attack
-    if not jps.canDPS(unit) then return {spellId, false, unit} end
+    if not jps.canDPS(unit) then 
+        return false
+    end
     
     -- here's the actual logic
     local guid = UnitGUID(unit)
@@ -336,8 +368,8 @@ function dotTracker.castTable(spellId, unit)
                     damageDelta = (dotTracker.dotDamage[spellId].dps * dotTracker.dotDamage[spellId].duration) - (target.dps * timeLeft)
                     -- assume 150k dps - if you waste 1.5 seconds for gcd (or immolate cast) you should get an increase of at least 225k to compensate
                     if damageDelta >= 225000  then
-                        castImmolate = true
                         LOG.info("Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
+                        castSpell = true
                     else
                         LOG.debug("NOT Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
                     end
@@ -353,10 +385,6 @@ function dotTracker.castTable(spellId, unit)
     end
 
     -- avoid double casts!
-    local wasLastCast = jps.LastCast == name and UnitGUID(jps.LastTarget) == UnitGUID(unit)
-    if not wasLastCast then 
-        return {name, castSpell, unit}
-    else
-        return {name, false}
-    end
+    local wasLastCast = jps.LastCast == name and jps.LastTargetGUID == UnitGUID(unit)
+    return castSpell and not wasLastCast
 end
