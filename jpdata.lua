@@ -498,7 +498,7 @@ function jps.glovesCooldown()
 end
 
 function jps.useBagItem(itemName)
-	if type(itemName) == number then
+	if type(itemName) == "number" then
 		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
 	end
 	local count = GetItemCount(itemName, false, false)
@@ -696,6 +696,10 @@ end
 
 function jps.burningEmbers()
 	return UnitPower("player",14)
+end
+
+function jps.emberShards()
+	return UnitPower("player",14, true)
 end
 
 function jps.demonicFury()
