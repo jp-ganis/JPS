@@ -242,11 +242,21 @@ function jps.Cast(spell)  -- "number" "string"
 	end
 	
 	jps.LastTarget = jps.Target
+	jps.LastTargetGUID = UnitGUID(jps.Target)
 	jps.Target = nil
 	jps.Message = nil
 	jps.ThisCast = nil
 end
 
+function jps.isRecast(spell,unit)
+	local spellname = nil
+	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+	
+	if unit==nil then unit = "target" end
+	
+	return jps.LastCast==spellname and UnitGUID(unit)==jps.LastTargetGUID
+end
 ----------------------
 -- DEBUG MODE
 ----------------------`
