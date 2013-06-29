@@ -10,17 +10,10 @@ function shouldInterruptCasting(spellsToCheck)
 		local breakpoint = healSpellTable[2]
 		local spellName = healSpellTable[1]
 		if spellName == spellCasting then
-			local AOEHealBreakpoint = Ternary(healSpellTable[3] ~=nil, healSpellTable[3], false)
-			if isAOESpell == false then 
-				if healTargetHP > breakpoint then
-					return true
-				end
-			else
-				local targetsBelowAOEBreakpoint = jps.CountInRaidStatus(breakpoint)
-				if AOEHealBreakpoint < targetsBelowAOEBreakpoint then
-					return true
-				end
+			if healTargetHP > breakpoint then
+				return true
 			end
+			
 		end
 	end
 	return false
@@ -84,7 +77,7 @@ function paladin_holy()
 			{.....},
 		} 
 	]]--
-	if shouldInterruptCasting({{"Holy Radiance", 0.9, 2}, {"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.95}}) then
+	if shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.95}}) then
 		print("interrupt cast, unit "..jps.LastTarget.. " has enough hp!");
 		SpellStopCasting()
 	end
@@ -182,7 +175,7 @@ function paladin_holy()
 		
 		-- Multi Heals
 
-		{ "Light's Hammer", IsShiftKeyDown() ~= nil  and jps.UseCDs, rangedTarget },
+		{ "Light's Hammer", IsShiftKeyDown() ~= nil, rangedTarget },
 		{ "Light of Dawn",  hPower > 2 or jps.buff("Divine Purpose") and jps.CountInRaidStatus(0.9) > 2 , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 		{ "Holy Radiance", jps.MultiTarget and countInRaid > 2 , ourHealTarget },  -- only here jps.MultiTarget since it is a mana inefficent spell
 		{ "Holy Shock", jps.buff("Daybreak") and healTargetHPPct < .9 , ourHealTarget }, -- heals with daybreak buff other targets
