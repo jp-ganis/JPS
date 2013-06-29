@@ -47,6 +47,7 @@ jps.Level = 1
 jps.IconSpell = nil
 jps.Message = nil
 jps.LastTarget = nil
+jps.LastTargetGUID = nil
 jps.Target = nil
 jps.Casting = false
 jps.LastCast = nil
