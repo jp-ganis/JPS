@@ -11,12 +11,12 @@ function shouldInterruptCasting(spellsToCheck)
 		local spellName = healSpellTable[1]
 		if spellName == spellCasting then
 			if healTargetHP > breakpoint then
-				return true
+				return true, spellName
 			end
 			
 		end
 	end
-	return false
+	return false, nil
 end
 
 function paladin_holy()
@@ -41,7 +41,7 @@ function paladin_holy()
 	--------------------------------------------------------------------------------------------
 	
 	-- left ALT key		- for beacon of light on mouseover
-	-- left Control Key 		- for Light's Hammer
+	-- left Shift Key 		- for Light's Hammer
 
 	--------------------------------------------------------------------------------------------
 	---- Declarations                    
@@ -64,21 +64,22 @@ function paladin_holy()
 	--3 = Seal of Insight - Seal of Justice if retribution  
 
 	--------------------------------------------------------------------------------------------
-	---- Stop Casting to save mana
+	---- Stop Casting to save mana - curently no AOE spell support!
 	--------------------------------------------------------------------------------------------
 	--[[ 
 		{ 
 			{
 				spellName,
-				 maxHealthBeforStopCasting, 
-				 AOE only, number of players below maxHealthBeforStopCasting
+				 maxHealthBeforStopCasting
 			}, 
-			{{"Holy Radiance", 0.7, 2}, {"Flash of Light", 0.5}, {"Divine Light", 0.7},{ "Holy Light", 0.85}}
+			{{"Flash of Light", 0.5}, {"Divine Light", 0.7},{ "Holy Light", 0.85}}
 			{.....},
 		} 
 	]]--
-	if shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.95}}) then
-		print("interrupt cast, unit "..jps.LastTarget.. " has enough hp!");
+	local interruptSpell, spellInterrupted = shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}})
+	
+	if interruptSpell == true  then
+		print("interrupt "..spellInterrupted.." , unit "..jps.LastTarget.. " has enough hp!");
 		SpellStopCasting()
 	end
 
@@ -111,11 +112,13 @@ function paladin_holy()
 	end
 	
 	local ourHealTargetIsTank = false
+
 	if lowestHP < healTargetHPPct then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP
 		ourHealTarget = myLowestImportantUnit
 		ourHealTargetIsTank = true
 	end
 
+	local rangedTarget = "target"
 	----------------------
 	-- DAMAGE
 	----------------------
@@ -159,7 +162,8 @@ function paladin_holy()
 		
 	-- Cooldowns                     
 		{ "Lay on Hands", lowestHP < 0.20 and jps.UseCDs , myLowestImportantUnit, "casted lay on hands!" },
-		{ "Divine Plea", mana < 0.60 and jps.glyphInfo(45745) == false , player },
+		{ "Divine Plea", mana < 0.60 and jps.glyphInfo(45745) == false and jps.UseCDs , player },
+		{ jps.useBagItem("Master Mana Potion"), mana < 0.60 and jps.UseCDs , player },
 		
 		{ "Avenging Wrath", jps.UseCDs , player },
 		{ "Divine Favor", jps.UseCDs , player },
