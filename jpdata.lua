@@ -572,28 +572,64 @@ end
 -- isUsable, notEnoughMana = IsUsableItem(itemID) or IsUsableItem("itemName")
 -- isUsable - 1 if the item is usable; otherwise nil (1nil)
 -- notEnoughMana - 1 if the player lacks the resources (e.g. mana, energy, runes) to use the item; otherwise nil (1nil)
-
-function Tooltip_Parse(trinket)
+function parseTrinketText(trinket,str)
 	local id = 13 + trinket
+	if trinket > 1 then return false end
 	CreateFrame("GameTooltip", "ScanningTooltip", nil, "GameTooltipTemplate") -- Tooltip name cannot be nil
 	ScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" )
 	ScanningTooltip:ClearLines()
 	ScanningTooltip:SetInventoryItem("player", id)
 	-- hasItem, hasCooldown, repairCost = Tooltip:SetInventoryItem("unit", invSlot {, nameOnly})
 
-	local found = 0
+	local found = false
 	for i=1,select("#",ScanningTooltip:GetRegions()) do 
 		local region=select(i,ScanningTooltip:GetRegions())
 		if region and region:GetObjectType()=="FontString" and region:GetText() then
 			local text =  region:GetText()
 			--if text ~=nil then print(text) end
-			if string.find(text, L["Use"]) then 
-            	found = 1 
+			if type(str) == "table" then 
+				local matchesRequired = table.getn(str)
+				local matchesFound = 0
+				for key, val in pairs(str) do 
+					if string.find(text, val) then 
+            			matchesFound = matchesFound +1 
+            		end
+				end
+				if matchesFound == matchesRequired then found = true end
+			else 
+				if string.find(text, str) then 
+            		found = true 
+            	end
 			end
+			
 		end 
 	end
-return found
+	return found
 end
+
+function Tooltip_Parse(trinket)
+	return parseTrinketText(trinket, L["Use"])
+end
+
+function jps.isManaRegTrinket(trinket)
+	return parseTrinketText(trinket, {L["Use"], "mana"})
+end
+
+function jps.isPVPInsignia(trinket)
+	return parseTrinketText(trinket, {L["Use"], "Removes all movement impairing"})
+end
+--[[
+function jps.isDPSHPSTrinket(trinket)
+	local validStrings = {
+	}
+	for k,valTable in pairs(validStrings) do 
+		if parseTrinketText(trinket, valTable) == true then
+			return true
+		end
+	end
+	return false
+end
+]]--
 
 function jps.itemCooldown(item) -- start, duration, enable = GetItemCooldown(itemID) or GetItemCooldown("itemName")
 	if item == nil then return 999 end
