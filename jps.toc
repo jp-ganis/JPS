@@ -20,6 +20,7 @@ Lib\jpgui.lua
 Lib\jpconfig.lua
 Lib\bindings.xml
 
+Rotations\dk.lua
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
 Rotations\dk_unholy.lua
