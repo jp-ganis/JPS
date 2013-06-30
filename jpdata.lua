@@ -612,15 +612,33 @@ function Tooltip_Parse(trinket)
 end
 
 function jps.isManaRegTrinket(trinket)
-	return parseTrinketText(trinket, {L["Use"], "mana"})
+	local result = parseTrinketText(trinket, {L["Use"], "spirit"}) or parseTrinketText(trinket, {L["Use"], "mana"}) 
+	return result
+end
+
+function jps.trinketIncreasesHealth(trinket)
+	return parseTrinketText(trinket, {L["Use"], "health"})
+end
+
+function jps.trinketAbsorbDmg(trinket)
+	return parseTrinketText(trinket, {L["Use"], "absorb"})
 end
 
 function jps.isPVPInsignia(trinket)
 	return parseTrinketText(trinket, {L["Use"], "Removes all movement impairing"})
 end
+
 --[[
 function jps.isDPSHPSTrinket(trinket)
 	local validStrings = {
+		{L["Use"], "Increases", "spell power"},
+		{L["Use"], "Increases", "strength"},
+		{L["Use"], "Increases", "agility"},
+		{L["Use"], "Increases", "intellect"},
+		{L["Use"], "charges your weapon"},
+		{L["Use"], "Increases", "haste"},
+		{L["Use"], "Increases", "critical strike"},
+		{L["Use"], "Increases", "mastery"},
 	}
 	for k,valTable in pairs(validStrings) do 
 		if parseTrinketText(trinket, valTable) == true then
@@ -630,6 +648,7 @@ function jps.isDPSHPSTrinket(trinket)
 	return false
 end
 ]]--
+
 
 function jps.itemCooldown(item) -- start, duration, enable = GetItemCooldown(itemID) or GetItemCooldown("itemName")
 	if item == nil then return 999 end
