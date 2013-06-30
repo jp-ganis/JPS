@@ -54,7 +54,8 @@ function parseStaticSpellTable( hydraTable )
             local macroTarget = spell[3]
             if type(macroTarget)=="function" then macroTarget = macroTarget() end
             -- Workaround for TargetUnit is still PROTECTED despite goblin active
-             if jps.UnitExists(macroTarget) then jps.Macro("/target "..macroTarget) end
+            local changeTargets = jps.UnitExists(macroTarget) 
+            if changeTargets then jps.Macro("/target "..macroTarget) end
              
             if conditions() and type(macroText) == "string" then
                 local macroSpell = macroText
@@ -81,7 +82,7 @@ function parseStaticSpellTable( hydraTable )
                     end
                 end
             end
-            if jps.isHealer then jps.Macro("/targetlasttarget") end
+            if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
         end
 
         -- If not already assigned, assign target now.
