@@ -28,8 +28,12 @@ jps.raid.encounterTimers = {}
 jps.raid.hasDBM = false
 jps.raid.hasBigWings = false
 jps.raid.validFight = false
+jps.raid.initialized = false
+jps.UpdateRaidBarsInterval = 0.5 -- maybe we need a smaller value !
+jps.raid.currentEncounterTable = {}
 
 function jps.raid.initialize()
+	jps.raid.initialized = true
     jps.findEncounterAddon()
 end
 
@@ -51,7 +55,8 @@ function jps.raid.getInstanceInfo()
     diffTable[10] = "none"
     diffTable[11] = "normal3"
     diffTable[12] = "heroic3" 
-    return {instance = name , enemy = targetName, difficulty = diffTable[difficultyID]}
+    jps.raid.instance = {instance = name , enemy = targetName, difficulty = diffTable[difficultyID]}
+    return jps.raid.instance
 end
 
 -- look for encounter addon
@@ -67,15 +72,11 @@ end
 
 -- read boss mod timers
 function jps.raid.getCurrentBossModTimers()
-    jps.raid.encounterTimers = {}
     if jps.raid.hasDBM == true then
         bars = _G.DBM.Bars.bars
         for bar in pairs(bars) do
-            --remove time from id
-            local newTimer = {}
-            newTimer["timer"] = bar.timer
-            newTimer["name"] = bar.id
-            table.insert(jps.raid.encounterTimers, newTimer)
+            -- to-do : remove time from id
+            jps.raid.encounterTimers[bar.id] = {timer = bar.timer, name= bar.id }
 		end
     elseif jps.raid.hasBigWings == true then
         -- to do
@@ -83,7 +84,7 @@ function jps.raid.getCurrentBossModTimers()
     end
 end
 
-function jps.raid.encounterTimer(ability) 
+function jps.raid.getTimer(ability) 
     for v,k in pairs(jps.raid.encounterTimers) do 
         if ability == v.name then
             return v.timer
@@ -93,13 +94,22 @@ function jps.raid.encounterTimer(ability)
 end
 -- supported by jps
 function jps.raid.isSupported()
+	local supportedFight = false
+	local supportedSpec = false
  local raidInfo = jps.raid.getInstanceInfo()
-    if  jps.raid.supported[raidInfo.instance] ~= nil then -- supported instance
-        if jps.raid.supported[raidInfo.instance][raidInfo.enemy] ~= nil then -- supported encounter
-            return true
+    if  jps.raid.supportedEncounters[raidInfo.instance] ~= nil then -- supported instance
+        if jps.raid.supportedEncounters[raidInfo.instance][raidInfo.enemy] ~= nil then -- supported encounter
+        	jps.raid.currentEncounterTable = jps.raid.supportedEncounters[raidInfo.instance][raidInfo.enemy]
+            supportedFight = true
         end
     end
-    return false
+    if jps.raid.supportedAbilities[jps.Class] ~= nil then
+	    if jps.raid.supportedAbilities[jps.Class][jps.Spec] ~= nil
+	    jps.raid.currentAbilityTable = jps.raid.supportedAbilities[jps.Class][jps.Spec]
+	    	supportedSpec = true
+	    then
+    end
+    return supportedFight and supportedSpec
 end
 
 -- fight start, read instance information , connect to boss mods, get timers
@@ -120,29 +130,107 @@ jps.raid.frame = CreateFrame('Frame')
 jps.raid.frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 jps.raid.frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 function jps.raid.eventManager(self, event, ...)
-    if event == "PLAYER_REGEN_ENABLED" then
+    if event == "PLAYER_REGEN_ENABLED" and jps.RaidMode then
         jps.raid.leaveFight()
-    elseif event == "PLAYER_REGEN_DISABLED" then
+    elseif event == "PLAYER_REGEN_DISABLED" and jps.RaidMode then
+    	if not jps.raid.initialized then
+    		jps.raid.initialize()
+    	end
         jps.raid.fightEngaged()
     end
 end
 jps.raid.frame:SetScript("OnEvent", jps.raid.eventManager)
+jps.raid.frame:SetScript("OnUpdate", function(self, elapsed)
+	if jps.RaidMode then
+		if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
+		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
+		if (self.TimeSinceLastUpdate > jps.UpdateRaidBarsInterval and jps.raid.validFight) then
+			jps.raid.getCurrentBossModTimers()
+	   	end
+   	end
+end)
+
+function jps.raid.shouldCast(ability)
+	if jps.RaidMode and jps.raid.validFight then
+		if type(ability) == "string" then spellname = ability end
+		if type(ability) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+		for key,spellTable  in pairs(jps.raid.currentEncounterTable) do
+			local encounterSpellName = spellTable[1]
+			local typeOfAbility = spellTable[2]
+			local conditionsToCheck = spellTable[3]
+			if jps.raid.currentAbilityTable[spellname] ~= nil  and conditionsMatched(spellname, conditionsToCheck)  then
+				if typeOfAbility == jps.raid.currentAbilityTable[ability]["spellType"] then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+
+jps.raid.supportedAbilities = {
+	{"Death Knight", 
+		{"Blood", 
+			{"anti-magic shell" = {spellType="magic", spellAction="absorb"}},
+			{"anti-magic shell" = {spellType="dispelMagic", spellAction="dispel"}},
+			{"Death's Advance" = {spellType="runspeed"}},
+		},
+		{"Frost", 
+			{"anti-magic shell" = {spellType="magic", spellAction="absorb"}},
+			{"anti-magic shell" = {spellType="dispelMagic", spellAction="dispel"}},
+			{"Death's Advance" = {spellType="runspeed"}},
+		},
+		{"Unholy", 
+			{"anti-magic shell" = {spellType="magic", spellAction="absorb"}},
+			{"anti-magic shell" = {spellType="dispelMagic", spellAction="dispel"}},
+			{"Death's Advance" = {spellType="runspeed"}},
+		}
+	},
+	{"Paladin" 
+		{"Holy", 
+			{"Speed of Light" = {spellType="runspeed"}},
+		}
+	}
+}
 
 -- supported raids & encounters
-jps.raid.supported = {
+jps.raid.supportedEncounters = {
     {"Throne Of Thunder", 
         {"Jin'rokh the Breaker", 
             {
-                {"Focused Lightning", "magic" , jps.debuff("Focused Lightning","player") },
-                {"Lightning Storm", "magic", jps.raid.encounterTimer("Lightning Storm") < 0.5 }
+                --{"Focused Lightning", "magic" , jps.debuff("Focused Lightning","player") }, 
+                {"Focused Lightning", "runspeed" , jps.debuff("Focused Lightning","player") }, 
+                {"Lightning Storm", "magic", jps.raid.getTimer("Lightning Storm") < 0.5 and jps.hp() < 0.85 },
+                {"Ionization", "dispelMagic", jps.raid.getTimer("Ionization") < 1 and jps.isTank == false }, --- no ionization @ HC on tanks!
+                {"Lightning Storm", "runspeed", jps.raid.getTimer("Lightning Storm") < 1 and jps.debuff("Fluidity", "player") }
             }
         },
         {"Horridon", 
             {
                 { "charge", "physical", jps.debuff("charge") },
                 { "Rampage", "physical", jps.buff("rampage", "target") and jps.hp() < 0.5 },
-                { "Triple Puncture", "physical" , jps.debuffStacks("Triple Puncture","player") > 5 and jps.hp() < .6 },
             }
         },
+        {"Council Of Elders", 
+            {
+            }
+        },
+        {"Tortos", 
+            {
+            }
+        },
+        {"Megaera", 
+            {
+            }
+        },
+        {"Ji-Kun", 
+            {
+            }
+        },
+        {"Durumu The Forgotten", 
+            {
+            }
+        }
     },
 }

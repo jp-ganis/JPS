@@ -10,7 +10,6 @@ jputils.lua
 jphealing.lua
 jpparse.lua
 jpdata.lua
-jptips.lua
 jplogging.lua
 jpdots.lua
 jplexer.lua
