@@ -131,6 +131,7 @@ combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
+combatFrame:RegisterEvent("ADDON_ACTION_BLOCKED")
 combatFrame:RegisterEvent("LOOT_OPENED")
 combatFrame:RegisterEvent("LOOT_CLOSED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
@@ -233,6 +234,18 @@ end
 -- "ADDON_ACTION_FORBIDDEN"
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		jps.PLuaFlag = true
+		local addon, eventBlocked = ...
+		if addon == "JPS" then  -- thx here to Phelps & ProbablyEngine
+			StaticPopup1:Hide()
+			if jps.Debug then write("Addon Action blocked: "..eventBlocked) end
+		end
+-- "ADDON_ACTION_BLOCKED"
+	elseif event == "ADDON_ACTION_BLOCKED" then
+		local addon, eventBlocked = ...
+		if addon == "JPS" then -- thx here to Phelps & ProbablyEngine
+			StaticPopup1:Hide()
+			if jps.Debug then write("Addon Action blocked: "..eventBlocked) end
+		end
 	  
 -- FISHES
 	elseif event == "LOOT_OPENED"  then
@@ -848,9 +861,6 @@ function jps_Combat()
 --		  jps.Cast(jps.ThisCast)
 --	  end
 --   end
-   
-   -- Hide Error
-   StaticPopup1:Hide()
    
    -- Return spellcast.
    return jps.ThisCast,jps.Target
