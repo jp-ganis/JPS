@@ -61,6 +61,7 @@ jps.HarmSpell = nil
 jps.IconSpell = nil
 jps.CurrentCast = {}
 jps.SpellBookTable = {}
+jps.detectSpecDisabled = false
 
 -- Class
 jps.isNotBehind = false
@@ -138,9 +139,7 @@ combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 combatFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-if UnitLevel("player") < 10 then
-	combatFrame:RegisterEvent("PLAYER_LEVEL_UP")
-end
+combatFrame:RegisterEvent("PLAYER_LEVEL_UP")
 
 --combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
 --combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
@@ -411,6 +410,7 @@ end
 				jps.Level = eventtable[1]
 				jps.detectSpec()
 				jps.Enabled = true
+				jps.detectSpecDisabled = false
 			end
 				
 -- COMBAT_LOG_EVENT
@@ -622,6 +622,8 @@ combatFrame:SetScript("OnEvent", jps_combatEventHandler)
 ------------------------
 
 function jps.detectSpec()
+	if jps.detectSpecDisabled then return false end
+	
 	jps.Count = 1
 	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
 	jps.ToggleRotationName = {"No Rotations"}
@@ -639,6 +641,7 @@ function jps.detectSpec()
 			if jps.Level < 10 then 
 				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
 				jps.Enabled = false
+				jps.detectSpecDisabled = true
 			else
 				write("jps couldn't find your talent tree... One second please.") 
 			end
