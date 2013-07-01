@@ -93,6 +93,7 @@ jps.RaidTimeToLive = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
 jps.settings = {}
+jps.settingsQueue = {}
 jps.combatStart = 0
 
 -- Config.
@@ -755,7 +756,9 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage("collect") end
+		if jps.getConfigVal("collect garbage ingame(could cause a fps drop)") == 1 then 
+			if GetAddOnMemoryUsage("JPS") > 5000 then collectgarbage("collect") end
+		end
 		updateTimeToDie()
 	  	if jps.Combat and jps.Enabled then
 		 	jps_Combat() 
