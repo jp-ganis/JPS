@@ -13,7 +13,6 @@ function shouldInterruptCasting(spellsToCheck)
 			if healTargetHP > breakpoint then
 				return true, spellName
 			end
-			
 		end
 	end
 	return false, nil
