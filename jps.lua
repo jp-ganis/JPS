@@ -61,6 +61,7 @@ jps.HarmSpell = nil
 jps.IconSpell = nil
 jps.CurrentCast = {}
 jps.SpellBookTable = {}
+jps.detectSpecDisabled = false
 
 -- Class
 jps.isNotBehind = false
@@ -93,6 +94,7 @@ jps.RaidTimeToLive = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
 jps.settings = {}
+jps.settingsQueue = {}
 jps.combatStart = 0
 
 -- Config.
@@ -130,15 +132,14 @@ combatFrame:RegisterEvent("PLAYER_ALIVE")
 combatFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 combatFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
 combatFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN")
+combatFrame:RegisterEvent("ADDON_ACTION_BLOCKED")
 combatFrame:RegisterEvent("LOOT_OPENED")
 combatFrame:RegisterEvent("LOOT_CLOSED")
 combatFrame:RegisterEvent("UI_ERROR_MESSAGE")
 combatFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 combatFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
 combatFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-if UnitLevel("player") < 10 then
-	combatFrame:RegisterEvent("PLAYER_LEVEL_UP")
-end
+combatFrame:RegisterEvent("PLAYER_LEVEL_UP")
 
 --combatFrame:RegisterEvent("PLAYER_CONTROL_GAINED") -- Fires after the PLAYER_CONTROL_LOST event, when control has been restored to the player
 --combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
@@ -232,6 +233,18 @@ end
 -- "ADDON_ACTION_FORBIDDEN"
 	elseif event == "ADDON_ACTION_FORBIDDEN" then
 		jps.PLuaFlag = true
+		local addon, eventBlocked = ...
+		if addon == "JPS" then  -- thx here to Phelps & ProbablyEngine
+			StaticPopup1:Hide()
+			if jps.Debug then write("Addon Action blocked: "..eventBlocked) end
+		end
+-- "ADDON_ACTION_BLOCKED"
+	elseif event == "ADDON_ACTION_BLOCKED" then
+		local addon, eventBlocked = ...
+		if addon == "JPS" then -- thx here to Phelps & ProbablyEngine
+			StaticPopup1:Hide()
+			if jps.Debug then write("Addon Action blocked: "..eventBlocked) end
+		end
 	  
 -- FISHES
 	elseif event == "LOOT_OPENED"  then
@@ -397,6 +410,7 @@ end
 				jps.Level = eventtable[1]
 				jps.detectSpec()
 				jps.Enabled = true
+				jps.detectSpecDisabled = false
 			end
 				
 -- COMBAT_LOG_EVENT
@@ -608,6 +622,8 @@ combatFrame:SetScript("OnEvent", jps_combatEventHandler)
 ------------------------
 
 function jps.detectSpec()
+	if jps.detectSpecDisabled then return false end
+	
 	jps.Count = 1
 	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
 	jps.ToggleRotationName = {"No Rotations"}
@@ -625,6 +641,7 @@ function jps.detectSpec()
 			if jps.Level < 10 then 
 				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
 				jps.Enabled = false
+				jps.detectSpecDisabled = true
 			else
 				write("jps couldn't find your talent tree... One second please.") 
 			end
@@ -755,7 +772,9 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
 	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
 	if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
-		if GetAddOnMemoryUsage("JPS") > 1000 then collectgarbage("collect") end
+		if jps.getConfigVal("collect garbage ingame(could cause a fps drop)") == 1 then 
+			if GetAddOnMemoryUsage("JPS") > 5000 then collectgarbage("collect") end
+		end
 		updateTimeToDie()
 	  	if jps.Combat and jps.Enabled then
 		 	jps_Combat() 
@@ -845,9 +864,6 @@ function jps_Combat()
 --		  jps.Cast(jps.ThisCast)
 --	  end
 --   end
-   
-   -- Hide Error
-   StaticPopup1:Hide()
    
    -- Return spellcast.
    return jps.ThisCast,jps.Target

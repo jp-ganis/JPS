@@ -652,8 +652,9 @@ end
 
 function jps.itemCooldown(item) -- start, duration, enable = GetItemCooldown(itemID) or GetItemCooldown("itemName")
 	if item == nil then return 999 end
-	local start,duration,_ = GetItemCooldown(item) -- GetItemCooldown(ItemID)
+	local start,duration,isNotBlocked = GetItemCooldown(item) -- GetItemCooldown(ItemID)
 	local cd = start+duration-GetTime() -- jps.Lag
+	if isNotBlocked == 0 then return 999 end -- 1 if the item is ready or on cooldown, 0 if the item is used, but the cooldown didn't start yet 
 	if cd < 0 then return 0 end
 	return cd
 end

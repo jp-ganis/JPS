@@ -296,6 +296,14 @@ function jps.addSettingsFrame()
 	end
 	
 	InterfaceOptions_AddCategory(jpsSettingsFrame)
+	
+	for key, settingOptions in pairs(jps.settingsQueue) do
+		if settingOptions["settingType"] == checkbox then
+			jps.addSettingsCheckbox(key)
+			jps.settingsQueue[key] = nil
+		end
+	end
+	
 	jpsSettingsFrame:Hide()
 	
 end
@@ -304,7 +312,13 @@ function jps.getConfigVal(key)
 	local setting = jps.settings[string.lower(key)]
 	if setting == nil then
 		jps.setConfigVal(key, 1)
-		jps.addSettingsCheckbox(key)
+		if not jps.Configged then
+			if jps.settingsQueue[key] == nil then
+				jps.settingsQueue[key] = {settingType="checkbox" }
+			end
+		else
+			jps.addSettingsCheckbox(key)
+		end
 		return 1
 	else 
 		return setting
