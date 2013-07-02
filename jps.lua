@@ -120,6 +120,7 @@ local total_time = 0
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
+--[[JPSEVENT
 local combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
 combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -145,7 +146,7 @@ combatFrame:RegisterEvent("PLAYER_LEVEL_UP")
 --combatFrame:RegisterEvent("PLAYER_CONTROL_LOST") -- Fires whenever the player is unable to control the character
 combatFrame:RegisterEvent("RAID_ROSTER_UPDATE")
 combatFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-
+]]
 --------------------------
 -- LOCALIZATION
 --------------------------
@@ -162,7 +163,7 @@ end
 --------------------------
 -- EVENTS HANDLER
 --------------------------
-
+--[[JPSEVENT
 	function jps_combatEventHandler(self, event, ...)
 
 	if event == "PLAYER_LOGIN" then
@@ -457,32 +458,12 @@ end
 			local enemyName = eventtable[5] -- eventtable[5] == sourceName
 			local enemyGuid = eventtable[4] -- eventtable[4] == sourceGUID
 			jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
--- TABLE DAMAGE
---[[		elseif (eventtable[8] ~= nil) and ((eventtable[2] == "SPELL_PERIODIC_DAMAGE") or (eventtable[2] == "SPELL_DAMAGE") or (eventtable[2] == "SWING_DAMAGE")) then
-			local dmg_TTD = 0
-			jps.Combat = true
-			jps.gui_toggleCombat(true)
-			-- end_time = GetTime()
-			-- total_time = math.max(end_time - start_time, 1)
-			if (eventtable[2] == "SPELL_DAMAGE" or eventtable[2] == "SPELL_PERIODIC_DAMAGE") and (eventtable[15] > 0) then
-				dmg_TTD = eventtable[15]
-			elseif (eventtable[2] == "SWING_DAMAGE") and (eventtable[12] > 0) then
-				dmg_TTD = eventtable[12]
-			end
-			if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
-				local unitGuid = eventtable[8] -- eventtable[8] == destGUID
-				if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
-				local dataset = jps.RaidTimeToDie[unitGuid]
-				local data = table.getn(dataset)
-				if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
-				table.insert(dataset, 1, {GetTime(), dmg_TTD})
-				jps.RaidTimeToDie[unitGuid] = dataset
-				--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
-			end
-]]
+			
+
 		end
 	end
 end
+]]
 
 function updateTimeToDie(unit)
 	if not unit then
@@ -614,9 +595,9 @@ jps.timeToDieFunctions["WeightedLeastSquares"] = {
 		end
 	end 
 }
-
+--[[JPSEVENT
 combatFrame:SetScript("OnEvent", jps_combatEventHandler)
-
+]]
 ------------------------
 -- DETECT CLASS SPEC
 ------------------------
@@ -767,6 +748,7 @@ function SlashCmdList.jps(cmd, editbox)
 end
 
 -- Create the frame that does all the work
+--[[JPSEVENT
 JPSFrame = CreateFrame("Frame", "JPSFrame")
 JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 	if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
@@ -782,6 +764,7 @@ JPSFrame:SetScript("OnUpdate", function(self, elapsed)
 		end
    	end
 end)
+]]
 
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
