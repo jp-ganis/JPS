@@ -121,6 +121,9 @@ local total_time = 0
 SLASH_jps1 = '/jps'
 
 --[[JPSEVENT
+local L = MyLocalizationTable
+
+>>>>>>> 37565819679b6962f835c231e4be218e9228642a
 local combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
 combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -151,7 +154,7 @@ combatFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 -- LOCALIZATION
 --------------------------
 
-local L = MyLocalizationTable
+
 
 function write(...)
    DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange

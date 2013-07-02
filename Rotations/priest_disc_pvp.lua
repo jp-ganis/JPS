@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 
 -- Create a frame that will periodically (OnUpdate)
 --local frame = CreateFrame("Frame")

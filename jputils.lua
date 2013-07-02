@@ -20,7 +20,7 @@
 -- LOCALIZATION
 --------------------------
 
-local L = MyLocalizationTable
+
 
 ---------------------------
 -- FUNCTIONS CLASS SPEC

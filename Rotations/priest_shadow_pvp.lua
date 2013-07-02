@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 
 function priest_shadow_pvp()
 
