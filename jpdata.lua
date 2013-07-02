@@ -20,7 +20,7 @@
 -- LOCALIZATION
 --------------------------
 
-local L = MyLocalizationTable
+
 
 --------------------------
 -- Dispel Functions LOOP

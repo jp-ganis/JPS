@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 
 function shouldInterruptCasting(spellsToCheck)	
 	local healTargetHP = jps.hp(jps.LastTarget)

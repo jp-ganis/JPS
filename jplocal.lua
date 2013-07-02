@@ -18,7 +18,7 @@ local function defaultFunc(L, key)
 end
 MyLocalizationTable = setmetatable({}, {__index=defaultFunc})
 
-local L = MyLocalizationTable
+
 if GetLocale() == "frFR" then
  L["Hello World"] = "Bonjour la Terre"
 end
@@ -33,7 +33,7 @@ if (GetLocale() == "frFR") then
          __index = function(t, index) return index end
       })
 end
-local L = MyLocalizationTable
+
 ]]
 
 do

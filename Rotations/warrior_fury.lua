@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 -- TO DO : need better code style!!!!
 function warrior_fury()
 
