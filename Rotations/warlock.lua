@@ -19,6 +19,10 @@ wl.spells["spellLock"] = toSpellName(19647)
 wl.spells["mortalCoil"] = toSpellName(6789)
 wl.spells["createHealthstone"] = toSpellName(6201)
 wl.spells["curseOfTheElements"] = toSpellName(1490)
+wl.spells["demonicCircleSummon"] = toSpellName(48018)
+wl.spells["demonicCircleTeleport"] = toSpellName(48020)
+wl.spells["demonicGateway"] = toSpellName(113901)
+wl.spells["grimoireOfSacrifice"] = toSpellName(108503)
 --Affliction
 wl.spells["corruption"] = toSpellName(172)
 wl.spells["darkSoulMisery"] = toSpellName(113860)
@@ -57,7 +61,7 @@ end
 
 
 local function npcId(unit)
-    if UnitExists(unit) then return tonumber(UnitGUID(unit):sub(7, 10), 16) end
+    if UnitExists(unit) then return tonumber(UnitGUID(unit):sub(6, 10), 16) end
     return -1
 end
 -- stop spam curse of the elements at invalid targets @ mop
