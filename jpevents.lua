@@ -149,7 +149,6 @@ end)
 --- Event Handler
 jpsFrame:SetScript("OnEvent", function(self, event, ...)
     if eventTable[event] then
-        LOG.debug("OnEvent: %s", event)
         for _,fn in pairs(eventTable[event]) do
             local status, error = pcall(fn, ...)
             if not status then
