@@ -1,3 +1,11 @@
+local hPala = {}
+hPala.values = {}
+function hPala.updateValues() 
+end
+
+function hPala.get(key) 
+end
+
 local L = MyLocalizationTable
 
 function shouldInterruptCasting(spellsToCheck)	
@@ -11,12 +19,12 @@ function shouldInterruptCasting(spellsToCheck)
 		local spellName = healSpellTable[1]
 		if spellName == spellCasting then
 			if healTargetHP > breakpoint then
-				return true, spellName
+				print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
+				SpellStopCasting()
 			end
 			
 		end
 	end
-	return false, nil
 end
 
 function paladin_holy()
@@ -52,16 +60,13 @@ function paladin_holy()
 	
 	local ourHealTarget = jps.LowestInRaidStatus() -- return Raid unit name with LOWEST PERCENTAGE in RaidStatus
 	local healTargetHPPct = jps.hp(ourHealTarget) -- hp percentage of ourHealTarget
-	local mana = UnitPower(player,0)/UnitPowerMax(player,0) -- our mana
-	local hPower = UnitPower("player",9) -- SPELL_POWER_HOLY_POWER = 9 
+	local mana = jps.mana()
+	local hPower = jps.holyPower() -- SPELL_POWER_HOLY_POWER = 9 
 	local stance = GetShapeshiftForm() -- stance
 	local myLowestImportantUnit = jps.findMeATank() -- if not "tank" or  "focus" returns "player" as default
 	local myRaidTanks = jps.findTanksInRaid() -- get all players marked as tanks or with tank specific auras  
 	local importantHealTargets = myRaidTanks -- tanks / focus / target / player
 	local countInRaid = jps.CountInRaidStatus(0.8) -- number of players below 70% for AOE heals
-	
-	--Paladin stance 
-	--3 = Seal of Insight - Seal of Justice if retribution  
 
 	--------------------------------------------------------------------------------------------
 	---- Stop Casting to save mana - curently no AOE spell support!
@@ -76,12 +81,8 @@ function paladin_holy()
 			{.....},
 		} 
 	]]--
-	local interruptSpell, spellInterrupted = shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}})
-	
-	if interruptSpell == true  then
-		print("interrupt "..spellInterrupted.." , unit "..jps.LastTarget.. " has enough hp!");
-		SpellStopCasting()
-	end
+	shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}})
+
 
 	--------------------------------------------------------------------------------------------
 	---- myLowestImportantUnit = tanks / focus / target / player
@@ -113,7 +114,7 @@ function paladin_holy()
 	
 	local ourHealTargetIsTank = false
 
-	if lowestHP < healTargetHPPct then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP
+	if lowestHP < healTargetHPPct or lowestHP < 0.5 then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP or our important targets drop below 0.5
 		ourHealTarget = myLowestImportantUnit
 		ourHealTargetIsTank = true
 	end
