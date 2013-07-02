@@ -110,7 +110,6 @@ end
 
 -- ENEMY MOST TARGETED
 function jps.RaidTargetUnit()
-if enemies == nil then return "target" end
 local maxTargets = 0
 local enemyWithMostTargets = "target"
 	for enemyGuid, enemyName in pairs(jps.RaidTarget) do
@@ -138,187 +137,6 @@ function jps.IstargetMe()
 		end 
 	end
 	return nil
-end
-
------------------------
--- TIME TO DIE FRAME
------------------------
-
-jps.UnitToLiveData = {}
-jps.timeToLiveMaxSamples = 30
-
-local JPSEXTInfoFrame = CreateFrame("frame","JPSEXTInfoFrame")
-JPSEXTInfoFrame:SetBackdrop({
-      bgFile="Interface\\DialogFrame\\UI-DialogBox-Background",
-      tile=1, tileSize=32, edgeSize=32,
-      insets={left=11, right=12, top=12, bottom=11}
-})
-JPSEXTInfoFrame:SetWidth(150)
-JPSEXTInfoFrame:SetHeight(60)
-JPSEXTInfoFrame:SetPoint("CENTER",UIParent)
-JPSEXTInfoFrame:EnableMouse(true)
-JPSEXTInfoFrame:SetMovable(true)
-JPSEXTInfoFrame:RegisterForDrag("LeftButton")
-JPSEXTInfoFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
-JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
-JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
-local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal") -- "OVERLAY"
-infoFrameText:SetJustifyH("LEFT")
-infoFrameText:SetPoint("LEFT", 15, 0)
-infoFrameText:SetFont('Fonts\\ARIALN.ttf', 11, 'THINOUTLINE')
-local infoTTL = 60
-local infoTTD = 60
-
-JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
-JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
-    jps.updateTimeToLive(self, elapsed)
-end)
-JPSEXTInfoFrame:Hide()
-
-function jps.updateInfoText()
-	local infoTexts = ""
-	if infoTTL ~= nil and jps.isHealer and infoTTL < 200000 then
-		local minutesLive = math.floor(infoTTL / 60)
-		local secondsLive = infoTTL - (minutesLive*60)	
-		if infoTTL < 200000 then
-			infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
-		else 
-			infoTexts = "TimeToLive: n/a"
-		end
-	end
-
-	if infoTTD ~= nil and infoTTD < 200000 then
-		local minutesDie = math.floor(infoTTD / 60)
-		local secondsDie = infoTTD - (minutesDie*60)
-		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec"
-	else
-		infoTexts = infoTexts.."TimeToDie: n/a"
-	end	
-	infoFrameText:SetText(infoTexts)
-end
-
-function jps.updateTimeToLive(self, elapsed)
-	if UnitAffectingCombat("player") == nil then return end
-	if self.TimeToLiveSinceLastUpdate == nil then self.TimeToLiveSinceLastUpdate = 0 end
-    self.TimeToLiveSinceLastUpdate = self.TimeToLiveSinceLastUpdate + elapsed
-    if (self.TimeToLiveSinceLastUpdate > jps.UpdateInterval) then
-        if jps.Combat and UnitExists("target") then
-            --jps.updateUnitTimeToLive("target")
-            self.TimeToLiveSinceLastUpdate = 0
-        end
-        infoTTL = jps.TimeToLive("target")
-		infoTTD = jps.TimeToDie("target")
-        jps.updateInfoText()
-    end
-end
-
------------------------
--- TIME TO DIE
------------------------
-
-function jps.updateUnitTimeToLive(unit)
-    local guid = UnitGUID(unit)
-    if jps.UnitToLiveData[guid] == nil then jps.UnitToLiveData[guid] = {} end
-    local dataset = jps.UnitToLiveData[guid]
-    local data = table.getn(dataset)
-    if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
-    table.insert(dataset, 1, {GetTime(), UnitHealth(unit)})
-    jps.UnitToLiveData[guid] = dataset
-end
-
--- table.getn Returns the size of a table, If the table has an n field with a numeric value, this value is the size of the table.
--- Otherwise, the size is the largest numerical index with a non-nil value in the table
--- we supply 3 arguments to the table.insert(table,position,value) function.
--- We can also use the table.remove(table,position) to remove elements from a table array.
--- jps.UnitToLiveData[guid] = { [1] = {GetTime(), UnitHealth(unit)} , [2] = {GetTime(), UnitHealth(unit)} , [3] = {GetTime(), UnitHealth(unit)} }
-
-function jps.clearTimeToLive()
-    jps.UnitToLiveData = {}
-    jps.RaidTimeToDie = {}
-	jps.RaidTimeToLive = {}
-end
-
-function jps.UnitTimeToLive(unit)
-	if unit == nil then return 60 end
-    local guid = UnitGUID(unit)
-	local health_unit = UnitHealth(unit)
-	local timetolive = 60 -- e.g. 60 seconds
-	local totalDmg = 1 -- to avoid 0/0
-	local incomingDps = 1
-	
-    if jps.UnitToLiveData[guid] ~= nil then
-        local dataset = jps.UnitToLiveData[guid]
-        local data = table.getn(dataset)
-        if #dataset > 1 then
-        	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
-			local totalTime = math.max(timeDelta, 1)
-        	totalDmg = dataset[data][2] - dataset[1][2] -- (UnitHealth_old - UnitHealth_last) = Health Loss
-        	incomingDps = math.ceil(totalDmg / totalTime)
-			if incomingDps <= 0 then incomingDps = 1 end
-        end
-		timetolive = math.ceil(health_unit / incomingDps)
-    end
-    return timetolive
-end
-
-function jps.TimeToLive(unit)
-	if unit == nil then return 60 end
-    local guid = UnitGUID(unit)
-	local health_unit = UnitHealth(unit)
-	local timetolive = 60 -- e.g. 60 seconds
-	local totalDmg = 1 -- to avoid 0/0
-	local incomingDps = 1
-	
-    if jps.RaidTimeToLive[guid] ~= nil then
-        local dataset = jps.RaidTimeToLive[guid]
-        local data = table.getn(dataset)
-        if #dataset > 1 then
-        	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
-			local totalTime = math.max(timeDelta, 1)
-        	totalDmg = dataset[data][2] - dataset[1][2] -- (UnitHealth_old - UnitHealth_last) = Health Loss
-        	incomingDps = math.ceil(totalDmg / totalTime)
-			if incomingDps <= 0 then incomingDps = 1 end
-        end
-		timetolive = math.ceil(health_unit / incomingDps)
-    end
-    return timetolive
-end
-
--- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
-function jps.TimeToDie(unit, percent)
-	local unitGuid = UnitGUID(unit)
-	local health = UnitHealth(unit)
-	if health == UnitHealthMax(unit) then
-		return 100000
-	end
-	local time = GetTime()
-    local timeToDie = jps.timeToDieFunctions[jps.timeToDieAlgorithm][1](jps.RaidTimeToDie[unitGuid],health,time)
-    
-	if percent ~= nil and timeToDie ~= nil then
-		curPercent = health/UnitHealthMax(unit)
-		if curPercent > percent then
-			timeToDie = (curPercent-percent)/(curPercent/timeToDie)
-		else
-			timeToDie = 0
-		end
-	end
-	
-	if timeToDie ~= nil then return math.ceil(timeToDie) else return 100000 end
-end
-
--- FRIEND UNIT WITH THE LOWEST TIMETODIE -- USAGE FOR HEALING TO SHIELD INCOMING DAMAGE
-function jps.LowestTimetoDie()
-	local lowestUnit = jpsName
-	local timetodie = 60
-	
-	for unit, unitTable in pairs(jps.RaidStatus) do
-		local timetodieUnit = jps.TimeToDie(unit)
-		if jps.canHeal(unit) and timetodieUnit < timetodie then
-			timetodie = timetodieUnit
-			lowestUnit = unit
-		end
-	end
-	return lowestUnit
 end
 
 ------------------------------
@@ -408,7 +226,7 @@ function jps.CountInRaidStatus(low_health_def)
 	if low_health_def == nil then low_health_def = 0.80 end
 	local units_needing_heals = 0
 		for unit, unitTable in pairs(jps.RaidStatus) do 
-			if jps.canHeal(unit) and unitTable["hpct"] < low_health_def then
+			if (unitTable["inrange"] == true) and unitTable["hpct"] < low_health_def then
 				units_needing_heals = units_needing_heals + 1
 			end
 		end	
@@ -421,7 +239,7 @@ function jps.LowestFriendly()
 	local lowestHP = 0
 	for unit, unitTable in pairs(jps.RaidStatus) do
 	local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
-		if jps.canHeal(unit) and thisHP > lowestHP then
+		if (unitTable["inrange"] == true) and thisHP > lowestHP then
 			lowestHP = thisHP
 			lowestUnit = unit
 		end
@@ -434,7 +252,7 @@ function jps.LowestInRaidStatus()
 	local lowestUnit = jpsName
 	local lowestHP = 1
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
+		if (unitTable["inrange"] == true) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
 			lowestHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
 			lowestUnit = unit
 		end
@@ -474,7 +292,7 @@ function jps.FindSubGroup()
 	local gr8 = 0
 
 	for unit,unitTable in pairs(jps.RaidStatus) do
-        if jps.canHeal(unit) then
+        if (unitTable["inrange"] == true) then
             	if  unitTable["subgroup"] == 1 then gr1= gr1+1
             elseif  unitTable["subgroup"] == 2 then gr2= gr2+1
             elseif  unitTable["subgroup"] == 3 then gr3 = gr3+1
@@ -510,11 +328,11 @@ function jps.FindSubGroupTarget(low_health_def)
 	local tt_count = 0
 	local lowestHP = low_health_def
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		if  jps.canHeal(unit) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
 			tt = unit
 			lowestHP = unitTable["hpct"]
 		end
-		if  jps.canHeal(unit) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < low_health_def) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < low_health_def) then
 			tt_count = tt_count + 1
 		end
 	end
@@ -528,7 +346,7 @@ function jps.FindSubGroupAura(auratypes) --  FindSubGroupAura("Carapace spiritue
 	local tt = nil
 
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and (unitTable["subgroup"] == groupToHeal) and (not jps.buff(auratypes,unit)) then
+		if (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (not jps.buff(auratypes,unit)) then
 			tt = unit
 		break end
 	end
@@ -536,26 +354,27 @@ function jps.FindSubGroupAura(auratypes) --  FindSubGroupAura("Carapace spiritue
 end
 
 -----------------------
--- UPDATE TABLE
+-- UPDATE RAIDSTATUS
 -----------------------
 --[[
 jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
 jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend }  -- TABLE OF ENEMY TARGETING FRIEND
 ]]
 
-function jps.UpdateRaidStatus()	
-	for unit,index in pairs(jps.RaidRoster) do	
-		local subgroup = jps.RaidRoster[unit].subgroup
-		local hpct_friend = jps.hp(unit)
-		local unittarget = jps.RaidRoster[unit]["unit"].."target"
-		local inrange_friend = jps.canHeal(unit)
-			jps.RaidStatus[unit] = {
-				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-				["hpct"] = hpct_friend,
-				["subgroup"] = subgroup,
-				["target"] = unittarget,
-				["inrange"] = inrange_friend
-			}
+function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5
+	local unitname = select(1,UnitName(unit))
+	if jps.RaidStatus[unitname] then
+	local subgroup = jps.RaidStatus[unitname].subgroup
+	local unit_hpct = jps.hp(unit)
+	local unittarget = unit.."target"
+	local inrange_friend = jps.canHeal(unit)
+		jps.RaidStatus[unitname] = {
+			["unit"] = unit, -- RAID INDEX player, party..n, raid..n
+			["hpct"] = unit_hpct,
+			["subgroup"] = subgroup,
+			["target"] = unittarget,
+			["inrange"] = inrange_friend
+		}
 	end
 end
 
@@ -579,7 +398,6 @@ function jps.SortRaidStatus()
 	-- for k,v in pairs (jps.RaidStatus) do jps.RaidStatus[k]=nil end
 	-- The difference between wipe(table) and table={} is that wipe removes the contents of the table, but retains the variable's internal pointer.
 	
-	table.wipe(jps.RaidRoster)
 	table.wipe(jps.RaidStatus)
 	table.wipe(jps.RaidTarget)
 			
@@ -605,13 +423,13 @@ function jps.SortRaidStatus()
 		
 		local subgroup = select(3,GetRaidRosterInfo(i))
 		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
-		local hpct_friend = jps.hp(unit)
+		local unit_hpct = jps.hp(unit)
 		local unittarget = unit.."target"
 		local inrange_friend = jps.canHeal(unit)
 		
-			jps.RaidRoster[unitname] = {
+			jps.RaidStatus[unitname] = {
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-				["hpct"] = hpct_friend,
+				["hpct"] = unit_hpct,
 				["subgroup"] = subgroup,
 				["target"] = unittarget,
 				["inrange"] = inrange_friend
@@ -625,16 +443,12 @@ end
 
 function jps_RaidTest()
 
-	print("|cff0070dd","HighestDMG","|cffffffff"..jps.LowestTimetoDie())
-	print("|cff0070dd","LowestFriendly","|cffffffff"..jps.LowestInRaidStatus())
-	print("|cff0070dd","AggroTank","|cffffffff"..jps.findMeATank())
-
 	for unit,index in pairs(jps.RaidStatus) do 
 		print("|cffa335eeJPS",unit,"Unit:",index.unit,"Hpct: ",index.hpct,"|cffa335eesubGroup: ",index.subgroup,"Target: ",index.target,"Range",index.inrange) -- color violet 
 	end
 
 	for unit,index in pairs(jps.RaidTarget) do
-		print("|cffe5cc80JPS",unit,"|cffa335ee","Unit: ",index.unit,"Hpct: ",index.guid)
+		print("|cffe5cc80JPS",unit,"|cffa335ee","Unit: ",index.unit,"Hpct: ",index.hpct,"Count: ",index.count)
 	end
 
 	local enemycount,targetcount = jps.RaidEnemyCount()

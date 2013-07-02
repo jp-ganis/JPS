@@ -8,10 +8,12 @@ function shaman_resto_pvp()
 	local hostileTarget = UnitIsEnemy("player","target")
 	local focus = "focus"
 	local me = "player"
-	local friendlies = {}
 
 	-- Populate friendlies
-	for name, _ in pairs(jps.RaidStatus) do table.insert( friendlies, name ) end
+	local friendlies = {}
+	for name,_ in pairs(jps.RaidStatus) do 
+	if jps.canHeal(unit) then table.insert(friendlies,name) end
+	end
 
 	-- Totems
 	local _, fireName, _, _, _ = GetTotemInfo(1)
