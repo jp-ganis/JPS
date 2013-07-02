@@ -137,7 +137,7 @@ jpsFrame:SetScript("OnUpdate", function(self, elapsed)
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jps.UpdateInterval) then
         for _,fn in pairs(updateTable) do
-            local status, error = pcall(fn, elapsed)
+            local status, error = pcall(fn)
             if not status then
                LOG.error("Error %s on OnUpdate function %s", error, fn)
             end
@@ -494,7 +494,7 @@ jps.registerCombatLogEventUnfiltered("SWING_DAMAGE", aggroTimer)
 jps.registerCombatLogEventUnfiltered("SPELL_DAMAGE", aggroTimer)
 
 -- REMOVE DIED UNIT OR OUT OF RANGE UNIT OF TABLES
-jps.registerCombatLogEventUnfiltered("", function(...)
+jps.registerCombatLogEventUnfiltered("UNIT_DIED", function(...)
     if select(8,...) ~= nil then
         local mobName = jps_stringTarget(select(9,...),"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
         local mobGuid = select(8,...) -- eventtable[8] == destGUID 
