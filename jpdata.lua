@@ -572,33 +572,89 @@ end
 -- isUsable, notEnoughMana = IsUsableItem(itemID) or IsUsableItem("itemName")
 -- isUsable - 1 if the item is usable; otherwise nil (1nil)
 -- notEnoughMana - 1 if the player lacks the resources (e.g. mana, energy, runes) to use the item; otherwise nil (1nil)
-
-function Tooltip_Parse(trinket)
+function parseTrinketText(trinket,str)
 	local id = 13 + trinket
+	if trinket > 1 then return false end
 	CreateFrame("GameTooltip", "ScanningTooltip", nil, "GameTooltipTemplate") -- Tooltip name cannot be nil
 	ScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" )
 	ScanningTooltip:ClearLines()
 	ScanningTooltip:SetInventoryItem("player", id)
 	-- hasItem, hasCooldown, repairCost = Tooltip:SetInventoryItem("unit", invSlot {, nameOnly})
 
-	local found = 0
+	local found = false
 	for i=1,select("#",ScanningTooltip:GetRegions()) do 
 		local region=select(i,ScanningTooltip:GetRegions())
 		if region and region:GetObjectType()=="FontString" and region:GetText() then
 			local text =  region:GetText()
 			--if text ~=nil then print(text) end
-			if string.find(text, L["Use"]) then 
-            	found = 1 
+			if type(str) == "table" then 
+				local matchesRequired = table.getn(str)
+				local matchesFound = 0
+				for key, val in pairs(str) do 
+					if string.find(text, val) then 
+            			matchesFound = matchesFound +1 
+            		end
+				end
+				if matchesFound == matchesRequired then found = true end
+			else 
+				if string.find(text, str) then 
+            		found = true 
+            	end
 			end
+			
 		end 
 	end
-return found
+	return found
 end
+
+function Tooltip_Parse(trinket)
+	return parseTrinketText(trinket, L["Use"])
+end
+
+function jps.isManaRegTrinket(trinket)
+	local result = parseTrinketText(trinket, {L["Use"], "spirit"}) or parseTrinketText(trinket, {L["Use"], "mana"}) 
+	return result
+end
+
+function jps.trinketIncreasesHealth(trinket)
+	return parseTrinketText(trinket, {L["Use"], "health"})
+end
+
+function jps.trinketAbsorbDmg(trinket)
+	return parseTrinketText(trinket, {L["Use"], "absorb"})
+end
+
+function jps.isPVPInsignia(trinket)
+	return parseTrinketText(trinket, {L["Use"], "Removes all movement impairing"})
+end
+
+--[[
+function jps.isDPSHPSTrinket(trinket)
+	local validStrings = {
+		{L["Use"], "Increases", "spell power"},
+		{L["Use"], "Increases", "strength"},
+		{L["Use"], "Increases", "agility"},
+		{L["Use"], "Increases", "intellect"},
+		{L["Use"], "charges your weapon"},
+		{L["Use"], "Increases", "haste"},
+		{L["Use"], "Increases", "critical strike"},
+		{L["Use"], "Increases", "mastery"},
+	}
+	for k,valTable in pairs(validStrings) do 
+		if parseTrinketText(trinket, valTable) == true then
+			return true
+		end
+	end
+	return false
+end
+]]--
+
 
 function jps.itemCooldown(item) -- start, duration, enable = GetItemCooldown(itemID) or GetItemCooldown("itemName")
 	if item == nil then return 999 end
-	local start,duration,_ = GetItemCooldown(item) -- GetItemCooldown(ItemID)
+	local start,duration,isNotBlocked = GetItemCooldown(item) -- GetItemCooldown(ItemID)
 	local cd = start+duration-GetTime() -- jps.Lag
+	if isNotBlocked == 0 then return 999 end -- 1 if the item is ready or on cooldown, 0 if the item is used, but the cooldown didn't start yet 
 	if cd < 0 then return 0 end
 	return cd
 end
