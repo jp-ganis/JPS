@@ -621,7 +621,7 @@ function jps.trinketIncreasesHealth(trinket)
 end
 
 function jps.trinketAbsorbDmg(trinket)
-	return parseTrinketText(trinket, {L["Use"], "absorb"})
+	return parseTrinketText(trinket, {L["Use"], "absorb"}) or parseTrinketText(trinket, {L["Use"], "Reduces damage taken"})
 end
 
 function jps.isPVPInsignia(trinket)
