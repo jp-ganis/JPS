@@ -5,7 +5,13 @@ function fnConditionsMatched(spell,conditions)
     if spell == nil then
         return false
     -- nil
-    elseif conditions == nil then
+    else
+        return fnConditionEval(conditions)
+    end
+end
+
+function fnConditionEval(conditions)
+    if conditions == nil then
         return true
     elseif type(conditions) == "boolean" then
         return conditions
@@ -43,13 +49,13 @@ function parseStaticSpellTable( hydraTable )
         if not target then target = "target" end
 
         -- NESTED TABLE
-        if spell == "nested" and conditions() then
+        if spell == "nested" and fnConditionEval(conditions) then
         
             local newTable = spellTable[3]
             spell,target = parseStaticSpellTable( newTable )
 
         -- MACRO -- BE SURE THAT CONDITION TAKES CARE OF CANCAST -- TRUE or FALSE -- NOT NIL
-        elseif type(spell) == "table" and spell[1] == "macro" and conditions() then
+        elseif type(spell) == "table" and spell[1] == "macro" and fnConditionEval(conditions) then
             local macroText = spell[2]
             local macroTarget = spell[3]
             if type(macroTarget)=="function" then macroTarget = macroTarget() end
@@ -57,7 +63,7 @@ function parseStaticSpellTable( hydraTable )
             local changeTargets = jps.UnitExists(macroTarget) 
             if changeTargets then jps.Macro("/target "..macroTarget) end
              
-            if conditions() and type(macroText) == "string" then
+            if fnConditionEval(conditions) and type(macroText) == "string" then
                 local macroSpell = macroText
                 if string.find(macroText,"%s") == nil then -- {"macro","/startattack"}
                     macroSpell = macroText
@@ -72,7 +78,7 @@ function parseStaticSpellTable( hydraTable )
             -- better than "#showtooltip\n/cast Frappe du colosse\n/cast Sanguinaire"
             -- because I can check the spell with jps.canCast
             -- {"macro",{109964,2060},player}
-            if conditions() and type(macroText) == "table" then
+            if fnConditionEval(conditions) and type(macroText) == "table" then
                 for _,sequence in ipairs (macroText) do
                     local spellname = tostring(select(1,GetSpellInfo(sequence)))
                     if jps.canCast(spellname,macroTarget) then
