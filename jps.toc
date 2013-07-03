@@ -6,13 +6,13 @@
 
 jplocal.lua
 jps.lua
+jplogging.lua
 jputils.lua
 jpttd.lua
 jphealing.lua
 jpparse.lua
 jpdata.lua
 jptips.lua
-jplogging.lua
 jpdots.lua
 jplexer.lua
 jpconditionparser.lua
@@ -20,6 +20,8 @@ jpconditionparser.lua
 Lib\jpgui.lua
 Lib\jpconfig.lua
 Lib\bindings.xml
+
+jpevents.lua
 
 Rotations\dk.lua
 Rotations\dk_blood.lua
