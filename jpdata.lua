@@ -536,6 +536,16 @@ function jps.IsCastingSpell(spell,unit)
 	return false
 end
 
+function jps.IsChannelingSpell(spell,unit)
+	local spellname = nil
+	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+	if unit == nil then unit = "player" end
+	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitChannelInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
+	if spellname == name and jps.ChannelTimeLeft(unit) > 0 then return true end
+	return false
+end
+
 function jps.IsCastingPoly(unit)
 	if not jps.canDPS(unit) then return false end
 	local istargeting = unit.."player"
