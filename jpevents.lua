@@ -29,6 +29,8 @@ local eventTable = {}
 local combatLogEventTable = {}
 
 
+-- Localization
+local L = MyLocalizationTable
 
 --------------------------
 -- (UN)REGISTER FUNCTIONS 
@@ -42,6 +44,7 @@ local combatLogEventTable = {}
 function jps.registerOnUpdate(fn)
     if not updateTable[fn] then
         updateTable[fn] = fn
+        return true
     end
 end
 
@@ -51,9 +54,10 @@ end
 -- was registered earlier. 
 -- Has no effect if the function wasn't registered
 -- @param fn function to unregister
-function jps.unregisterEvent(fn)
+function jps.unregisterOnUpdate(fn)
     if  updateTable[fn] then
         updateTable[fn] = nil
+        return true
     end
 end
 
@@ -70,6 +74,7 @@ function jps.registerEvent(event, fn)
     end
     if not eventTable[event][fn] then
         eventTable[event][fn] = fn
+        return true
     end
 end
 
@@ -88,6 +93,7 @@ function jps.unregisterEvent(event, fn)
         if count == 0 then
             jpsFrame:UnregisterEvent(event)
         end
+        return true
     end
 end
 
@@ -104,6 +110,7 @@ function jps.registerCombatLogEventUnfiltered(event, fn)
     end
     if not combatLogEventTable[event][fn] then
         combatLogEventTable[event][fn] = fn
+        return true
     end
 end
 
@@ -122,6 +129,7 @@ function jps.unregisterCombatLogEventUnfiltered(event, fn)
         if count == 0 then
             jpsFrame:UnregisterEvent(event)
         end
+        return true
      end
 end
 
@@ -149,7 +157,6 @@ end)
 --- Event Handler
 jpsFrame:SetScript("OnEvent", function(self, event, ...)
     if eventTable[event] then
-        LOG.debug("OnEvent: %s", event)
         for _,fn in pairs(eventTable[event]) do
             local status, error = pcall(fn, ...)
             if not status then
