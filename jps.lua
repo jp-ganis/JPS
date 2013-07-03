@@ -18,7 +18,7 @@
 
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
-
+local L = MyLocalizationTable
 jps = {}
 jps.Version = "1.3.0"
 jps.Revision = "r546"
@@ -153,7 +153,6 @@ combatFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 --------------------------
 -- LOCALIZATION
 --------------------------
-
 
 
 function write(...)
@@ -468,26 +467,26 @@ end
 end
 ]]
 
-function updateTimeToDie(unit)
+function updateTimeToDie(elapsed, unit)
 	if not unit then
-			updateTimeToDie("target")
-			updateTimeToDie("focus")
-			updateTimeToDie("mouseover")
+			updateTimeToDie(elapsed, "target")
+			updateTimeToDie(elapsed, "focus")
+			updateTimeToDie(elapsed, "mouseover")
 			for id = 1, 4 do
-				updateTimeToDie("boss" .. id)
+				updateTimeToDie(elapsed, "boss" .. id)
 			end
 			if jps.isHealer then
 				for id = 1, 4 do
-					updateTimeToDie("party" .. id)
-					updateTimeToDie("partypet" .. id)
+					updateTimeToDie(elapsed, "party" .. id)
+					updateTimeToDie(elapsed, "partypet" .. id)
 				end
 				for id = 1, 5 do
-					updateTimeToDie("arena" .. id)
-					updateTimeToDie("arenapet" .. id)
+					updateTimeToDie(elapsed, "arena" .. id)
+					updateTimeToDie(elapsed, "arenapet" .. id)
 				end
 				for id = 1, 40 do
-					updateTimeToDie("raid" .. id)
-					updateTimeToDie("raidpet" .. id)
+					updateTimeToDie(elapsed, "raid" .. id)
+					updateTimeToDie(elapsed, "raidpet" .. id)
 				end
 			end
 		return
