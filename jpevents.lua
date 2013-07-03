@@ -29,6 +29,8 @@ local eventTable = {}
 local combatLogEventTable = {}
 
 
+-- Localization
+local L = MyLocalizationTable
 
 --------------------------
 -- (UN)REGISTER FUNCTIONS 

@@ -18,7 +18,7 @@
 
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
-
+local L = MyLocalizationTable
 jps = {}
 jps.Version = "1.3.0"
 jps.Revision = "r546"
@@ -150,8 +150,6 @@ combatFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 --------------------------
 -- LOCALIZATION
 --------------------------
-
-local L = MyLocalizationTable
 
 function write(...)
    DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
