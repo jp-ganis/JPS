@@ -88,6 +88,10 @@ function paladin_holy()
 	table.insert(importantHealTargets,player)
 	if jps.canHeal("target") then table.insert(importantHealTargets,"target") end
 	if jps.canHeal("focus") then table.insert(importantHealTargets,"focus") end
+
+	-- ICC Dreamwalker healing
+	-- if jps.canHeal("Valithria Dreamwalker") then table.insert(importantHealTargets,"Valithria Dreamwalker") end
+
 	local lowestHP = 1
 	for unitName, _ in ipairs(importantHealTargets) do
 		local thisHP = jps.hp(unitName)
@@ -98,23 +102,15 @@ function paladin_holy()
 	end
 	
 	--------------------------------------------------------------------------------------------
-	---- myLowestTank = tanks only for beacon ,sacred shield, eternal flame
+	---- myTank = tanks only for beacon ,sacred shield, eternal flame
 	--------------------------------------------------------------------------------------------
-	local lowestTankHP = 1
-	local myLowestTank = jps.findMeATank()
-	for unitName, _ in ipairs(myRaidTanks) do
-		local thisHP = jps.hp(unitName)
-		if jps.canHeal(unitName) and thisHP <= lowestTankHP then 
-				lowestTankHP = thisHP
-				myLowestTank = unitName
-		end
-	end
-	
-	local ourHealTargetIsTank = false
+	local myTank = jps.findMeAggroTank() 
+
+	local gotImportantHealTarget = false
 
 	if lowestHP < healTargetHPPct then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP
 		ourHealTarget = myLowestImportantUnit
-		ourHealTargetIsTank = true
+		gotImportantHealTarget = true
 	end
 
 	local rangedTarget = "target"
@@ -137,16 +133,10 @@ function paladin_holy()
 	----------------------
 	-- dont change beacon everytime you heal another tank
 	----------------------
-	if jps.beaconTarget == nil then
-		jps.beaconTarget = nil
-	end
-	local haveUnitWithBeacon = false
 	if jps.beaconTarget ~=  nil then
-		if jps.buff("Beacon of Light", jps.beaconTarget) == true then
-			haveUnitWithBeacon = true
+		if not jps.buff("Beacon of Light", jps.beaconTarget) or not jps.canHeal(jps.beaconTarget) then
+			jps.beaconTarget = nil
 		end
-	else
-		jps.beaconTarget = myLowestImportantUnit
 	end
 	------------------------
 	-- SPELL TABLE -----
@@ -186,9 +176,9 @@ function paladin_holy()
 		-- Buffs
 		{ "Seal of Insight", stance ~= 3 , player },
 		{ "Beacon of Light", jps.canHeal("mouseover") and IsAltKeyDown() ~= nil and not jps.buff("Beacon of Light","mouseover") , "mouseover" , "set beacon of light to our mouseover" },  -- set beacon of light on mouseover
-		{ "Beacon of Light", (UnitIsUnit(myLowestTank,player)~=1) and not jps.buff("Beacon of Light",myLowestTank) and haveUnitWithBeacon == false, myLowestTank }, 
-		{ "Eternal Flame", (hPower > 2) and not jps.buff("Eternal Flame", myLowestTank) , myLowestTank },
-		{ "Sacred Shield", (UnitIsUnit(myLowestTank,player)~=1) and not jps.buff("Sacred Shield",myLowestTank), myLowestTank },
+		{ "Beacon of Light", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Beacon of Light",myTank) and jps.beaconTarget == nil, myTank }, 
+		{ "Eternal Flame", (hPower > 2) and not jps.buff("Eternal Flame", myTank) , myTank },
+		{ "Sacred Shield", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Sacred Shield",myTank), myTank },
 		
 		{ "Divine Protection", (playerHealthPct < 0.50) , player },
 		{ "Divine Shield", (playerHealthPct < 0.30) and jps.cooldown("Divine Protection")~=0 , player },
@@ -207,10 +197,10 @@ function paladin_holy()
 		{ "Cleanse", jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil , jps.DispelDiseaseTarget() , "dispelling unit" },
 		
 		-- tank + focus + target
-		{ "Flash of Light", lowestHP < 0.35 and ourHealTargetIsTank == true , ourHealTarget },
-		{ "Divine Light", lowestHP < 0.78  and ourHealTargetIsTank == true, ourHealTarget },
-		{ "Holy Shock", lowestHP < 0.94  and ourHealTargetIsTank == true, ourHealTarget },
-		{ "Holy Light", lowestHP < 0.90  and ourHealTargetIsTank == true, ourHealTarget },
+		{ "Flash of Light", lowestHP < 0.35 and gotImportantHealTarget == true , ourHealTarget },
+		{ "Divine Light", lowestHP < 0.78  and gotImportantHealTarget == true, ourHealTarget },
+		{ "Holy Shock", lowestHP < 0.94  and gotImportantHealTarget == true, ourHealTarget },
+		{ "Holy Light", lowestHP < 0.90  and gotImportantHealTarget == true, ourHealTarget },
 		
 		-- other raid / party
 		{ "Flash of Light", (healTargetHPPct < 0.30) , ourHealTarget },
@@ -220,10 +210,72 @@ function paladin_holy()
 		{ "Word of Glory", (hPower > 2) and (healTargetHPPct < 0.90) , ourHealTarget },
 		{ "Divine Plea", mana < 0.60, player },
 	}
+	
+	spellTable[2] = {
+    	["ToolTip"] = "Holy Paladin only tanks/Focus/self",
+		-- Kicks                    
+		{ "Rebuke", jps.shouldKick(rangedTarget) , rangedTarget },
+		{ "Rebuke", jps.shouldKick("focus"), "focus" },
+		{ "Fist of Justice", jps.shouldKick(rangedTarget) and jps.cooldown("Rebuke")~=0 , rangedTarget },
+		
+	-- Cooldowns                     
+		{ "Lay on Hands", lowestHP < 0.20 and jps.UseCDs , myLowestImportantUnit, "casted lay on hands!" },
+		{ "Divine Plea", mana < 0.60 and jps.glyphInfo(45745) == false and jps.UseCDs , player },
+		{ jps.useBagItem("Master Mana Potion"), mana < 0.60 and jps.UseCDs , player },
+		
+		{ "Avenging Wrath", jps.UseCDs , player },
+		{ "Divine Favor", jps.UseCDs , player },
+		{ "Guardian of Ancient Kings", jps.UseCDs , rangedTarget },
+		{ jps.useTrinket(0), jps.UseCDs },
+		{ jps.useTrinket(1), jps.UseCDs },
+		
+		-- Requires engineerins
+		{ jps.useSynapseSprings(), jps.UseCDs },
+		
+		-- Requires herbalism
+		{ "Lifeblood", jps.UseCDs },
+		
+		-- Multi Heals
+		{ "Light's Hammer", IsShiftKeyDown() ~= nil, rangedTarget },
+		{ "Light of Dawn",  jps.MultiTarget and hPower > 2 or jps.buff("Divine Purpose") and jps.CountInRaidStatus(0.9) > 2 , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+		{ "Holy Radiance", jps.MultiTarget and countInRaid > 2 , myLowestImportantUnit },  -- only here jps.MultiTarget since it is a mana inefficent spell
+		{ "Holy Shock", jps.buff("Daybreak") and lowestHP < .9 , myLowestImportantUnit }, -- heals with daybreak buff other targets
+
+		-- Buffs
+		{ "Seal of Insight", stance ~= 3 , player },
+		{ "Beacon of Light", jps.canHeal("mouseover") and IsAltKeyDown() ~= nil and not jps.buff("Beacon of Light","mouseover") , "mouseover" , "set beacon of light to our mouseover" },  -- set beacon of light on mouseover
+		{ "Beacon of Light", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Beacon of Light",myTank) and jps.beaconTarget == nil, myTank }, 
+		{ "Eternal Flame", (hPower > 2) and not jps.buff("Eternal Flame", myTank) , myTank },
+		{ "Sacred Shield", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Sacred Shield",myTank), myTank },
+		
+		{ "Divine Protection", (playerHealthPct < 0.50) , player },
+		{ "Divine Shield", (playerHealthPct < 0.30) and jps.cooldown("Divine Protection")~=0 , player },
+		
+	-- Infusion of Light Proc
+		{ "Divine Light", jps.buff("Infusion of Light") and (lowestHP < 0.5), myLowestImportantUnit }, 
+
+	-- Divine Purpose Proc
+		{ "Word of Glory", jps.buff("Divine Purpose") and (lowestHP < 0.90), myLowestImportantUnit }, 
+
+	-- Spells
+		{ "Cleanse", jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil  , jps.DispelFriendlyTarget()  , "dispelling unit " },
+		-- dispel ALL DEBUFF of FriendUnit
+		{ "Cleanse", jps.dispelActive() and jps.DispelMagicTarget() ~= nil , jps.DispelMagicTarget() , "dispelling unit" },
+		{ "Cleanse", jps.dispelActive() and jps.DispelPoisonTarget() ~= nil , jps.DispelPoisonTarget() , "dispelling unit" },
+		{ "Cleanse", jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil , jps.DispelDiseaseTarget() , "dispelling unit" },
+		
+		-- tank + focus + target
+		{ "Flash of Light", lowestHP < 0.35, myLowestImportantUnit },
+		{ "Divine Light", lowestHP < 0.78, myLowestImportantUnit },
+		{ "Holy Shock", lowestHP < 0.94, myLowestImportantUnit },
+		{ "Holy Light", lowestHP < 0.90, myLowestImportantUnit },
+		{ "Divine Plea", mana < 0.60, player },
+	}
+
 
 	local spellTableActive = jps.RotationActive(spellTable)
 	spell,target = parseSpellTable(spellTableActive)
-	if spell == "Beacon of Light" and target == "mouseover" then
+	if spell == "Beacon of Light" then
 		jps.beaconTarget = target
 	end
 	return spell,target

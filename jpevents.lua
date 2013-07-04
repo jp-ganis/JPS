@@ -27,6 +27,9 @@ local eventTable = {}
 -- Event Table for COMBAT_LOG_EVENT_UNFILTERED Sub-Types
 local combatLogEventTable = {}
 
+-- Localization
+local L = MyLocalizationTable
+
 --------------------------
 -- (UN)REGISTER FUNCTIONS 
 --------------------------

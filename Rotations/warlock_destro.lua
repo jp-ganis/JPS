@@ -98,6 +98,7 @@ spellTable[2] = {
     {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
 }
 
+spellTable[3] = wlk.spellTable
 
 
 function warlock_destro()   
