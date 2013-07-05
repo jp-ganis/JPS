@@ -23,7 +23,7 @@ function rogue_assass()
 		{ "envenom", cp > 4 },
 		{ "envenom", cp >= 2 and snd_duration < 3 },
 		{ "dispatch", cp < 5 },
-		{ "tricks of the trade", UnitExists("focus") and UnitIsFriend("focus"), "focus" },
+		{ "tricks of the trade", UnitExists("focus") and UnitIsFriend("focus", "player"), "focus" },
 		{ "tricks of the trade", tank ~= "player", tank },
 		{ "mutilate" },
 	}
