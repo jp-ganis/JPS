@@ -233,7 +233,7 @@ function jps.Cast(spell)  -- "number" "string"
 	if jps.Target==nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
 	
-	if jps.spell_need_select(spellname) then jps.groundClick() end
+	if jps.spell_need_select(spellname) and SpellIsTargeting() then jps.groundClick() end
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
 	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastCast) then
