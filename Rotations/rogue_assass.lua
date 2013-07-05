@@ -7,7 +7,7 @@ function rogue_assass()
 	local rupture_duration = jps.debuffDuration("rupture")
 	local snd_duration = jps.buffDuration("slice and dice")
 	local energy = UnitMana("player")
-	local tank = jps.findMeATank()
+	local tank = jps.findMeAggroTank()
 	local spellTable =
 	{
 		{ "preparation", not jps.buff("vanish") and jps.cooldown("vanish") > 60 },
