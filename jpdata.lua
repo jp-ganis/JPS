@@ -925,7 +925,7 @@ function jps.findMeAggroTank()
 	local allTanks = jps.findTanksInRaid() 
 	local highestThreat = 0
 	local aggroTank = "player"
-	for possibleTankUnit, _ in pairs(allTanks) do
+	for _, possibleTankUnit in pairs(allTanks) do
 		local unitThreat = UnitThreatSituation(possibleTankUnit)
 		if unitThreat > highestThreat then 
 			highestThreat = unitThreat
