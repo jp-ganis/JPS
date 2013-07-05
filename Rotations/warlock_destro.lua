@@ -101,7 +101,9 @@ spellTable[2] = {
 spellTable[3] = wlk.spellTable
 
 
-function warlock_destro()   
+function warlock_destro()
+    wl.deactivateBurningRushIfNotMoving(1)
+
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
         jps.NextSpell = {}
