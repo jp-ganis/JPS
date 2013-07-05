@@ -812,6 +812,12 @@ function jps.useSlot(num)
 	local trinketUsable = GetItemSpell(trinketId)
 	if not trinketUsable then return nil end
 	
+	-- Abort Disenchant (or any Spell Targeting) if active
+	if SpellIsTargeting() then
+		SpellStopTargeting()
+	end
+	
+	
 	-- Use it
 	return { "macro", "/use "..num }
 end
