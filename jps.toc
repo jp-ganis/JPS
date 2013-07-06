@@ -15,6 +15,7 @@ jptips.lua
 jpdots.lua
 jplexer.lua
 jpconditionparser.lua
+jphistory.lua
 
 Lib\jpgui.lua
 Lib\jpconfig.lua
