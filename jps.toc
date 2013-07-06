@@ -4,6 +4,7 @@
 ## SavedVariables: jpsDB
 ## Dependencies:
 
+ringbuffer.lua
 jplocal.lua
 jps.lua
 jplogging.lua
@@ -15,13 +16,13 @@ jptips.lua
 jpdots.lua
 jplexer.lua
 jpconditionparser.lua
-jphistory.lua
 
 Lib\jpgui.lua
 Lib\jpconfig.lua
 Lib\bindings.xml
 
 jpevents.lua
+jphistory.lua
 
 Rotations\dk.lua
 Rotations\dk_blood.lua

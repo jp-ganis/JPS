@@ -7,9 +7,39 @@ jphistory.rowHeight = 15
 jphistory.frameWidth = jphistory.textWidth + jphistory.targetWidth + jphistory.rowHeight
 jphistory.width = 150
 jphistory.thisSpell = nil
-jphistory.updateInterval = 0.1
+jphistory.updateInterval = 0.05
+jphistory.isCasting = false
+jphistory.target = nil
+jphistory.lastSpellLineId = 0
+jphistory.showNext = false
+
+jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(unit,spellName,rank,lineId,spellId)
+    -- lineId is 0 for ticks!
+    if unit=="player" and lineId > 1 and lineId ~= jphistory.lastSpellLineId then
+        jphistory.addSpellEvent(spellId)
+        jphistory.isCasting = false
+        jphistory.lastSpellLineId = lineId
+    end
+end)
+
+jps.registerEvent("UNIT_SPELLCAST_START", function(unit,spellName,rank,lineId,spellId)
+    jphistory.isCasting = true
+end)
+jps.registerEvent("UNIT_SPELLCAST_FAILED", function(unit,spellName,rank,lineId,spellId)
+    jphistory.isCasting = false
+end)
+
+--[[
 
 
+function SampleTrackerFunctions.UNIT_SPELLCAST_START()
+  is_casting = true
+end
+----
+function SampleTrackerFunctions.UNIT_SPELLCAST_FAILED()
+  is_casting = false
+end
+]]
 
 function cooldownLeft(spellName)
     local spellID = nil
@@ -37,26 +67,28 @@ end
 
 
 
-jphistory.history = {}
 jphistory.maxSize = 10
+jphistory.history = RingBuffer:init(jphistory.maxSize,{})
 
 function jphistory.update(self, elapsed)
     if self.TimeSinceLastUpdate == nil then self.TimeSinceLastUpdate = 0 end
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jphistory.updateInterval) then
         self.TimeSinceLastUpdate = 0
-        -- Next Cast
-        --local nextCast, nextTarget = jps.Rotation()
-        local cf = jphistory.castFrames[1]
-        if not nextTarget then nextTarget = "target" end
-        if nextCast then
-            name, _, icon = GetSpellInfo(nextCast)
-            cf.frame:Show()
-            cf.text:SetText(name)
-            cf.target:SetText(nextTarget)
-            cf.texture:SetTexture(icon)
-        else
-            cf.frame:Hide()
+        if jphistory.showNext then
+            -- Next Cast
+            local nextCast, nextTarget = jps.Rotation()
+            local cf = jphistory.castFrames[1]
+            if not nextTarget then nextTarget = "target" end
+            if nextCast then
+                name, _, icon = GetSpellInfo(nextCast)
+                cf.frame:Show()
+                cf.text:SetText(name)
+                cf.target:SetText(nextTarget)
+                cf.texture:SetTexture(icon)
+            else
+                cf.frame:Hide()
+            end
         end
         
         local cf = jphistory.castFrames[2]
@@ -68,10 +100,10 @@ function jphistory.update(self, elapsed)
             end
             local duration = endTime/1000-startTime/1000
             local castLeft = endTime/1000-GetTime()
-            local percentDone = duration / castLeft * 100
+            local percentDone = 100 - castLeft / duration * 100
             cf.frame:Show()
             cf.text:SetText(name .. " " ..math.floor( castLeft * 10) / 10)
-            cf.target:SetText(jphistory.thisSpell.target)
+            --XXX: cf.target:SetText(jphistory.thisSpell.target)
             cf.texture:SetTexture(icon)
             cf.frame:SetValue(percentDone)
         else
@@ -90,9 +122,10 @@ function jphistory.update(self, elapsed)
         end
     
         -- History Cast's
-        for i = 1,jphistory.maxSize do
-            local spell = jphistory.history[i]
-            local cf = jphistory.castFrames[i+2]
+        local i = 3
+        for spell in jphistory.history:iterator() do
+            local cf = jphistory.castFrames[i]
+            i = i+1
             if spell then
                 cf.frame:Show()
                 cf.text:SetText(spell.name)
@@ -218,13 +251,29 @@ jphistory.createAllCastFrames()
 
 
 
+function jphistory.updateTarget(target)
+    if not isCasting then
+        jphistory.target = target
+    end
+end
+--[[
 function jphistory.addSpell(spellname, target)
     local name, _, icon = GetSpellInfo(spellname)
-    if jphistory.thisSpell then tinsert(jphistory.history, 1, jphistory.thisSpell) end
-    jphistory.thisSpell = {name=name, target=target, icon=icon}
-    if table.getn(jphistory.history) > jphistory.maxSize then
-        table.remove(jphistory.history, jphistory.maxSize+1)
-    end
+    local spell = jphistory.history:next()
+    spell.name =name
+    spell.icon = icon
+    spell.target = target
+    jphistory.history:rotate()
+end
+]]
+
+function jphistory.addSpellEvent(spellId)
+    local name, _, icon = GetSpellInfo(spellId)
+    local spell = jphistory.history:next()
+    spell.name = name
+    spell.icon = icon
+    spell.target = jphistory.target
+    jphistory.history:rotate()
 end
 
 

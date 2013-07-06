@@ -234,6 +234,7 @@ function jps.Cast(spell)  -- "number" "string"
 	if not jps.Casting then jps.LastCast = spellname end
 	
 	if jps.spell_need_select(spellname) and SpellIsTargeting() then jps.groundClick() end
+	jps.history.updateTarget(jps.Target)
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
 	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastCast) then
