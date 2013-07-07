@@ -75,23 +75,7 @@ function jphistory.update(self, elapsed)
     self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
     if (self.TimeSinceLastUpdate > jphistory.updateInterval) then
         self.TimeSinceLastUpdate = 0
-        if jphistory.showNext then
-            -- Next Cast
-            local nextCast, nextTarget = jps.Rotation()
-            local cf = jphistory.castFrames[1]
-            if not nextTarget then nextTarget = "target" end
-            if nextCast then
-                name, _, icon = GetSpellInfo(nextCast)
-                cf.frame:Show()
-                cf.text:SetText(name)
-                cf.target:SetText(nextTarget)
-                cf.texture:SetTexture(icon)
-            else
-                cf.frame:Hide()
-            end
-        end
-        
-        local cf = jphistory.castFrames[2]
+        local cf = jphistory.castFrames[1]
         if UnitCastingInfo("player") or UnitChannelInfo("player") then
             --jphistory.thisSpell
             local name, _, _, icon, startTime, endTime = UnitCastingInfo("player")
@@ -122,7 +106,7 @@ function jphistory.update(self, elapsed)
         end
     
         -- History Cast's
-        local i = 3
+        local i = 2
         for spell in jphistory.history:iterator() do
             local cf = jphistory.castFrames[i]
             i = i+1
@@ -185,7 +169,7 @@ function jphistory.createAllCastFrames()
          })
 
     jphistory.frame:SetWidth(jphistory.frameWidth)
-    jphistory.frame:SetHeight(jphistory.rowHeight*(jphistory.maxSize+2))
+    jphistory.frame:SetHeight(jphistory.rowHeight*(jphistory.maxSize+1))
     jphistory.frame:SetPoint("CENTER",UIParent)
     jphistory.frame:EnableMouse(true)
     jphistory.frame:SetMovable(true)
@@ -196,7 +180,7 @@ function jphistory.createAllCastFrames()
     jphistory.frame:SetFrameStrata("FULLSCREEN_DIALOG")
     jphistory.frame:SetScript("OnUpdate", jphistory.update)
 
-    for i = 1,jphistory.maxSize+2 do
+    for i = 1,jphistory.maxSize+1 do
         jphistory.castFrames[i] = jphistory.createCastFrame(i)
     end
     
@@ -220,17 +204,8 @@ function jphistory.createAllCastFrames()
     jphistory.targetTitle:SetHeight(jphistory.rowHeight)
     jphistory.targetTitle:SetText("Target")
     jphistory.targetTitle:Show()
-    
-    jphistory.nextTitle = jphistory.titleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    jphistory.nextTitle:SetPoint("LEFT",jphistory.titleFrame, -105, -1 * jphistory.rowHeight)
-    jphistory.nextTitle:SetJustifyH("RIGHT")
-    jphistory.nextTitle:SetWidth(100)
-    jphistory.nextTitle:SetHeight(jphistory.rowHeight)
-    jphistory.nextTitle:SetText("Next:")
-    jphistory.nextTitle:Show()
-    
     jphistory.currentTitle = jphistory.titleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    jphistory.currentTitle:SetPoint("LEFT",jphistory.titleFrame, -105, -2 * jphistory.rowHeight)
+    jphistory.currentTitle:SetPoint("LEFT",jphistory.titleFrame, -105, -1 * jphistory.rowHeight)
     jphistory.currentTitle:SetJustifyH("RIGHT")
     jphistory.currentTitle:SetWidth(100)
     jphistory.currentTitle:SetHeight(jphistory.rowHeight)
@@ -238,7 +213,7 @@ function jphistory.createAllCastFrames()
     jphistory.currentTitle:Show()
     
     jphistory.lastTitle = jphistory.titleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    jphistory.lastTitle:SetPoint("LEFT",jphistory.titleFrame, -105, -3 * jphistory.rowHeight)
+    jphistory.lastTitle:SetPoint("LEFT",jphistory.titleFrame, -105, -2 * jphistory.rowHeight)
     jphistory.lastTitle:SetJustifyH("RIGHT")
     jphistory.lastTitle:SetWidth(100)
     jphistory.lastTitle:SetHeight(jphistory.rowHeight)
@@ -256,16 +231,6 @@ function jphistory.updateTarget(target)
         jphistory.target = target
     end
 end
---[[
-function jphistory.addSpell(spellname, target)
-    local name, _, icon = GetSpellInfo(spellname)
-    local spell = jphistory.history:next()
-    spell.name =name
-    spell.icon = icon
-    spell.target = target
-    jphistory.history:rotate()
-end
-]]
 
 function jphistory.addSpellEvent(spellId)
     local name, _, icon = GetSpellInfo(spellId)
