@@ -370,15 +370,7 @@ end)
 jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
     --if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
     jps.CurrentCast = {...}
-    
-    -- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
-    if jps.CurrentCast[2] == tostring(select(1,GetSpellInfo(5221))) then 
-        jps.isNotBehind = false
-        jps.isBehind = true
-    elseif jps.CurrentCast[2] == tostring(select(1,GetSpellInfo(8676))) then
-        jps.isNotBehind = false
-        jps.isBehind = true
-    end
+
     if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
         SaveView(2)
         if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then
@@ -388,6 +380,8 @@ jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
         end
         CameraOrSelectOrMoveStop()
     end
+    jps.isNotBehind = false
+     jps.isBehind = true
 end)
 
 -- RAIDSTATUS UPDATE
