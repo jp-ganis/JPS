@@ -1,13 +1,13 @@
-	--Ty to MEW Feral Sim
+  --Ty to MEW Feral Sim
 	-- jpganis
 function druid_feral_pve()
 	local spell = nil
 	local target = nil
-	
+
 	local energy = UnitMana("player")
 	local cp = GetComboPoints("player")
 	local executePhase = jps.hp("target") <= .25
-	local energyPerSec = 10.59
+	local energyPerSec = 11.16
 	
 	local tigersFuryCD = jps.cooldown("Tiger's Fury")
 	
@@ -18,10 +18,10 @@ function druid_feral_pve()
 	local cenarionStacks = jps.buffStacks(108381) 
 	-- Dream of Cenarius
 	
-	local ripDuration = jps.debuffDuration("Rip")
-	local rakeDuration = jps.debuffDuration("Rake")
+	local ripDuration = jps.myDebuffDuration("Rip")
+	local rakeDuration = jps.myDebuffDuration("Rake")
 	local savageRoarDuration = jps.buffDuration("Savage Roar")
-	local thrashDuration = jps.debuffDuration("Thrash")
+	local thrashDuration = jps.myDebuffDuration("Thrash")
 	local predatorySwiftnessDuration = jps.buffDuration("Predatory Swiftness")
 	
 	
@@ -61,7 +61,7 @@ function druid_feral_pve()
 	-- Savage Roar should be kept up at all times. 
 		{ "Savage Roar",  savageRoarDuration == 0 },
 		
-	-- Healing Touch when we have Predatory Swiftness, less than 2 cenarion stacks, and the combo points to use the damage buff. 
+	-- Healing Touch when we have Predatory Swiftness, less than 2 cenarion stacks, and the combo points to use the damage buff.
 		{ "Healing Touch",  predatorySwiftness and cenarionStacks < 2 and cp >= 4 and maxLevel },
 		
 	-- Healing Touch to use up Predatory Swiftness before it falls off if we have less than 2 cenarion stacks and low combo points and energy. 
@@ -83,7 +83,7 @@ function druid_feral_pve()
 		{ "Incarnation",  jps.UseCDs and berserk },
 		
 	-- Engineers may have synapse springs on their gloves (slot 10). 
-		{ jps.useSynapseSprings(),  jps.UseCDs },
+		{ jps.useSynapseSprings(),  jps.UseCDs and tigersFury },
 		
 	-- On-Use Trinkets if Berserk buff in on. 
 		{ jps.useTrinket(0),  jps.UseCDs },
@@ -120,9 +120,9 @@ function druid_feral_pve()
 		{ "Nature's Swiftness", cenarionStacks == 0  and not predatorySwiftness  and cp >= 5  and executePhase },
 		
 	-- Rip 
-		{ "Rip",  not jps.MultiTarget and (energy >= ripCost or clearcasting) and cp >= 5  and cenarionStacks > 0  and executePhase  and not jps.RipBuffed },
+		{ "Rip",  not jps.MultiTarget and (energy >= ripCost or clearcasting) and cp >= 5  and cenarionStacks > 0  and executePhase  and ripDuration < 4 },
 		
-	-- stronger rip detection  	-- Ferocious Bite 
+	-- stronger rip detection	  -- Ferocious Bite 
 		{ "Ferocious Bite",  not jps.MultiTarget and executePhase  and cp == 5  and ripDuration > 0 },
 		
 	-- Rip 
@@ -150,19 +150,19 @@ function druid_feral_pve()
 		{ "Ferocious Bite",  not jps.MultiTarget and cp >= 5  and ripDuration > 4 },
 		
 	-- Rake 
-		{ "Rake",  not jps.MultiTarget and (energy >= rakeCost or clearcasting) and cenarionStacks > 0  and not jps.RakeBuffed },
+		{ "Rake",  not jps.MultiTarget and (energy >= rakeCost or clearcasting) and cenarionStacks > 0  and rakeDuration < 3 },
 		
 	-- Rake 
 		{ "Rake",  not jps.MultiTarget and (energy >= rakeCost or clearcasting) and rakeDuration < 3  and (berserk  or tigersFuryCD + .8 >= rakeDuration) },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and clearcasting },
+		{ "Shred",  not jps.MultiTarget and clearcasting and jps.isBehind },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and predatorySwiftnessDuration > 1  and not (energy + (energyPerSec * (predatorySwiftnessDuration - 1)) < (4 - cp) * 20) },
+		{ "Shred",  not jps.MultiTarget and predatorySwiftnessDuration > 1  and not (energy + (energyPerSec * (predatorySwiftnessDuration - 1)) < (4 - cp) * 20) and jps.isBehind },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (  (cp < 5  and ripDuration < 3)  or (cp == 0  and savageRoarDuration < 2 )  ) },
+		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (  (cp < 5  and ripDuration < 3)  or (cp == 0  and savageRoarDuration < 2 )  ) and jps.isBehind },
 		
 	-- Thrash 
 		{ "Thrash",  cp >= 5  and energy >= thrashCost and thrashDuration < 6  and (tigersFury  or berserk) },
@@ -174,17 +174,19 @@ function druid_feral_pve()
 		{ "Thrash",  cp >= 5  and energy >= thrashCost and thrashDuration < 6  and energy >= 100 - energyPerSec },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (tigersFury  or berserk) },
+		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (tigersFury  or berserk)  and jps.isBehind },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= shredCost and tigersFuryCD <= 3 },
+		{ "Shred",  not jps.MultiTarget and energy >= shredCost and tigersFuryCD <= 3  and jps.isBehind },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= 100 - (energyPerSec * 2) } 
+		{ "Shred",  not jps.MultiTarget and energy >= 100 - (energyPerSec * 2)  and jps.isBehind }, 
+	-- Mangle if not behind
+		{ "Mangle",  not jps.MultiTarget and jps.isNotBehind }  
 	}
 	
+	--if (event_error == SPELL_FAILED_NOT_BEHIND) then jps.Cast("mangle") end 
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 
-end
-
+end	
