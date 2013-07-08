@@ -19,7 +19,7 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
-
+local L = MyLocalizationTable
 
 
 --------------------------
@@ -45,16 +45,11 @@ end
 
 function jps.IsCasting(unit)
 	if unit == nil then unit = "player" end
-	local enemyspell = nil
 	local enemycasting = false
-	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
-	if jps.CastTimeLeft(unit) > 0 then
-		enemycasting = true
-		enemyspell = name
-	elseif (jps.CastTimeLeft(unit) > 0) or (jps.ChannelTimeLeft(unit) > 0) then
+	if jps.CastTimeLeft(unit) > 0 or jps.ChannelTimeLeft(unit) > 0 then -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
 		enemycasting = true
 	end
-	return enemycasting,enemyspell
+	return enemycasting
 end
 
 function jps.IsCastingSpell(spell,unit)
@@ -64,6 +59,16 @@ function jps.IsCastingSpell(spell,unit)
 	if unit == nil then unit = "player" end
 	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
 	if spellname == name and jps.CastTimeLeft(unit) > 0 then return true end
+	return false
+end
+
+function jps.IsChannelingSpell(spell,unit)
+	local spellname = nil
+	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+	if unit == nil then unit = "player" end
+	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitChannelInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
+	if spellname == name and jps.ChannelTimeLeft(unit) > 0 then return true end
 	return false
 end
 

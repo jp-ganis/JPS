@@ -1,4 +1,3 @@
-
 -----------------------
 -- TIME TO DIE FRAME
 -----------------------
@@ -41,18 +40,34 @@ function jps.updateInfoText()
 		local secondsLive = infoTTL - (minutesLive*60)	
 		if infoTTL < 200000 then
 			infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
-		else 
-			infoTexts = "TimeToLive: n/a"
+		else
+			infoTexts = "TimeToLive: n/a".."\n"
 		end
 	end
 
 	if infoTTD ~= nil and infoTTD < 200000 then
 		local minutesDie = math.floor(infoTTD / 60)
 		local secondsDie = infoTTD - (minutesDie*60)
-		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec"
+		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec\n"
 	else
-		infoTexts = infoTexts.."TimeToDie: n/a"
+		infoTexts = infoTexts.."TimeToDie: n/a".."\n"
 	end	
+	if jps.getConfigVal("show current cast in JPS UI") == 1 then
+		local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget.."\n"
+		local message = "|cffffffff"..jps.CastBar.currentMessage
+		
+		infoTexts = infoTexts..currentCast
+		infoTexts = infoTexts..message.."\n"
+	end
+	if jps.isHealer and jps.getConfigVal("show Lowest Raid Member in UI") == 1  then
+		infoTexts = infoTexts.."|cffffffffLowestInRaid: |cffa335ee"..jps.LowestInRaidStatus().."\n"
+	end
+	if jps.getConfigVal("show Latency in JPS UI") == 1 then
+		if jps.CastBar.latency ~= 0 then
+			local latency = jps.CastBar.latency
+			infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
+		end
+	end
 	infoFrameText:SetText(infoTexts)
 end
 
@@ -62,7 +77,6 @@ function jps.updateTimeToLive(self, elapsed)
     self.TimeToLiveSinceLastUpdate = self.TimeToLiveSinceLastUpdate + elapsed
     if (self.TimeToLiveSinceLastUpdate > jps.UpdateInterval) then
         if jps.Combat and UnitExists("target") then
-            --jps.updateUnitTimeToLive("target")
             self.TimeToLiveSinceLastUpdate = 0
         end
         infoTTL = jps.TimeToLive("target")
@@ -166,16 +180,53 @@ function jps.TimeToDie(unit, percent)
 end
 
 -- FRIEND UNIT WITH THE LOWEST TIMETODIE -- USAGE FOR HEALING TO SHIELD INCOMING DAMAGE
-function jps.LowestTimetoDie()
+function jps.LowestTimetoLive()
 	local lowestUnit = jpsName
-	local timetodie = 60
+	local timetolive = 60
 	
-	for unit, unitTable in pairs(jps.RaidStatus) do
-		local timetodieUnit = jps.TimeToDie(unit)
-		if jps.canHeal(unit) and timetodieUnit < timetodie then
-			timetodie = timetodieUnit
+	for unit, index in pairs(jps.RaidStatus) do
+		local timetoliveUnit = jps.TimeToLive(unit)
+		if (index["inrange"] == true) and timetoliveUnit < timetolive then
+			timetolive = timetoliveUnit
 			lowestUnit = unit
 		end
 	end
 	return lowestUnit
 end
+
+---------------------------------------------------
+-- SLIDER UPDATE INTERVAL
+---------------------------------------------------
+
+function jps_round(val, decimal)
+  local exp = decimal and 10^decimal or 1
+  return math.ceil(val * exp - 0.5) / exp
+end
+
+local slider = CreateFrame("Slider","UpdateInterval",JPSEXTInfoFrame,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate  
+
+slider:ClearAllPoints()
+slider:SetPoint("TOP",0,20)
+--slider:SetWidth(120)
+--slider:SetHeight(12)
+slider:SetScale(0.8)
+slider:SetMinMaxValues(0.05, 0.5)
+slider.minValue, slider.maxValue = slider:GetMinMaxValues()
+slider:SetValue(0.2)
+slider:SetValueStep(0.05)
+slider:EnableMouse(true)
+local latency = jps_round(jps.CastBar.latency,3)
+getglobal(slider:GetName() .. 'Low'):SetText('0.05')
+getglobal(slider:GetName() .. 'High'):SetText('0.5')
+getglobal(slider:GetName() .. 'Text'):SetText("Update Interval")
+
+local function slider_OnClick(self)
+	jps.UpdateInterval = jps_round(slider:GetValue(),2)
+	write("jps.UpdateInterval set to: "..jps.UpdateInterval)
+end
+
+slider:SetScript("OnValueChanged", function(self,event)
+	if jps.UpdateInterval ~= jps_round(slider:GetValue(),2) then
+		slider_OnClick(self)
+	end
+end)

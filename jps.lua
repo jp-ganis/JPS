@@ -94,6 +94,7 @@ jps.firstInitializingLoop = true
 jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
+jps.RaidMode = false
 
 -- Config.
 jps.Configged = false
@@ -722,6 +723,14 @@ function SlashCmdList.jps(cmd, editbox)
    		jps.Macro("/reload")
 	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
+	elseif msg == "raid"  or msg == "raidmode" then
+		jps.RaidMode = not jps.RaidMode
+		if jps.RaidMode then
+			write("Raid Mode is now enabled")
+		else
+			write("Raid Mode is now disabled")
+		end
+		
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))

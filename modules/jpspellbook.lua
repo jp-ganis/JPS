@@ -19,8 +19,7 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
-
-
+local L = MyLocalizationTable
 
 ------------------------------
 -- GLYPHS
@@ -52,7 +51,7 @@ end
 function jps.glyphInfo(glyphID)
 	for i = 1, NUM_GLYPH_SLOTS do
 		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(i)
-		if ( enabled ) then
+		if enabled then
 			local link = GetGlyphLink(i) -- Retrieves the Glyph's link ("" if no glyph in Socket)
 			if ( link ~= "") and glyphSpellID == glyphID then return true end
 		end

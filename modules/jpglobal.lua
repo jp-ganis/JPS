@@ -16,7 +16,10 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
-
+--------------------------
+-- LOCALIZATION
+--------------------------
+local L = MyLocalizationTable
 
 --------------------------
 -- TABLE FUNCTIONS

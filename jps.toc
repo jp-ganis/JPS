@@ -6,14 +6,26 @@
 
 jplocal.lua
 jps.lua
+Data\jpraid.data.lua
 jplogging.lua
 jputils.lua
-jpttd.lua
 jphealing.lua
 jpparse.lua
-jpdata.lua
+modules\jpauras.lua
+modules\jpcasting.lua
+modules\jpccinterrupt.lua
+modules\jpdispel.lua
+modules\jpdots.lua
+modules\jpglobal.lua
+modules\jphealing.lua
+modules\jpitems.lua
+modules\jppowers.lua
+modules\jpraid.lua
+modules\jpspellbook.lua
+modules\jptesting.lua
+modules\jptimetodie.lua
+
 jplogging.lua
-jpdots.lua
 jplexer.lua
 jpconditionparser.lua
 

@@ -12,10 +12,10 @@ function fnTargetEval(target)
 end
 
 function fnConditionEval(conditions)
-    if conditions == nil then
+    if conditions == nil or conditions == "onCD" then
         return true
     elseif type(conditions) == "boolean" then
-        return conditions
+        return conditigons
     else
         return conditions()
     end
@@ -95,6 +95,28 @@ function parseStaticSpellTable( hydraTable )
     end
     return nil
 end
+
+-- Pick a spell from a priority table.
+function parseStaticRaidTable( hydraTable )
+    if not parser.compiledTables[tostring(hydraTable)] then 
+        jps.compileRaidSpellTable(hydraTable)
+        parser.compiledTables[tostring(hydraTable)] = true
+    end
+    
+    for _, spellTable in pairs(hydraTable) do
+        local spell = nil
+        local conditions = nil
+        local spellType = nil
+        spell = spellTable[1]
+        conditions = fnConditionEval(spellTable[3])
+        spellType = spellTable[2]
+        if conditions == true then
+            return spell, spellType 
+        end
+    end
+    return nil, nil
+end
+
 
 --[[
     FUNCTIONS USED IN SPELL TABLE
@@ -444,6 +466,25 @@ function jps.compileSpellTable(unparsedTable)
             if spell == "nested" then
                 jps.compileSpellTable(spellTable[3])
             end
+        end
+    end
+    return unparsedTable
+end
+
+function jps.compileRaidSpellTable(unparsedTable)
+    local spell = nil
+    local conditions = nil
+    local target = nil
+    local message = nil
+    
+    for i, spellTable in pairs(unparsedTable) do
+        if type(spellTable) == "table" then
+            spell = spellTable[1] 
+            conditions = spellTable[3]
+            if conditions ~= nil and type(conditions)=="string" then
+                spellTable[3] = jps.conditionParser(conditions)
+            end
+
         end
     end
     return unparsedTable

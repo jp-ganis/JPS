@@ -505,10 +505,6 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
 	local GUID = select(8, ...)
 	
 	local dmg_TTD = 0
-	jps.Combat = true
-	jps.gui_toggleCombat(true)
-	-- end_time = GetTime()
-	-- total_time = math.max(end_time - start_time, 1)
 	if (action == "SPELL_DAMAGE" or action == "SPELL_PERIODIC_DAMAGE") and periodicDMG ~= nil then
 		if periodicDMG > 0 then 
 			dmg_TTD = periodicDMg
@@ -520,7 +516,8 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
 	end
 	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
 		local unitGuid = GUID -- thisEvent[8] == destGUID
-
+		jps.Combat = true
+		jps.gui_toggleCombat(true)
 		if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
 		local dataset = jps.RaidTimeToDie[unitGuid]
 		local data = table.getn(dataset)

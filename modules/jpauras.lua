@@ -19,7 +19,7 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
-
+local L = MyLocalizationTable
 
 --------------------------
 -- BUFF DEBUFF

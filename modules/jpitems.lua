@@ -19,7 +19,7 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
-
+local L = MyLocalizationTable
 
 
 function jps.glovesCooldown()
@@ -151,15 +151,20 @@ function jps.useSlot(num)
 	-- get the Trinket ID
 	local trinketId = GetInventoryItemID("player", num)
 	if not trinketId then return nil end
-	
+
 	-- Check if it's on cooldown
 	local trinketCd = jps.itemCooldown(trinketId)
 	if trinketCd > 0 then return nil end
-	
+
 	 -- Check if it's usable
 	local trinketUsable = GetItemSpell(trinketId)
 	if not trinketUsable then return nil end
-	
+
+	-- Abort Disenchant (or any Spell Targeting) if active
+	if SpellIsTargeting() then
+		SpellStopTargeting()
+	end
+
 	-- Use it
 	return { "macro", "/use "..num }
 end

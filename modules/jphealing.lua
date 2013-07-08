@@ -1,6 +1,9 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
+
+local L = MyLocalizationTable
+
 --------------------------
 -- TABLE FUNCTIONS
 --------------------------
@@ -73,69 +76,20 @@ function jps_stringTarget(unit,case)
 return playerName
 end
 
------------------------
--- RAID ENEMY COUNT 
------------------------
--- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
-
--- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
-function jps.RaidEnemyCount() 
-local enemycount = 0
-local targetcount = 0
-	for unit,index in pairs(jps.EnemyTable) do 
-		enemycount = enemycount + 1
-	end
-	for tar_unit,tar_index in pairs(jps.RaidTarget) do
-		targetcount = targetcount + 1
-	end
-return enemycount,targetcount
-end
 
 -- ENEMY UNIT with LOWEST HEALTH
 function jps.LowestInRaidTarget() 
-local mytarget = nil
-local lowestHP = 1 
-	for unit,index in pairs(jps.RaidTarget) do
-		local unit_Hpct = index.hpct
-		if unit_Hpct < lowestHP then
-			lowestHP = unit_Hpct
-			mytarget = index.unit
+	local mytarget = nil
+	local lowestHP = 1 
+		for unit,index in pairs(jps.RaidTarget) do
+			local unit_Hpct = index.hpct
+			if unit_Hpct < lowestHP then
+				lowestHP = unit_Hpct
+				mytarget = index.unit
+			end
 		end
-	end
-return mytarget
+	return mytarget
 end
-
--- ENEMY MOST TARGETED
-function jps.RaidTargetUnit()
-local maxTargets = 0
-local enemyWithMostTargets = "target"
-	for enemyGuid, enemyName in pairs(jps.RaidTarget) do
-		if enemyName["count"] > maxTargets then
-		maxTargets = enemyName["count"]
-		enemyWithMostTargets = enemyName.unit
-	end
-end
-return enemyWithMostTargets
-end
-
--- ENEMY TARGETING THE PLAYER
--- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
--- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
-function jps.IstargetMe()
-	local enemy_guid = nil
-	for unit,index in pairs(jps.EnemyTable) do 
-		if index.friend == GetUnitName("player") then
-			enemy_guid = unit
-		end
-	end
-	for unit, index in pairs(jps.RaidTarget) do 
-		if  (unit == enemy_guid) then 
-			return index.unit -- return "raid1target"
-		end 
-	end
-	return nil
-end
->>>>>>> master:jphealing.lua
 
 ------------------------------
 -- SPELLTABLE -- contains the average value of healing spells
@@ -218,20 +172,6 @@ end
 ---------------------------
 -- HEALTH UNIT RAID
 ---------------------------
--- ENEMY UNIT with LOWEST HEALTH
-function jps.LowestInRaidTarget() 
-local mytarget = nil
-local lowestHP = 1 
-	for unit,index in pairs(jps.RaidTarget) do
-		local unit_Hpct = index.hpct
-		if unit_Hpct < lowestHP then
-			lowestHP = unit_Hpct
-			mytarget = index.unit
-		end
-	end
-return mytarget
-end
-
 
 -- COUNTS THE NUMBER OF PARTY MEMBERS INRANGE HAVING A SIGNIFICANT HEALTH PCT LOSS
 function jps.CountInRaidStatus(low_health_def)
@@ -470,6 +410,5 @@ function jps_RaidTest()
 	print("|cFFFF0000","EnemyTarget_","|cffffffff",enemytargeted,"|cFFFF0000","EnemyTargetMe_","|cffffffff",enemytargetMe)
 
 end
-
 
 

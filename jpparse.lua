@@ -19,6 +19,8 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
+local L = MyLocalizationTable
+
 
 
 

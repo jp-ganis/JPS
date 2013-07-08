@@ -242,7 +242,13 @@ function dk_blood()
 		-- Cntrol is pressed
 		{ "Army of the Dead",			IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		
+		
+		-- raid spells 
+		{ "Anti-Magic Shell",			jps.raid.shouldCast("anti-magic shell") and jps.UseCDs },
+		{ "Death's Advance",			jps.raid.shouldCast("Death's Advance") and jps.UseCDs },
+
 		-- Defensive cooldowns
+		
 		{ "Death Pact",			jps.hp() < .5 and haveGhoul },
 		{ "Lichborne",			jps.UseCDs and jps.hp() < 0.5 and rp >= 40 and jps.IsSpellKnown("Lichborne") },
 		{ "Death Coil",			 		jps.hp() < 0.5 and rp >= 40 and jps.buff("lichborne"), "player" }, 
