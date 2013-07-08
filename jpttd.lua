@@ -53,7 +53,7 @@ function jps.updateInfoText()
 		infoTexts = infoTexts.."TimeToDie: n/a".."\n"
 	end	
 
-	local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee_"..jps.CastBar.currentTarget.."\n"
+	local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget.."\n"
 	local message = "|cffffffff"..jps.CastBar.currentMessage
 	local latency = jps.CastBar.latency
 	infoTexts = infoTexts..currentCast

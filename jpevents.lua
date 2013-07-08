@@ -413,7 +413,7 @@ end)
 -- UNIT_SPELLCAST_SENT latency castbar
 jps.registerEvent("UNIT_SPELLCAST_SENT",  function(...) 
 	jps.CastBar.sentTime = GetTime()
-end
+end)
 -- UNIT_SPELLCAST_START latency castbar
 jps.registerEvent("UNIT_SPELLCAST_START",  function(...) 
 	local name, _, text, texture, startTime, endTime, _, castID, interrupt = UnitCastingInfo("player")
@@ -426,7 +426,7 @@ jps.registerEvent("UNIT_SPELLCAST_START",  function(...)
 	else
 		jps.CastBar.latency = 0
 	end
-end
+end)
 
 -- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 jps.registerEvent("PLAYER_LEVEL_UP", function(level)
@@ -499,26 +499,35 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
         local enemyFriend = jps_stringTarget(destName,"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
         jps.EnemyTable[sourceGUID] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
     end
-end)
-
-jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
-	local thisEvent
+	local action = select(2, ...)
+	local periodic = select(15, ...)
+	local swing = select(12, ...)    
+	local GUID = select(8, ...)
+	
 	local dmg_TTD = 0
-	if (thisEvent[2] == "SPELL_DAMAGE" or thisEvent[2] == "SPELL_PERIODIC_DAMAGE") and (thisEvent[15] > 0) then
-		dmg_TTD = thisEvent[15]
-	elseif (thisEvent[2] == "SWING_DAMAGE") and (thisEvent[12] > 0) then
-		dmg_TTD = thisEvent[12]
+	jps.Combat = true
+	jps.gui_toggleCombat(true)
+	-- end_time = GetTime()
+	-- total_time = math.max(end_time - start_time, 1)
+	if (action == "SPELL_DAMAGE" or action == "SPELL_PERIODIC_DAMAGE") and periodicDMG ~= nil then
+		if periodicDMG > 0 then 
+			dmg_TTD = periodicDMg
+		end
+	elseif (action == "SWING_DAMAGE") and swingDMG ~= nil then
+		if swingDMG > 0 then 
+			dmg_TTD = swingDMG
+		end
 	end
 	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
-		jps.Combat = true
-		jps.gui_toggleCombat(true)
-		local unitGuid = thisEvent[8] -- eventtable[8] == destGUID
+		local unitGuid = GUID -- thisEvent[8] == destGUID
+
 		if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
 		local dataset = jps.RaidTimeToDie[unitGuid]
 		local data = table.getn(dataset)
 		if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
 		table.insert(dataset, 1, {GetTime(), dmg_TTD})
 		jps.RaidTimeToDie[unitGuid] = dataset
-		--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
+		--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
 	end
-end
+end)
+
