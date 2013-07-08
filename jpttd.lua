@@ -52,17 +52,20 @@ function jps.updateInfoText()
 	else
 		infoTexts = infoTexts.."TimeToDie: n/a".."\n"
 	end	
-
-	local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget.."\n"
-	local message = "|cffffffff"..jps.CastBar.currentMessage
-	local latency = jps.CastBar.latency
-	infoTexts = infoTexts..currentCast
-	infoTexts = infoTexts..message.."\n"
-	if jps.isHealer then
+	if jps.getConfigVal("show current cast in JPS UI") == 1 then
+		local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget.."\n"
+		local message = "|cffffffff"..jps.CastBar.currentMessage
+		local latency = jps.CastBar.latency
+		infoTexts = infoTexts..currentCast
+		infoTexts = infoTexts..message.."\n"
+	end
+	if jps.isHealer and jps.getConfigVal("show Lowest Raid Member in UI") == 1  then
 		infoTexts = infoTexts.."|cffffffffLowestInRaid: |cffa335ee"..jps.LowestInRaidStatus().."\n"
 	end
-	if latency ~= 0 then
-		infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
+	if jps.getConfigVal("show Latency in JPS UI") == 1 then
+		if latency ~= 0 then
+			infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
+		end
 	end
 	infoFrameText:SetText(infoTexts)
 end
