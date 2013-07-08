@@ -68,7 +68,11 @@ jpsIcon:SetScript("OnEnter", function(self)
 	GameTooltip:SetOwner(self, "ANCHOR_TOP")
 	local text = ""
 	if jps.Enabled then text = "JPS enabled" else text = "JPS disabled" end
-	GameTooltip:SetText(text.." for your|cffa335ee "..jps.Class.." "..jps.Spec)
+	if jps.Spec  then
+		GameTooltip:SetText(text.." for your|cffa335ee "..jps.Class.." "..jps.Spec)
+	else
+		GameTooltip:SetText(text.." - no specialization found!")
+	end
 	if(jps.MultiRotation) then 
 		GameTooltip:AddLine("Rotation: "..jps.ToggleRotationName[jps.Count] , 1, 1, 1)
 	end

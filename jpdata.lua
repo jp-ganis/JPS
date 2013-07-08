@@ -812,6 +812,12 @@ function jps.useSlot(num)
 	local trinketUsable = GetItemSpell(trinketId)
 	if not trinketUsable then return nil end
 	
+	-- Abort Disenchant (or any Spell Targeting) if active
+	if SpellIsTargeting() then
+		SpellStopTargeting()
+	end
+	
+	
 	-- Use it
 	return { "macro", "/use "..num }
 end
@@ -915,13 +921,13 @@ end
 -- Find TANK
 ----------------------
 
-function jps.findMeAggroTank()
+function jps.findMeAggroTank(targetUnit)
 	local allTanks = jps.findTanksInRaid() 
 	local highestThreat = 0
 	local aggroTank = "player"
-	for possibleTankUnit, _ in pairs(allTanks) do
-		local unitThreat = UnitThreatSituation(possibleTankUnit)
-		if unitThreat > highestThreat then 
+	for _, possibleTankUnit in pairs(allTanks) do
+		local unitThreat = UnitThreatSituation(possibleTankUnit, targetUnit)
+		if unitThreat and unitThreat > highestThreat then 
 			highestThreat = unitThreat
 			aggroTank = possibleTankUnit
 		end

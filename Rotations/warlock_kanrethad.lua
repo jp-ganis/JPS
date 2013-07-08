@@ -343,6 +343,11 @@ wlk.spellTable = {
     }},
 }
 
+local function petAttackIfEnslaved() 
+    if jps.debuff("Enslave Demon","pet")then
+        RunMacroText("/petattack [target=focus]")
+    end
+end
 
 -- Updates the state machine
 function wlk.updateState()
@@ -389,10 +394,7 @@ function wlk.updateState()
     end
     
     
-    -- If not in Felhunter Phase - let the Pet attack
-    if jps.debuff("Enslave Demon","pet") and wlk.currentPhase ~= 2 and wlk.currentPhase ~= 5 then
-        RunMacroText("/petattack [target=focus]")
-    end
+
 
     -- State detection
     if wlk.currentPhase == 0 then
@@ -402,6 +404,7 @@ function wlk.updateState()
             LOG.warn("Switchting to Phase " .. wlk.currentPhase)
         end
     elseif wlk.currentPhase == 0.5 then
+        petAttackIfEnslaved()
         -- Switch to 1 @ Summon Wild Imps
         if jps.IsChannelingSpell(wlk.kanrethadSpells.summonWildImps,"focus") then 
             wlk.currentPhase = 1 
@@ -453,17 +456,19 @@ function wlk.updateState()
         end
         if npcId("target") ~= mobs.felhunter then
             scanTargets(targetByID, mobs.felhunter)
+            wlk.haltJPS = false
         end
         -- Switch to next Phase @ Summon Doom Lord - target and release pet so enslave can be renewed
         if jps.IsChannelingSpell(wlk.kanrethadSpells.summonDoomLord,"focus") then 
             wlk.currentPhase = wlk.currentPhase + 1
             LOG.warn("Switchting to Phase " .. wlk.currentPhase)
             PetFollow()
-            RunMacroText("/petattack [target=focus]")
+            petAttackIfEnslaved()
             --RunMacroText("/target pet")
             --PetDismiss()
         end
     elseif wlk.currentPhase == 3 then
+        petAttackIfEnslaved()
         -- Find Doom Lord 1 and save as Banish Target
         if not wlk.doomLordBanishGUID then
             scanTargets(function (targetGUID, targetID, targetName)
@@ -482,6 +487,7 @@ function wlk.updateState()
             LOG.warn("Switchting to Phase " .. wlk.currentPhase)
         end
     elseif wlk.currentPhase == 6 then
+        petAttackIfEnslaved()
         -- Find Doom Lord 2 and save as Fear Target
         if not wlk.doomLordFearGUID then
             scanTargets(function (targetGUID, targetID, targetName)
