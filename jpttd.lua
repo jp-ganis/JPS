@@ -61,7 +61,9 @@ function jps.updateInfoText()
 	if jps.isHealer then
 		infoTexts = infoTexts.."|cffffffffLowestInRaid: |cffa335ee"..jps.LowestInRaidStatus().."\n"
 	end
-	infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
+	if latency ~= 0 then
+		infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
+	end
 	infoFrameText:SetText(infoTexts)
 end
 
