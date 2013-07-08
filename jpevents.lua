@@ -16,7 +16,6 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
-
 -- Logger
 local LOG=jps.Logger(jps.LogLevel.ERROR)
 -- JPS Frame
@@ -28,14 +27,12 @@ local eventTable = {}
 -- Event Table for COMBAT_LOG_EVENT_UNFILTERED Sub-Types
 local combatLogEventTable = {}
 
-
 -- Localization
 local L = MyLocalizationTable
 
 --------------------------
 -- (UN)REGISTER FUNCTIONS 
 --------------------------
-
 
 --- Register OnUpdate Function
 -- Adds the given function to the update table if it
@@ -48,7 +45,6 @@ function jps.registerOnUpdate(fn)
     end
 end
 
-
 --- Unregister OnUpdate OnUpdate
 -- Removes the given event function from the update table if it
 -- was registered earlier. 
@@ -60,7 +56,6 @@ function jps.unregisterOnUpdate(fn)
         return true
     end
 end
-
 
 --- Register event
 -- Adds the given event function to the event table if it
@@ -77,7 +72,6 @@ function jps.registerEvent(event, fn)
         return true
     end
 end
-
 
 --- Unregister event
 -- Removes the given event function from the event table if it
@@ -97,7 +91,6 @@ function jps.unregisterEvent(event, fn)
     end
 end
 
-
 --- Register event subtype for COMBAT_LOG_EVENT_UNFILTERED
 -- Adds the given event function to the COMBAT_LOG_EVENT_UNFILTERED table if it
 -- wasn't already registered.
@@ -113,7 +106,6 @@ function jps.registerCombatLogEventUnfiltered(event, fn)
         return true
     end
 end
-
 
 --- Unregister event subtype for COMBAT_LOG_EVENT_UNFILTERED
 -- Removes the given event function from the COMBAT_LOG_EVENT_UNFILTERED table if it
@@ -132,8 +124,6 @@ function jps.unregisterCombatLogEventUnfiltered(event, fn)
         return true
      end
 end
-
-
 
 --------------------------
 -- EVENT LOOP FUNCTIONS 
@@ -173,7 +163,6 @@ jpsFrame:SetScript("OnEvent", function(self, event, ...)
     end
 end)
 
-
 --- COMBAT_LOG_EVENT_UNFILTERED Handler
 jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(timeStamp, event, ...)
     if jps.Enabled and UnitAffectingCombat("player") == 1 and combatLogEventTable[event] then
@@ -186,8 +175,6 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(timeStamp, event, ...
         end
     end
 end)
-
-
 
 --------------------------
 -- UPDATE FUNCTIONS
@@ -209,8 +196,6 @@ jps.registerOnUpdate(function()
     end
 end)
 
-
-
 --------------------------
 -- EVENT FUNCTIONS
 --------------------------
@@ -224,7 +209,7 @@ jps.registerEvent("PLAYER_ENTERING_WORLD", function()
     jps.detectSpec()
     reset_healtable()
     jps.SortRaidStatus()
-    jps.UpdateRaidStatus()
+
 end)
 
 -- INSPECT_READY
@@ -243,8 +228,6 @@ jps.registerEvent("PLAYER_REGEN_DISABLED", function()
     jps.Combat = true
     jps.gui_toggleCombat(true)
     jps.SortRaidStatus()
-    jps.UpdateRaidStatus()
-    start_time = GetTime()
     if jps.getConfigVal("timetodie frame visible") == 1 then
         JPSEXTInfoFrame:Show()
     end
@@ -392,51 +375,32 @@ end)
 -- "UNIT_HEALTH_PREDICTION" arg1 unitId receiving the incoming heal
 jps.registerEvent("UNIT_HEALTH_FREQUENT", function(unit)
     if jps.Enabled then
-        local unitname = select(1,UnitName(unit))
         local unittarget = unit.."target"
-        local unit_guid = UnitGUID(unit)
-        local unit_health = jps.hp(unit) 
         
-        local calculate = true -- first time event fires
-        if event_dataset == nil then event_dataset = {} end
-        table.insert( event_dataset,1, GetTime() )
-        local raid_data = jps_tableLen(event_dataset)
-
-        if raid_data == 1 or raid_data == 0 then calculate = true
-        else
-            if (event_dataset[1] - event_dataset[raid_data]) < jps.UpdateInterval then
-                calculate = false
-            else
-                calculate = true
-                table.wipe(event_dataset)
-            end
-             
-        end 
-
-        if calculate and jps.isHealer then
-            jps.UpdateRaidStatus()    
-        end
-
-        if calculate and jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
-            local hpct_enemy = jps.hp(unittarget)
+        if jps.isHealer then jps.UpdateRaidStatus(unit) end
+        
+        if jps.canDPS(unittarget) then -- Working only with raidindex.."target" and not with unitname.."target"
+            local unittarget_hpct = jps.hp(unittarget)
             local unittarget_guid = UnitGUID(unittarget)
             
             local countTargets = 0
             if jps.RaidTarget[unittarget_guid] ~= nil then
                 countTargets = jps.RaidTarget[unittarget_guid]["count"]
             end
-    
+            
             jps.RaidTarget[unittarget_guid] = { 
                 ["unit"] = unittarget,
-                ["hpct"] = hpct_enemy,
+                ["hpct"] = unittarget_hpct,
                 ["count"] = countTargets + 1
             }
-            
+        
         else
             jps_removeKey(jps.RaidTarget,unittarget_guid)
             jps_removeKey(jps.EnemyTable,unittarget_guid)
         end
-
+        
+        local unit_guid = UnitGUID(unit)
+        local unit_health = jps.hp(unit) 
         if jps.RaidTimeToLive[unit_guid] == nil then jps.RaidTimeToLive[unit_guid] = {} end
         local raid_dataset = jps.RaidTimeToLive[unit_guid]
         local raid_data = table.getn(raid_dataset)
@@ -445,6 +409,24 @@ jps.registerEvent("UNIT_HEALTH_FREQUENT", function(unit)
         jps.RaidTimeToLive[unit_guid] = raid_dataset
     end
 end)
+
+-- UNIT_SPELLCAST_SENT latency castbar
+jps.registerEvent("UNIT_SPELLCAST_SENT",  function(...) 
+	jps.CastBar.sentTime = GetTime()
+end
+-- UNIT_SPELLCAST_START latency castbar
+jps.registerEvent("UNIT_SPELLCAST_START",  function(...) 
+	local name, _, text, texture, startTime, endTime, _, castID, interrupt = UnitCastingInfo("player")
+	if (not name) then jps.CastBar.latency = 0 end
+	local now = GetTime()
+	
+	if (jps.CastBar.sentTime) then
+		local latency = now - jps.CastBar.sentTime
+		jps.CastBar.latency = latency
+	else
+		jps.CastBar.latency = 0
+	end
+end
 
 -- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 jps.registerEvent("PLAYER_LEVEL_UP", function(level)
@@ -455,8 +437,6 @@ jps.registerEvent("PLAYER_LEVEL_UP", function(level)
         jps.detectSpecDisabled = false
     end
 end)
-
-
 
 --------------------------
 -- COMBAT_LOG_EVENT_UNFILTERED FUNCTIONS
@@ -521,5 +501,24 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
     end
 end)
 
-
-
+jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
+	local thisEvent
+	local dmg_TTD = 0
+	if (thisEvent[2] == "SPELL_DAMAGE" or thisEvent[2] == "SPELL_PERIODIC_DAMAGE") and (thisEvent[15] > 0) then
+		dmg_TTD = thisEvent[15]
+	elseif (thisEvent[2] == "SWING_DAMAGE") and (thisEvent[12] > 0) then
+		dmg_TTD = thisEvent[12]
+	end
+	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
+		jps.Combat = true
+		jps.gui_toggleCombat(true)
+		local unitGuid = thisEvent[8] -- eventtable[8] == destGUID
+		if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
+		local dataset = jps.RaidTimeToDie[unitGuid]
+		local data = table.getn(dataset)
+		if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
+		table.insert(dataset, 1, {GetTime(), dmg_TTD})
+		jps.RaidTimeToDie[unitGuid] = dataset
+		--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
+	end
+end

@@ -230,17 +230,22 @@ function jps.Cast(spell)  -- "number" "string"
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	
-	if jps.Target==nil then jps.Target = "target" end
+	if jps.Target == nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
 	
 	if jps.spell_need_select(spellname) and SpellIsTargeting() then jps.groundClick() end
+
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	
-	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastCast) then
+	jps.CastBar.currentSpell = spellname
+	jps.CastBar.currentTarget = jps.Target
+	jps.CastBar.currentMessage = jps.Message
+	
+	if (jps.IconSpell ~= spellname) or (jps.Target ~= jps.LastTarget) then
 		jps.set_jps_icon(spellname)
 		if jps.Debug then write(spellname,"|cff1eff00",jps.Target,"|cffffffff",jps.Message) end
 	end
-	
+
 	jps.LastTarget = jps.Target
 	jps.LastTargetGUID = UnitGUID(jps.Target)
 	jps.Target = nil
@@ -343,6 +348,7 @@ function parseMultiUnitTable( spellTable )
 	local unitFunction = spellTable[2]
 	local targets = spellTable[3]
 	local message = spellTable[4]
+	if message == nil then message = "" end
 	local sirenTable = {}
 
 	for _, unit in pairs(targets) do
@@ -388,6 +394,7 @@ function parseSpellTable( hydraTable )
 		target = spellTable[3]
 		if not target then target = "target" end
 		message = spellTable[4]
+		if message == nil then message = "" end
 		if jps.Message ~= message then jps.Message = message end
 
 		-- NESTED TABLE
@@ -410,7 +417,7 @@ function parseSpellTable( hydraTable )
 				else 
 					macroSpell = select(3,string.find(macroText,"%s(.*)")) -- {"macro","/cast Sanguinaire"}
 				end
-				jps.Macro(macroText)
+				if not jps.Casting then jps.Macro(macroText) end -- Avoid interrupt Channeling with Macro
 				if jps.Debug then macrowrite(macroSpell,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 			end
 		
@@ -423,18 +430,13 @@ function parseSpellTable( hydraTable )
 					local spellname = tostring(select(1,GetSpellInfo(sequence)))
 					if jps.canCast(spellname,macroTarget) then
 						local macroText = "/cast "..spellname
-						jps.Macro(macroText)
+						if not jps.Casting then jps.Macro(macroText) end -- Avoid interrupt Channeling with Macro
 						if jps.Debug then macrowrite(spellname,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 					end
 				end
 			end
 			if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
-			
-		-- MultiTarget List -- { { "func" , spell , function_unit }, function_conditions , table_unit , message }
-		elseif type(spell) == "table" and spell[1] == "func" and conditions then
-			local newTable = { spell[2] , spell[3] , target , message}
-			spell,target = parseMultiUnitTable(newTable)
-			
+
 		-- MultiTarget List -- { spell , function_unit , table_unit }
 		elseif type(conditions) == "function" and type(target) == "table" then
 			spell,target = parseMultiUnitTable(spellTable)
@@ -447,7 +449,8 @@ function parseSpellTable( hydraTable )
 
 		-- Return spell if conditions are true and spell is castable.
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
-			-- if jps.Debug then print("|cffff8000Spell","|cffffffff",tostring(select(1,GetSpellInfo(spell)))) end 
+			jps.CastBar.nextSpell = tostring(select(1,GetSpellInfo(spell)))
+			jps.CastBar.nextTarget = target
 			return spell,target 
 		end
 	end

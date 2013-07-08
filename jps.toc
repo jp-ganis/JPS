@@ -8,6 +8,7 @@ jplocal.lua
 jps.lua
 jplogging.lua
 jputils.lua
+jpttd.lua
 jphealing.lua
 jpparse.lua
 jpdata.lua

@@ -22,7 +22,6 @@ function shouldInterruptCasting(spellsToCheck)
 				print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
 				SpellStopCasting()
 			end
-			
 		end
 	end
 end

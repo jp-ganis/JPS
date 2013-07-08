@@ -38,8 +38,8 @@ function jps.canDispel( unit, ... )
 end
 
 function jps.FindMeDispelTarget(dispeltypes) -- jps.FindMeDispelTarget({"Magic"}, {"Poison"}, {"Disease"})
-     for unit, _ in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and jps.canDispel( unit, dispeltypes ) then return unit end
+     for unit,index in pairs(jps.RaidStatus) do
+		if (index["inrange"] == true) and jps.canDispel(unit,dispeltypes) then return unit end
 	end
 end
 
@@ -90,22 +90,22 @@ end
 
 function jps.DispelMagicTarget()
 	if jps.getConfigVal("Dispel Magic") == 0 then return false end
-	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.canHeal(unit) and jps.MagicDispel(unit) then return unit end
+	for unit,index in pairs(jps.RaidStatus) do	 
+		if (index["inrange"] == true) and jps.MagicDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelDiseaseTarget()
 if jps.getConfigVal("Dispel Disease") == 0 then return false end
-	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.canHeal(unit) and jps.DiseaseDispel(unit) then return unit end
+	for unit,index in pairs(jps.RaidStatus) do	 
+		if (index["inrange"] == true) and jps.DiseaseDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelPoisonTarget()
 if jps.getConfigVal("Dispel Poison") == 0 then return false end
-	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.canHeal(unit) and jps.PoisonDispel(unit) then return unit end
+	for unit,index in pairs(jps.RaidStatus) do	 
+		if (index["inrange"] == true) and jps.PoisonDispel(unit) then return unit end
 	end
 end 
 
@@ -141,8 +141,8 @@ function jps.DispelFriendly(unit)
 end
 
 function jps.DispelFriendlyTarget()
-	for unit,_ in pairs(jps.RaidStatus) do	 
-		if jps.canHeal(unit) and jps.DispelFriendly(unit) then 
+	for unit,index in pairs(jps.RaidStatus) do	 
+		if (index["inrange"] == true) and jps.DispelFriendly(unit) then 
 		return unit end
 	end
 end
@@ -354,8 +354,8 @@ function jps.buffStacks(spell,unit)
 end
 
 function jps.buffTracker(buff)
-	for unit,_ in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and jps.myBuffDuration(buff,unit) > 0 then
+	for unit,index in pairs(jps.RaidStatus) do
+		if (index["inrange"] == true) and jps.myBuffDuration(buff,unit) > 0 then
 		return true end
 	end
 	return false
@@ -514,16 +514,11 @@ end
 
 function jps.IsCasting(unit)
 	if unit == nil then unit = "player" end
-	local enemyspell = nil
 	local enemycasting = false
-	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
-	if jps.CastTimeLeft(unit) > 0 then
-		enemycasting = true
-		enemyspell = name
-	elseif (jps.CastTimeLeft(unit) > 0) or (jps.ChannelTimeLeft(unit) > 0) then
+	if jps.CastTimeLeft(unit) > 0 then -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
 		enemycasting = true
 	end
-	return enemycasting,enemyspell
+	return enemycasting
 end
 
 function jps.IsCastingSpell(spell,unit)
@@ -741,7 +736,6 @@ function parseTrinketText(trinket,str)
             		found = true 
             	end
 			end
-			
 		end 
 	end
 	return found
