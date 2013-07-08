@@ -1,16 +1,55 @@
 local parser = {}
 parser.testMode = false
-function fnConditionsMatched(spell,conditions)
-    -- nil
-    if spell == nil then
-        return false
-    -- nil
-    elseif conditions == nil then
+
+function fnTargetEval(target)
+    if target == nil then
+        return "target"
+    elseif type(target) == "function" then
+        return target()
+    else
+        return target
+    end
+end
+
+function fnConditionEval(conditions)
+    if conditions == nil then
         return true
     elseif type(conditions) == "boolean" then
         return conditions
     else
         return conditions()
+    end
+end
+
+function fnParseMacro(macro, condition, target)
+    if condition then
+        -- Workaround for TargetUnit is still PROTECTED despite goblin active
+        local changeTargets = target ~= "target" and jps.UnitExists(target) 
+        if changeTargets then jps.Macro("/target "..target) end
+
+        if type(macro) == "string" then
+            local macroSpell = macro
+            if string.find(macro,"%s") == nil then -- {"macro","/startattack"}
+                macroSpell = macro
+            else 
+                macroSpell = select(3,string.find(macro,"%s(.*)")) -- {"macro","/cast Sanguinaire"}
+            end
+            jps.Macro(macro)
+            if jps.Debug then macrowrite(macroSpell,"|cff1eff00",target,"|cffffffff",jps.Message) end
+        elseif type(macro) == "table" then
+            for _,sequence in ipairs (macro) do
+                local spellname = tostring(GetSpellInfo(sequence))
+                if jps.canCast(spellname,target) then
+                    local macroText = "/cast "..spellname
+                    jps.Macro(macroText)
+                    if jps.Debug then macrowrite(spellname,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
+                end
+            end
+        else
+            return "/cast " .. tostring(GetSpellInfo(macro))
+        end
+
+        if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
     end
 end
 
@@ -23,85 +62,39 @@ function parseStaticSpellTable( hydraTable )
         jps.compileSpellTable(hydraTable)
         parser.compiledTables[tostring(hydraTable)] = true
     end
-    local spell = nil
-    local conditions = nil
-    local target = nil
-    local message = nil
-
+    
     for _, spellTable in pairs(hydraTable) do
+        local spell = nil
+        local conditions = nil
+        local target = nil
+        -- Table Entry is a function - will return {spell[[, condition[, target]]}
         if type(spellTable) == "function" then
             local fnTable = spellTable()
-            spell = fnTable[1] 
-            conditions = fnTable[2]
-            target = fnTable[3]
+            spell = fnTable[1]
+            conditions = fnConditionEval(fnTable[2])
+            target = fnTargetEval(fnTable[3])
+        -- Macro
+        elseif type(spellTable[1]) == "table" and spellTable[1][1] == "macro" then
+            fnParseMacro(spellTable[1][2], fnConditionEval(spellTable[2]), fnTargetEval(spellTable[3]))
+        -- Nested Table
+        elseif spellTable[1] == "nested" then
+            if fnConditionEval(spellTable[2]) then
+                spell, target = parseStaticSpellTable( spellTable[3] )
+            end
+        -- Default: {spell[[, condition[, target]]}
         else
-            spell = spellTable[1] 
-            conditions = spellTable[2]
-            target = spellTable[3]
-        end
-        
-        if not target then target = "target" end
-
-        -- NESTED TABLE
-        if spell == "nested" and conditions() then
-        
-            local newTable = spellTable[3]
-            spell,target = parseStaticSpellTable( newTable )
-
-        -- MACRO -- BE SURE THAT CONDITION TAKES CARE OF CANCAST -- TRUE or FALSE -- NOT NIL
-        elseif type(spell) == "table" and spell[1] == "macro" and conditions() then
-            local macroText = spell[2]
-            local macroTarget = spell[3]
-            if type(macroTarget)=="function" then macroTarget = macroTarget() end
-            -- Workaround for TargetUnit is still PROTECTED despite goblin active
-            local changeTargets = jps.UnitExists(macroTarget) 
-            if changeTargets then jps.Macro("/target "..macroTarget) end
-             
-            if conditions() and type(macroText) == "string" then
-                local macroSpell = macroText
-                if string.find(macroText,"%s") == nil then -- {"macro","/startattack"}
-                    macroSpell = macroText
-                else 
-                    macroSpell = select(3,string.find(macroText,"%s(.*)")) -- {"macro","/cast Sanguinaire"}
-                end
-                jps.Macro(macroText)
-                if jps.Debug then macrowrite(macroSpell,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
-            end
-        
-            -- CASTSEQUENCE WORKS ONLY FOR {INSTANT CAST, SPELL}
-            -- better than "#showtooltip\n/cast Frappe du colosse\n/cast Sanguinaire"
-            -- because I can check the spell with jps.canCast
-            -- {"macro",{109964,2060},player}
-            if conditions() and type(macroText) == "table" then
-                for _,sequence in ipairs (macroText) do
-                    local spellname = tostring(select(1,GetSpellInfo(sequence)))
-                    if jps.canCast(spellname,macroTarget) then
-                        local macroText = "/cast "..spellname
-                        jps.Macro(macroText)
-                        if jps.Debug then macrowrite(spellname,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
-                    end
-                end
-            end
-            if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
-        end
-
-        -- If not already assigned, assign target now.
-        if not target and type(spellTable[3]) == "string" then
-            target = spellTable[3]
-        elseif not target and type(spellTable[3]) == "function" then
-            target = spellTable[3]()
+            spell = spellTable[1]
+            conditions = fnConditionEval(spellTable[2])
+            target = fnTargetEval(spellTable[3])
         end
 
         -- Return spell if conditions are true and spell is castable.
-        if type(spell) ~= "table" and fnConditionsMatched(spell,conditions) and jps.canCast(spell,target) then
-            -- if jps.Debug then print("|cffff8000Spell","|cffffffff",tostring(select(1,GetSpellInfo(spell)))) end 
+        if spell ~= nil and fnConditionEval(conditions) and jps.canCast(spell,target) then
             return spell,target 
         end
     end
     return nil
 end
-
-
 
 --[[
     FUNCTIONS USED IN SPELL TABLE
@@ -251,23 +244,22 @@ function parser.lookaheadData(tokens)
 end
 
 -- conditions = <condition> | <condition> 'and' <conditions> | <condition> 'or' <conditions>
-function parser.conditions(tokens, expectBracket) 
-    local condition1 = parser.condition(tokens)
-    
+function parser.conditions(tokens, bracketLevel)
+    local condition1 = parser.condition(tokens, bracketLevel)
+
     if tokens[1] then
         local t, v = parser.pop(tokens)
-        
         if t == "keyword" then
             if v == 'and' then
-                local condition2 = parser.conditions(tokens)
+                local condition2 = parser.conditions(tokens, bracketLevel)
                 return AND(condition1, condition2)
             elseif v == 'or' then
-                local condition2 = parser.conditions(tokens)
+                local condition2 = parser.conditions(tokens, bracketLevel)
                 return OR(condition1, condition2)
             else
                 error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " conditions must be combined using keywords 'and' or 'or'!")
             end
-        elseif expectBracket then
+        elseif bracketLevel > 0 then
             if t == ")" then
                 return condition1
             else
@@ -276,7 +268,7 @@ function parser.conditions(tokens, expectBracket)
         else
             error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " conditions must be combined using keywords 'and' or 'or'!")
         end
-    elseif expectBracket then
+    elseif bracketLevel > 0 then
         error("Unexpected " .. tostring(t) .. ":" .. tostring(v) .. " missing ')'!")
     else
         return condition1
@@ -284,14 +276,14 @@ function parser.conditions(tokens, expectBracket)
 end
 
 -- condition = 'not' <condition> | '(' <conditions> ')' | <comparison>
-function parser.condition(tokens)
+function parser.condition(tokens, bracketLevel)
     local t, v = parser.lookahead(tokens)
     if t == "keyword" and v == "not" then
         parser.pop(tokens)
-        return NOT(parser.condition(tokens))
+        return NOT(parser.condition(tokens, bracketLevel))
     elseif t == "(" then
         parser.pop(tokens)
-        return parser.conditions(tokens, true)
+        return parser.conditions(tokens, bracketLevel + 1)
     else
         return parser.comparison(tokens)
     end
@@ -422,7 +414,7 @@ function jps.conditionParser(str)
         i = i+1
         tokens[i] = {t,v}
     end
-    local retOK, fn  = pcall(parser.conditions, tokens)
+    local retOK, fn  = pcall(parser.conditions, tokens, 0)
     if not retOK then
         return ERROR(str,fn)
     end

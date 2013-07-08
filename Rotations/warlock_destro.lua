@@ -44,9 +44,8 @@ spellTable[1] = {
     {wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
     {wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
     
-    {wl.spells.fireAndBrimstone, 'jps.burningEmbers() > 0 and not jps.buff(wl.spells.fireAndBrimstone, "player") and jps.MultiTarget' },
+    {wl.spells.fireAndBrimstone, 'jps.burningEmbers() > 0 and not jps.buff(wl.spells.fireAndBrimstone, "player") and jps.MultiTarget and not jps.isRecast(wl.spells.fireAndBrimstone, "target")' },
     { {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.burningEmbers() == 0' },
-    
     { {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and not jps.MultiTarget' },
     
     -- On the move
@@ -98,9 +97,13 @@ spellTable[2] = {
     {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
 }
 
+spellTable[3] = wlk.spellTable
 
+myd = spellTable[1]
 
-function warlock_destro()   
+function warlock_destro()
+    wl.deactivateBurningRushIfNotMoving(1)
+
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
         jps.NextSpell = {}

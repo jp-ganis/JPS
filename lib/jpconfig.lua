@@ -389,7 +389,9 @@ function jps.addRotationDropdownFrame()
 	rotationInfo:SetNonSpaceWrap(true)
 	rotationInfo:SetJustifyH("LEFT")
 	rotationInfo:SetJustifyV("TOP")
-	rotationInfo:SetText("Rotation Config for your "..jps.Spec.." "..jps.Class)
+	if jps.Spec then
+		rotationInfo:SetText("Rotation Config for your "..jps.Spec.." "..jps.Class)
+	end
 	
 	local desc = jpsRotationFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	desc:SetHeight(32)
@@ -399,40 +401,41 @@ function jps.addRotationDropdownFrame()
 	desc:SetJustifyH("LEFT")
 	desc:SetJustifyV("TOP")
 	desc:SetText("Uncheck spells when you dont want to use them. Do a /jps db to reset the spells")
-
-	for spellKey,spellVal in pairs (jps.spellConfig[jps.Spec]) do
-		rotationCount = rotationCount + 1
-		if rotationCount == 16 then 
-			rotationButtonPositionX = 220
-			rotationButtonPositionY = - 90
-		elseif rotationCount == 31 then
-			rotationButtonPositionX = 420
-			rotationButtonPositionY = - 90
+	if jps.spellConfig[jps.Spec] then
+		for spellKey,spellVal in pairs (jps.spellConfig[jps.Spec]) do
+			rotationCount = rotationCount + 1
+			if rotationCount == 16 then 
+				rotationButtonPositionX = 220
+				rotationButtonPositionY = - 90
+			elseif rotationCount == 31 then
+				rotationButtonPositionX = 420
+				rotationButtonPositionY = - 90
+			end
+	
+			local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellKey, jpsRotationFrame, "OptionsCheckButtonTemplate");
+			rotationJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
+			getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellKey);
+	
+			local function rotationJPS_IconOptions_CheckButton_OnClick()
+	            local spellStatus = nil
+	            if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+	                spellStatus = 0 
+	            else 
+	                spellStatus = 1 
+	            end
+	            setSpellStatus(spellKey, spellStatus)
+			end  
+			
+			local function rotationJPS_IconOptions_CheckButton_OnShow()
+				rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellKey));
+			end  
+	
+			rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+			rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
+			rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
+			
+			rotationButtonPositionY = rotationButtonPositionY - 30;
 		end
-
-		local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellKey, jpsRotationFrame, "OptionsCheckButtonTemplate");
-		rotationJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
-		getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellKey);
-
-		local function rotationJPS_IconOptions_CheckButton_OnClick()
-            local spellStatus = nil
-            if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
-                spellStatus = 0 
-            else 
-                spellStatus = 1 
-            end
-            setSpellStatus(spellKey, spellStatus)
-		end  
-		
-		local function rotationJPS_IconOptions_CheckButton_OnShow()
-			rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellKey));
-		end  
-
-		rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
-		rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
-		rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
-		
-		rotationButtonPositionY = rotationButtonPositionY - 30;
 	end
 	
 	InterfaceOptions_AddCategory(jpsRotationFrame)

@@ -1,8 +1,141 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
+--------------------------
+-- TABLE FUNCTIONS
+--------------------------
 
+function jps_tableSum(table)
+	if table == nil then return 0 end
+	local total = 0
+	for i,j in ipairs(table) do
+		total = total + table[i]
+	end
+	return total
+end 
 
+function jps_removeKey(table, key)
+	if key == nil then return end
+    local element = table[key]
+    table[key] = nil
+    return element
+end
+
+--get table length
+function jps_tableLen(table)
+	if table == nil then return 0 end
+    local count = 0
+    for k,v in pairs(table) do 
+        count = count+1
+    end
+    return count
+end
+
+function jps_deepCopy(object)
+    local lookup_table = {}
+    local function _copy(object)
+        if type(object) ~= "table" then
+            return object
+        elseif lookup_table[object] then
+            return lookup_table[object]
+        end
+        local new_table = {}
+        lookup_table[object] = new_table
+        for index, value in pairs(object) do
+            new_table[_copy(index)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(object))
+    end
+    return _copy(object)
+end
+
+--------------------------
+-- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
+--------------------------
+
+function jps_stringTarget(unit,case)
+	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
+	local threatUnit = tostring(unit)
+	local playerName = threatUnit
+	local playerServer = "UnKnown"
+	
+	local stringLength = string.len(threatUnit)
+	local startPos, endPos = string.find(threatUnit,case)  -- "-" "%s" space
+	if ( startPos ) then
+		playerName = string.sub(threatUnit, 1, (startPos-1))
+		playerServer = string.sub(threatUnit, (startPos+1), stringLength)
+		--print("playerName_",playerName,"playerServer_",playerServer) 
+	else
+		playerName = threatUnit
+		playerServer = "UnKnown"
+		--print("playerName_",playerName,"playerServer_",playerServer)
+	end
+return playerName
+end
+
+-----------------------
+-- RAID ENEMY COUNT 
+-----------------------
+-- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
+
+-- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
+function jps.RaidEnemyCount() 
+local enemycount = 0
+local targetcount = 0
+	for unit,index in pairs(jps.EnemyTable) do 
+		enemycount = enemycount + 1
+	end
+	for tar_unit,tar_index in pairs(jps.RaidTarget) do
+		targetcount = targetcount + 1
+	end
+return enemycount,targetcount
+end
+
+-- ENEMY UNIT with LOWEST HEALTH
+function jps.LowestInRaidTarget() 
+local mytarget = nil
+local lowestHP = 1 
+	for unit,index in pairs(jps.RaidTarget) do
+		local unit_Hpct = index.hpct
+		if unit_Hpct < lowestHP then
+			lowestHP = unit_Hpct
+			mytarget = index.unit
+		end
+	end
+return mytarget
+end
+
+-- ENEMY MOST TARGETED
+function jps.RaidTargetUnit()
+local maxTargets = 0
+local enemyWithMostTargets = "target"
+	for enemyGuid, enemyName in pairs(jps.RaidTarget) do
+		if enemyName["count"] > maxTargets then
+		maxTargets = enemyName["count"]
+		enemyWithMostTargets = enemyName.unit
+	end
+end
+return enemyWithMostTargets
+end
+
+-- ENEMY TARGETING THE PLAYER
+-- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
+-- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
+function jps.IstargetMe()
+	local enemy_guid = nil
+	for unit,index in pairs(jps.EnemyTable) do 
+		if index.friend == GetUnitName("player") then
+			enemy_guid = unit
+		end
+	end
+	for unit, index in pairs(jps.RaidTarget) do 
+		if  (unit == enemy_guid) then 
+			return index.unit -- return "raid1target"
+		end 
+	end
+	return nil
+end
+>>>>>>> master:jphealing.lua
 
 ------------------------------
 -- SPELLTABLE -- contains the average value of healing spells
@@ -105,7 +238,7 @@ function jps.CountInRaidStatus(low_health_def)
 	if low_health_def == nil then low_health_def = 0.80 end
 	local units_needing_heals = 0
 		for unit, unitTable in pairs(jps.RaidStatus) do 
-			if jps.canHeal(unit) and unitTable["hpct"] < low_health_def then
+			if (unitTable["inrange"] == true) and unitTable["hpct"] < low_health_def then
 				units_needing_heals = units_needing_heals + 1
 			end
 		end	
@@ -118,7 +251,7 @@ function jps.LowestFriendly()
 	local lowestHP = 0
 	for unit, unitTable in pairs(jps.RaidStatus) do
 	local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
-		if jps.canHeal(unit) and thisHP > lowestHP then
+		if (unitTable["inrange"] == true) and thisHP > lowestHP then
 			lowestHP = thisHP
 			lowestUnit = unit
 		end
@@ -131,7 +264,7 @@ function jps.LowestInRaidStatus()
 	local lowestUnit = jpsName
 	local lowestHP = 1
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
+		if (unitTable["inrange"] == true) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
 			lowestHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
 			lowestUnit = unit
 		end
@@ -171,7 +304,7 @@ function jps.FindSubGroup()
 	local gr8 = 0
 
 	for unit,unitTable in pairs(jps.RaidStatus) do
-        if jps.canHeal(unit) then
+        if (unitTable["inrange"] == true) then
             	if  unitTable["subgroup"] == 1 then gr1= gr1+1
             elseif  unitTable["subgroup"] == 2 then gr2= gr2+1
             elseif  unitTable["subgroup"] == 3 then gr3 = gr3+1
@@ -207,11 +340,11 @@ function jps.FindSubGroupTarget(low_health_def)
 	local tt_count = 0
 	local lowestHP = low_health_def
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		if  jps.canHeal(unit) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
 			tt = unit
 			lowestHP = unitTable["hpct"]
 		end
-		if  jps.canHeal(unit) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < low_health_def) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < low_health_def) then
 			tt_count = tt_count + 1
 		end
 	end
@@ -225,7 +358,7 @@ function jps.FindSubGroupAura(auratypes) --  FindSubGroupAura("Carapace spiritue
 	local tt = nil
 
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and (unitTable["subgroup"] == groupToHeal) and (not jps.buff(auratypes,unit)) then
+		if (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (not jps.buff(auratypes,unit)) then
 			tt = unit
 		break end
 	end
@@ -233,26 +366,27 @@ function jps.FindSubGroupAura(auratypes) --  FindSubGroupAura("Carapace spiritue
 end
 
 -----------------------
--- UPDATE TABLE
+-- UPDATE RAIDSTATUS
 -----------------------
 --[[
 jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
 jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend }  -- TABLE OF ENEMY TARGETING FRIEND
 ]]
 
-function jps.UpdateRaidStatus()	
-	for unit,index in pairs(jps.RaidRoster) do	
-		local subgroup = jps.RaidRoster[unit].subgroup
-		local hpct_friend = jps.hp(unit)
-		local unittarget = jps.RaidRoster[unit]["unit"].."target"
-		local inrange_friend = jps.canHeal(unit)
-			jps.RaidStatus[unit] = {
-				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-				["hpct"] = hpct_friend,
-				["subgroup"] = subgroup,
-				["target"] = unittarget,
-				["inrange"] = inrange_friend
-			}
+function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5
+	local unitname = select(1,UnitName(unit))
+	if jps.RaidStatus[unitname] then
+	local subgroup = jps.RaidStatus[unitname].subgroup
+	local unit_hpct = jps.hp(unit)
+	local unittarget = unit.."target"
+	local inrange_friend = jps.canHeal(unit)
+		jps.RaidStatus[unitname] = {
+			["unit"] = unit, -- RAID INDEX player, party..n, raid..n
+			["hpct"] = unit_hpct,
+			["subgroup"] = subgroup,
+			["target"] = unittarget,
+			["inrange"] = inrange_friend
+		}
 	end
 end
 
@@ -276,7 +410,6 @@ function jps.SortRaidStatus()
 	-- for k,v in pairs (jps.RaidStatus) do jps.RaidStatus[k]=nil end
 	-- The difference between wipe(table) and table={} is that wipe removes the contents of the table, but retains the variable's internal pointer.
 	
-	table.wipe(jps.RaidRoster)
 	table.wipe(jps.RaidStatus)
 	table.wipe(jps.RaidTarget)
 			
@@ -302,13 +435,13 @@ function jps.SortRaidStatus()
 		
 		local subgroup = select(3,GetRaidRosterInfo(i))
 		local unitname = select(1,UnitName(unit))  -- to avoid that party1, focus and target are added all refering to the same player
-		local hpct_friend = jps.hp(unit)
+		local unit_hpct = jps.hp(unit)
 		local unittarget = unit.."target"
 		local inrange_friend = jps.canHeal(unit)
 		
-			jps.RaidRoster[unitname] = {
+			jps.RaidStatus[unitname] = {
 				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-				["hpct"] = hpct_friend,
+				["hpct"] = unit_hpct,
 				["subgroup"] = subgroup,
 				["target"] = unittarget,
 				["inrange"] = inrange_friend
@@ -322,16 +455,12 @@ end
 
 function jps_RaidTest()
 
-	print("|cff0070dd","HighestDMG","|cffffffff"..jps.LowestTimetoDie())
-	print("|cff0070dd","LowestFriendly","|cffffffff"..jps.LowestInRaidStatus())
-	print("|cff0070dd","AggroTank","|cffffffff"..jps.findMeATank())
-
 	for unit,index in pairs(jps.RaidStatus) do 
 		print("|cffa335eeJPS",unit,"Unit:",index.unit,"Hpct: ",index.hpct,"|cffa335eesubGroup: ",index.subgroup,"Target: ",index.target,"Range",index.inrange) -- color violet 
 	end
 
 	for unit,index in pairs(jps.RaidTarget) do
-		print("|cffe5cc80JPS",unit,"|cffa335ee","Unit: ",index.unit,"Hpct: ",index.guid)
+		print("|cffe5cc80JPS",unit,"|cffa335ee","Unit: ",index.unit,"Hpct: ",index.hpct,"Count: ",index.count)
 	end
 
 	local enemycount,targetcount = jps.RaidEnemyCount()

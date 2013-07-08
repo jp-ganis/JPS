@@ -240,7 +240,9 @@ spellTable[2] = {
 
 
 
-function warlock_affliction()   
+function warlock_affliction()
+    wl.deactivateBurningRushIfNotMoving(1)
+
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
         jps.NextSpell = {}

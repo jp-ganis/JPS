@@ -8,6 +8,7 @@ jplocal.lua
 jps.lua
 jplogging.lua
 jputils.lua
+jpttd.lua
 jphealing.lua
 jpparse.lua
 jpdata.lua
@@ -80,6 +81,7 @@ Rotations\shaman_resto_pve.lua
 Rotations\shaman_resto_pvp.lua
 
 Rotations\warlock.lua
+Rotations\warlock_kanrethad.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
 Rotations\warlock_destro.lua

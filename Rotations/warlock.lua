@@ -23,6 +23,17 @@ wl.spells["demonicCircleSummon"] = toSpellName(48018)
 wl.spells["demonicCircleTeleport"] = toSpellName(48020)
 wl.spells["demonicGateway"] = toSpellName(113901)
 wl.spells["grimoireOfSacrifice"] = toSpellName(108503)
+wl.spells["enslaveDemon"] = toSpellName(1098)
+wl.spells["unendingResolve"] = toSpellName(104773)
+wl.spells["twilightWard"] = toSpellName(6229)
+wl.spells["commandDemon"] = toSpellName(119898)
+wl.spells["darkIntent"] = toSpellName(109773)
+wl.spells["fear"] = toSpellName(5782)
+wl.spells["banish"] = toSpellName(710)
+wl.spells["soulshatter"] = toSpellName(29858)
+wl.spells["singeMagic"] = toSpellName(132411)
+wl.spells["sacrificialPact"] = toSpellName(108416)
+wl.spells["burningRush"] = toSpellName(111400)
 --Affliction
 wl.spells["corruption"] = toSpellName(172)
 wl.spells["darkSoulMisery"] = toSpellName(113860)
@@ -92,4 +103,20 @@ end
 -- Helper to prevent Recasts
 function wl.isRecast(spell,target)
     return jps.LastCast == spell and jps.LastTarget == target
+end
+
+
+-- Deactivate Burning Rush after n seconds of not moving
+local burningRushNotMovingSeconds = 0
+function wl.deactivateBurningRushIfNotMoving(seconds)
+    if not seconds then seconds = 0 end
+    if jps.Moving or not jps.buff(wl.spells.burningRush) then
+        burningRushNotMovingSeconds = 0
+    else
+        if burningRushNotMovingSeconds >= seconds then
+            RunMacroText("/cancelaura Burning Rush")
+        else
+            burningRushNotMovingSeconds = burningRushNotMovingSeconds + jps.UpdateInterval
+        end
+    end
 end
