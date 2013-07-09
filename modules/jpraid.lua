@@ -52,7 +52,11 @@ function jps.findMeAggroTank(targetUnit)
 			aggroTank = possibleTankUnit
 		end
 	end
+	if aggroTank == "player" and jps_tableLen(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
+		return jps.findMeAggroTank()
+	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
+	
 	return aggroTank
 end
 
