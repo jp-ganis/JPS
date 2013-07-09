@@ -79,7 +79,7 @@ end
 local interruptSpellTables = {}
 function wl.getInterruptSpell(unit)
     return function()
-        if not interruptSpellTables[unit] then = interruptSpellTables[unit] = {{"macro", "/cast " .. wl.spells.commandDemon }, false , unit}
+        if not interruptSpellTables[unit] then interruptSpellTables[unit] = {{"macro", "/cast " .. wl.spells.commandDemon }, false , unit} end
         local canInterrupt = false
         if jps.canCast(wl.spells.opticalBlast, unit) then -- Observer Pet 
             canInterrupt = true
