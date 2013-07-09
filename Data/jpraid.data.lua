@@ -20,7 +20,7 @@ jps.raid.supportedEncounters = {
 			{
 				{"Quills", "magicShortCD" ,' jps.raid.getTimer("Quills") < 1 '}, 
 				{"Quills", "magicShortCD" ,' jps.IsCastingSpell("Quills","target")'},
-				{"Talor Rake", "physicalHighCD", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro() and jps.glyphInfo(43536)'},
+				{"Talor Rake", "physicalHighCD", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro()'},
 				{"Downdraft", "runspeed" ,' jps.debuff("Downdraft") '}, 
 			},
 		["Durumu The Forgotten"] = {}
@@ -53,6 +53,7 @@ jps.raid.supportedAbilities = {
 		{
 			["anti-magic shell"] = {{spellType="magicShortCD", spellAction="absorb"},{spellType="dispelMagic", spellAction="dispel"}},
 			["death's advance"] = {{spellType="runspeed"}},
+			["icebound fortitude"] = {{spellType="physicalHighCD"}},
 		},
 		["Frost"] =
 		{
