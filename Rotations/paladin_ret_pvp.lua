@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 
 function paladin_ret_pvp()
 	-- sphoenix

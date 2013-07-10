@@ -9,14 +9,14 @@ function canCastPlagueLeech(timeLeft)
 	end
 	return false
 end
---[[
+
 -- DK Bloodshield Toggle 
 bloodshieldAbsorb = 0;
 hasBloodshield = false;
 bloodshieldMeActive = false;
-
+bsDataAdded = false;
 -- Watch CombatLog for Bloodshild Aura changes
-function handleDeathknightBloodschield(elapsed, ...)	 
+function handleDeathknightBloodschield(...)	 
 	local  timestamp, eventtype, hideCaster, 
 		srcGUID, srcName, srcFlags, srcRaidFlags, 
 		destGUID, destName, destFlags, destRaidFlags, 
@@ -121,27 +121,6 @@ function jps.gui_ToggleBS( value )
 	return
 end
 
-if jps.Spec == "Blood" then
-	jps.GUIicon_bs = "Interface\\Icons\\Spell_deathknight_deathstrike"
-	if ToggleBS == nil then 
-		ToggleBS = CreateFrame("Button", "ToggleBS", jpsIcon)
-		addBloodDeathknightButtons()
-	end
-	jps.registerCombatLogEventUnfiltered("SPELL_AURA_APPLIED", handleDeathknightBloodschield)
-	jps.registerCombatLogEventUnfiltered("SPELL_AURA_REFRESH", handleDeathknightBloodschield)
-	jps.registerCombatLogEventUnfiltered("SPELL_AURA_REMOVED", handleDeathknightBloodschield)
-else
-	if ToggleBS ~= nil then
-		ToggleBS:hide()
-		ToggleBS:SetParent(nil)
-		ToggleBS:ClearAllPoints()
-		ToggleBS.OnEvent = function() end
-	end
-	jps.unregisterCombatLogEventUnfiltered("SPELL_AURA_APPLIED", handleDeathknightBloodschield)
-	jps.unregisterCombatLogEventUnfiltered("SPELL_AURA_REFRESH", handleDeathknightBloodschield)
-	jps.unregisterCombatLogEventUnfiltered("SPELL_AURA_REMOVED", handleDeathknightBloodschield)
-end
-
 
 --	After jps.bloodshieldActive is set to true (button) blood DK starts to build up a bloodshild until your max hp
 --	auto refresh it when buff duration < 3 sec
@@ -152,34 +131,62 @@ function bloodshieldMe(spell)
     local frostFeverDuration = jps.myDebuffDuration("Frost Fever")
     local bloodPlagueDuration = jps.myDebuffDuration("Blood Plague")
     local cooldownDS = jps.cooldown("Death Strike")
-    local spellsWithGCD = {"Death and Decay", "Army of the Dead", "Soul Reaper", "Heart Strike","Rune Strike"}
+    local spellsWithGCD = {"Death and Decay","Blood Boil","Scourge Strike", "Army of the Dead", "Soul Reaper", "Heart Strike","Rune Strike"}
     local bloodChargeStacks = jps.buffStacks("Blood Charge")
-    
+    local shouldBloodTap = false
+    if bloodChargeStacks < 5 and jps.IsSpellKnown("Blood Tap") then
+    	shouldBloodTap = true
+    end 
+    local dr1 = select(3,GetRuneCooldown(1))
+	local dr2 = select(3,GetRuneCooldown(2))
+	local ur1 = select(3,GetRuneCooldown(3))
+	local ur2 = select(3,GetRuneCooldown(4))
+	local one_dr = dr1 or dr2
+	local two_dr = dr1 and dr2
+	local one_ur = ur1 or ur2
+	local two_ur = ur1 and ur2
+	
     if not jps.bloodshieldActive then return spell end -- run normal rotation
 
-    foundBadSpell = false
+    local foundBadSpell = false
+    local stopLoop = false
+    local useRuneStrike = false
     for k,v in pairs(spellsWithGCD) do -- check if we dont waste runes and GCD's
-        if v == spell then
-        	foundBadSpell = true;
+        if v == spell and stopLoop == false then
+        	if (spell == "Death and Decay" or spell == "Blood Boil" ) and jps.buff("Crimson Scourge")  and jps.buffDuration("Blood Shield") > 3 then
+        		foundBadSpell = false
+        		stopLoop = true
+    		elseif spell == "Heart Strike" and two_dr and jps.buffDuration("Blood Shield") > 3 then
+    			foundBadSpell = false
+    			stopLoop = true
+    		elseif spell == "Scourge Strike" and (two_dr or two_ur) and jps.buffDuration("Blood Shield") > 3 then
+    			foundBadSpell = false
+    			stopLoop = true
+    		elseif spell == "Soul Reaper" and jps.buffDuration("Blood Shield") > 3 then
+	    		foundBadSpell = false
+	    		stopLoop = true
+	    	elseif spell == "Rune Strike" and jps.buffDuration("Blood Shield") > 3 and shouldBloodTap then
+	    		foundBadSpell = false
+	    		stopLoop = true
+        	elseif spell == "Rune Strike" and jps.buffDuration("Blood Shield") > 3 and not jps.IsSpellKnown("Blood Tap") then
+	    		foundBadSpell = false
+	    		stopLoop = true
+        	else
+	        	foundBadSpell = true
+        	end
         end
     end
-    if jps.runicPower >= 30 and cooldownDS > 1.5 and bloodChargeStacks < 5 then   -- use Rune Strike, when our DS CD > GCD & we need blood charge stacks
-        spell = "Rune Strike"
-        foundBadSpell = false
-    end
+
+    if jps.bloodshieldAbsorb == 0 and cooldownDS == 0 and jps.canCast("Death Strike","target") then return "Death Strike" end --build BS, no more checks needed
     if foundBadSpell == false then -- run filtered rotation
     	return spell
     end
-
-    if jps.bloodshieldAbsorb == 0 and cooldownDS == 0 and ImReallySureICanCastThisShit("Death Strike") then return "Death Strike" end --build BS, no more checks needed
-    if jps.hp("player","abs") == jps.bloodshieldAbsorb and jps.buffDuration("Blood Shield") > 3 then return spell end -- run normal rotation
-    local usable, nomana = IsUsableSpell("Plague Leech")
+    if jps.hp("player","abs") == jps.bloodshieldAbsorb and jps.buffDuration("Blood Shield") >= 4  then return spell end -- run normal rotation
     if cooldownDS > 2 and  bloodChargeStacks >= 5 then jps.Cast("Blood Tap") end -- try to get runes
-    if cooldownDS > 2 and (frostFeverDuration > 0 and bloodPlagueDuration > 0)  then jps.Cast("Plague Leech") end -- try to get runes
-    if (jps.buffDuration("Blood Shield") <= 3 or jps.hp("player","abs") > jps.bloodshieldAbsorb ) and ImReallySureICanCastThisShit("Death Strike") then return "Death Strike" end -- build BS
+    if cooldownDS > 2 and jps.IsSpellKnown("Plague Leech") and (frostFeverDuration > 1 and bloodPlagueDuration > 1)  then jps.Cast("Plague Leech") end -- try to get runes
+    if (jps.buffDuration("Blood Shield") <= 4 or jps.hp("player","abs") > jps.bloodshieldAbsorb ) and jps.canCast("Death Strike","target") then return "Death Strike" end -- build BS
     return nil
 end
-]]--
 
 function dk_blood()
 	-- Talents:
@@ -200,6 +207,26 @@ function dk_blood()
 	-- Cooldowns: trinkets, raise dead, dancing rune weapon, synapse springs, lifeblood 
 
 	-- focus on other tank in raids !
+	if not bsDataAdded then
+		bsDataAdded = true
+		if jps.Spec == "Blood" then
+			jps.GUIicon_bs = "Interface\\Icons\\Spell_deathknight_deathstrike"
+			if ToggleBS == nil then 
+				ToggleBS = CreateFrame("Button", "ToggleBS", jpsIcon)
+				addBloodDeathknightButtons()
+			end
+			jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  handleDeathknightBloodschield)
+		else
+			if ToggleBS ~= nil then
+				ToggleBS:hide()
+				ToggleBS:SetParent(nil)
+				ToggleBS:ClearAllPoints()
+				ToggleBS.OnEvent = function() end
+			end
+		end
+	end
+
+
 	
 	local spell = nil
 	local target = nil
@@ -242,12 +269,18 @@ function dk_blood()
 		-- Cntrol is pressed
 		{ "Army of the Dead",			IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		
+		
+		-- raid spells 
+		{ "Anti-Magic Shell",			jps.raid.shouldCast("anti-magic shell") and jps.UseCDs },
+		{ "Death's Advance",			jps.raid.shouldCast("Death's Advance") and jps.UseCDs },
+
 		-- Defensive cooldowns
+		
 		{ "Death Pact",			jps.hp() < .5 and haveGhoul },
 		{ "Lichborne",			jps.UseCDs and jps.hp() < 0.5 and rp >= 40 and jps.IsSpellKnown("Lichborne") },
 		{ "Death Coil",			 		jps.hp() < 0.5 and rp >= 40 and jps.buff("lichborne"), "player" }, 
 		{ "Rune Tap",			jps.hp() < .8 },
-		{ "Icebound Fortitude",			jps.UseCDs and jps.hp() < .3},
+		{ "Icebound Fortitude",			jps.UseCDs and (jps.hp() <= .3 or (jps.raid.shouldCast("icebound fortitude") and  jps.glyphInfo(43536))) },
 		{ "Vampiric Blood",			jps.UseCDs and jps.hp() < .4 },
 		
 		-- Interrupts
@@ -326,6 +359,6 @@ function dk_blood()
 
 	local spellTableActive = jps.RotationActive(spellTable)
 	spell,target = parseSpellTable(spellTableActive)
-
+	spell = bloodshieldMe(spell)
 	return spell,target
 end

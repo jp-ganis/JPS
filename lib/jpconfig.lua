@@ -556,6 +556,7 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].Defensive = false
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
+		jpsDB[jpsRealm][jpsName].RaidMode = false
 		jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
 		if jps.Spec then
 			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
@@ -573,6 +574,9 @@ function jps_VARIABLES_LOADED()
 			if ( not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) then -- NEW
 				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
 			end	
+		end
+		if not jpsDB[jpsRealm][jpsName].RaidMode then		
+			jpsDB[jpsRealm][jpsName].RaidMode = false
 		end
 	end
 

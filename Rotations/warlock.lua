@@ -115,9 +115,10 @@ function wl.isTrivial(unit)
     return  UnitHealth(unit) <= minHp
 end
 
-function wl.attackFocus()
+wl.attackFocus = function jps.cachedValue(function()
     return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
-end
+end)
+
 
 -- Helper to prevent Recasts
 function wl.isRecast(spell,target)
