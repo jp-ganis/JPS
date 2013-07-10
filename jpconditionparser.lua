@@ -443,13 +443,14 @@ function jps.compileSpellTable(unparsedTable)
     return unparsedTable
 end
 
-function jps.cachedValue(fn,...)
-    local value = fn(...)
-    local maxAge = GetTime() + jps.UpdateInterval
+function jps.cachedValue(fn,updateInterval)
+    if not updateInterval then updateInterval = jps.UpdateInterval end
+    local value = fn()
+    local maxAge = GetTime() + updateInterval
     return function()
         if maxAge < GetTime() then
-            value = fn(...)
-            maxAge = GetTime() + jps.UpdateInterval
+            value = fn()
+            maxAge = GetTime() + updateInterval
         end
         return value
     end
