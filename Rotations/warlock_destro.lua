@@ -86,12 +86,10 @@ spellTable[1] = {
 }
 spellTable[2] = {
 ["ToolTip"] = "Interrupt Only",
-    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wl.maxIntCastLength', "target" },
-    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wl.maxIntCastLength', "focus"},
-    {wl.spells.opticalBlast, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
-    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < wl.maxIntCastLength', "target" },
-    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < wl.maxIntCastLength', "focus"},
-    {wl.spells.spellLock, 'jps.Interrupts and jps.shouldKick("mouseover") and jps.CastTimeLeft("mouseover") < wl.maxIntCastLength', "mouseover"},
+    -- Interrupts
+    wl.getInterruptSpell("target"),
+    wl.getInterruptSpell("focus"),
+    wl.getInterruptSpell("mouseover"),
 }
 
 spellTable[3] = wlk.spellTable
