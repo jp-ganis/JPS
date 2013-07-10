@@ -15,7 +15,7 @@ function fnConditionEval(conditions)
     if conditions == nil or conditions == "onCD" then
         return true
     elseif type(conditions) == "boolean" then
-        return conditigons
+        return conditions
     else
         return conditions()
     end
