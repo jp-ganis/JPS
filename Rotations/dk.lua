@@ -26,6 +26,11 @@
 		dk.twoUr = dk.ur1 and dk.ur2
 	end
 	
+	function dk.hasGhoul()
+		if UnitExists("pet") == nil then return false end
+		return true
+	end
+	
 	function dk.rune(name)
 		dk.updateRunes()
 		if dk[name] ~= nil then
@@ -35,7 +40,6 @@
 		return 0
 	end
 
-	-- DK Blood
 	-- Bloodshield Toggle
 	ToggleBS = nil
 	jps.bloodshieldAbsorb = 0;
@@ -144,38 +148,30 @@
 	--	auto refresh it when buff duration < 3 sec
 	--	GCD and Runes are not wasted until our bloodshild is maxed
 	--	deff CDs
-	
-	function bloodshieldMe(spell) 
+	dk.spellsWithGCD = {"Death and Decay","Blood Boil","Scourge Strike", "Army of the Dead", "Soul Reaper", "Heart Strike","Rune Strike"}
+	function dk.bloodshieldMe(spell) 
 		local frostFeverDuration = jps.myDebuffDuration("Frost Fever")
 		local bloodPlagueDuration = jps.myDebuffDuration("Blood Plague")
 		local cooldownDS = jps.cooldown("Death Strike")
-		local spellsWithGCD = {"Death and Decay","Blood Boil","Scourge Strike", "Army of the Dead", "Soul Reaper", "Heart Strike","Rune Strike"}
 		local bloodChargeStacks = jps.buffStacks("Blood Charge")
 		local shouldBloodTap = false
 		if bloodChargeStacks < 5 and jps.IsSpellKnown("Blood Tap") then
 			shouldBloodTap = true
 		end 
-		local dr1 = select(3,GetRuneCooldown(1))
-		local dr2 = select(3,GetRuneCooldown(2))
-		local ur1 = select(3,GetRuneCooldown(3))
-		local ur2 = select(3,GetRuneCooldown(4))
-		local one_dr = dr1 or dr2
-		local two_dr = dr1 and dr2
-		local one_ur = ur1 or ur2
-		local two_ur = ur1 and ur2
-		
 		if not jps.bloodshieldActive then return spell end -- run normal rotation
 	
 		local foundBadSpell = false
 		local stopLoop = false
 		local useRuneStrike = false
-		for k,v in pairs(spellsWithGCD) do -- check if we dont waste runes and GCD's
-			if v == spell and stopLoop == false then
-				if spell == "Rune Strike" and jps.buffDuration("Blood Shield") > 4 and shouldBloodTap then
-					foundBadSpell = false
-					stopLoop = true
-				else
-					foundBadSpell = true
+		if spell ~= nil then
+			for k,v in pairs(dk.spellsWithGCD) do -- check if we dont waste runes and GCD's
+				if v == spell and stopLoop == false then
+					if spell == "Rune Strike" and jps.buffDuration("Blood Shield") > 4 and shouldBloodTap then
+						foundBadSpell = false
+						stopLoop = true
+					else
+						foundBadSpell = true
+					end
 				end
 			end
 		end
