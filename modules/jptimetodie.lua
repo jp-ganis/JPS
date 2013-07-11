@@ -1,4 +1,4 @@
------------------------
+-- Time To Die Update Function-----------------------
 -- TIME TO DIE FRAME
 -----------------------
 
@@ -88,6 +88,138 @@ end
 -----------------------
 -- TIME TO DIE
 -----------------------
+
+function updateTimeToDie(elapsed, unit)
+	if not unit then
+			updateTimeToDie(elapsed, "target")
+			updateTimeToDie(elapsed, "focus")
+			updateTimeToDie(elapsed, "mouseover")
+			for id = 1, 4 do
+				updateTimeToDie(elapsed, "boss" .. id)
+			end
+			if jps.isHealer then
+				for id = 1, 4 do
+					updateTimeToDie(elapsed, "party" .. id)
+					updateTimeToDie(elapsed, "partypet" .. id)
+				end
+				for id = 1, 5 do
+					updateTimeToDie(elapsed, "arena" .. id)
+					updateTimeToDie(elapsed, "arenapet" .. id)
+				end
+				for id = 1, 40 do
+					updateTimeToDie(elapsed, "raid" .. id)
+					updateTimeToDie(elapsed, "raidpet" .. id)
+				end
+			end
+		return
+	end
+	if not UnitExists(unit) then return end
+
+	local unitGuid = UnitGUID(unit)
+	local health = UnitHealth(unit)
+
+	if health == UnitHealthMax(unit) then
+		jps.RaidTimeToDie[unitGuid] = nil
+		return
+	end
+
+	local time = GetTime()
+
+	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieAlgorithm][0](jps.RaidTimeToDie[unitGuid],health,time)
+end
+
+-- Time To Die Algorithms
+jps.timeToDieFunctions = {}
+jps.timeToDieFunctions["InitialMidpoints"] = { 
+	[0] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			dataset = {}
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth, dataset.mtime = time, health
+		else
+			dataset.mhealth = (dataset.mhealth + health) * .5
+			dataset.mtime = (dataset.mtime + time) * .5
+			if dataset.mhealth > dataset.health0 then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			return nil
+		else
+			return health * (dataset.time0 - dataset.mtime) / (dataset.mhealth - dataset.health0)
+		end
+	end 
+}
+jps.timeToDieFunctions["LeastSquared"] = { 
+	[0] = function(dataset, health, time)	
+		if not dataset or not dataset.n then
+			dataset = {}
+			dataset.n = 1
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth = time * health
+			dataset.mtime = time * time
+		else
+			dataset.n = dataset.n + 1
+			dataset.time0 = dataset.time0 + time
+			dataset.health0 = dataset.health0 + health
+			dataset.mhealth = dataset.mhealth + time * health
+			dataset.mtime = dataset.mtime + time * time
+			local timeToDie = jps.timeToDieFunctions["LeastSquared"][1](dataset,health,time)
+			if not timeToDie then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.n then
+			return nil
+		else
+			local timeToDie = (dataset.health0 * dataset.mtime - dataset.mhealth * dataset.time0) / (dataset.health0 * dataset.time0 - dataset.mhealth * dataset.n) - time
+			if timeToDie < 0 then
+				return nil
+			else
+				return timeToDie
+			end
+		end
+	end 
+}
+jps.timeToDieFunctions["WeightedLeastSquares"] = { 
+	[0] = function(dataset, health, time)	
+		if not dataset or not dataset.health0 then
+			dataset = {}
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth = time * health
+			dataset.mtime = time * time
+		else
+			dataset.time0 = (dataset.time0 + time) * .5
+			dataset.health0 = (dataset.health0 + health) * .5
+			dataset.mhealth = (dataset.mhealth + time * health) * .5
+			dataset.mtime = (dataset.mtime + time * time) * .5
+			local timeToDie = jps.timeToDieFunctions["WeightedLeastSquares"][1](dataset,health,time)
+			if not timeToDie then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			return nil
+		else
+		
+			local timeToDie = (dataset.mtime * dataset.health0 - dataset.time0 * dataset.mhealth) / (dataset.time0 * dataset.health0 - dataset.mhealth) - time
+			if timeToDie < 0 then
+				return nil
+			else
+				return timeToDie
+			end
+		end
+	end 
+}
 
 function jps.updateUnitTimeToLive(unit)
     local guid = UnitGUID(unit)
