@@ -251,7 +251,7 @@ function jps.Cast(spell)  -- "number" "string"
 	jps.LastTarget = jps.Target
 	jps.LastTargetGUID = UnitGUID(jps.Target)
 	jps.Target = nil
-	jps.Message = nil
+	jps.Message = ""
 	jps.ThisCast = nil
 end
 
