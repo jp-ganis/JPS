@@ -115,7 +115,7 @@ function wl.isTrivial(unit)
     return  UnitHealth(unit) <= minHp
 end
 
-wl.attackFocus = function jps.cachedValue(function()
+wl.attackFocus = jps.cachedValue(function()
     return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
 end)
 
