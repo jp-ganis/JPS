@@ -38,9 +38,8 @@
 	-- DK Blood
 	-- Bloodshield Toggle
 	ToggleBS = nil
-	bloodshieldAbsorb = 0;
-	hasBloodshield = false;
-	bloodshieldMeActive = false;
+	jps.bloodshieldAbsorb = 0;
+	jps.hasBloodshield = false;
 	bsDataAdded = false;
 	jps.bloodshieldActive = false
 	-- Watch CombatLog for Bloodshild Aura changes
