@@ -217,7 +217,10 @@ jps.registerEvent("INSPECT_READY", function()
     if not jps.Spec then 
         jps.detectSpec() 
     end
-    if jps_variablesLoaded and not jps.Configged then jps_createConfigFrame() end
+    if jps_variablesLoaded and not jps.Configged then 
+    	jps_createConfigFrame()
+    	jps.runFunctionQueue("gui_loaded")
+    end
 end)
 
 -- VARIABLES_LOADED
