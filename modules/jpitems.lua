@@ -30,6 +30,7 @@ function jps.glovesCooldown()
 	return cd
 end
 
+local useBagItemMacros = {}
 function jps.useBagItem(itemName)
 	if type(itemName) == "number" then
 		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
@@ -45,7 +46,8 @@ function jps.useBagItem(itemName)
 				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
 				local hasNoCD = Ternary(dur == 0, true, false)
 				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
-					return { "macro", "/use "..itemName }
+					if not useBagItemMacros[itemName] then useBagItemMacros[itemName] = { "macro", "/use "..itemName } end
+                    return useBagItemMacros[itemName]
 				end
 			end
 		end
@@ -147,6 +149,7 @@ function jps.itemCooldown(item) -- start, duration, enable = GetItemCooldown(ite
 	return cd
 end
 
+local useSlotMacros = {}
 function jps.useSlot(num)
 	-- get the Trinket ID
 	local trinketId = GetInventoryItemID("player", num)
@@ -166,7 +169,8 @@ function jps.useSlot(num)
 	end
 
 	-- Use it
-	return { "macro", "/use "..num }
+	if not useSlotMacros[num] then useSlotMacros[num] = { "macro", "/use "..num } end
+    return useSlotMacros[num]
 end
 
 -- For trinket's. Pass 0 or 1 for the number.

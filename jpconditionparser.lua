@@ -15,7 +15,7 @@ function fnConditionEval(conditions)
     if conditions == nil or conditions == "onCD" then
         return true
     elseif type(conditions) == "boolean" then
-        return conditigons
+        return conditions
     else
         return conditions()
     end
@@ -49,7 +49,7 @@ function fnParseMacro(macro, condition, target)
             return "/cast " .. tostring(GetSpellInfo(macro))
         end
 
-        if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
+        if changeTargets then jps.Macro("/targetlasttarget") end
     end
 end
 
@@ -64,17 +64,11 @@ function parseStaticSpellTable( hydraTable )
     end
     
     for _, spellTable in pairs(hydraTable) do
+        if type(spellTable) == "function" then spellTable = spellTable() end
         local spell = nil
         local conditions = nil
         local target = nil
-        -- Table Entry is a function - will return {spell[[, condition[, target]]}
-        if type(spellTable) == "function" then
-            local fnTable = spellTable()
-            spell = fnTable[1]
-            conditions = fnConditionEval(fnTable[2])
-            target = fnTargetEval(fnTable[3])
-        -- Macro
-        elseif type(spellTable[1]) == "table" and spellTable[1][1] == "macro" then
+        if type(spellTable[1]) == "table" and spellTable[1][1] == "macro" then
             fnParseMacro(spellTable[1][2], fnConditionEval(spellTable[2]), fnTargetEval(spellTable[3]))
         -- Nested Table
         elseif spellTable[1] == "nested" then
@@ -488,5 +482,19 @@ function jps.compileRaidSpellTable(unparsedTable)
         end
     end
     return unparsedTable
+end
+
+
+function jps.cachedValue(fn,updateInterval)
+    if not updateInterval then updateInterval = jps.UpdateInterval end
+    local value = fn()
+    local maxAge = GetTime() + updateInterval
+    return function()
+        if maxAge < GetTime() then
+            value = fn()
+            maxAge = GetTime() + updateInterval
+        end
+        return value
+    end
 end
 
