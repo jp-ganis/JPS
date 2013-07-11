@@ -101,29 +101,15 @@ end
 ---------------------------
 
 -- COUNTS THE NUMBER OF PARTY MEMBERS INRANGE HAVING A SIGNIFICANT HEALTH PCT LOSS
-function jps.CountInRaidStatus(low_health_def)
-	if low_health_def == nil then low_health_def = 0.80 end
-	local units_needing_heals = 0
+function jps.CountInRaidStatus(lowHealthDef)
+	if lowHealthDef == nil then lowHealthDef = 0.80 end
+	local unitsBelowHealthDef = 0
 		for unit, unitTable in pairs(jps.RaidStatus) do 
-			if (unitTable["inrange"] == true) and unitTable["hpct"] < low_health_def then
-				units_needing_heals = units_needing_heals + 1
+			if (unitTable["inrange"] == true) and unitTable["hpct"] < lowHealthDef then
+				unitsBelowHealthDef = unitsBelowHealthDef + 1
 			end
 		end	
-	return units_needing_heals
-end
-
--- LOWEST HP in RaidStatus
-function jps.LowestFriendly()
-	local lowestUnit = jpsName
-	local lowestHP = 0
-	for unit, unitTable in pairs(jps.RaidStatus) do
-	local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
-		if (unitTable["inrange"] == true) and thisHP > lowestHP then
-			lowestHP = thisHP
-			lowestUnit = unit
-		end
-	end
-	return lowestUnit
+	return unitsBelowHealthDef
 end
 
 -- LOWEST PERCENTAGE in RaidStatus
@@ -136,7 +122,40 @@ function jps.LowestInRaidStatus()
 			lowestUnit = unit
 		end
 	end
-	return lowestUnit
+	return lowestUnit, lowestHP
+end
+
+-- LOWEST HP in RaidStatus
+function jps.LowestFriendly()
+	return jps.LowestInRaidStatus() 
+end
+
+-- AVG RAID PERCENTAGE in RaidStatus without aberrations
+function jps.avgRaidHP(noFilter)
+	local raidHP = 1
+	local unitCount = 0
+	local minUnit = 1
+	if jps_tableLen(jps.RaidStatus) <= 1 then return 1 end
+	for unit, unitTable in pairs(jps.RaidStatus) do
+		unitHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
+		if unitHP < minUnit then minUnit = unitHp end
+		raidHP = raidHP + unitHP
+		unitCount = unitCount + 1
+	end
+	local avgHP = raidHP / unitCount
+	if unitCount > 10 or noFilter == true then
+		return avgHP
+	end
+	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% difference to avg hp
+	for unit, unitTable in pairs(jps.RaidStatus) do
+		unitHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit))
+		if unitHp < (avgHP / 1.3 ) then
+			raidHP = raidHP - unitHP
+			unitCount = unitCount -1
+		end
+	end
+	
+	return raidHP / unitCount
 end
 
 ------------------------------------
@@ -200,18 +219,18 @@ return groupToHeal, groupTableToHeal
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH POH IN RAID
-function jps.FindSubGroupTarget(low_health_def)
-	if low_health_def == nil then low_health_def = 0.80 end
+function jps.FindSubGroupTarget(lowHealthDef)
+	if lowHealthDef == nil then lowHealthDef = 0.80 end
 	local groupToHeal, groupTableToHeal = jps.FindSubGroup()
 	local tt = nil
 	local tt_count = 0
-	local lowestHP = low_health_def
+	local lowestHP = lowHealthDef
 	for unit,unitTable in pairs(jps.RaidStatus) do
 		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
 			tt = unit
 			lowestHP = unitTable["hpct"]
 		end
-		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < low_health_def) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt_count = tt_count + 1
 		end
 	end
