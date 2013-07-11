@@ -18,9 +18,8 @@ jps.raid.supportedEncounters = {
 		["Megaera"] = {},
 		["Ji-Kun"] =
 			{
-				{"Quills", "magicShortCD" ,' jps.raid.getTimer("Quills") < 1 '}, 
 				{"Quills", "magicShortCD" ,' jps.IsCastingSpell("Quills","target")'},
-				{"Talor Rake", "physicalHighCD", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro()'},
+				{"Talor Rake", "physicalHighCD", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro() and jps.hp() < 0.90'},
 				{"Downdraft", "runspeed" ,' jps.debuff("Downdraft") '}, 
 			},
 		["Durumu The Forgotten"] = {}
