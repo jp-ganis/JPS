@@ -167,10 +167,20 @@ function jps.getDPSRacial()
 	return nil
 end
 
+function jps.getDeffRacial()
+	-- Trolls n' Orcs
+	if jps.DPSRacial ~= nil then return jps.DPSRacial end -- no more checks needed
+	if jps.Race == nil then jps.Race = UnitRace("player") end
+	if jps.Race == "Dwarf" then
+		return "Stoneform"
+	end
+	return nil
+end
+
 function jps.setClassCooldowns()
 	local options = {}
 	jps.DPSRacial = nil
-	jps.DPSRacial =  jps.getRacial()
+	jps.DPSRacial = jps.getDPSRacial()
 	if jps.DPSRacial then table.insert(options,"DPS Racial") end
 
 	-- Add spells
