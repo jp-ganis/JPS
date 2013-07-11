@@ -50,7 +50,7 @@ dkFrost.spellTable[1] =
 	{ jps.useBagItem("Flask of Winter's Bite"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite")'},
 	{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'}, 
 	
-	{ jps.DPSRacial,'jps.UseCDs'},
+	{ jps.getDPSRacial(),'jps.UseCDs'},
 	
 	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
 	-- On-use Trinkets.
@@ -112,7 +112,7 @@ dkFrost.spellTable[2] =
 	{ "Plague Leech",'dk.canCastPlagueLeech(3)'}, 
 	
 	{ "Pillar of Frost",'jps.UseCDs'},
-	{ jps.DPSRacial,'jps.UseCDs'},
+	{ jps.getDPSRacial(),'jps.UseCDs'},
 	
 	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
 	

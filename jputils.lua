@@ -155,15 +155,22 @@ end
 -- GET CLASS COOLDOWNS
 ---------------------------
 
+function jps.getDPSRacial()
+	-- Trolls n' Orcs
+	if jps.DPSRacial ~= nil then return jps.DPSRacial end -- no more checks needed
+	if jps.Race == nil then jps.Race = UnitRace("player") end
+	if jps.Race == "Troll" then
+		return "Berserking"
+	elseif jps.Race == "Orc" then
+		return "Blood Fury"
+	end
+	return nil
+end
+
 function jps.setClassCooldowns()
 	local options = {}
-
-	-- Trolls n' Orcs
-	if jps.Race == "Troll" then
-		jps.DPSRacial = "Berserking"
-	elseif jps.Race == "Orc" then
-		jps.DPSRacial = "Blood Fury"
-	end
+	jps.DPSRacial = nil
+	jps.DPSRacial =  jps.getRacial()
 	if jps.DPSRacial then table.insert(options,"DPS Racial") end
 
 	-- Add spells
