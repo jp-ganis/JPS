@@ -464,7 +464,6 @@ end
 -------------------------
 function hideDropdown()
 	rotationDropdownHolder:Hide()
-	print("called")
 end
 
 function jps.RotationActive(spellTable)
