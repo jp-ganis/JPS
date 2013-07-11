@@ -507,8 +507,10 @@ function jps.addTofunctionQueue(fn,queueName)
 end
 
 function jps.deleteFunctionFromQueue(fn, queueName)
-	if jps.functionQueues[queueName][fn] then
-		jps.functionQueues[queueName][fn] = nil
+	if jps.functionQueues[queueName] ~= nil then
+		if jps.functionQueues[queueName][fn] ~= nil then
+			jps.functionQueues[queueName][fn] = nil
+		end
 	end
 end
 
