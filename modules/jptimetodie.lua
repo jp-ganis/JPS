@@ -118,7 +118,7 @@ function updateTimeToDie(elapsed, unit)
 	local unitGuid = UnitGUID(unit)
 	local health = UnitHealth(unit)
 
-	if health == UnitHealthMax(unit) then
+	if health == UnitHealthMax(unit) or health == 0 then
 		jps.RaidTimeToDie[unitGuid] = nil
 		return
 	end
@@ -126,6 +126,11 @@ function updateTimeToDie(elapsed, unit)
 	local time = GetTime()
 
 	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieAlgorithm][0](jps.RaidTimeToDie[unitGuid],health,time)
+	if jps.RaidTimeToDie[unitGuid] then
+		if jps.RaidTimeToDie[unitGuid]["timeSinceNoChange"] >= jps.maxTDDLifetime then
+			jps.RaidTimeToDie[unitGuid] = nil
+		end
+	end
 end
 
 -- Time To Die Algorithms
@@ -136,7 +141,20 @@ jps.timeToDieFunctions["InitialMidpoints"] = {
 			dataset = {}
 			dataset.time0, dataset.health0 = time, health
 			dataset.mhealth, dataset.mtime = time, health
+			dataset.health = health
+			dataset.timeSinceChange = 0
+			dataset.timeSinceNoChange = 0
+			dataset.timestamp = time
 		else
+			dataset.timeSinceLastChange = time - dataset.timestamp
+			dataset.timestamp = time
+			dataset.healthChange = dataset.health - health 
+			dataset.health = health
+			if dataset.healthChange <= 1 then
+				dataset.timeSinceNoChange = dataset.timeSinceNoChange + dataset.timeSinceLastChange
+			else
+				dataset.timeSinceNoChange = 0 
+			end
 			dataset.mhealth = (dataset.mhealth + health) * .5
 			dataset.mtime = (dataset.mtime + time) * .5
 			if dataset.mhealth > dataset.health0 then
@@ -161,8 +179,21 @@ jps.timeToDieFunctions["LeastSquared"] = {
 			dataset.time0, dataset.health0 = time, health
 			dataset.mhealth = time * health
 			dataset.mtime = time * time
+			dataset.health = health
+			dataset.timeSinceChange = 0
+			dataset.timeSinceNoChange = 0
+			dataset.timestamp = time
 		else
 			dataset.n = dataset.n + 1
+			dataset.timeSinceLastChange = time - dataset.timestamp
+			dataset.timestamp = time
+			dataset.healthChange = dataset.health - health 
+			dataset.health = health
+			if dataset.healthChange <= 1 then
+				dataset.timeSinceNoChange = dataset.timeSinceNoChange + dataset.timeSinceLastChange
+			else
+				dataset.timeSinceNoChange = 0 
+			end
 			dataset.time0 = dataset.time0 + time
 			dataset.health0 = dataset.health0 + health
 			dataset.mhealth = dataset.mhealth + time * health
@@ -194,7 +225,20 @@ jps.timeToDieFunctions["WeightedLeastSquares"] = {
 			dataset.time0, dataset.health0 = time, health
 			dataset.mhealth = time * health
 			dataset.mtime = time * time
+			dataset.health = health
+			dataset.timeSinceChange = 0
+			dataset.timeSinceNoChange = 0
+			dataset.timestamp = time
 		else
+			dataset.timeSinceLastChange = time - dataset.timestamp
+			dataset.timestamp = time
+			dataset.healthChange = dataset.health - health 
+			dataset.health = health
+			if dataset.healthChange <= 1 then
+				dataset.timeSinceNoChange = dataset.timeSinceNoChange + dataset.timeSinceLastChange
+			else
+				dataset.timeSinceNoChange = 0 
+			end
 			dataset.time0 = (dataset.time0 + time) * .5
 			dataset.health0 = (dataset.health0 + health) * .5
 			dataset.mhealth = (dataset.mhealth + time * health) * .5

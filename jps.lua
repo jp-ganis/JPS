@@ -111,6 +111,7 @@ jps.MultiRotation = false
 rotationDropdownHolder = nil
 jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
+jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withing 30 seconds
 
 -- Latency
 jps.CastBar = {}
