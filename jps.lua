@@ -95,6 +95,7 @@ jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
 jps.RaidMode = false
+jps.functionQueues = {}
 
 -- Config.
 jps.Configged = false
@@ -855,4 +856,38 @@ function jps_Combat()
    
    -- Return spellcast.
    return jps.ThisCast,jps.Target
+end
+
+function jps.addTofunctionQueue(fn,queueName) 
+	if not jps.functionQueues[queueName] then
+		jps.functionQueues[queueName] = {}
+	end
+	if not jps.functionQueues[queueName][fn] then
+		jps.functionQueues[queueName][fn] = fn
+	end
+end
+
+function jps.deleteFunctionFromQueue(fn, queueName)
+	if jps.functionQueues[queueName][fn] then
+		jps.functionQueues[queueName][fn] = nil
+	end
+end
+
+function jps.runFunctionQueue(queueName)
+	local noErrors = true
+	if jps.functionQueues[queueName] then
+		for _,fn in pairs(jps.functionQueues[queueName]) do
+			local status, error = pcall(fn)
+			if not status then
+				noError = false
+				LOG.error("Error %s on function: %s in Queue %s", error, fn, queueName)
+			end
+			jps.functionQueues[queueName][fn] = nil
+		end
+		if noErrors then
+			jps.functionQueues[queueName] = nil
+			return true
+		end
+	end	
+	return false
 end
