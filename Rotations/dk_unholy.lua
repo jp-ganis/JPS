@@ -3,7 +3,6 @@
 function dk_unholy()
 
 	-- Shift-key to cast Death and Decay
-	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
 	-- Automatically raise ghoul if dead
 	
@@ -84,8 +83,8 @@ function dk_unholy()
 		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
 		-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
-    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
+    	{ "Raise Ally", UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds, "focus" },
+    	{ "Raise Ally", UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds, "target"},
 
 		-- AOE
 		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget },

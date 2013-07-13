@@ -22,8 +22,8 @@ dkBloodSpellTable[1] = {
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
 	-- Battle Rezz
-	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "focus" },
-	{ "Raise Ally",'UnitIsDeadOrGhost("mouseover") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "mouseover"},
+	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
+	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
 	
 	-- Shift is pressed
 	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and not IsLeftAltKeyDown()'},

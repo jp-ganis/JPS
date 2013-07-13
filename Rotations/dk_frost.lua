@@ -8,7 +8,6 @@
 -- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
 
 -- Usage info:
--- left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover	
 
 -- Cooldowns: trinkets, raise dead, synapse springs, lifeblood, pillar of frost, racials
 
@@ -28,8 +27,8 @@ dkFrost.spellTable[1] =
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and IsLeftAltKeyDown == nil'},
 	
 	-- Battle Rezz
-	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "focus" },
-	{ "Raise Ally",'UnitIsDeadOrGhost("mouseover") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "mouseover"},
+	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
+	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
 	
 	-- Self heal
 	{ "Death Pact",'jps.UseCDs and jps.hp() < 0.6 and UnitExists("pet") ~= nil'},
