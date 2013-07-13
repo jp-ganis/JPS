@@ -101,7 +101,7 @@ dkBloodSpellTable[1] = {
 	
 	{"Horn of Winter", "onCD"},
 	
-	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower < 30'},
+	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 }
 
 dkBloodSpellTable[2] = {
