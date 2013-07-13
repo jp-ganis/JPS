@@ -8,6 +8,7 @@
 -- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
 
 -- Usage info:
+-- left shift for death and decay
 
 -- Cooldowns: trinkets, raise dead, synapse springs, lifeblood, pillar of frost, racials
 
@@ -69,11 +70,11 @@ dkFrost.spellTable[1] =
 	{ "howling blast",'jps.myDebuffDuration("Frost Fever") == 0'},
 	{ "plague strike",'jps.myDebuffDuration("Blood Plague") == 0'},
 	{ "soul reaper",'jps.hp("target") <= 0.35'},
-	{ "blood tap",'jps.hp("target") <= 0.35 and jps.cooldown("soul reaper") == 0'},
-	{ "howling blast",'jps.buff("Freezing Fog")'},
+	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.hp("target") <= 0.35 and jps.cooldown("soul reaper") == 0'},
+	{ "howling blast",'jps.buff("Freezing Fog") or jps.MultiTarget'},
 	{ "obliterate",'jps.buff("killing machine")'},
-	{ "blood tap",'jps.buff("killing machine")'},
-	{ "blood tap",'jps.buffStacks("blood charge")>10 and jps.runicPower() > 76'},
+	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.buff("killing machine")'},
+	{ "blood tap",'jps.buffStacks("blood charge") >10 and jps.runicPower() > 76'},
 	{ "frost strike",'jps.runicPower() > 76'},
 	{ "obliterate",'dk.rune("twoDr")'},
 	{ "obliterate",'dk.rune("twoFr")'},
