@@ -11,6 +11,7 @@ jplogging.lua
 jputils.lua
 jphealing.lua
 jpparse.lua
+jprotations.lua
 modules\jpauras.lua
 modules\jpcasting.lua
 modules\jpccinterrupt.lua

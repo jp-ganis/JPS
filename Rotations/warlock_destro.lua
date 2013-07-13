@@ -94,7 +94,9 @@ spellTable[2] = {
 
 spellTable[3] = wlk.spellTable
 
-myd = spellTable[1]
+jps.registerStaticTable("WARLOCK",3,spellTable[1],"Destruction 5.3")
+jps.registerStaticTable("WARLOCK",3,spellTable[2],"Interrupt Only")
+jps.registerStaticTable("WARLOCK",3,spellTable[3],"Kanrethad Ebonlocke")
 
 function warlock_destro()
     wl.deactivateBurningRushIfNotMoving(1)
