@@ -24,7 +24,7 @@ dkFrost.spellTable[1] =
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
 	
 	--AOE
-	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget and IsLeftAltKeyDown == nil'},
+	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
 	
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },

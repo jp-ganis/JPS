@@ -26,8 +26,8 @@ dkBloodSpellTable[1] = {
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
 	
 	-- Shift is pressed
-	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and not IsLeftAltKeyDown()'},
-	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and not IsShiftKeyDown()'},
+	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
 	
 	-- Cntrol is pressed
 	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
@@ -81,6 +81,7 @@ dkBloodSpellTable[1] = {
 	
 	-- Multi target
 	{"Blood Boil",'jps.MultiTarget and jps.IsSpellInRange("Blood Boil","target")'},
+	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.buff("Crimson Scourge")'},
 	{"Blood Boil",'jps.buff("Crimson Scourge") and jps.IsSpellInRange("Blood Boil","target")'},
 	
 	-- Rotation
