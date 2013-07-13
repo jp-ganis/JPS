@@ -77,8 +77,6 @@ dkBloodSpellTable[1] = {
 	{"Outbreak",'jps.myDebuffDuration("frost fever") < 2'},
 	{"Outbreak",'jps.myDebuffDuration("blood plague") < 2'},
 	
-	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
-	
 	-- Multi target
 	{"Blood Boil",'jps.MultiTarget and jps.IsSpellInRange("Blood Boil","target")'},
 	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.buff("Crimson Scourge")'},
@@ -101,7 +99,9 @@ dkBloodSpellTable[1] = {
 	{"Rune Strike",'jps.runicPower() >= 40 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
 	
 	{"Horn of Winter", "onCD"},
+	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
 	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
+	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 	
 	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 }
