@@ -20,9 +20,11 @@ dotTracker.trackedSpells = {}
 -- Current DoT Damage
 function dotTracker.toDotDamage(id,dps,dur,tE) dotTracker.dotDamage[id] = {dps = dps, duration = dur, tickEvery = tE} end
 dotTracker.dotDamage = {}
+
 -- Tracked Targets
 function dotTracker.toTarget(guid, spellid) dotTracker.targets[guid..spellid] = { dps = dotTracker.dotDamage[spellid].dps, age = GetTime(), strength = 100, pandemicSafe = false} end
 dotTracker.targets = {}
+
 -- Spell Table
 function dotTracker.toSpell(id,r,altId) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r, alternativeId = altId} end
 dotTracker.spells = {}
@@ -44,6 +46,7 @@ dotTracker.buffs = {}
 
 -- Supported Classes/Specs + Damage Calculation
 function dotTracker.toClass(fn,...) return { updateFunction = fn, spells = {...} } end
+
 dotTracker.supportedClasses = {}
 dotTracker.supportedClasses["WARLOCK"] = {
     dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)

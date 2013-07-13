@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 
 function priest_shadow_pve()
 
@@ -22,7 +22,9 @@ function priest_shadow_pve()
 	local ArenaUnit = {"arena1","arena2","arena3"}
 
 	local FriendUnit = {}
-	for name, _ in pairs(jps.RaidStatus) do table.insert(FriendUnit,name) end
+	for name,_ in pairs(jps.RaidStatus) do 
+	if jps.canHeal(unit) then table.insert(FriendUnit,name) end
+	end
 
 	local EnemyUnit = {}
 	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
@@ -223,7 +225,7 @@ spellTable[1] =
 -- "Vampiric Touch" 34914 
 	{ 34914, (not jps.mydebuff(34914,rangedTarget)) and (lastcast ~= vamptouch or jps.LastCast ~= vamptouch) , rangedTarget },
 -- "Cascade" Heal 121135 -- Shadow 127632
-	{ 127632, (jps.cooldown(121135) == 0) , rangedTarget , "Cascade_" }, -- and (enemycount > 2)
+	{ 127632, (jps.cooldown(121135) == 0) , rangedTarget , "Cascade_" },
 -- "Divine Star" Heal 110744 -- Shadow 122121
 	{ 122121, (jps.cooldown(122121) == 0) , rangedTarget , "Divine Star_" },
 -- "Mindbender" "Torve-esprit" 123040 -- "Ombrefiel" 34433 "Shadowfiend"

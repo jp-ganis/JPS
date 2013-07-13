@@ -60,7 +60,6 @@ jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
 jps.CurrentCast = {}
-jps.SpellBookTable = {}
 jps.detectSpecDisabled = false
 
 -- Class
@@ -84,7 +83,6 @@ jps.RipBuffed = false
 jps.BlacklistTimer = 2
 jps.RaidStatus = {}
 jps.RaidTarget = {}
-jps.RaidRoster = {}
 jps.HealerBlacklist = {}
 jps.Timers = {}
 Healtable = {}
@@ -96,6 +94,7 @@ jps.firstInitializingLoop = true
 jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
+jps.RaidMode = false
 
 -- Config.
 jps.Configged = false
@@ -112,15 +111,22 @@ rotationDropdownHolder = nil
 jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 
--- IN COMBAT
-local start_time = 0
-local end_time = 0
-local total_time = 0
+-- Latency
+jps.CastBar = {}
+jps.CastBar.latency = 0
+jps.CastBar.nextSpell = ""
+jps.CastBar.nextTarget = ""
+jps.CastBar.currentSpell = ""
+jps.CastBar.currentTarget = ""
+jps.CastBar.currentMessage = ""
 
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
 --[[JPSEVENT
+local L = MyLocalizationTable
+
+>>>>>>> 37565819679b6962f835c231e4be218e9228642a
 local combatFrame = CreateFrame("FRAME", nil)
 combatFrame:RegisterEvent("PLAYER_LOGIN")
 combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -150,6 +156,7 @@ combatFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 --------------------------
 -- LOCALIZATION
 --------------------------
+
 
 function write(...)
    DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
@@ -716,6 +723,14 @@ function SlashCmdList.jps(cmd, editbox)
    		jps.Macro("/reload")
 	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
+	elseif msg == "raid"  or msg == "raidmode" then
+		jps.RaidMode = not jps.RaidMode
+		if jps.RaidMode then
+			write("Raid Mode is now enabled")
+		else
+			write("Raid Mode is now disabled")
+		end
+		
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
@@ -795,9 +810,19 @@ function jps_Combat()
 	  return 
    end
    
-   -- STOP spam Combat -- or (jps.checkTimer( "PLAYER_CONTROL_LOST" ) > 0) IF RETURN END NEVER PVP TRINKET
    if (IsMounted() == 1 and jps.getConfigVal("dismount in combat") == 0) or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
-   
+	-- LagWorld
+	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
+	-- Casting
+	-- if UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil then jps.Casting = true else jps.Casting = false end
+	local latency = jps.CastBar.latency
+	if jps.ChannelTimeLeft() > 0 then
+		jps.Casting = true
+	elseif (jps.CastTimeLeft() - latency) > 0 then 
+		jps.Casting = true
+	else
+		jps.Casting = false
+	end
    -- Check spell usability 
    if string.len(jps.customRotationFunc) > 10 then
 	   jps.ThisCast,jps.Target = jps.customRotation() 
@@ -815,36 +840,18 @@ function jps_Combat()
    jps.Moving = GetUnitSpeed("player") > 0
    jps.MovingTarget = GetUnitSpeed("target") > 0
    
-   -- LagWorld
-   jps.Lag = select(4,GetNetStats()) -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
-   jps.Lag = jps.Lag/100
-   
-   -- Casting
-   if UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil then jps.Casting = true
-   else jps.Casting = false
-   end
-
    if not jps.Casting and jps.ThisCast ~= nil then
-	  if #jps.NextSpell >= 1 then
-		 if jps.NextSpell[1] then
-			jps.Cast(jps.NextSpell[1])
-			table.remove(jps.NextSpell, 1)
+	   if #jps.NextSpell >= 1 then
+		   if jps.NextSpell[1] then
+				jps.Cast(jps.NextSpell[1])
+				table.remove(jps.NextSpell, 1)
 		 else
-			jps.NextSpell[1] = nil
+			 jps.NextSpell[1] = nil
 		 end
 	  else
 		 jps.Cast(jps.ThisCast)
 	  end
    end
-   
---   if jps.ThisCast ~= nil and not jps.Casting then
---	  if jps.NextCast ~= nil and jps.NextCast ~= jps.ThisCast then
---		 jps.Cast(jps.NextCast)
---		 jps.NextCast = nil
---	   else
---		  jps.Cast(jps.ThisCast)
---	  end
---   end
    
    -- Return spellcast.
    return jps.ThisCast,jps.Target

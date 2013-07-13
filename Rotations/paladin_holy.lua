@@ -1,3 +1,11 @@
+local hPala = {}
+hPala.values = {}
+function hPala.updateValues() 
+end
+
+function hPala.get(key) 
+end
+
 local L = MyLocalizationTable
 
 function shouldInterruptCasting(spellsToCheck)	
@@ -11,12 +19,11 @@ function shouldInterruptCasting(spellsToCheck)
 		local spellName = healSpellTable[1]
 		if spellName == spellCasting then
 			if healTargetHP > breakpoint then
-				return true, spellName
+				print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
+				SpellStopCasting()
 			end
-			
 		end
 	end
-	return false, nil
 end
 
 function paladin_holy()
@@ -30,7 +37,7 @@ function paladin_holy()
 	---- Talents:
 	---- Tier 1: Pursuit of Justice
 	---- Tier 2: Fist of Justice
-	---- Tier 3: Sacred Shield
+	---- Tier 3: Sacred Shield / Eternal Flame
 	---- Tier 4: Unbreakable Spirit
 	---- Tier 5: Divine Purpose
 	---- Tier 6: Light's Hammer
@@ -52,16 +59,13 @@ function paladin_holy()
 	
 	local ourHealTarget = jps.LowestInRaidStatus() -- return Raid unit name with LOWEST PERCENTAGE in RaidStatus
 	local healTargetHPPct = jps.hp(ourHealTarget) -- hp percentage of ourHealTarget
-	local mana = UnitPower(player,0)/UnitPowerMax(player,0) -- our mana
-	local hPower = UnitPower("player",9) -- SPELL_POWER_HOLY_POWER = 9 
+	local mana = jps.mana()
+	local hPower = jps.holyPower() -- SPELL_POWER_HOLY_POWER = 9 
 	local stance = GetShapeshiftForm() -- stance
 	local myLowestImportantUnit = jps.findMeATank() -- if not "tank" or  "focus" returns "player" as default
 	local myRaidTanks = jps.findTanksInRaid() -- get all players marked as tanks or with tank specific auras  
 	local importantHealTargets = myRaidTanks -- tanks / focus / target / player
 	local countInRaid = jps.CountInRaidStatus(0.8) -- number of players below 70% for AOE heals
-	
-	--Paladin stance 
-	--3 = Seal of Insight - Seal of Justice if retribution  
 
 	--------------------------------------------------------------------------------------------
 	---- Stop Casting to save mana - curently no AOE spell support!
@@ -76,12 +80,8 @@ function paladin_holy()
 			{.....},
 		} 
 	]]--
-	local interruptSpell, spellInterrupted = shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}})
-	
-	if interruptSpell == true  then
-		print("interrupt "..spellInterrupted.." , unit "..jps.LastTarget.. " has enough hp!");
-		SpellStopCasting()
-	end
+	shouldInterruptCasting({{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}})
+
 
 	--------------------------------------------------------------------------------------------
 	---- myLowestImportantUnit = tanks / focus / target / player
@@ -105,11 +105,13 @@ function paladin_holy()
 	--------------------------------------------------------------------------------------------
 	---- myTank = tanks only for beacon ,sacred shield, eternal flame
 	--------------------------------------------------------------------------------------------
-	local myTank = jps.findMeAggroTank() 
+	
+	local myTank = jps.findMeAggroTank("target")
+
 
 	local gotImportantHealTarget = false
 
-	if lowestHP < healTargetHPPct then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP
+	if lowestHP < healTargetHPPct or lowestHP < 0.5 then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP or our important targets drop below 0.5
 		ourHealTarget = myLowestImportantUnit
 		gotImportantHealTarget = true
 	end
@@ -169,8 +171,8 @@ function paladin_holy()
 		
 		-- Multi Heals
 
-		{ "Light's Hammer", IsShiftKeyDown() ~= nil, rangedTarget },
-		{ "Light of Dawn",  hPower > 2 or jps.buff("Divine Purpose") and jps.CountInRaidStatus(0.9) > 2 , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+		{ "Light's Hammer", IsShiftKeyDown() ~= nil, ourHealTarget },
+		{ "Light of Dawn",  IsLeftControlKeyDown() ~= nil and (hPower > 2 or jps.buff("Divine Purpose")) , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 		{ "Holy Radiance", jps.MultiTarget and countInRaid > 2 , ourHealTarget },  -- only here jps.MultiTarget since it is a mana inefficent spell
 		{ "Holy Shock", jps.buff("Daybreak") and healTargetHPPct < .9 , ourHealTarget }, -- heals with daybreak buff other targets
 
@@ -178,7 +180,7 @@ function paladin_holy()
 		{ "Seal of Insight", stance ~= 3 , player },
 		{ "Beacon of Light", jps.canHeal("mouseover") and IsAltKeyDown() ~= nil and not jps.buff("Beacon of Light","mouseover") , "mouseover" , "set beacon of light to our mouseover" },  -- set beacon of light on mouseover
 		{ "Beacon of Light", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Beacon of Light",myTank) and jps.beaconTarget == nil, myTank }, 
-		{ "Eternal Flame", (hPower > 2) and not jps.buff("Eternal Flame", myTank) , myTank },
+		{ "Eternal Flame", (hPower > 2 or jps.buff("Divine Purpose")) and not jps.buff("Eternal Flame", myTank) , myTank },
 		{ "Sacred Shield", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Sacred Shield",myTank), myTank },
 		
 		{ "Divine Protection", (playerHealthPct < 0.50) , player },
@@ -188,6 +190,7 @@ function paladin_holy()
 		{ "Divine Light", jps.buff("Infusion of Light") and (healTargetHPPct < 0.5), ourHealTarget }, 
 
 	-- Divine Purpose Proc
+		{ "Eternal Flame", (hPower > 2 or jps.buff("Divine Purpose")) and not jps.buff("Eternal Flame", ourHealTarget)  and healTargetHPPct < 0.97, ourHealTarget },
 		{ "Word of Glory", jps.buff("Divine Purpose") and (healTargetHPPct < 0.90), ourHealTarget }, 
 
 	-- Spells
@@ -237,8 +240,8 @@ function paladin_holy()
 		{ "Lifeblood", jps.UseCDs },
 		
 		-- Multi Heals
-		{ "Light's Hammer", IsShiftKeyDown() ~= nil, rangedTarget },
-		{ "Light of Dawn",  jps.MultiTarget and hPower > 2 or jps.buff("Divine Purpose") and jps.CountInRaidStatus(0.9) > 2 , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+		{ "Light's Hammer", IsShiftKeyDown() ~= nil, ourHealTarget },
+		{ "Light of Dawn",  jps.MultiTarget and (hPower > 2 or jps.buff("Divine Purpose")) and jps.CountInRaidStatus(0.9) > 2 , ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 		{ "Holy Radiance", jps.MultiTarget and countInRaid > 2 , myLowestImportantUnit },  -- only here jps.MultiTarget since it is a mana inefficent spell
 		{ "Holy Shock", jps.buff("Daybreak") and lowestHP < .9 , myLowestImportantUnit }, -- heals with daybreak buff other targets
 
@@ -246,7 +249,7 @@ function paladin_holy()
 		{ "Seal of Insight", stance ~= 3 , player },
 		{ "Beacon of Light", jps.canHeal("mouseover") and IsAltKeyDown() ~= nil and not jps.buff("Beacon of Light","mouseover") , "mouseover" , "set beacon of light to our mouseover" },  -- set beacon of light on mouseover
 		{ "Beacon of Light", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Beacon of Light",myTank) and jps.beaconTarget == nil, myTank }, 
-		{ "Eternal Flame", (hPower > 2) and not jps.buff("Eternal Flame", myTank) , myTank },
+		{ "Eternal Flame", (hPower > 2 or jps.buff("Divine Purpose")) and not jps.buff("Eternal Flame", myTank) , myTank },
 		{ "Sacred Shield", (UnitIsUnit(myTank,player)~=1) and not jps.buff("Sacred Shield",myTank), myTank },
 		
 		{ "Divine Protection", (playerHealthPct < 0.50) , player },
@@ -256,6 +259,8 @@ function paladin_holy()
 		{ "Divine Light", jps.buff("Infusion of Light") and (lowestHP < 0.5), myLowestImportantUnit }, 
 
 	-- Divine Purpose Proc
+		{ "Eternal Flame", (hPower > 2 or jps.buff("Divine Purpose")) and not jps.buff("Eternal Flame", myLowestImportantUnit)  and lowestHP < 0.97, myLowestImportantUnit },
+
 		{ "Word of Glory", jps.buff("Divine Purpose") and (lowestHP < 0.90), myLowestImportantUnit }, 
 
 	-- Spells

@@ -1,4 +1,4 @@
-local L = MyLocalizationTable
+
 
 function priest_shadow_pvp()
 
@@ -22,7 +22,9 @@ function priest_shadow_pvp()
 	local ArenaUnit = {"arena1","arena2","arena3"}
 
 	local FriendUnit = {}
-	for name, _ in pairs(jps.RaidStatus) do table.insert(FriendUnit,name) end
+	for name,_ in pairs(jps.RaidStatus) do 
+	if jps.canHeal(unit) then table.insert(FriendUnit,name) end
+	end
 
 	local EnemyUnit = {}
 	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end

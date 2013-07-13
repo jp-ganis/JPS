@@ -1,5 +1,5 @@
 wl = {}
-wl.maxIntCastLength = 2.8
+wl.maxIntCastLength = 1
 
 wl.dottableUnits = {
     "target",
@@ -75,6 +75,25 @@ local function npcId(unit)
     if UnitExists(unit) then return tonumber(UnitGUID(unit):sub(6, 10), 16) end
     return -1
 end
+
+local interruptSpellTables = {}
+function wl.getInterruptSpell(unit)
+    return function()
+        if not interruptSpellTables[unit] then interruptSpellTables[unit] = {{"macro", "/cast " .. wl.spells.commandDemon }, false , unit} end
+        local canInterrupt = false
+        if jps.canCast(wl.spells.opticalBlast, unit) then -- Observer Pet 
+            canInterrupt = true
+        elseif jps.canCast(wl.spells.spellLock, unit) then -- Felhunter Pet
+            canInterrupt = true
+        elseif jps.canCast(wl.spells.commandDemon, unit) and select(3,GetSpellInfo(wl.spells.commandDemon))=="Interface\\Icons\\Spell_Shadow_MindRot" then -- GoSac Felhunter
+            canInterrupt = true
+        end
+        local shouldInterrupt = jps.Interrupts and jps.shouldKick(unit) and jps.CastTimeLeft(unit) < wl.maxIntCastLength
+        interruptSpellTables[unit][2] = canInterrupt and shouldInterrupt
+        return interruptSpellTables[unit]
+    end
+end
+
 -- stop spam curse of the elements at invalid targets @ mop
 function wl.isCotEBlacklisted(unit) 
     local table_noSpamCotE = {
@@ -96,9 +115,10 @@ function wl.isTrivial(unit)
     return  UnitHealth(unit) <= minHp
 end
 
-function wl.attackFocus()
+wl.attackFocus = jps.cachedValue(function()
     return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
-end
+end)
+
 
 -- Helper to prevent Recasts
 function wl.isRecast(spell,target)
