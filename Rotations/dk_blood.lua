@@ -56,7 +56,7 @@ dkBloodSpellTable[1] = {
 	
 	-- Aggro cooldowns
 	-- {"Dark Command",'--targetThreatStatus ~= 3 and not jps.targetTargetTank()'},
-	{"Raise Dead",'jps.UseCDs and dk.hasGhoul()'},
+	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	{"Dancing Rune Weapon",'jps.UseCDs'},
 	
 	-- Requires engineering
