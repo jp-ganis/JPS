@@ -94,9 +94,9 @@ dkBloodSpellTable[1] = {
 	-- Death Siphon when we need a bit of healing. (talent based)
 	{"Death Siphon",'jps.hp() < 0.6'}, -- moved here, because we heal often more with Death Strike than Death Siphon
 	
-	{"Heart Strike",'jps.mydebuff("Blood Plague") and jps.mydebuff("Frost Fever")'},
+	{"Heart Strike",'jps.mydebuff("Blood Plague") and jps.mydebuff("Frost Fever") and GetRuneType(1) ~= 4 and GetRuneType(2) ~= 4'},
 	
-	{"Rune Strike",'jps.runicPower() >= 40 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
+	{"Rune Strike",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
 	
 	{"Horn of Winter", "onCD"},
 	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
