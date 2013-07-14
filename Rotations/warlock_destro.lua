@@ -50,7 +50,7 @@ spellTable[1] = {
     
     -- CD's
     { {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and jps.UseCDs' },
-    { jps.DPSRacial, 'jps.UseCDs' },
+    { jps.getDPSRacial(), 'jps.UseCDs' },
     {wl.spells.lifeblood, 'jps.UseCDs' },
     { jps.useSynapseSprings(), 'jps.UseCDs' },
     { jps.useTrinket(0),       'jps.UseCDs' },
