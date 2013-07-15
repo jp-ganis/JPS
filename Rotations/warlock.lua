@@ -115,9 +115,10 @@ function wl.isTrivial(unit)
     return  UnitHealth(unit) <= minHp
 end
 
-function wl.attackFocus()
+wl.attackFocus = jps.cachedValue(function()
     return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
-end
+end)
+
 
 -- Helper to prevent Recasts
 function wl.isRecast(spell,target)
@@ -139,3 +140,14 @@ function wl.deactivateBurningRushIfNotMoving(seconds)
         end
     end
 end
+
+-- Interrupt SpellTable for all specs
+local interruptSpellTable = {
+    -- Interrupts
+    wl.getInterruptSpell("target"),
+    wl.getInterruptSpell("focus"),
+    wl.getInterruptSpell("mouseover"),
+}
+jps.registerStaticTable("WARLOCK","AFFLICTION",interruptSpellTable,"Interrupt Only")
+jps.registerStaticTable("WARLOCK","DEMONOLOGY",interruptSpellTable,"Interrupt Only")
+jps.registerStaticTable("WARLOCK","DESTRUCTION",interruptSpellTable,"Interrupt Only")

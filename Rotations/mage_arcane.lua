@@ -1,5 +1,5 @@
 --jpganis + SIMCRAFT
-function mage_arcane()
+jps.registerRotation("MAGE","ARCANE",function()
 	local spell = nil
 	local target = nil	
 
@@ -9,11 +9,7 @@ function mage_arcane()
 	local mStacks = jps.buffStacks("arcane missiles!")
 	local alterTimeActive = jps.buff("alter time")
 	
-	local spellTable = {}
-	
-	spellTable[1] = {
-		["ToolTip"] = "Arcane PVE SingleTarget 5.3",
-		
+	local spellTable = {
 		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
 		
 		{ "mage armor",				 not jps.buff("mage armor") }, 
@@ -56,9 +52,22 @@ function mage_arcane()
 		{ "fire blast ",				 jps.Moving },
 		{ "ice lance ",				 jps.Moving },
 	}
+
+	return parseSpellTable(spellTable)
+end, "Arcane PVE SingleTarget 5.3")
+
+jps.registerRotation("MAGE","ARCANE",function()
+	local spell = nil
+	local target = nil	
+
+	local player = jpsName
+	local mana = UnitPower(player,0)/UnitPowerMax(player,0)
+	local stacks = jps.debuffStacks("arcane charge","player")
+	local mStacks = jps.buffStacks("arcane missiles!")
+	local alterTimeActive = jps.buff("alter time")
 	
 	-- only short cd's 
-	spellTable[2] = {
+	spellTable = {
 		["ToolTip"] = "Arcane PVE > 4 Targets 5.3",
 
 		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
@@ -90,7 +99,5 @@ function mage_arcane()
 	}
 		
 	
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
-	return spell,target
-end
+	return parseSpellTable(spellTable)
+end, "Arcane PVE > 4 Targets 5.3")

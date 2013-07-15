@@ -45,7 +45,7 @@ jps.Spec = nil
 jps.Race = nil
 jps.Level = 1
 jps.IconSpell = nil
-jps.Message = ""
+jps.Message = nil
 jps.LastTarget = nil
 jps.LastTargetGUID = nil
 jps.Target = nil
@@ -95,7 +95,6 @@ jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
 jps.RaidMode = false
-jps.functionQueues = {}
 
 -- Config.
 jps.Configged = false
@@ -111,7 +110,6 @@ jps.MultiRotation = false
 rotationDropdownHolder = nil
 jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
-jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withing 30 seconds
 
 -- Latency
 jps.CastBar = {}
@@ -125,6 +123,7 @@ jps.CastBar.currentMessage = ""
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 
+
 function write(...)
    DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
 end
@@ -132,6 +131,139 @@ function macrowrite(...)
    DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO: " .. strjoin(" ", tostringall(...))); -- color orange
 end
 
+function updateTimeToDie(elapsed, unit)
+	if not unit then
+			updateTimeToDie(elapsed, "target")
+			updateTimeToDie(elapsed, "focus")
+			updateTimeToDie(elapsed, "mouseover")
+			for id = 1, 4 do
+				updateTimeToDie(elapsed, "boss" .. id)
+			end
+			if jps.isHealer then
+				for id = 1, 4 do
+					updateTimeToDie(elapsed, "party" .. id)
+					updateTimeToDie(elapsed, "partypet" .. id)
+				end
+				for id = 1, 5 do
+					updateTimeToDie(elapsed, "arena" .. id)
+					updateTimeToDie(elapsed, "arenapet" .. id)
+				end
+				for id = 1, 40 do
+					updateTimeToDie(elapsed, "raid" .. id)
+					updateTimeToDie(elapsed, "raidpet" .. id)
+				end
+			end
+		return
+	end
+	if not UnitExists(unit) then return end
+
+	local unitGuid = UnitGUID(unit)
+	local health = UnitHealth(unit)
+
+	if health == UnitHealthMax(unit) then
+		jps.RaidTimeToDie[unitGuid] = nil
+		return
+	end
+
+	local time = GetTime()
+
+	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieAlgorithm][0](jps.RaidTimeToDie[unitGuid],health,time)
+end
+
+jps.timeToDieFunctions = {}
+jps.timeToDieFunctions["InitialMidpoints"] = { 
+	[0] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			dataset = {}
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth, dataset.mtime = time, health
+		else
+			dataset.mhealth = (dataset.mhealth + health) * .5
+			dataset.mtime = (dataset.mtime + time) * .5
+			if dataset.mhealth > dataset.health0 then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			return nil
+		else
+			return health * (dataset.time0 - dataset.mtime) / (dataset.mhealth - dataset.health0)
+		end
+	end 
+}
+jps.timeToDieFunctions["LeastSquared"] = { 
+	[0] = function(dataset, health, time)	
+		if not dataset or not dataset.n then
+			dataset = {}
+			dataset.n = 1
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth = time * health
+			dataset.mtime = time * time
+		else
+			dataset.n = dataset.n + 1
+			dataset.time0 = dataset.time0 + time
+			dataset.health0 = dataset.health0 + health
+			dataset.mhealth = dataset.mhealth + time * health
+			dataset.mtime = dataset.mtime + time * time
+			local timeToDie = jps.timeToDieFunctions["LeastSquared"][1](dataset,health,time)
+			if not timeToDie then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.n then
+			return nil
+		else
+			local timeToDie = (dataset.health0 * dataset.mtime - dataset.mhealth * dataset.time0) / (dataset.health0 * dataset.time0 - dataset.mhealth * dataset.n) - time
+			if timeToDie < 0 then
+				return nil
+			else
+				return timeToDie
+			end
+		end
+	end 
+}
+jps.timeToDieFunctions["WeightedLeastSquares"] = { 
+	[0] = function(dataset, health, time)	
+		if not dataset or not dataset.health0 then
+			dataset = {}
+			dataset.time0, dataset.health0 = time, health
+			dataset.mhealth = time * health
+			dataset.mtime = time * time
+		else
+			dataset.time0 = (dataset.time0 + time) * .5
+			dataset.health0 = (dataset.health0 + health) * .5
+			dataset.mhealth = (dataset.mhealth + time * health) * .5
+			dataset.mtime = (dataset.mtime + time * time) * .5
+			local timeToDie = jps.timeToDieFunctions["WeightedLeastSquares"][1](dataset,health,time)
+			if not timeToDie then
+				return nil
+			end
+		end
+		return dataset
+	end,
+	[1] = function(dataset, health, time)
+		if not dataset or not dataset.health0 then
+			return nil
+		else
+		
+			local timeToDie = (dataset.mtime * dataset.health0 - dataset.time0 * dataset.mhealth) / (dataset.time0 * dataset.health0 - dataset.mhealth) - time
+			if timeToDie < 0 then
+				return nil
+			else
+				return timeToDie
+			end
+		end
+	end 
+}
+--[[JPSEVENT
+combatFrame:SetScript("OnEvent", jps_combatEventHandler)
+]]
 ------------------------
 -- DETECT CLASS SPEC
 ------------------------
@@ -171,11 +303,6 @@ function jps.detectSpec()
 			end
 		end
 	end
-   if (GetLocale() == "frFR") then
-	  jps.Rotation = jps_getCombatFunction_fr(jps.Class,jps.Spec)
-   else
-	  jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
-   end
    if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
 	   jps.isTank = true
@@ -289,6 +416,7 @@ function SlashCmdList.jps(cmd, editbox)
 	end
 end
 
+
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
    return unpack(spellcache[a])
@@ -314,7 +442,7 @@ end)
 function jps_Combat() 
    -- Check for the Rotation
    if not jps.Class then return end
-   if not jps.Rotation then
+   if not jps.activeRotation() then
 	  write("JPS does not have a rotation for your",jps.Spec,jps.Class)
 	  jps.Enabled = false
 	  return 
@@ -337,7 +465,7 @@ function jps_Combat()
    if string.len(jps.customRotationFunc) > 10 then
 	   jps.ThisCast,jps.Target = jps.customRotation() 
    else
-	   jps.ThisCast,jps.Target = jps.Rotation() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+	   jps.ThisCast,jps.Target =  jps.activeRotation().getSpell()
    end
    if jps.firstInitializingLoop == true then
 	   jps.firstInitializingLoop = false
@@ -365,40 +493,4 @@ function jps_Combat()
    
    -- Return spellcast.
    return jps.ThisCast,jps.Target
-end
-
-function jps.addTofunctionQueue(fn,queueName) 
-	if not jps.functionQueues[queueName] then
-		jps.functionQueues[queueName] = {}
-	end
-	if not jps.functionQueues[queueName][fn] then
-		jps.functionQueues[queueName][fn] = fn
-	end
-end
-
-function jps.deleteFunctionFromQueue(fn, queueName)
-	if jps.functionQueues[queueName] ~= nil then
-		if jps.functionQueues[queueName][fn] ~= nil then
-			jps.functionQueues[queueName][fn] = nil
-		end
-	end
-end
-
-function jps.runFunctionQueue(queueName)
-	local noErrors = true
-	if jps.functionQueues[queueName] then
-		for _,fn in pairs(jps.functionQueues[queueName]) do
-			local status, error = pcall(fn)
-			if not status then
-				noError = false
-				LOG.error("Error %s on function: %s in Queue %s", error, fn, queueName)
-			end
-			jps.functionQueues[queueName][fn] = nil
-		end
-		if noErrors then
-			jps.functionQueues[queueName] = nil
-			return true
-		end
-	end	
-	return false
 end

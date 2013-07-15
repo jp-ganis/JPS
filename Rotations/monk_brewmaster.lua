@@ -1,4 +1,4 @@
-function monk_brewmaster()
+jps.registerRotation("MONK","BREWMASTER",function()
 
 	-- Usage info:
 	-- Shift to use "Dizzying Haze" at mouse position - AoE threat builder - "Hurl a keg of your finest brew"
@@ -108,4 +108,4 @@ function monk_brewmaster()
 	local spell,target = parseSpellTable(spellTable)
 	
 	return spell,target
-end
+end, "Default")

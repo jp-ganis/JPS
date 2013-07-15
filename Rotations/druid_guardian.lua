@@ -1,4 +1,4 @@
-function druid_guardian()
+jps.registerRotation("DRUID","GUARDIAN",function()
 	-- attempted by jpganis, fixed by Attip, updated by peanutbird
 	
 	local spell = nil
@@ -58,4 +58,4 @@ function druid_guardian()
 
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

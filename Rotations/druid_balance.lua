@@ -2,7 +2,7 @@
 -- simcrafty
 -- TODO: add tab-dotting everything.
 
-function druid_balance()
+jps.registerRotation("DRUID","BALANCE", function()
 	
 	local spell = nil
 	local target = nil
@@ -54,4 +54,4 @@ function druid_balance()
 	
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

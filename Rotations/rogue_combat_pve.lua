@@ -1,9 +1,5 @@
 -- jpganis
 -- Ty to SIMCRAFT for this rotation
-
-    function rogue_combat_pve(self)
-       
-       local player, target
        -- Using the same rotation as Noxxic http://Noxxic.com
        -- Talents: all are optional
        -- Tier 1: Shadow Focus
@@ -22,6 +18,10 @@
        -- Multi-target
        -- ToT on Focus
        -- Vanish only cast if shadowstep is off cooldown
+
+jps.registerRotation("ROGUE","COMBAT",function()
+       
+       local player, target
        
        local cp = GetComboPoints("player")
        local rupture_duration = jps.debuffDuration("rupture")
@@ -30,10 +30,7 @@
        local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or jps.buff("Smoke Bomb") or jps.buff("Shroud of Concealment")
        
        -- Spells should be ordered by priority.
-       local spellTable = {}
-       spellTable[1] = {
-          ["ToolTip"] = "PVE single target",
-         
+       local spellTable = {
           -- Defensive Cooldowns.
               { "Recuperate", jps.hp() < .5 and not defensiveCDActive },
              
@@ -119,10 +116,23 @@
               -- Sinister Strike as Cp builder
               { "Sinister Strike", cp < 5 },
            }
+
+       local spellTableActive = jps.RotationActive(spellTable)
+       return parseSpellTable(spellTableActive)
+end, "PVE single target", true, false)
        
-       spellTable[2] = {
-          ["ToolTip"] = "PVE 2-5 targets",
-         
+jps.registerRotation("ROGUE","COMBAT",function()
+       
+       local player, target
+       
+       local cp = GetComboPoints("player")
+       local rupture_duration = jps.debuffDuration("rupture")
+       local snd_duration = jps.buffDuration("slice and dice")
+       local energy = UnitPower("player")
+       local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or jps.buff("Smoke Bomb") or jps.buff("Shroud of Concealment")
+       
+       -- Spells should be ordered by priority.
+       local spellTable = {
               -- Defensive Cooldowns.
               { "Recuperate", jps.hp() < .5 and not defensiveCDActive },
              
@@ -196,10 +206,23 @@
               -- Sinister Strike as Cp builder
               { "Sinister Strike", cp < 5 },   
        }
+
+       local spellTableActive = jps.RotationActive(spellTable)
+       return parseSpellTable(spellTableActive)
+end, "PVE 2-5 targets", true, false)
        
-       spellTable[3] = {
-          ["ToolTip"] = "PVE 5+ targets",
-             
+jps.registerRotation("ROGUE","COMBAT",function()
+       
+       local player, target
+       
+       local cp = GetComboPoints("player")
+       local rupture_duration = jps.debuffDuration("rupture")
+       local snd_duration = jps.buffDuration("slice and dice")
+       local energy = UnitPower("player")
+       local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or jps.buff("Smoke Bomb") or jps.buff("Shroud of Concealment")
+       
+       -- Spells should be ordered by priority.
+       local spellTable = {
               -- Defensive Cooldowns.
               { "Recuperate", jps.hp() < .5 and not defensiveCDActive },
              
@@ -267,4 +290,4 @@
 
        local spellTableActive = jps.RotationActive(spellTable)
        return parseSpellTable(spellTableActive)
-end
+end, "PVE 5+ targets", true, false)

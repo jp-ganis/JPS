@@ -2,7 +2,7 @@
 -- by: SwollNMember WoW v5.2 compliant
 -- Thanks to Gocargo for original version
 
-function warrior_arms_pvp()
+jps.registerStaticTable("WARRIOR","ARMS",function()
 -- Player Specific
 	local player = jpsName
 	local playerRace = UnitRace(player)
@@ -374,4 +374,4 @@ function warrior_arms_pvp()
 	spell,target = parseSpellTable(spellTable)
 
 	return spell,target
-end
+end, "Default", false, true)

@@ -1,6 +1,6 @@
 
 -- TO DO : need better code style!!!!
-function warrior_fury()
+jps.registerStaticTable("WARRIOR","FURY",function()
 
 	local player = jpsName
 	local playerhealth_deficiency =  UnitHealthMax(player) - UnitHealth(player)
@@ -56,12 +56,7 @@ function warrior_fury()
 	-- SPELL TABLE ---------
 	------------------------
 	
-	local spellTable = {}
-	
-	spellTable[1] =
-	{
-		["ToolTip"] = "Warrior Fury",
-		
+	local spellTable = {
 		-- "Bloodthirst" 23881 "Sanguinaire"
 		{ 23881, true , rangedTarget , "Bloodthirst" },
 		-- "Heroic Leap" 6544 "Bond héroïque"
@@ -136,11 +131,9 @@ function warrior_fury()
 	}
 
 
-
-	local spellTableActive = jps.RotationActive(spellTable)
-	local spell,target = parseSpellTable(spellTableActive)
+	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")
 
 	-- "Victorieux" 32216 " Victorious -- Ivresse de la victoire activée -- Attaque instantanément la cible, lui inflige 1246 points de dégâts et vous soigne pour un montant égal à 20% de votre maximum de points de vie
 	-- "Enrage" 13046 12880 "Enrager" -- Les coups critiques de FRAPPE MORTELLE, DE SANGUINAIRE ET DE FRAPPE DU COLOSSE ainsi que les blocages critiques vous font enrager 

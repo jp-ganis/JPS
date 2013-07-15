@@ -1,4 +1,4 @@
-function paladin_ret_pve(self)
+jps.registerRotation("PALADIN","RETRIBUTION",function()
 
 	local holyPower = jps.holyPower()
 	local stance = GetShapeshiftForm() -- stance
@@ -79,4 +79,5 @@ function paladin_ret_pve(self)
 	local spellTableActive = jps.RotationActive(spellTable)
 	spell,target = parseSpellTable(spellTableActive)
 	return spell,target
-end
+end, "Default",true,false)
+

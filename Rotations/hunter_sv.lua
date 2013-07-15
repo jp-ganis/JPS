@@ -1,4 +1,4 @@
-function hunter_sv(self)
+jps.registerRotation("HUNTER","SURVIVAL", function()
 -- by tropic
 jps.Tooltip = "::Survival Hunter (PvE)::\n- Shift-key: \"Explosive Trap\"\n- Alt-key: \"Freezing Trap\"\n- Control-key: \"Snake Trap\"\n- Shift+Control-key: \"Ice Trap\"\nMisdirect to Pet when soloing or misdirect to \"focus\" in party/raid.\nUse CDs: Blows all cooldowns: trinkets, eng. gloves, \n  talents, pots (if boss) etc. (manually use \"Readiness\") \nAuto use \"Healthstone\" at 50% hp, \"Mend Pet\" at 90% hp.\nInterrupt spell cast with \"Silencing Shot\".\nCheck file for talents and glyphs..."
 --------------
@@ -88,8 +88,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 -- Spell Table --
 -----------------
 
-	local spellTable =  {}
-	spellTable[1] = {
+	local spellTable =  {
 		["ToolTip"] = "SV Hunter PVE 5.3",
 		-- Preparation (flasks)
 		{ jps.useBagItem("Alchemist's Flask") , not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") and jps.UseCDs},
@@ -149,8 +148,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 
 	jps.petIsDead = false
 
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
 	return spell,target
 	
-end
+end, "Default")

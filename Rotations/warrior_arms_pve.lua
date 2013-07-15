@@ -1,4 +1,4 @@
-function warrior_arms_pve()
+jps.registerStaticTable("WARRIOR","ARMS",function()
 --Gocargo
 	
 	local targetHealth = UnitHealth("target")/UnitHealthMax("target")
@@ -28,4 +28,4 @@ function warrior_arms_pve()
 	
 		local spell,target = parseSpellTable(spellTable)
 		return spell,target
-end
+end, "Default", true, false)

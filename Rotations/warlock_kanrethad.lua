@@ -319,8 +319,7 @@ local dpsWildImpTable = {
         {wl.spells.incinerate },
 }
 
-wlk.spellTable = {
-["ToolTip"] = "Kanrethad Ebonlocke",
+jps.registerStaticTable("WARLOCK","DESTRUCTION",{
     -- Fake Spell to execute updateState() -- HACK: init() will be only executed once, when the condition is parsed!!!
     {"No Spell", 'wlk.updateState() and wlk.init()'},
     -- Actual Spell Table, executed if JPS shouldn't halt
@@ -341,7 +340,7 @@ wlk.spellTable = {
         {wl.spells.demonicCircleSummon, 'jps.buffDuration(wl.spells.demonicCircleSummon,"player")<240 and GetSpellCooldown(wl.spells.demonicCircleTeleport) > 0' },
         {wl.spells.soulshatter },
     }},
-}
+},"Kanrethad Ebonlocke")
 
 local function petAttackIfEnslaved() 
     if jps.debuff("Enslave Demon","pet")then
