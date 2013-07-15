@@ -1,4 +1,4 @@
-function shaman_resto_pvp()
+jps.registerStaticTable("SHAMAN","RESTORATION",function()
 
 	local spell = nil
 	local target = nil
@@ -106,4 +106,4 @@ function shaman_resto_pvp()
 
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default", false, true)

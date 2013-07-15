@@ -1,4 +1,4 @@
-function rogue_sub()
+jps.registerStaticTable("ROGUE","SUBTLETY",function()
 	
 	----------
 	--- Declarations
@@ -57,7 +57,7 @@ function rogue_sub()
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")
 
 
 

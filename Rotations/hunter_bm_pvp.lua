@@ -1,4 +1,4 @@
-jps.registerRotation("HUNTER","BEASTMASTER", function()
+jps.registerRotation("HUNTER","BEASTMASTERY", function()
 -- valve
 	local player = jpsName
 	local pet = "pet"

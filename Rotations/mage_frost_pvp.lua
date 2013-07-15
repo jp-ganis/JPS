@@ -1,6 +1,6 @@
 -- SEE BOTTOM FOR USER NOTES
 -- by: SwollNMember WoW v5.2 compliant
-function mage_frost_pvp()
+jps.registerRotation("MAGE","FROST",function()
 
 -- Player Specific
 	local player = jpsName
@@ -177,4 +177,4 @@ function mage_frost_pvp()
 	}
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default", false, true)

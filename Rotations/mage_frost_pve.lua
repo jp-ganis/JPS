@@ -27,10 +27,8 @@ function ma_fr.kick(unit)
 	return jps.shouldKick(unit) or jps.IsCastingPoly(unit)
 end
 
-local spellTable ={}
 
-spellTable[1] = {
-	["ToolTip"] = "Frost Mage PVE",
+jps.registerStaticTable("MAGE","FROST",{
 	-- SIMCRAFT 5.3
 	-- pre fight
 	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
@@ -71,9 +69,10 @@ spellTable[1] = {
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "fire blast", 'jps.Moving'}, 
 	{ "ice lance", 'jps.Moving'}, 
-}
-spellTable[2] = {
-	["ToolTip"] = "Noxxic PVE",
+},"Frost Mage PVE",true,false)
+
+
+jps.registerStaticTable("MAGE","FROST",{
 	-- Noxxic
 	-- pre fight
 	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
@@ -123,11 +122,4 @@ spellTable[2] = {
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "fire blast", 'jps.Moving'}, 
 	{ "ice lance", 'jps.Moving'}, 
-}
-
-
-
-
-function mage_frost_pve()
-	return parseStaticSpellTable(jps.RotationActive(spellTable))
-end
+},"Noxxic PVE",true,false)

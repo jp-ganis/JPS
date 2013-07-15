@@ -1,4 +1,4 @@
-function shaman_elemental(self)
+jps.registerStaticTable("SHAMAN","ELEMENTAL",function()
 	-- Updated for MoP
 	-- Tier 1: Astral Shift
 	-- Tier 2: Windwalk Totem
@@ -68,4 +68,4 @@ function shaman_elemental(self)
 	
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

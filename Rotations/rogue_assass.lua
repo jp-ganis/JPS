@@ -20,7 +20,7 @@ rogue.spells["stealth"] = toSpellName(1784)
 rogue.spells["deadlyPoison"] = toSpellName(2823)
 rogue.spells["leechingPoison"] = toSpellName(108211)
 
-local spellTable = {
+jps.registerStaticTable("ROGUE","ASSASSINATION",{
     -- Poisons
     { rogue.spells.deadlyPoison, 'not jps.buff(rogue.spells.deadlyPoison)' },
     { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison)' },
@@ -61,9 +61,5 @@ local spellTable = {
         { rogue.spells.crimsonTempest, 'GetComboPoints("player") > 4'},
         { rogue.spells.fanOfKnives },
     }},
-}
+}, "Default")
 
-
-function rogue_assass()
-    return parseStaticSpellTable(spellTable)
-end

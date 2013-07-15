@@ -1,4 +1,4 @@
-function paladin_protadin_pvp()
+jps.registerRotation("PALADIN","PROTECTION",function()
 -- Conor663 (begged, borrowed, stolen)
 local spell = nil
 
@@ -83,4 +83,4 @@ local spellTable_single =
 		spell, target = parseSpellTable(spellTable_single)
 	end
 	return spell,target
-end
+end, "Default",false,true)

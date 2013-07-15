@@ -1,4 +1,4 @@
-jps.registerRotation("HUNTER","BEASTMASTER", function()
+jps.registerRotation("HUNTER","BEASTMASTERY", function()
 	---------------
 	local spell = spell,target
 	local sps_duration = jps.debuffDuration("serpent sting")
