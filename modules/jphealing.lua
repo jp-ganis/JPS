@@ -4,79 +4,6 @@
 
 local L = MyLocalizationTable
 
---------------------------
--- TABLE FUNCTIONS
---------------------------
-
-function jps_tableSum(table)
-	if table == nil then return 0 end
-	local total = 0
-	for i,j in ipairs(table) do
-		total = total + table[i]
-	end
-	return total
-end 
-
-function jps_removeKey(table, key)
-	if key == nil then return end
-    local element = table[key]
-    table[key] = nil
-    return element
-end
-
---get table length
-function jps_tableLen(table)
-	if table == nil then return 0 end
-    local count = 0
-    for k,v in pairs(table) do 
-        count = count+1
-    end
-    return count
-end
-
-function jps_deepCopy(object)
-    local lookup_table = {}
-    local function _copy(object)
-        if type(object) ~= "table" then
-            return object
-        elseif lookup_table[object] then
-            return lookup_table[object]
-        end
-        local new_table = {}
-        lookup_table[object] = new_table
-        for index, value in pairs(object) do
-            new_table[_copy(index)] = _copy(value)
-        end
-        return setmetatable(new_table, getmetatable(object))
-    end
-    return _copy(object)
-end
-
---------------------------
--- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
---------------------------
-
-function jps_stringTarget(unit,case)
-	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
-	local threatUnit = tostring(unit)
-	local playerName = threatUnit
-	local playerServer = "UnKnown"
-	
-	local stringLength = string.len(threatUnit)
-	local startPos, endPos = string.find(threatUnit,case)  -- "-" "%s" space
-	if ( startPos ) then
-		playerName = string.sub(threatUnit, 1, (startPos-1))
-		playerServer = string.sub(threatUnit, (startPos+1), stringLength)
-		--print("playerName_",playerName,"playerServer_",playerServer) 
-	else
-		playerName = threatUnit
-		playerServer = "UnKnown"
-		--print("playerName_",playerName,"playerServer_",playerServer)
-	end
-return playerName
-end
-
-
 -- ENEMY UNIT with LOWEST HEALTH
 function jps.LowestInRaidTarget() 
 	local mytarget = nil
@@ -174,29 +101,15 @@ end
 ---------------------------
 
 -- COUNTS THE NUMBER OF PARTY MEMBERS INRANGE HAVING A SIGNIFICANT HEALTH PCT LOSS
-function jps.CountInRaidStatus(low_health_def)
-	if low_health_def == nil then low_health_def = 0.80 end
-	local units_needing_heals = 0
+function jps.CountInRaidStatus(lowHealthDef)
+	if lowHealthDef == nil then lowHealthDef = 0.80 end
+	local unitsBelowHealthDef = 0
 		for unit, unitTable in pairs(jps.RaidStatus) do 
-			if (unitTable["inrange"] == true) and unitTable["hpct"] < low_health_def then
-				units_needing_heals = units_needing_heals + 1
+			if (unitTable["inrange"] == true) and unitTable["hpct"] < lowHealthDef then
+				unitsBelowHealthDef = unitsBelowHealthDef + 1
 			end
 		end	
-	return units_needing_heals
-end
-
--- LOWEST HP in RaidStatus
-function jps.LowestFriendly()
-	local lowestUnit = jpsName
-	local lowestHP = 0
-	for unit, unitTable in pairs(jps.RaidStatus) do
-	local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
-		if (unitTable["inrange"] == true) and thisHP > lowestHP then
-			lowestHP = thisHP
-			lowestUnit = unit
-		end
-	end
-	return lowestUnit
+	return unitsBelowHealthDef
 end
 
 -- LOWEST PERCENTAGE in RaidStatus
@@ -209,7 +122,40 @@ function jps.LowestInRaidStatus()
 			lowestUnit = unit
 		end
 	end
-	return lowestUnit
+	return lowestUnit, lowestHP
+end
+
+-- LOWEST HP in RaidStatus
+function jps.LowestFriendly()
+	return jps.LowestInRaidStatus() 
+end
+
+-- AVG RAID PERCENTAGE in RaidStatus without aberrations
+function jps.avgRaidHP(noFilter)
+	local raidHP = 1
+	local unitCount = 0
+	local minUnit = 1
+	if jps_tableLen(jps.RaidStatus) <= 1 then return 1 end
+	for unit, unitTable in pairs(jps.RaidStatus) do
+		unitHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
+		if unitHP < minUnit then minUnit = unitHp end
+		raidHP = raidHP + unitHP
+		unitCount = unitCount + 1
+	end
+	local avgHP = raidHP / unitCount
+	if unitCount > 10 or noFilter == true then
+		return avgHP
+	end
+	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% difference to avg hp
+	for unit, unitTable in pairs(jps.RaidStatus) do
+		unitHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit))
+		if unitHp < (avgHP / 1.3 ) then
+			raidHP = raidHP - unitHP
+			unitCount = unitCount -1
+		end
+	end
+	
+	return raidHP / unitCount
 end
 
 ------------------------------------
@@ -273,18 +219,18 @@ return groupToHeal, groupTableToHeal
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH POH IN RAID
-function jps.FindSubGroupTarget(low_health_def)
-	if low_health_def == nil then low_health_def = 0.80 end
+function jps.FindSubGroupTarget(lowHealthDef)
+	if lowHealthDef == nil then lowHealthDef = 0.80 end
 	local groupToHeal, groupTableToHeal = jps.FindSubGroup()
 	local tt = nil
 	local tt_count = 0
-	local lowestHP = low_health_def
+	local lowestHP = lowHealthDef
 	for unit,unitTable in pairs(jps.RaidStatus) do
 		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
 			tt = unit
 			lowestHP = unitTable["hpct"]
 		end
-		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < low_health_def) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt_count = tt_count + 1
 		end
 	end

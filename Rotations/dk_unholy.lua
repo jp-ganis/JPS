@@ -3,7 +3,6 @@
 jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 
 	-- Shift-key to cast Death and Decay
-	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
 	-- Automatically raise ghoul if dead
 	
@@ -66,8 +65,25 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		end
 		return false
 	end
+--[[
+spellTable[2] = {
 
-	
+{"Unholy Presence", 'not jps.buff("Unholy Presence")'},
+{ "unholy frenzy" },
+{ jps.getDPSRacial, 'jps.UseCDs' },
+{ jps.useTrinket(0), 'jps.UseCDs' },
+{ jps.useTrinket(1), 'jps.UseCDs' },
+
+-- Requires engineerins
+{ jps.useSynapseSprings(), 'jps.UseCDs' },
+
+-- Requires herbalism
+{ "Lifeblood", 'jps.UseCDs' },
+
+
+
+}
+]]--	
 	local spellTable =
 	{
 	   -- Kick
@@ -79,16 +95,16 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate", "focus" },
 		
 		-- Self heals
-		{ "Death Siphon", jps.hp() < .8 },
-		{ "Death Strike", jps.hp() < .7 },
+		{ "Death Siphon", jps.hp() < .8 and jps.Defensive },
+		{ "Death Strike", jps.hp() < .7 and jps.Defensive },
 		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
 		
 		-- Battle Rezz
-    	{ "Raise Ally",		UnitIsDeadOrGhost("focus") == 1 and jps.UseCds and IsShiftKeyDown() ~= nil and IsLeftAltKeyDown()  ~= nil and GetCurrentKeyBoardFocus() == nil  , "focus" },
-    	{ "Raise Ally",		UnitIsDeadOrGhost("mouseover") == 1 and jps.UseCds and IsShiftKeyDown()  ~= nil  and IsLeftAltKeyDown()  ~= nil  and GetCurrentKeyBoardFocus() == nil , "mouseover" },
+    	{ "Raise Ally", UnitIsDeadOrGhost("focus") == 1 and jps.UseCds, "focus" },
+    	{ "Raise Ally", UnitIsDeadOrGhost("target") == 1 and jps.UseCds, "target"},
 
 		-- AOE
-		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget },
+		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil},
 		
 		-- spell steal
 		
@@ -96,7 +112,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		
 		-- CDs
 		{ "unholy frenzy" },
-		{ jps.DPSRacial, jps.UseCDs },
+		{ jps.getDPSRacial(), jps.UseCDs },
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
 		
@@ -110,29 +126,30 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "Raise Dead", jps.UseCDs and UnitExists("pet") == nil },
 		
 		-- DOT CDs
-		{ "outbreak",				ffDuration < 3 or bpDuration < 3 },
-		{ "unholy blight",			ffDuration < 3 or bpDuration < 3 },
+
+		{ "outbreak",				not jps.mydebuff("frost fever") or not jps.mydebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
+		{ "unholy blight",			not jps.mydebuff("frost fever") or not jps.mydebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
 		
 		-- Execute
 		{ "soul reaper",			jps.hp("target") <= 0.35 },
 		
 		-- renew Dots
-		{ "icy touch",				ffDuration <= 0 },
-		{ "plague strike",			bpDuration <= 0 },
+		--{ "icy touch",				ffDuration <= 0 },
+		{ "plague strike",			bpDuration <= 0 or ffDuration <= 0 or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague")  },
 		
 		-- get Runes
-		{ "Plague Leech",			canCastPlagueLeech(3)}, 		
 		{ "summon gargoyle" },
-    	{ "empower rune weapon",		(not twoDr and not twoFr and not twoUr)  and jps.UseCDs },
 		
 		{ "dark transformation",	siStacks >= 5 and not superPet },
 		
 		-- 
 		{ "scourge strike",			twoUr and rp < 90 },
 		{ "festering strike",		twoDr and twoFr and rp < 90 },
+		{ "Blood Tap", jps.buffStacks("Blood Charge") >= 5},
 		{ "death coil",				rp > 90 },
 		{ "death coil",				jps.buff("sudden doom") },
 		{ "blood tap",            jps.buffStacks("blood charge") >= 5 and (not oneDr or not oneUr or not oneFr )},
+		--{ "festering strike",		(dk.shouldExtendDot("frost fever") or dk.shouldExtendDot("blood plague")) and (ffDuration < 20 or bpDuration < 20)},
 		{ "scourge strike" },
 		{ "festering strike" },
 		{ "death coil", 			jps.cooldown("summon gargoyle") > 8 },

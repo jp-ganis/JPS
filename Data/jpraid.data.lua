@@ -1,6 +1,15 @@
 -- supported raids & encounters (only spell Ids for jps.raid.getTimer() !!! )
 
 jps.raid.supportedEncounters = {
+	["Isle of Giants"]= {
+		["Oondasta"]=
+			{
+				{"Frill Blast", "magicShortCD" , 'jps.IsCastingSpell("Frill Blast","target") and jps.CastTimeLeft("Oondasta") < 1'},
+				{"Frill Blast", "reduceDamage" , 'jps.IsCastingSpell("Frill Blast","target") and jps.CastTimeLeft("Oondasta") < 1'},
+			}
+		}
+	},
+		
 	["Throne of Thunder"]= {
 		["Jin'rokh the Breaker"]=
 			{
@@ -18,9 +27,8 @@ jps.raid.supportedEncounters = {
 		["Megaera"] = {},
 		["Ji-Kun"] =
 			{
-				{"Quills", "magicShortCD" ,' jps.raid.getTimer("Quills") < 1 '}, 
 				{"Quills", "magicShortCD" ,' jps.IsCastingSpell("Quills","target")'},
-				{"Talor Rake", "physicalHighCD", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro()'},
+				{"Talor Rake", "reduceDamage", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro() and jps.hp() < 0.90'},
 				{"Downdraft", "runspeed" ,' jps.debuff("Downdraft") '}, 
 			},
 		["Durumu The Forgotten"] = {}
@@ -53,7 +61,8 @@ jps.raid.supportedAbilities = {
 		{
 			["anti-magic shell"] = {{spellType="magicShortCD", spellAction="absorb"},{spellType="dispelMagic", spellAction="dispel"}},
 			["death's advance"] = {{spellType="runspeed"}},
-			["icebound fortitude"] = {{spellType="physicalHighCD"}},
+			["icebound fortitude"] = {{spellType="reduceDamage"}},
+			["icebound fortitude"] = {{spellType="breakStun"}},
 		},
 		["Frost"] =
 		{

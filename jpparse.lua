@@ -245,7 +245,7 @@ function jps.Cast(spell)  -- "number" "string"
 	jps.LastTarget = jps.Target
 	jps.LastTargetGUID = UnitGUID(jps.Target)
 	jps.Target = nil
-	jps.Message = nil
+	jps.Message = ""
 	jps.ThisCast = nil
 end
 
@@ -458,6 +458,9 @@ end
 -------------------------
 -- MULTIPLE ROTATIONS
 -------------------------
+function hideDropdown()
+	rotationDropdownHolder:Hide()
+end
 
 function jps.RotationActive(spellTable)
 	local countRotations = 0
@@ -472,10 +475,12 @@ function jps.RotationActive(spellTable)
 
 	if jps.initializedRotation == false then
 		if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
-			rotationDropdownHolder:Show()
+			
 			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
+			jps.deleteFunctionFromQueue(hideDropdown,"gui_loaded")
+			rotationDropdownHolder:Show()
 		else  
-			rotationDropdownHolder:Hide() 
+			jps.addTofunctionQueue(hideDropdown,"gui_loaded") 
 		end
 		jps.firstInitializingLoop = true
 	end
