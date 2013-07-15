@@ -55,7 +55,7 @@ end
 
 local function getCurrentKey()
     _,_,classId = UnitClass("player")
-    specId = GetSpecialization()
+    specId = GetSpecialization() or 0
     return classId * 10 + specId
 end
 
