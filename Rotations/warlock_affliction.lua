@@ -143,9 +143,7 @@ end
 
 
 
-local spellTable = {}
-spellTable[1] = {
-["ToolTip"] = "Warlock PvE",
+local spellTable = {
     -- Interrupts
     wl.getInterruptSpell("target"),
     wl.getInterruptSpell("focus"),
@@ -225,16 +223,10 @@ spellTable[1] = {
         {wl.spells.drainSoul },
     }},
 }
-spellTable[2] = {
-["ToolTip"] = "Interrupt Only",
-    wl.getInterruptSpell("target"),
-    wl.getInterruptSpell("focus"),
-    wl.getInterruptSpell("mouseover"),
-}
 
 
 
-function warlock_affliction()
+jps.registerRotation("WARLOCK","AFFLICTION",function()
     wl.deactivateBurningRushIfNotMoving(1)
 
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
@@ -244,6 +236,6 @@ function warlock_affliction()
     
     cancelChannelingIfNecessary()
 
-    return parseStaticSpellTable(jps.RotationActive(spellTable))
-end
+    return parseStaticSpellTable(spellTable)
+end,"Affliction 5.3")
 

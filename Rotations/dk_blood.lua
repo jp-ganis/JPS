@@ -10,8 +10,6 @@ function canCastPlagueLeech(timeLeft)
 	return false
 end
 
-
-function dk_blood()
 	-- Talents:
 	-- Tier 1: Roiling Blood (for trash / add fights) or Plague Leech for Single Target
 	-- Tier 2: Anti-Magic Zone
@@ -30,8 +28,7 @@ function dk_blood()
 	-- Cooldowns: trinkets, raise dead, dancing rune weapon, synapse springs, lifeblood 
 
 	-- focus on other tank in raids !
-
-	
+jps.registerRotation("DEATHKNIGHT","BLOOD",dk_blood()
 	local spell = nil
 	local target = nil
 	
@@ -54,11 +51,7 @@ function dk_blood()
 	local one_ur = ur1 or ur2
 	local two_ur = ur1 and ur2
 
-	local spellTable = {}
-	
-	spellTable[1] = {
-		["ToolTip"] = "DK Blood Main",			
-		
+	local spellTable = {
 		-- Blood presence
 		{ "Blood Presence",			 not jps.buff("Blood Presence") },
 		
@@ -138,7 +131,36 @@ function dk_blood()
 		
 		{ "Empower Rune Weapon",			not two_dr and not two_fr and not two_ur },
 	}
-	spellTable[2] = {
+
+	spell,target = parseSpellTable(spellTable)
+	spell = bloodshieldMe(spell)
+	return spell,target
+end,"DK Blood Main")
+
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
+	local spell = nil
+	local target = nil
+	
+	local rp = jps.runicPower();
+	local ffDuration = jps.myDebuffDuration("frost fever")
+	local bpDuration = jps.myDebuffDuration("blood plague")
+	local bcStacks = jps.buffStacks("blood charge") --Blood Stacks
+	local haveGhoul, _, _, _, _ = GetTotemInfo(1) --Information about Ghoul pet
+	
+	local dr1 = select(3,GetRuneCooldown(1))
+	local dr2 = select(3,GetRuneCooldown(2))
+	local ur1 = select(3,GetRuneCooldown(3))
+	local ur2 = select(3,GetRuneCooldown(4))
+	local fr1 = select(3,GetRuneCooldown(5))
+	local fr2 = select(3,GetRuneCooldown(6))
+	local one_dr = dr1 or dr2
+	local two_dr = dr1 and dr2
+	local one_fr = fr1 or fr2
+	local two_fr = fr1 and fr2
+	local one_ur = ur1 or ur2
+	local two_ur = ur1 and ur2
+
+	local spellTable = {
 		["ToolTip"] = "DK Blood CDs+interrupts only",			
 		-- Blood presence
 		{ "Blood Presence",			 not jps.buff("Blood Presence") },
@@ -178,10 +200,37 @@ function dk_blood()
 		-- Diseases
 		{ "Unholy Blight",			 ffDuration < 2 or bpDuration < 2 },
 		{ "Outbreak",			ffDuration <= 2 or bpDuration <= 2 },		
-	}	
-	spellTable[3] = {
-		["ToolTip"] = "DK Diseases+interrupts only",			
+	}
 
+	spell,target = parseSpellTable(spellTable)
+	spell = bloodshieldMe(spell)
+	return spell,target
+end,"DK Blood CDs+interrupts only")
+
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
+	local spell = nil
+	local target = nil
+	
+	local rp = jps.runicPower();
+	local ffDuration = jps.myDebuffDuration("frost fever")
+	local bpDuration = jps.myDebuffDuration("blood plague")
+	local bcStacks = jps.buffStacks("blood charge") --Blood Stacks
+	local haveGhoul, _, _, _, _ = GetTotemInfo(1) --Information about Ghoul pet
+	
+	local dr1 = select(3,GetRuneCooldown(1))
+	local dr2 = select(3,GetRuneCooldown(2))
+	local ur1 = select(3,GetRuneCooldown(3))
+	local ur2 = select(3,GetRuneCooldown(4))
+	local fr1 = select(3,GetRuneCooldown(5))
+	local fr2 = select(3,GetRuneCooldown(6))
+	local one_dr = dr1 or dr2
+	local two_dr = dr1 and dr2
+	local one_fr = fr1 or fr2
+	local two_fr = fr1 and fr2
+	local one_ur = ur1 or ur2
+	local two_ur = ur1 and ur2
+
+	local spellTable = {
 		-- Kicks
 		{ "mind freeze",			jps.shouldKick() },
 		{ "mind freeze",			jps.shouldKick("focus"), "focus" },
@@ -202,8 +251,7 @@ function dk_blood()
 		
 	}
 
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
 	spell = bloodshieldMe(spell)
 	return spell,target
-end
+end,"DK Diseases+interrupts only")

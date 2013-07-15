@@ -98,9 +98,7 @@ function druid.legacyDefaultHP()
     return jps.hpInc(druid.legacyDefaultTarget())
 end
 
-local spellTable = {}
-spellTable[1] = {
-["ToolTip"] = "Legacy Rotation",
+jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
     { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
@@ -122,9 +120,9 @@ spellTable[1] = {
     { druid.spells.healingTouch, '(jps.buff(druid.spells.naturesSwiftness) or not jps.Moving) and druid.legacyDefaultHP() < 0.55', druid.legacyDefaultTarget },    
     { druid.spells.nourish, 'druid.legacyDefaultHP() < 0.85', druid.legacyDefaultTarget },
     --    { "nourish",            jps.hp(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
-}
-spellTable[2] = {
-["ToolTip"] = "Advanced Rotation",
+}, "Legacy Rotation")
+
+jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
     { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
@@ -164,9 +162,4 @@ spellTable[2] = {
         { druid.spells.nourish, 'jps.hpInc(druid.focusHealTarget()) < 0.85', druid.focusHealTarget },
     }},
     { druid.spells.regrowth, 'jps.Defensive and jps.buffDuration(druid.spells.harmony) < 1', jps.findMeATank },
-}
-druid.spellTable = spellTable[2]
-
-function druid_resto()
-    return parseStaticSpellTable(jps.RotationActive(spellTable))
-end
+},"Advanced Rotation")

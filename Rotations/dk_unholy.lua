@@ -1,6 +1,6 @@
 -- tropic (original by jpganis)
 -- Ty to SIMCRAFT for this rotation
-function dk_unholy()
+jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 
 	-- Shift-key to cast Death and Decay
 	-- shift + left alt for battle rezz at your focus or (if focus is not death , or no focus or focus target out of range) mouseover
@@ -142,4 +142,4 @@ function dk_unholy()
 
 	spell,target = parseSpellTable(spellTable) 
 	return spell,target
-end
+end,"Default")

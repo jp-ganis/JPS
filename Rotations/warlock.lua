@@ -140,3 +140,14 @@ function wl.deactivateBurningRushIfNotMoving(seconds)
         end
     end
 end
+
+-- Interrupt SpellTable for all specs
+local interruptSpellTable = {
+    -- Interrupts
+    wl.getInterruptSpell("target"),
+    wl.getInterruptSpell("focus"),
+    wl.getInterruptSpell("mouseover"),
+}
+jps.registerStaticTable("WARLOCK","AFFLICTION",interruptSpellTable,"Interrupt Only")
+jps.registerStaticTable("WARLOCK","DEMONOLOGY",interruptSpellTable,"Interrupt Only")
+jps.registerStaticTable("WARLOCK","DESTRUCTION",interruptSpellTable,"Interrupt Only")

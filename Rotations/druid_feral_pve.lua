@@ -1,6 +1,6 @@
   --Ty to MEW Feral Sim
 	-- jpganis
-function druid_feral_pve()
+jps.registerRotation("DRUID","FERAL", function()
 	local spell = nil
 	local target = nil
 
@@ -189,4 +189,4 @@ function druid_feral_pve()
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 
-end	
+end	,"Default",true,false)

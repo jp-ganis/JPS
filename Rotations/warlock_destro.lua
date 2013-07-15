@@ -20,9 +20,7 @@ Known Bugs:
 
 ]]--
 
-local spellTable = {}
-spellTable[1] = {
-["ToolTip"] = "Warlock PvE",
+local spellTable = {
     -- Interrupts
     wl.getInterruptSpell("target"),
     wl.getInterruptSpell("focus"),
@@ -84,21 +82,10 @@ spellTable[1] = {
         {wl.spells.incinerate },
     }},
 }
-spellTable[2] = {
-["ToolTip"] = "Interrupt Only",
-    -- Interrupts
-    wl.getInterruptSpell("target"),
-    wl.getInterruptSpell("focus"),
-    wl.getInterruptSpell("mouseover"),
-}
 
-spellTable[3] = wlk.spellTable
 
-jps.registerStaticTable("WARLOCK",3,spellTable[1],"Destruction 5.3")
-jps.registerStaticTable("WARLOCK",3,spellTable[2],"Interrupt Only")
-jps.registerStaticTable("WARLOCK",3,spellTable[3],"Kanrethad Ebonlocke")
 
-function warlock_destro()
+jps.registerRotation("WARLOCK","DESTRUCTION",function()
     wl.deactivateBurningRushIfNotMoving(1)
 
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
@@ -106,5 +93,6 @@ function warlock_destro()
         jps.NextSpell = {}
     end
 
-    return parseStaticSpellTable(jps.RotationActive(spellTable))
-end
+    return parseStaticSpellTable(spellTable)
+end,"Destruction 5.3")
+
