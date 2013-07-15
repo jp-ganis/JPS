@@ -44,6 +44,16 @@ local function getCurrentKey()
     return classId * 10 + specId
 end
 
+local function addRotationToTable(rotations,rotation)
+    for k,v in pairs(rotations) do
+        if v.tooltip == rotation.tooltip then
+            rotations[k] = rotation
+            return
+        end
+    end
+    table.insert(rotations, rotation)
+end
+
 function jps.registerRotation(class,specId,fn,tooltip,config,pve,pvp)
     local key = toKey(class, specId)
     if pve==nil then pve = true end
@@ -52,17 +62,37 @@ function jps.registerRotation(class,specId,fn,tooltip,config,pve,pvp)
     if pvp and not pvpRotations[key] then pvpRotations[key] = {} end
     if pve and not pveRotations[key] then pveRotations[key] = {} end
     local rotation = {tooltip = tooltip, rotation = fn, config = config}
-    if pvp then table.insert(pvpRotations[key], rotation) end
-    if pve then table.insert(pveRotations[key], rotation) end
+    if pvp then addRotationToTable(pvpRotations[key], rotation) end
+    if pve then addRotationToTable(pveRotations[key], rotation) end
+    jps.initializedRotation = false
+    jps.activeRotation()
+end
+
+function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
+    local key = toKey(class, specId)
+    if pve==nil then pve = true end
+    if pvp==nil then pvp = true end
+    if pve and pveRotations[key] then for k,v in pairs(pveRotations[key]) do
+        if v.tooltip == tooltip then
+            table.remove(pveRotations[key], k)
+            break
+        end
+    end end
+    if pvp and pvpRotations[key] then for k,v in pairs(pvpRotations[key]) do
+        if v.tooltip == tooltip then
+            table.remove(pvpRotations[key], k)
+            break
+        end
+    end end
+end
+
+function jps.registerTable(class,spec,spellTable,tooltip,config,pve,pvp)
+    jps.registerRotation(class,spec,function() return parseSpellTable(spellTable) end,tooltip,config,pve,pvp)
 end
 
 function jps.registerStaticTable(class,spec,spellTable,tooltip,config,pve,pvp)
     jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,config,pve,pvp)
 end
---[[
-function jps.activeRotation()
-        if jps.PvP then return jps.getActiveRotation(pvpRotation) else return jps.activeRotation(pveRotation) end
-end]]
 
 function jps.activeRotation(rotationTable)
     if rotationTable == nil then
