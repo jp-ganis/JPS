@@ -54,10 +54,10 @@ dkFrost.spellTable[1] =
 	
 	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
 	-- On-use Trinkets.
-	{ jps.useTrinket(0),'jps.UseCDs'},
-	{ jps.useTrinket(1),'jps.UseCDs'},
+	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
+	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
 	
@@ -133,11 +133,11 @@ dkFrost.spellTable[2] =
  	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
  	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},		
 	-- On-use Trinkets.
-	{ jps.useTrinket(0),'jps.UseCDs'},
-	{ jps.useTrinket(1),'jps.UseCDs'},
+	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
+	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
 	
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
