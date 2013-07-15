@@ -2,12 +2,12 @@
 
 jps.raid.supportedEncounters = {
 	["Isle of Giants"]= {
-		["Oondasta"]=
+		["Oondasta"]= {
 			{
 				{"Frill Blast", "magicShortCD" , 'jps.IsCastingSpell("Frill Blast","target") and jps.CastTimeLeft("Oondasta") < 1'},
 				{"Frill Blast", "reduceDamage" , 'jps.IsCastingSpell("Frill Blast","target") and jps.CastTimeLeft("Oondasta") < 1'},
-			}
-		}
+			},
+		},
 	},
 		
 	["Throne of Thunder"]= {
