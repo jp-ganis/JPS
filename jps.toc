@@ -36,6 +36,7 @@ Lib\bindings.xml
 
 jpevents.lua
 
+Rotations\dk.lua
 Rotations\dk_blood.lua
 Rotations\dk_frost.lua
 Rotations\dk_unholy.lua

@@ -159,4 +159,4 @@ spellTable[2] = {
 
 	spell,target = parseSpellTable(spellTable) 
 	return spell,target
-end,"Default")
+end, "Default")
