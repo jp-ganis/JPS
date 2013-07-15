@@ -1,4 +1,4 @@
-function hunter_sv(self)
+jps.registerRotation("HUNTER","SURVIVAL", function()
 -- by tropic
 jps.Tooltip = "::Survival Hunter (PvE)::\n- Shift-key: \"Explosive Trap\"\n- Alt-key: \"Freezing Trap\"\n- Control-key: \"Snake Trap\"\n- Shift+Control-key: \"Ice Trap\"\nMisdirect to Pet when soloing or misdirect to \"focus\" in party/raid.\nUse CDs: Blows all cooldowns: trinkets, eng. gloves, \n  talents, pots (if boss) etc. (manually use \"Readiness\") \nAuto use \"Healthstone\" at 50% hp, \"Mend Pet\" at 90% hp.\nInterrupt spell cast with \"Silencing Shot\".\nCheck file for talents and glyphs..."
 --------------
@@ -153,4 +153,4 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 	spell,target = parseSpellTable(spellTableActive)
 	return spell,target
 	
-end
+end, "Default")

@@ -109,6 +109,7 @@ title:SetText("JPS ROTATIONS")
 local function GUIRotation_OnClick(self)
    UIDropDownMenu_SetSelectedID(DropDownRotationGUI, self:GetID())
    jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
+   jps.setActiveRotation(self:GetID())
    write("Changed your active Rotation to: "..jps.ToggleRotationName[jps.Count])
 end
 
@@ -637,6 +638,8 @@ end
 function jps.togglePvP( value )
 	if value == nil then jps.PvP = not jps.PvP
 	else jps.PvP = value end
+	-- Reset Rotation
+	jps.resetRotationTable()
 
 	if jps.PvP then jpsIcon.texture:SetTexture(jps.GUIpvp)
 	else jpsIcon.texture:SetTexture(jps.GUInormal) end

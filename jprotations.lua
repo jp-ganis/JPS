@@ -1,5 +1,6 @@
 local pveRotations = {}
 local pvpRotations = {}
+local activeRotation = 1
 
 local classNames = { "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "DEATHKNIGHT", "SHAMAN", "MAGE", "WARLOCK", "MONK", "DRUID" }
 
@@ -44,7 +45,7 @@ end
 local function toKey(class,spec)
     local classId = classToNumber(class)
     if not classId then return 0 end
-    local specId = classToNumber(classId, spec)
+    local specId = specToNumber(classId, spec)
     if not specId then return 0 end
     if classId < 1 or classId > 11 then return 0 end
     if classId < 11 and specId > 3 then return 0 end
@@ -68,8 +69,24 @@ local function addRotationToTable(rotations,rotation)
     table.insert(rotations, rotation)
 end
 
-function jps.registerRotation(class,specId,fn,tooltip,config,pve,pvp)
-    local key = toKey(class, specId)
+local function tableCount(rotationTable, key)
+    if not rotationTable[key] then return 0 end
+    return table.getn(rotationTable[key])
+end
+
+function jps.setActiveRotation(idx)
+    local maxCount = 0
+    if jps.PvP then
+        maxCount = tableCount(pvpRotations, getCurrentKey())
+    else
+        maxCount = tableCount(pveRotations, getCurrentKey())
+    end
+    if idx < 1 or idx > maxCount then idx = 1 end
+    activeRotation = idx
+end
+
+function jps.registerRotation(class,spec,fn,tooltip,config,pve,pvp)
+    local key = toKey(class, spec)
     if pve==nil then pve = true end
     if pvp==nil then pvp = true end
     if config== nil then config = {} end
@@ -78,8 +95,27 @@ function jps.registerRotation(class,specId,fn,tooltip,config,pve,pvp)
     local rotation = {tooltip = tooltip, getSpell = fn, config = config}
     if pvp then addRotationToTable(pvpRotations[key], rotation) end
     if pve then addRotationToTable(pveRotations[key], rotation) end
+    jps.resetRotationTable()
+end
+
+function jps.resetRotationTable()
     jps.initializedRotation = false
+    jps.setActiveRotation(activeRotation)
     jps.activeRotation()
+end
+
+
+function jps.printRotations()
+    for ci,class in ipairs(classNames) do
+        local msg = class .. ": "
+        for si,spec in ipairs(specNames[ci]) do
+            local key = toKey(class, spec)
+            local pveCount = tableCount(pveRotations,key)
+            local pvpCount = tableCount(pvpRotations,key)
+            msg = msg .. spec .. "(PvE " .. pveCount .. " / PvP " .. pvpCount .. ") "
+        end
+        print(msg)
+    end
 end
 
 function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
@@ -121,10 +157,11 @@ function jps.activeRotation(rotationTable)
         jps.ToggleRotationName[k] = v.tooltip
     end
     
+    
     if jps.initializedRotation == false then
         if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
             rotationDropdownHolder:Show()
-            UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
+            UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[activeRotation])
         else  
             rotationDropdownHolder:Hide() 
         end
@@ -133,7 +170,7 @@ function jps.activeRotation(rotationTable)
 
     jps.initializedRotation = true
 
-    if not rotationTable[getCurrentKey()][jps.Count] then return nil end
+    if not rotationTable[getCurrentKey()][activeRotation] then return nil end
     jps.Tooltip = rotationTable[getCurrentKey()][jps.Count].tooltip
-    return rotationTable[getCurrentKey()][jps.Count]
+    return rotationTable[getCurrentKey()][activeRotation]
 end

@@ -1,4 +1,4 @@
-function hunter_bm_pvp()
+jps.registerRotation("HUNTER","BEASTMASTER", function()
 -- valve
 	local player = jpsName
 	local pet = "pet"
@@ -150,6 +150,6 @@ function hunter_bm_pvp()
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end	,"Default",false,true)
 
 -- Put DPS trinket in top trinket slot and if not human, put PvP trinket in bottom slot.

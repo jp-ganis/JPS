@@ -1,5 +1,4 @@
-function hunter_bm_pve()
-	jps.Tooltip = ":: BM Hunter (PvE) 5.2 ::"
+jps.registerRotation("HUNTER","BEASTMASTER", function()
 	---------------
 	local spell = spell,target
 	local sps_duration = jps.debuffDuration("serpent sting")
@@ -77,10 +76,7 @@ function hunter_bm_pve()
 	-- Spell Table --
 	-----------------
 	
-	local spellTable =  {}
-	spellTable[1] = {
-		["ToolTip"] = "BM Hunter PVE 5.3",
-
+	local spellTable =  {
 		-- Preparation (flasks)
 		{ jps.useBagItem("Alchemist's Flask") , not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") and jps.UseCDs},
 		-- Revive pet
@@ -146,8 +142,7 @@ function hunter_bm_pve()
 
 	jps.petIsDead = false
 
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
 	return spell,target
 
-end
+end	,"BM Hunter PVE 5.3",true,false)

@@ -1,4 +1,4 @@
-function hunter_mm(self)
+jps.registerRotation("HUNTER","MARKSMANSHIP", function()
 	-- Marksmanship Hunter by Chiffon with additions by Scribe
 	--jpganis
 	--SIMCRAFT
@@ -124,4 +124,4 @@ function hunter_mm(self)
 	end
 	
 	return spell
-end
+end, "Default")

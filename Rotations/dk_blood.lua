@@ -28,7 +28,7 @@ end
 	-- Cooldowns: trinkets, raise dead, dancing rune weapon, synapse springs, lifeblood 
 
 	-- focus on other tank in raids !
-jps.registerRotation("DEATHKNIGHT","BLOOD",dk_blood()
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	
