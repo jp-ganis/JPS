@@ -303,11 +303,6 @@ function jps.detectSpec()
 			end
 		end
 	end
-   if (GetLocale() == "frFR") then
-	  jps.Rotation = jps_getCombatFunction_fr(jps.Class,jps.Spec)
-   else
-	  jps.Rotation = jps_getCombatFunction(jps.Class,jps.Spec)
-   end
    if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
 	   jps.isTank = true
@@ -447,7 +442,7 @@ end)
 function jps_Combat() 
    -- Check for the Rotation
    if not jps.Class then return end
-   if not jps.Rotation then
+   if not jps.activeRotation() then
 	  write("JPS does not have a rotation for your",jps.Spec,jps.Class)
 	  jps.Enabled = false
 	  return 
@@ -470,8 +465,7 @@ function jps_Combat()
    if string.len(jps.customRotationFunc) > 10 then
 	   jps.ThisCast,jps.Target = jps.customRotation() 
    else
-	   jps.ThisCast,jps.Target =  jps.activeRotation()
-	   if not jps.ThisCast then jps.ThisCast,jps.Target =  jps.Rotation() end -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+	   jps.ThisCast,jps.Target =  jps.activeRotation().getSpell()
    end
    if jps.firstInitializingLoop == true then
 	   jps.firstInitializingLoop = false

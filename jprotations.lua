@@ -1,37 +1,51 @@
 local pveRotations = {}
 local pvpRotations = {}
 
-local function toKey(class,specId)
-    local classId = class
+local classNames = { "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "DEATHKNIGHT", "SHAMAN", "MAGE", "WARLOCK", "MONK", "DRUID" }
+
+local specNames = {}
+specNames[1] = {"ARMS","FURY","PROTECTION"}
+specNames[2] = {"HOLY","PROTECTION","RETRIBUTION"}
+specNames[3] = {"BEASTMASTERY","MARKSMANSHIP","SURVIVAL"}
+specNames[4] = {"ASSASSINATION","COMBAT","SUBTLETY"}
+specNames[5] = {"DISCIPLINE","HOLY","SHADOW"}
+specNames[6] = {"BLOOD","FROST","UNHOLY"}
+specNames[7] = {"ELEMENTAL","ENHANCEMENT","RESTORATION"}
+specNames[8] = {"ARCANE","FIRE","FROST"}
+specNames[9] = {"AFFLICTION","DEMONOLOGY","DESTRUCTION"}
+specNames[10] = {"BREWMASTER","MISTWEAVER","WINDWALKER"}
+specNames[11] = {"BALANCE","FERAL","GUARDIAN","RESTORATION"}
+
+local function classToNumber(class)
     if type(class) == "string" then
-        class = string.upper(class)
-        if class == "WARRIOR" then
-            classId = 1
-        elseif class == "PALADIN" then
-            classId = 2
-        elseif class == "HUNTER" then
-            classId = 3
-        elseif class == "ROGUE" then
-            classId = 4
-        elseif class == "PRIEST" then
-            classId = 5
-        elseif class == "DEATHKNIGHT" then
-            classId = 6
-        elseif class == "SHAMAN" then
-            classId = 7
-        elseif class == "MAGE" then
-            classId = 8
-        elseif class == "WARLOCK" then
-            classId = 9
-        elseif class == "MONK" then
-            classId = 10
-        elseif class == "DRUID" then
-            classId = 11
-        else
-            return 0
+        className = string.upper(class)
+        for k, v in ipairs(classNames) do
+            if v == className then return k end
         end
+    elseif type(class) == "number" then
+        if classNames[class] then return class end
     end
-    if type(classId) ~= "number" or type(specId) ~= "number" then return 0 end
+    return nil
+end
+
+local function specToNumber(classId, spec)
+    if not specNames[classId] then return nil end
+    if type(spec) == "string" then
+        specName = string.upper(spec)
+        for k, v in ipairs(specNames[classId]) do
+            if v == specName then return k end
+        end
+    elseif type(spec) == "number" then
+        if specNames[classId][class] then return class end
+    end
+    return nil
+end
+
+local function toKey(class,spec)
+    local classId = classToNumber(class)
+    if not classId then return 0 end
+    local specId = classToNumber(classId, spec)
+    if not specId then return 0 end
     if classId < 1 or classId > 11 then return 0 end
     if classId < 11 and specId > 3 then return 0 end
     if classId == 11 and specId > 4 then return 0 end
@@ -61,7 +75,7 @@ function jps.registerRotation(class,specId,fn,tooltip,config,pve,pvp)
     if config== nil then config = {} end
     if pvp and not pvpRotations[key] then pvpRotations[key] = {} end
     if pve and not pveRotations[key] then pveRotations[key] = {} end
-    local rotation = {tooltip = tooltip, rotation = fn, config = config}
+    local rotation = {tooltip = tooltip, getSpell = fn, config = config}
     if pvp then addRotationToTable(pvpRotations[key], rotation) end
     if pve then addRotationToTable(pveRotations[key], rotation) end
     jps.initializedRotation = false
@@ -121,5 +135,5 @@ function jps.activeRotation(rotationTable)
 
     if not rotationTable[getCurrentKey()][jps.Count] then return nil end
     jps.Tooltip = rotationTable[getCurrentKey()][jps.Count].tooltip
-    return rotationTable[getCurrentKey()][jps.Count].rotation()
+    return rotationTable[getCurrentKey()][jps.Count]
 end
