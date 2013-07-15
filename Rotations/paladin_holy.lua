@@ -21,29 +21,61 @@
 	
 hpala = {}
 hpala.interruptTable = {{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}}
-function hpala.player()
-	return jpsName
+hpala.importantHealTargetsValue =  {}
+hpala.UpdateInterval = 0.2
+hpala.timestamp = GetTime()
+
+function hpala.update()
+	hpala.jpsNameValue = jpsName
+	hpala.rangedTargetValue = "target"
+	-- JPS.CANDPS IS WORKING ONLY FOR PARTYN.TARGET AND RAIDN.TARGET NOT FOR UNITNAME.TARGET
+	if jps.canDPS("target") then
+		hpala.rangedTargetValue = "target"
+	elseif jps.canDPS("focustarget") then
+		hpala.rangedTargetValue = "focustarget"
+	elseif jps.canDPS("targettarget") then
+		hpala.rangedTargetValue = "targettarget"
+	end
+	hpala.myTankValue = jps.findMeAggroTank("target")
+	
+	hpala.myLowestImportantUnitValue = hpala.jpsName
+
+	hpala.tanksValue = jps.findTanksInRaid() 
+	hpala.importantHealTargetsValue = hpala.tanksValue
+	hpala.myTankValue = jps.findMeAggroTank()
+	--------------------------------------------------------------------------------------------
+	---- myLowestImportantUnit = tanks / focus / target / player
+	--------------------------------------------------------------------------------------------
+	if jps.canHeal("target") then table.insert(hpala.importantHealTargetsValue,"target") end
+	if jps.canHeal("focus") then table.insert(hpala.importantHealTargetsValue,"focus") end
+	
+	local lowestHP = jps.hp("player")
+	for unitName, _ in ipairs(hpala.importantHealTargetsValue) do
+		local thisHP = jps.hp(unitName)
+		if jps.canHeal(unitName) and thisHP <= lowestHP then 
+				lowestHP = thisHP
+				hpala.myLowestImportantUnitValue = unitName
+		end
+	end
+	hpala.ourHealTargetValue = jps.LowestInRaidStatus()
+	local healTargetHPPct = jps.hp(hpala.ourHealTargetValue)
+	local importantUnit = hpala.myLowestImportantUnitValue
+	local importantTargetHP = jps.hp(importantUnit)
+	if importantTargetHP < healTargetHPPct or importantTargetHP < 0.5 then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP or our important targets drop below 0.5
+		hpala.ourHealTargetValue = importantUnit
+	end
 end
 
-function hpala.healTarget()
-	return jps.LowestInRaidStatus()
+function hpala.player()
+	return hpala.jpsNameValue
 end
 
 function hpala.rangedTarget()
-	local rangedTarget = "target"
-	-- JPS.CANDPS IS WORKING ONLY FOR PARTYN.TARGET AND RAIDN.TARGET NOT FOR UNITNAME.TARGET
-	if jps.canDPS("target") then
-		rangedTarget = "target"
-	elseif jps.canDPS("focustarget") then
-		rangedTarget = "focustarget"
-	elseif jps.canDPS("targettarget") then
-		rangedTarget = "targettarget"
-	end
-	return rangedTarget
+	return hpala.rangedTargetValue
 end
 
 function hpala.myTank()
-	return jps.findMeAggroTank("target")
+	return hpala.myTankValue
 end
 
 function hpala.checkBeaconUnit()
@@ -58,44 +90,22 @@ function hpala.checkBeaconUnit()
 end
 
 function hpala.myLowestImportantUnit()
-	local myLowestImportantUnit = jpsName
-	local importantHealTargets = jps.findTanksInRaid() 
-	--------------------------------------------------------------------------------------------
-	---- myLowestImportantUnit = tanks / focus / target / player
-	--------------------------------------------------------------------------------------------
-	if jps.canHeal("target") then table.insert(importantHealTargets,"target") end
-	if jps.canHeal("focus") then table.insert(importantHealTargets,"focus") end
-	
-	local lowestHP = jps.hp("player")
-	for unitName, _ in ipairs(importantHealTargets) do
-		local thisHP = jps.hp(unitName)
-		if jps.canHeal(unitName) and thisHP <= lowestHP then 
-				lowestHP = thisHP
-				myLowestImportantUnit = unitName
-		end
-	end
-	return myLowestImportantUnit
+	return hpala.myLowestImportantUnitValue
 end
 
+
 function hpala.ourHealTarget()
-	local ourHealTarget = jps.LowestInRaidStatus()
-	local healTargetHPPct = jps.hp(ourHealTarget)
-	local importantUnit = hpala.myLowestImportantUnit()
-	local importantTargetHP = jps.hp(importantUnit)
-	if importantTargetHP < healTargetHPPct or importantTargetHP < 0.5 then  -- heal our myLowestImportantUnit unit if myLowestImportantUnit hp < ourHealTarget HP or our important targets drop below 0.5
-		ourHealTarget = importantUnit
-	end
-	return ourHealTarget
+	return hpala.ourHealTargetValue
 end
 
 function hpala.unitIsImportant(unit)
 	if unit == jpsName or unit == "player" or unit == "focus" or unit =="target" then return true end
-	if inArray(unit, jps.findTanksInRaid()) then return true end
+	if inArray(unit, hpala.tanksValue) then return true end
 	return false
 end
 
 function hpala.unitIsTank(unit)
-	if inArray(unit, jps.findTanksInRaid()) then return true end
+	if inArray(unit, hpala.tanksValue) then return true end
 	return false
 end
 
@@ -122,8 +132,8 @@ end
 ------------------------
 -- SPELL TABLE -----
 ------------------------
-local spellTable = {}
-spellTable[1] = {
+hpala.spellTable = {}
+hpala.spellTable[1] = {
 	["ToolTip"] = "Holy Paladin PVE Full",
 	-- Kicks                    
 	{ "Rebuke",'jps.shouldKick(hpala.rangedTarget())', hpala.rangedTarget },
@@ -156,7 +166,7 @@ spellTable[1] = {
 
 	{ "Light's Hammer",'IsShiftKeyDown() ~= nil', hpala.ourHealTarget },
 	{ "Light of Dawn",'jps.avgRaidHP() < 0.80 and jps.holyPower() > 2', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
-	{ "Light of Dawn",'jps.avgRaidHP() < 0.80 and jps.buff("Divine Purpose)', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+	{ "Light of Dawn",'jps.avgRaidHP() < 0.80 and jps.buff("Divine Purpose")', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 	{ "Holy Radiance",'jps.avgRaidHP() < 0.6', hpala.ourHealTarget },  	
 	{ "Holy Radiance",'jps.MultiTarget and jps.avgRaidHP() < 0.90', hpala.ourHealTarget },  -- only here jps.MultiTarget since it is a jps.mana() inefficent spell but sometimes we need to spam it!
 	{ "Holy Shock",'jps.buff("Daybreak") and jps.hp(hpala.ourHealTarget()) < 0.9', hpala.ourHealTarget }, -- heals with daybreak buff other targets
@@ -206,14 +216,18 @@ function paladin_holy()
 	-- By Sphoenix, PCMD
 	local spell = nil
 	local target = nil
+	
+	if (GetTime() - hpala.timestamp) > hpala.UpdateInterval then
+		hpala.update()
+		hpala.timestamp = GetTime()
+	end
 	--------------------------------------------------------------------------------------------
 	---- Stop Casting to save mana - curently no AOE spell support!
-	--------------------------------------------------------------------------------------------
-	hpala.shouldInterruptCasting(hpala.interruptTable)
-	hpala.checkBeaconUnit()
-	local spellTableActive = jps.RotationActive(spellTable)
+	-------------------------------------------------------------------------------------------	
+	--hpala.shouldInterruptCasting(hpala.interruptTable)
+	--hpala.checkBeaconUnit()
 
-	spell,target = parseStaticSpellTable(spellTableActive)
+	spell,target = parseStaticSpellTable(jps.RotationActive(hpala.spellTable))
 	
 	if spell == "Beacon of Light" then
 		jps.beaconTarget = target
