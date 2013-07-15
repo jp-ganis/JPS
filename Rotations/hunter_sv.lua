@@ -88,8 +88,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 -- Spell Table --
 -----------------
 
-	local spellTable =  {}
-	spellTable[1] = {
+	local spellTable =  {
 		["ToolTip"] = "SV Hunter PVE 5.3",
 		-- Preparation (flasks)
 		{ jps.useBagItem("Alchemist's Flask") , not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") and jps.UseCDs},
@@ -149,8 +148,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 
 	jps.petIsDead = false
 
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
 	return spell,target
 	
 end, "Default")
