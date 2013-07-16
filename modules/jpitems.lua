@@ -62,12 +62,12 @@ end
 -- isUsable, notEnoughMana = IsUsableItem(itemID) or IsUsableItem("itemName")
 -- isUsable - 1 if the item is usable; otherwise nil (1nil)
 -- notEnoughMana - 1 if the player lacks the resources (e.g. mana, energy, runes) to use the item; otherwise nil (1nil)
+CreateFrame("GameTooltip", "ScanningTooltip", nil, "GameTooltipTemplate") -- Tooltip name cannot be nil
+ScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" )
+ScanningTooltip:ClearLines()
 function parseTrinketText(trinket,str)
 	local id = 13 + trinket
 	if trinket > 1 then return false end
-	CreateFrame("GameTooltip", "ScanningTooltip", nil, "GameTooltipTemplate") -- Tooltip name cannot be nil
-	ScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" )
-	ScanningTooltip:ClearLines()
 	ScanningTooltip:SetInventoryItem("player", id)
 	-- hasItem, hasCooldown, repairCost = Tooltip:SetInventoryItem("unit", invSlot {, nameOnly})
 
