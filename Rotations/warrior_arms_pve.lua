@@ -1,31 +1,53 @@
-jps.registerStaticTable("WARRIOR","ARMS",function()
---Gocargo
+--gig3m
+jps.registerStaticTable("WARRIOR","ARMS",
+{
+	-- Pots and Flasks
+	{ jps.useBagItem("Flask of Winter's Bite"), 'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite") '},
+	{ jps.useBagItem("Potion of Mogu Power"), 'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'}, 
 	
-	local targetHealth = UnitHealth("target")/UnitHealthMax("target")
-	local nRage = jps.buff("Berserker Rage","player")
-	local nPower = UnitPower("Player",1) -- Rage est PowerType 1
+	-- Trinkets
+	{ jps.useTrinket(0), 'jps.UseCDs' },
+	{ jps.useTrinket(1), 'jps.UseCDs '},
+	-- Engi
+	{ jps.useSynapseSprings(), 'jps.UseCDs '},
 	
-		local spellTable = 
-		{
-			{ "Recklessness" , jps.UseCDs and (jps.debuffDuration("Colossus Smash") >= 5 or jps.cooldown("Colossus Smash") <= 4 ) and targetHealth < 20 , "target" },
-			{ "Berserker Rage" , jps.UseCDs and not nRage, "player" },
-			{ "Deadly Calm" , jps.UseCDs and nPower >= 40, "player" },
-			{ "Lifeblood" , jps.UseCDs , "player" },
-			{ "Heroic Strike" , (((jps.buff("taste for blood") and jps.buffDuration("taste for blood") <= 2) or (jps.buffStacks("taste for blood") == 5) or (jps.buff("Taste for Blood") and jps.debuffDuration("Colossus Smash") <= 2 and jps.cooldown("Colossus Smash") > 0) or jps.buff("Deadly Calm") or nPower >= 110)) and targetHealth >= 20 and jps.debuff("Colossus Smash") , "target" },
-			{ "Mortal Strike" , "onCD" , "target" },
-			{ "Colossus Smash" , jps.debuffDuration("Colossus Smash") <= 1.5 , "target" },
-			{ "Execute" , "onCD" , "target" },
-			{ "Overpower" , jps.buff("Overpower") , "target"},
-			{ "Dragon Roar" , "onCD" , "target" },
-			{ "Slam" , (nPower >= 70 or jps.debuff("Colossus Smash")) and targetHealth >= 20 , "target" },
-			{ "Heroic Throw" , "onCD" , "target" },
-			{ "Battle Shout" , nPower <= 70 and not jps.debuff("Colossus Smash") , "player" },
-			{ "Slam" , targetHealth >= 20 , "target" },
-			{ "Impending Victory" , targetHealth >= 20 , "target" },
-			{ "Battle Shout" , nPower <= 70 , "player" },
-			{ {"macro","/startattack"}, true, "target" },
-		}
+	-- Herb
+	{ "Lifeblood", 'jps.UseCDs '},
 	
-		local spell,target = parseSpellTable(spellTable)
-		return spell,target
-end, "Default", true, false)
+	-- Racial
+	{ jps.DPSRacial, 'jps.UseCDs '},
+	
+	{ "Heroic Throw", 'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target" },
+	-- Multi target
+	{ "Thunder Clap", 'jps.MultiTarget and jps.mydebuff("Deep Wounds")'},
+	{ "Sweeping Strikes", ' jps.MultiTarget and jps.rage() >= 30'},
+	{ "Whirlwind", 'jps.MultiTarget and IsShiftKeyDown() ~= nil and jps.rage() >= 30'},
+	{ "Dragon Roar", 'jps.MultiTarget and IsShiftKeyDown() ~= nil'},
+	{ "Bladestorm", ' jps.MultiTarget and IsShiftKeyDown() ~= nil'},
+	
+	-- Cooldowns
+	{ "Bloodbath", 'jps.UseCDs '},
+	{ "Avatar", 'jps.UseCDs '},
+	{ "Skull Banner", ' jps.UseCDs '},
+	{ "Recklessness", ' jps.UseCDs '},
+	{ "Berserker Rage", ' jps.UseCDs '},
+	
+	-- Interrupts
+	{ "Pummel", ' jps.shouldKick() '},
+	{ "Pummel", ' jps.shouldKick("focus")', "focus" },
+	{ "Disrupting Shout", ' jps.shouldKick() '},
+	{ "Disrupting Shout", ' jps.shouldKick("focus")', "focus" },
+	
+	-- pop a heal when solo
+	{ "Impending Victory", ' jps.hp() <= .7 and GetNumSubgroupMembers() == 0', "target" }, 
+	
+	{ "Colossus Smash", ' jps.buff("Sudden Death") ', "target" }, -- Sudden Death procs
+	{ "Execute", "onCD", "target" }, -- only available less than 20% health, no need to check
+	{ "Mortal Strike", "onCD", "target" },
+	{ "Colossus Smash", "onCD", "target" },
+	{ "Heroic Strike", 'jps.rage() >= 70' },
+	{ "Overpower", 'jps.buff("Taste for Blood")', "target"},
+	{ "Slam", ' jps.rage() >= 40 '},
+	{ "Battle Shout", ' jps.rage() <= 70' , "player" },
+}
+, "5.3 Arms PVE")
