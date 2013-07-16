@@ -1,6 +1,13 @@
 --gig3m
 jps.registerStaticTable("WARRIOR","ARMS",
 {
+	
+	-- Interrupts
+	{ "Pummel", ' jps.shouldKick() '},
+	{ "Pummel", ' jps.shouldKick("focus")', "focus" },
+	{ "Disrupting Shout", ' jps.shouldKick() '},
+	{ "Disrupting Shout", ' jps.shouldKick("focus")', "focus" },
+
 	-- Pots and Flasks
 	{ jps.useBagItem("Flask of Winter's Bite"), 'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite") '},
 	{ jps.useBagItem("Potion of Mogu Power"), 'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'}, 
@@ -13,7 +20,6 @@ jps.registerStaticTable("WARRIOR","ARMS",
 	
 	-- Herb
 	{ "Lifeblood", 'jps.UseCDs '},
-	
 	-- Racial
 	{ jps.DPSRacial, 'jps.UseCDs '},
 	
@@ -31,12 +37,7 @@ jps.registerStaticTable("WARRIOR","ARMS",
 	{ "Skull Banner", ' jps.UseCDs '},
 	{ "Recklessness", ' jps.UseCDs '},
 	{ "Berserker Rage", ' jps.UseCDs '},
-	
-	-- Interrupts
-	{ "Pummel", ' jps.shouldKick() '},
-	{ "Pummel", ' jps.shouldKick("focus")', "focus" },
-	{ "Disrupting Shout", ' jps.shouldKick() '},
-	{ "Disrupting Shout", ' jps.shouldKick("focus")', "focus" },
+
 	
 	-- pop a heal when solo
 	{ "Impending Victory", ' jps.hp() <= .7 and GetNumSubgroupMembers() == 0', "target" }, 
