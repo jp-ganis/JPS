@@ -85,7 +85,7 @@ function jps.setActiveRotation(idx)
     activeRotation = idx
 end
 
-function jps.registerRotation(class,spec,fn,tooltip,config,pve,pvp)
+function jps.registerRotation(class,spec,fn,tooltip,pve,pvp,config)
     local key = toKey(class, spec)
     if pve==nil then pve = true end
     if pvp==nil then pvp = true end
@@ -136,8 +136,8 @@ function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
     end end
 end
 
-function jps.registerTable(class,spec,spellTable,tooltip,config,pve,pvp)
-    jps.registerRotation(class,spec,function() return parseSpellTable(spellTable) end,tooltip,config,pve,pvp)
+function jps.registerTable(class,spec,spellTable,tooltip,pve,pvp,config)
+    jps.registerRotation(class,spec,function() return parseSpellTable(spellTable) end,tooltip,pve,pvp,config)
 end
 
 function jps.registerStaticTable(class,spec,spellTable,tooltip,config,pve,pvp)
