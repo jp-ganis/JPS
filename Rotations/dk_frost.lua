@@ -168,7 +168,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.TimeToDie("target") < 60 and jps.buff("Potion of Mogu Power")'},
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.bloodlusting()'},
 				
-}, "PVP 2h")
+}, "PVP 2h", false, true)
 	
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	-- Kicks
