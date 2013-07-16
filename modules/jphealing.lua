@@ -23,17 +23,18 @@ end
 ------------------------------
 
 function update_healtable(...)
-	local eventtable =  {...}
-    if Healtable[eventtable[13]] == nil then
-		Healtable[eventtable[13]] = { 	["healname"]= eventtable[13],
-										["healtotal"]= eventtable[15],
+	local healname = select(13, ...)
+	local healVal = select(15, ...)
+    if Healtable[healname] == nil then
+		Healtable[healname] = { 	["healname"]= healname,
+										["healtotal"]= healVal,
 										["healcount"]= 1,
-										["averageheal"]=eventtable[15]
+										["averageheal"]=healVal
 									}
     else
-		Healtable[eventtable[13]]["healtotal"] = Healtable[eventtable[13]]["healtotal"] + eventtable[15]
-		Healtable[eventtable[13]]["healcount"] = Healtable[eventtable[13]]["healcount"] + 1
-		Healtable[eventtable[13]]["averageheal"] = Healtable[eventtable[13]]["healtotal"] / Healtable[eventtable[13]]["healcount"]
+		Healtable[healname]["healtotal"] = Healtable[healname]["healtotal"] + healVal
+		Healtable[healname]["healcount"] = Healtable[healname]["healcount"] + 1
+		Healtable[healname]["averageheal"] = Healtable[healname]["healtotal"] / Healtable[healname]["healcount"]
     end
 end
 

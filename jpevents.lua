@@ -437,15 +437,6 @@ jps.registerEvent("UNIT_HEALTH_FREQUENT", function(unit)
             jps_removeKey(jps.RaidTarget,unittarget_guid)
             jps_removeKey(jps.EnemyTable,unittarget_guid)
         end
-        
-        local unit_guid = UnitGUID(unit)
-        local unit_health = jps.hp(unit) 
-        if jps.RaidTimeToLive[unit_guid] == nil then jps.RaidTimeToLive[unit_guid] = {} end
-        local raid_dataset = jps.RaidTimeToLive[unit_guid]
-        local raid_data = table.getn(raid_dataset)
-        if raid_data > jps.timeToLiveMaxSamples then table.remove(raid_dataset, jps.timeToLiveMaxSamples) end
-        table.insert(raid_dataset, 1, {GetTime(), unit_health})
-        jps.RaidTimeToLive[unit_guid] = raid_dataset
     end
 end)
 
@@ -544,13 +535,13 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
 	local GUID = select(8, ...)
 	
 	local dmg_TTD = 0
-	if (action == "SPELL_DAMAGE" or action == "SPELL_PERIODIC_DAMAGE") and periodicDMG ~= nil then
-		if periodicDMG > 0 then 
-			dmg_TTD = periodicDMg
+	if (action == "SPELL_DAMAGE" or action == "SPELL_PERIODIC_DAMAGE") and periodic ~= nil then
+		if periodic > 0 then 
+			dmg_TTD = periodic
 		end
-	elseif (action == "SWING_DAMAGE") and swingDMG ~= nil then
-		if swingDMG > 0 then 
-			dmg_TTD = swingDMG
+	elseif (action == "SWING_DAMAGE") and swing ~= nil then
+		if swing > 0 then 
+			dmg_TTD = swing
 		end
 	end
 	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
