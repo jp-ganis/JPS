@@ -153,6 +153,7 @@ function jps.reportMemoryUsage(elapsed)
         for key,usage in pairs(memoryUsageTable) do
             print(" * " .. key .. ": " .. usage .. " KB in " .. reportInterval .. " seconds" )
         end
+        memoryStartTable = {}
         memoryUsageTable = {}
     end
 end
