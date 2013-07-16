@@ -1,4 +1,4 @@
-function shaman_resto_arena()
+jps.registerStaticTable("SHAMAN","RESTORATION",function()
 -- TO DO : better code/rotation style 
 
 local spell = nil
@@ -297,4 +297,4 @@ local target = nil
    
 	spell,target = parseSpellTable(spellTable)
 	return spell,target 
-end
+end, "Arena", false, true)

@@ -1,6 +1,5 @@
 
-
-function priest_shadow_pve()
+jps.registerRotation("PRIEST","SHADOW",function()
 
 	local spell = nil
 	local target = nil
@@ -164,10 +163,7 @@ end
 ------------------------ TABLE SPELL ------------------------
 -------------------------------------------------------------
 
-local spellTable = {}
-spellTable[1] = 
-{
-	["ToolTip"] = "Shadow Priest PVE",
+local spellTable = {
 -- "Shadowform" 15473 Stay in 
 	{ 15473, not jps.buff(15473) , player },
 -- TRINKETS -- jps.useTrinket(0) est "Trinket0Slot" est slotId  13 -- "jps.useTrinket(1) est "Trinket1Slot" est slotId  14  -- Do not use while Dispersion
@@ -339,11 +335,10 @@ local spellTable_moving =
 		jps.Tooltip = spellTable_moving["ToolTip"]
 		spell, target = parseSpellTable(spellTable_moving)
 	else
-		local spellTableActive = jps.RotationActive(spellTable)
-		spell,target = parseSpellTable(spellTableActive)
+		spell,target = parseSpellTable(spellTable)
 	end
 	return spell,target
-end
+end, "Shadow Priest PvE", true, false)
 
 -- Vampiric Embrace -- 3-minute cooldown with a 15-second duration. It causes all the single-target damage you deal to heal nearby allies for 50% of the damage
 -- Void Shift  -- allows you to swap health percentages with your target raid or party member. It can be used to save raid members, by trading your life with theirs, or to save yourself in the same way

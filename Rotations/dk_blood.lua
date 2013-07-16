@@ -16,8 +16,6 @@
 -- focus on other tank in raids !
 dkBloodSpellTable = {}	
 dkBloodSpellTable[1] = {
-	["ToolTip"] = "DK Blood Main",
-	
 	-- Blood presence
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
@@ -104,7 +102,6 @@ dkBloodSpellTable[1] = {
 	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 }
 dkBloodSpellTable[2] = {
-	["ToolTip"] = "DK Blood CDs+interrupts only",
 	-- Blood presence
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
@@ -152,8 +149,6 @@ dkBloodSpellTable[2] = {
 }
 
 dkBloodSpellTable[3] = {
-	["ToolTip"] = "DK Diseases+interrupts only",
-	
 	-- Kicks
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -175,10 +170,27 @@ dkBloodSpellTable[3] = {
 	{"Plague Strike",'not jps.mydebuff("Blood Plague")'},
 	{"Icy Touch",'not jps.mydebuff("Frost Fever")'},
 }
-function dk_blood()	
+
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
-	spell,target = parseStaticSpellTable(jps.RotationActive(dkBloodSpellTable))
+	spell,target = parseStaticSpellTable(dkBloodSpellTable[1])
 	spell = dk.bloodshieldMe(spell)
 	return spell,target
-end
+end, "DK Blood Main")
+
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
+	local spell = nil
+	local target = nil
+	spell,target = parseStaticSpellTable(dkBloodSpellTable[2])
+	spell = dk.bloodshieldMe(spell)
+	return spell,target
+end, "DK Blood CDs+interrupts only")
+
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
+	local spell = nil
+	local target = nil
+	spell,target = parseStaticSpellTable(dkBloodSpellTable[3])
+	spell = dk.bloodshieldMe(spell)
+	return spell,target
+end, "DK Diseases+interrupts only")

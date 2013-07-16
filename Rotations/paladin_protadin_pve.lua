@@ -1,4 +1,4 @@
-function paladin_protadin_pve(self)
+jps.registerRotation("PALADIN","PROTECTION",function()
 	local spell = nil
 	local target = nil
 	local holyPower = jps.holyPower()
@@ -83,4 +83,4 @@ function paladin_protadin_pve(self)
 	   
 	local spell, target = parseSpellTable(spellTable)
 	return spell, target
-end
+end, "Default",true,false)

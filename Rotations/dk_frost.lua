@@ -17,10 +17,7 @@
 ------------------------
 		
 dkFrost = {}
-dkFrost.spellTable = {}
-dkFrost.spellTable[1] =
-{	
-	["ToolTip"] = "PVE 2H Simcraft",
+jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Frost Presence",'not jps.buff("Frost Presence", "player")'},
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
 	
@@ -96,12 +93,9 @@ dkFrost.spellTable[1] =
 	{ "frost strike",'"onCD"'},
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
 	{ "empower rune weapon",'jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
-}
+}, "PVE 2H Simcraft")
 	
-dkFrost.spellTable[2] =
-{
-	["ToolTip"] = "PVP 2h",
-
+jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Horn of Winter",'not jps.buff("Horn of Winter")'},
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget'},
 			
@@ -174,12 +168,9 @@ dkFrost.spellTable[2] =
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.TimeToDie("target") < 60 and jps.buff("Potion of Mogu Power")'},
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.bloodlusting()'},
 				
-}
+}, "PVP 2h")
 	
-dkFrost.spellTable[3] =
-{
-	["ToolTip"] = "Kick Buff Debuff",
-	
+jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	-- Kicks
 	{ "mind freeze",'jps.shouldKick()'},
 	{ "mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -197,8 +188,4 @@ dkFrost.spellTable[3] =
 	{ "Howling Blast",'jps.myDebuffDuration("Frost Fever") <= 1'},
 	{ "Howling Blast",'jps.buff("Freezing Fog") and jps.runicPower() < 88'},
 	{ "Plague Strike",'jps.myDebuffDuration("Blood Plague") <= 1'},
-}
-
-function dk_frost()
-	return parseStaticSpellTable(jps.RotationActive(dkFrost.spellTable))
-end
+}, "Kick Buff Debuff")

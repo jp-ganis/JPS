@@ -1,4 +1,5 @@
-function warrior_prot()
+
+jps.registerStaticTable("WARRIOR","PROTECTION",function()
 	-- Gocargo
 		
 	local playerHealth = UnitHealth("player")/UnitHealthMax("player")
@@ -44,4 +45,4 @@ function warrior_prot()
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

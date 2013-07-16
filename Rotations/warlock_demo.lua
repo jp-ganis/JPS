@@ -1,4 +1,4 @@
-function warlock_demo()
+jps.registerRotation("WARLOCK","DEMONOLOGY",function()
    
 
 function mouseover_dot()
@@ -398,10 +398,7 @@ local StopCasting = StopCasting ()
 if  jps.IsCasting("player") and StopCasting then SpellStopCasting() end
 
 
-local spellTable = { }
-spellTable[1] = {
-      
-   ["ToolTip"] = "Demo Raid",
+local spellTable = {
    
    { {"macro","/focus [target=mouseover,exists,nodead]"}, IsShiftKeyDown() ~= nil },
       
@@ -447,7 +444,6 @@ spellTable[1] = {
 
 if jps.debuff("Doom") and form == 0 then jps.Opening = false end
 
-local spellTableActive = jps.RotationActive(spellTable)
-   spell,target = parseSpellTable(spellTableActive)
+   spell,target = parseSpellTable(spellTable)
    return spell,target
-end
+end,"Demo Raid (untested)")

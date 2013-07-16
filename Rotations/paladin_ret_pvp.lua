@@ -1,6 +1,4 @@
-
-
-function paladin_ret_pvp()
+jps.registerRotation("PALADIN","RETRIBUTION",function()
 	-- sphoenix
 	local spell = nil
 	local target = nil
@@ -85,4 +83,4 @@ local spellTable_multi =
 -- if you want to cast some healing spell on others targets you must return the spell and target
 -- you don't need to add jps.Target = target because in fct combat jps.ThisCast,jps.Target = jps.Rotation()
 	return spell,target 
-end
+end, "Default",false,true)

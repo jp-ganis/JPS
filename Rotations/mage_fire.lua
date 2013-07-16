@@ -1,4 +1,4 @@
-function mage_fire()
+jps.registerRotation("MAGE","FIRE",function()
 --pcmd
 
 local spellTable = 
@@ -48,4 +48,4 @@ local spellTable =
 	
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

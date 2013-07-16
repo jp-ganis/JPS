@@ -52,7 +52,7 @@ frame:SetScript("OnEvent", aggroCalculation)
 
 --////////////////////////////////////////////////////////////////////////////////////////////////--
 
-function priest_disc_pvp()
+jps.registerRotation("PRIEST","DISCIPLINE",function()
 
 ----------------------
 -- Average heal
@@ -708,7 +708,7 @@ local spellTable_moving =
 	end
 
 	return spell,target
-end
+end, "Default", false, true)
 
 -- "Leap of Faith" -- "Saut de foi" 
 -- "Mass Dispel"  -- Dissipation de masse 32375

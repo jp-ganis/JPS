@@ -1,4 +1,4 @@
-function monk_windwalker(self)
+jps.registerRotation("MONK","WINDWALKER",function()
 	if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
 	
 	-- Using the same rotation as SimulationCraft. http://simulationcraft.org
@@ -119,4 +119,4 @@ function monk_windwalker(self)
 	}
 
 	return parseSpellTable(possibleSpells)
-end
+end, "Default")

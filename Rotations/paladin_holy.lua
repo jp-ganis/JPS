@@ -132,8 +132,7 @@ end
 ------------------------
 -- SPELL TABLE -----
 ------------------------
-hpala.spellTable = {}
-hpala.spellTable[1] = {
+hpala.spellTable = {
 	["ToolTip"] = "Holy Paladin PVE Full",
 	-- Kicks                    
 	{ "Rebuke",'jps.shouldKick(hpala.rangedTarget())', hpala.rangedTarget },
@@ -212,7 +211,7 @@ hpala.spellTable[1] = {
 	{ "Divine Plea",'jps.mana() < 0.60 and jps.CountInRaidStatus(0.8) < 1', hpala.player },
 }
 
-function paladin_holy()
+jps.registerRotation("PALADIN","HOLY",function()
 	-- By Sphoenix, PCMD
 	local spell = nil
 	local target = nil
@@ -227,10 +226,10 @@ function paladin_holy()
 	--hpala.shouldInterruptCasting(hpala.interruptTable)
 	--hpala.checkBeaconUnit()
 
-	spell,target = parseStaticSpellTable(jps.RotationActive(hpala.spellTable))
+	spell,target = parseStaticSpellTable(hpala.spellTable)
 	
 	if spell == "Beacon of Light" then
 		jps.beaconTarget = target
 	end
 	return spell,target
-end
+end, "Default")

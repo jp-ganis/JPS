@@ -1,4 +1,4 @@
-function shaman_enhancement(self)
+jps.registerStaticTable("SHAMAN","ENHANCEMENT",function()
 	--simcraft and more
 	-- Talents:
 	-- Tier 1: Astral Shift
@@ -106,4 +106,4 @@ function shaman_enhancement(self)
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

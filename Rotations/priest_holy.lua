@@ -1,4 +1,4 @@
-function priest_holy()
+jps.registerRotation("PRIEST","HOLY",function()
 	
 	local spell = nil
 	local target = nil
@@ -79,4 +79,4 @@ function priest_holy()
 
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default")

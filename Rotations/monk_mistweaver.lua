@@ -1,4 +1,4 @@
-function monk_mistweaver(self)	
+jps.registerRotation("MONK","MISTWEAVER",function()
 	-- Healer
 	local me = "player"
 	local chi = UnitPower(me, 12)
@@ -151,5 +151,5 @@ function monk_mistweaver(self)
 	
 	return spell, target
 
-end
+end, "Default")
 

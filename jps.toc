@@ -11,6 +11,7 @@ jplogging.lua
 jputils.lua
 jphealing.lua
 jpparse.lua
+jprotations.lua
 modules\jpauras.lua
 modules\jpcasting.lua
 modules\jpccinterrupt.lua
@@ -47,7 +48,6 @@ Rotations\druid_feral_pvp.lua
 Rotations\druid_guardian.lua
 Rotations\druid_resto.lua
 
-Rotations\hunter_bm.lua
 Rotations\hunter_bm_pvp.lua
 Rotations\hunter_bm_pve.lua
 Rotations\hunter_mm.lua
@@ -64,39 +64,33 @@ Rotations\monk_mistweaver.lua
 Rotations\monk_windwalker.lua
 
 Rotations\paladin_holy.lua
-Rotations\paladin_protadin.lua
 Rotations\paladin_protadin_pve.lua
 Rotations\paladin_protadin_pvp.lua
-Rotations\paladin_ret.lua
 Rotations\paladin_ret_pve.lua
 Rotations\paladin_ret_pvp.lua
 
-Rotations\priest_disc.lua
 Rotations\priest_disc_pve.lua
 Rotations\priest_disc_pvp.lua
 Rotations\priest_holy.lua
-Rotations\priest_shadow.lua
 Rotations\priest_shadow_pvp.lua
 Rotations\priest_shadow_pve.lua
 
 Rotations\rogue_assass.lua
-Rotations\rogue_combat.lua
 Rotations\rogue_combat_pve.lua
 Rotations\rogue_combat_pvp.lua
 Rotations\rogue_sub.lua
 
 Rotations\shaman_elemental.lua
 Rotations\shaman_enhancement.lua
-Rotations\shaman_resto.lua
 Rotations\shaman_resto_arena.lua
 Rotations\shaman_resto_pve.lua
 Rotations\shaman_resto_pvp.lua
 
 Rotations\warlock.lua
-Rotations\warlock_kanrethad.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
 Rotations\warlock_destro.lua
+Rotations\warlock_kanrethad.lua
 
 Rotations\warrior_arms.lua
 Rotations\warrior_arms_pve.lua

@@ -2,7 +2,7 @@
 -- SwollNMember
 -- Thanks to jpganis for the original version and attack conditionals.
 
-function druid_feral_pvp()
+jps.registerRotation("DRUID","FERAL", function()
 	local spell = nil
 	local target = nil
 
@@ -276,7 +276,7 @@ local spellTable =
 
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end,"Default",false,true)
 
 ------------------------
 -- USER NOTES ----------

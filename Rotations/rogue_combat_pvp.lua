@@ -1,4 +1,4 @@
-function rogue_combat_pvp()
+jps.registerRotation("ROGUE","COMBAT",function()
 
 	local cp = GetComboPoints("player")
 	local rupture_duration = jps.debuffDuration("target","rupture")
@@ -31,4 +31,4 @@ function rogue_combat_pvp()
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end
+end, "Default", false, true)

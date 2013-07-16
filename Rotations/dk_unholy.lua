@@ -1,6 +1,6 @@
 -- tropic (original by jpganis)
 -- Ty to SIMCRAFT for this rotation
-function dk_unholy()
+jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 
 	-- Shift-key to cast Death and Decay
 	-- Set "focus" for dark simulacrum (duplicate spell) (this is optional, default is current target)
@@ -159,4 +159,4 @@ spellTable[2] = {
 
 	spell,target = parseSpellTable(spellTable) 
 	return spell,target
-end
+end, "Default")
