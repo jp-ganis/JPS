@@ -131,7 +131,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		{ "Snake Trap",				(SnakeTrap_KEY 		or allInOneTraps_KEY) and jps.buff("Trap Launcher") }, 	
 		{ "Freezing Trap",			FreezingTrap_KEY 	and jps.buff("Trap Launcher") }, 	
 		-- Rotation
-		{ "explosive shot", 			jps.buff("lock and load") and jps.debuffDuration("explosive shot") < 1.0 },
+		{ "explosive shot", 			jps.buff("lock and load") },
 		{ "Glaive Toss", 			"onCD"}, -- Tier 6 talent
 		-- AoE
 		{ "Multi-Shot", 			jps.MultiTarget },
@@ -139,7 +139,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		-- Single target
 		{ "kill shot", 				"onCD" }, -- Target below 20%
 		{ "serpent sting", 			jps.myDebuffDuration("serpent sting") < .3 },
-		{ "explosive shot", 			jps.myDebuffDuration("explosive shot") < .3 },
+		{ "explosive shot", 			"onCD" },
 		{ "black arrow", 			not jps.mydebuff("black arrow") and not jps.MultiTarget },
 		{ "cobra shot", 			jps.myDebuffDuration("serpent sting") < 6 },
 		{ "arcane shot", 			focus >= 70 and not jps.buff("lock and load") and not jps.MultiTarget },
