@@ -135,26 +135,27 @@ function jps.avgRaidHP(noFilter)
 	local raidHP = 1
 	local unitCount = 0
 	local minUnit = 1
-	if jps_tableLen(jps.RaidStatus) <= 1 then return 1 end
+	local avgHP = 1
+	if GetNumGroupMembers() == 0 then return 1 end
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		unitHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
+		unitHP = unitTable["hpct"]
 		if unitHP < minUnit then minUnit = unitHp end
 		raidHP = raidHP + unitHP
 		unitCount = unitCount + 1
 	end
-	local avgHP = raidHP / unitCount
+	avgHP = raidHP / unitCount
 	if unitCount > 10 or noFilter == true then
 		return avgHP
 	end
-	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% difference to avg hp
+	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% hp difference to avg hp
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		unitHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit))
+		unitHP = unitTable["hpct"]
 		if unitHp < (avgHP / 1.3 ) then
 			raidHP = raidHP - unitHP
 			unitCount = unitCount -1
 		end
 	end
-	
+
 	return raidHP / unitCount
 end
 
