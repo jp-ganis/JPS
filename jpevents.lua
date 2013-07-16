@@ -126,6 +126,38 @@ function jps.unregisterCombatLogEventUnfiltered(event, fn)
 end
 
 --------------------------
+-- PROFILING FUNCTIONS 
+--------------------------
+jps.enableProfiling = false
+local memoryUsageTable = {}
+local memoryStartTable = {}
+local function startProfileMemory(key)
+    UpdateAddOnMemoryUsage()
+    if not memoryStartTable[key] then memoryStartTable[key] = GetAddOnMemoryUsage("JPS") end 
+end
+
+local function endProfileMemory(key)
+    if not memoryStartTable[key] then return end
+    if not memoryUsageTable[key] then memoryUsageTable[key] = 0 end
+    UpdateAddOnMemoryUsage()
+    memoryUsageTable[key] = GetAddOnMemoryUsage("JPS") - memoryStartTable[key]
+end
+
+local reportInterval = 5
+local lastReportUpdate = 0
+function jps.reportMemoryUsage(elapsed)
+    lastReportUpdate = lastReportUpdate + elapsed
+    if lastReportUpdate > reportInterval then
+        lastReportUpdate = 0
+        print("Memory Usage Report:")
+        for key,usage in pairs(memoryUsageTable) do
+            print(" * " .. key .. ": " .. usage .. " KB in " .. reportInterval .. " seconds" )
+        end
+        memoryUsageTable = {}
+    end
+end
+
+--------------------------
 -- EVENT LOOP FUNCTIONS 
 --------------------------
 
@@ -142,17 +174,20 @@ jpsFrame:SetScript("OnUpdate", function(self, elapsed)
         end
         self.TimeSinceLastUpdate = 0
     end
+    if jps.enableProfiling then jps.reportMemoryUsage(elapsed) end
 end)
 
 --- Event Handler
 jpsFrame:SetScript("OnEvent", function(self, event, ...)
     if eventTable[event] then
+        if jps.enableProfiling then startProfileMemory(event) end
         for _,fn in pairs(eventTable[event]) do
             local status, error = pcall(fn, ...)
             if not status then
                 LOG.error("Error on event %s, function %s", error, fn)
             end
         end
+        if jps.enableProfiling then endProfileMemory(event) end
     end
     -- Execute this code everytime?
     if (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
