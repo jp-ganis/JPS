@@ -1,4 +1,4 @@
-jps.registerStaticTable("SHAMAN","RESTORATION",function()
+jps.registerRotation("SHAMAN","RESTORATION",function()
 -- TO DO : better code/rotation style 
 
 local spell = nil

@@ -1,4 +1,4 @@
-jps.registerStaticTable("SHAMAN","ENHANCEMENT",function()
+jps.registerRotation("SHAMAN","ENHANCEMENT",function()
 	--simcraft and more
 	-- Talents:
 	-- Tier 1: Astral Shift

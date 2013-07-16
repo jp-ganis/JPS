@@ -1,4 +1,4 @@
-jps.registerStaticTable("SHAMAN","RESTORATION",function()
+jps.registerRotation("SHAMAN","RESTORATION",function()
 	
 	local spell = nil
 	local target = nil

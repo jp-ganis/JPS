@@ -1,4 +1,4 @@
-jps.registerStaticTable("ROGUE","SUBTLETY",function()
+jps.registerRotation("ROGUE","SUBTLETY",function()
 	
 	----------
 	--- Declarations
