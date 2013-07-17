@@ -128,9 +128,9 @@ local canCastShadowfiend = isEnemy  or isBoss
 
 local canFear = false
 local knownTypes = {[0]="player", [1]="world object", [3]="NPC", [4]="pet", [5]="vehicle"}
+if isInBG and jps.canDPS(rangedTarget) and CheckInteractDistance(rangedTarget, 3) == 1 then canFear = true end
 
 if jps.FaceTarget and jps.canDPS(rangedTarget) then 
-	if CheckInteractDistance(rangedTarget, 3) == 1 then canFear = true end
 	if FireHack then
 		local rangedTarget_guid = UnitGUID(rangedTarget)
 		local targetObject = GetObjectFromGUID(rangedTarget_guid)
@@ -205,9 +205,7 @@ local function unitFor_Mending(unit)
 end
 
 local function unitLoseControl(unit) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
-	if jps.LoseControl(unit,"CC") then return true end
-	if jps.LoseControl(unit,"Snare") then return true end
-	if jps.LoseControl(unit,"Root") then return true end
+	if jps.LoseControlTable(unit) then return true end
 	return false
 end
 

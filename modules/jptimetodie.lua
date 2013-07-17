@@ -54,7 +54,7 @@ function jps.updateInfoText()
 	end
 	if jps.getConfigVal("show Latency in JPS UI") == 1 then
 		if jps.CastBar.latency ~= 0 then
-			local latency = jps.CastBar.latency
+			local latency = jps_round(jps.CastBar.latency,2)
 			infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
 		end
 	end
@@ -62,7 +62,6 @@ function jps.updateInfoText()
 end
 
 function jps.updateTimeToLive(self, elapsed)
-	if UnitAffectingCombat("player") == nil then return end
 	if self.TimeToLiveSinceLastUpdate == nil then self.TimeToLiveSinceLastUpdate = 0 end
     self.TimeToLiveSinceLastUpdate = self.TimeToLiveSinceLastUpdate + elapsed
     if (self.TimeToLiveSinceLastUpdate > jps.UpdateInterval) then
@@ -359,7 +358,7 @@ slider.minValue, slider.maxValue = slider:GetMinMaxValues()
 slider:SetValue(0.2)
 slider:SetValueStep(0.05)
 slider:EnableMouse(true)
-local latency = jps_round(jps.CastBar.latency,3)
+local latency = jps_round(jps.CastBar.latency,2)
 getglobal(slider:GetName() .. 'Low'):SetText('0.05')
 getglobal(slider:GetName() .. 'High'):SetText('0.5')
 getglobal(slider:GetName() .. 'Text'):SetText("Update Interval")
