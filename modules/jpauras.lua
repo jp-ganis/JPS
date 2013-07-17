@@ -142,8 +142,8 @@ function jps.buffStacks(spell,unit)
 end
 
 function jps.buffTracker(buff)
-	for unit,_ in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) and jps.myBuffDuration(buff,unit) > 0 then
+	for unit,index in pairs(jps.RaidStatus) do
+		if (index["inrange"] == true) and jps.myBuffDuration(buff,unit) > 0 then
 		return true end
 	end
 	return false

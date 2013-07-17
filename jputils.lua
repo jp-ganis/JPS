@@ -270,7 +270,7 @@ jps_Dispels = {
 
 
 ---------------------------
--- TABLES
+-- TABLES --  Credits - to LoseControl Addon
 ---------------------------
 
 jps_SpellControl = {
@@ -397,8 +397,9 @@ jps_SpellControl = {
 	[119381] = "CC",		-- Leg Sweep
 	[115078] = "CC",		-- Paralysis
 	[117368] = "Disarm",		-- Grapple Weapon
-	--[???] = "Disarm",		-- Ring of Peace
-	--[???] = "Silence",		-- Ring of Peace
+	[140023] = "Disarm",		-- Ring of Peace
+	[137461] = "Disarm",		-- Disarmed (Ring of Peace)
+	[137460] = "Silence",		-- Silenced (Ring of Peace)
 	[116709] = "Silence",		-- Spear Hand Strike
 	[116706] = "Root",		-- Disable
 	[113275] = "Root",		-- Entangling Roots (Symbiosis)
@@ -422,6 +423,7 @@ jps_SpellControl = {
 	[20170]  = "Snare",		-- Seal of Justice
 	[642]    = "Immune",		-- Divine Shield
 	[31821]  = "Other",		-- Aura Mastery
+	[1022]   = "Other",		-- Hand of Protection
 	-- Priest
 	[113506] = "CC",		-- Cyclone (Symbiosis)
 	[605]    = "CC",		-- Dominate Mind
@@ -506,6 +508,7 @@ jps_SpellControl = {
 	[20511]  = "CC",		-- Intimidating Shout (targeted)
 	[132168] = "CC",		-- Shockwave
 	[107570] = "CC",		-- Storm Bolt
+	[132169] = "CC",		-- Storm Bolt
 	[105771] = "CC",		-- Warbringer
 	[18498]  = "Silence",		-- Silenced - Gag Order (PvE only)
 	[676]    = "Disarm",		-- Disarm
@@ -536,7 +539,7 @@ jps_SpellControl = {
 	[13099]  = "Root",		-- Net-o-Matic
 	[1604]   = "Snare",		-- Dazed
 	-- PvE
-	--[123456]  = "PvE",		-- not real, just an example
+	--[123456] = "PvE",		-- This is just an example, not a real spell
 }
 
 --------------------------------------------------------------------
@@ -679,52 +682,3 @@ ShoppingTooltip1:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip2:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
 
------------------------
--- FUNCTION LOOKUP RAID
------------------------
-
-function LookupSpec ()
-	local function printing()
-		print("All Rotations return no Lua Error")
-	end
-	local Table_Spec = 	{
-		druid_feral(),
-		druid_guardian(),
-		druid_balance(),
-		druid_resto() ,
-		dk_unholy(),
-		dk_blood( ),
-		dk_frost( ),  
-		shaman_enhancement( ),
-		shaman_elemental( ),
-		shaman_resto( ),
-		paladin_protadin( ),
-		paladin_ret( ),
-		paladin_holy( ),
-		warlock_affliction( ),
-		warlock_destro( ),
-		warlock_demo( ),
-		hunter_bm( ),
-		hunter_mm( ),
-		hunter_sv( ),
-		mage_fire( ),
-		mage_arcane( ),
-		mage_frost( ),
-		rogue_assass( ),
-		rogue_sub( ),
-		rogue_combat( ),
-		warrior_fury( ),
-		warrior_prot( ),
-		warrior_arms( ),
-		priest_shadow( ),
-		priest_holy( ),
-		priest_disc( ),
-		monk_brewmaster( ),
-		monk_windwalker( ),
-		monk_mistweaver( ),
-		printing( ),
-	}
-	for i, j in ipairs(Table_Spec) do
-		RunMacroText("/run "..j)
-	end
-end
