@@ -156,7 +156,7 @@ end
 function jps.DispelOffensive(unit)
 	if not jps.canDPS(unit) then return false end
 	for _, buff in pairs(jps_BuffToDispel_Name) do
-		if  jps.buff(buff,unit)  then -- and debuffType=="Magic"
+		if jps.buff(buff,unit) then -- and debuffType=="Magic"
 		return true end
 	end
 	return false

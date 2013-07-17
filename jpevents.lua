@@ -442,21 +442,39 @@ end)
 
 -- UNIT_SPELLCAST_SENT latency castbar
 jps.registerEvent("UNIT_SPELLCAST_SENT",  function(...) 
-	jps.CastBar.sentTime = GetTime()
+		local unitID = select(1,...)
+		local spellname = select(2,...)
+
+		jps.CastBar.latencySpell = spellname
+		if unitID == "player" and spellname then jps.CastBar.sentTime = GetTime() end
 end)
 -- UNIT_SPELLCAST_START latency castbar
 jps.registerEvent("UNIT_SPELLCAST_START",  function(...) 
-	local name, _, text, texture, startTime, endTime, _, castID, interrupt = UnitCastingInfo("player")
-	if (not name) then jps.CastBar.latency = 0 end
-	local now = GetTime()
-	
-	if (jps.CastBar.sentTime) then
-		local latency = now - jps.CastBar.sentTime
-		jps.CastBar.latency = latency
-	else
-		jps.CastBar.latency = 0
-	end
+local unitID = select(1,...)
+		local spellname = select(2,...)
+
+		if unitID == "player" and (spellname == jps.CastBar.latencySpell) then 
+			jps.CastBar.startTime = GetTime() 
+		else
+			jps.CastBar.startTime = nil
+			jps.CastBar.latency = 0
+		end
+
+		if jps.CastBar.startTime then
+			jps.CastBar.latency = jps.CastBar.startTime - jps.CastBar.sentTime
+			jps.CastBar.latencySpell = nil
+		else
+			jps.CastBar.latency = 0
+		end
 end)
+
+local function latencySpell()
+		jps.CastBar.startTime = nil
+		jps.CastBar.latency = 0
+end
+
+jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", latencySpell)
+jps.registerEvent("UNIT_SPELLCAST_STOP", latencySpell)
 
 -- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 jps.registerEvent("PLAYER_LEVEL_UP", function(level)

@@ -181,7 +181,6 @@ end
 function jps.FindSubGroup()
 	if not IsInRaid() then return 0 end
 	
-	local groupVal = 0
 	local gr1 = 0
 	local gr2 = 0
 	local gr3 = 0
@@ -217,7 +216,7 @@ function jps.FindSubGroup()
 			table.insert(groupTableToHeal,i)
 		end
 	end
-return groupToHeal, groupTableToHeal
+return groupToHeal, groupTableToHeal -- RETURN Group with at least 3 unit in range
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH POH IN RAID
@@ -228,11 +227,9 @@ function jps.FindSubGroupTarget(lowHealthDef)
 	local tt_count = 0
 	local lowestHP = lowHealthDef
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt = unit
 			lowestHP = unitTable["hpct"]
-		end
-		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt_count = tt_count + 1
 		end
 	end

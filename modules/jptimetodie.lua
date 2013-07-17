@@ -24,7 +24,6 @@ local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFont
 infoFrameText:SetJustifyH("LEFT")
 infoFrameText:SetPoint("LEFT", 15, 0)
 infoFrameText:SetFont('Fonts\\ARIALN.ttf', 11, 'THINOUTLINE')
-local infoTTL = 60
 local infoTTD = 60
 
 JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
@@ -35,15 +34,6 @@ JPSEXTInfoFrame:Hide()
 
 function jps.updateInfoText()
 	local infoTexts = ""
-	if infoTTL ~= nil and jps.isHealer and infoTTL < 200000 then
-		local minutesLive = math.floor(infoTTL / 60)
-		local secondsLive = infoTTL - (minutesLive*60)	
-		if infoTTL < 200000 then
-			infoTexts = infoTexts.."TimeToLive: "..minutesLive.. "min "..secondsLive.. "sec\n"
-		else
-			infoTexts = "TimeToLive: n/a".."\n"
-		end
-	end
 
 	if infoTTD ~= nil and infoTTD < 200000 then
 		local minutesDie = math.floor(infoTTD / 60)
@@ -79,7 +69,6 @@ function jps.updateTimeToLive(self, elapsed)
         if jps.Combat and UnitExists("target") then
             self.TimeToLiveSinceLastUpdate = 0
         end
-        infoTTL = jps.TimeToLive("target")
 		infoTTD = jps.TimeToDie("target")
         jps.updateInfoText()
     end
@@ -284,7 +273,14 @@ end
 function jps.clearTimeToLive()
     jps.UnitToLiveData = {}
     jps.RaidTimeToDie = {}
-	jps.RaidTimeToLive = {}
+	
+	jps.CastBar.latency = 0
+	jps.CastBar.latencySpell = nil
+	jps.CastBar.nextSpell = ""
+	jps.CastBar.nextTarget = ""
+	jps.CastBar.currentSpell = ""
+	jps.CastBar.currentTarget = ""
+	jps.CastBar.currentMessage = ""
 end
 
 function jps.UnitTimeToLive(unit)
@@ -297,29 +293,6 @@ function jps.UnitTimeToLive(unit)
 	
     if jps.UnitToLiveData[guid] ~= nil then
         local dataset = jps.UnitToLiveData[guid]
-        local data = table.getn(dataset)
-        if #dataset > 1 then
-        	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
-			local totalTime = math.max(timeDelta, 1)
-        	totalDmg = dataset[data][2] - dataset[1][2] -- (UnitHealth_old - UnitHealth_last) = Health Loss
-        	incomingDps = math.ceil(totalDmg / totalTime)
-			if incomingDps <= 0 then incomingDps = 1 end
-        end
-		timetolive = math.ceil(health_unit / incomingDps)
-    end
-    return timetolive
-end
-
-function jps.TimeToLive(unit)
-	if unit == nil then return 60 end
-    local guid = UnitGUID(unit)
-	local health_unit = UnitHealth(unit)
-	local timetolive = 60 -- e.g. 60 seconds
-	local totalDmg = 1 -- to avoid 0/0
-	local incomingDps = 1
-	
-    if jps.RaidTimeToLive[guid] ~= nil then
-        local dataset = jps.RaidTimeToLive[guid]
         local data = table.getn(dataset)
         if #dataset > 1 then
         	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
@@ -356,14 +329,14 @@ function jps.TimeToDie(unit, percent)
 end
 
 -- FRIEND UNIT WITH THE LOWEST TIMETODIE -- USAGE FOR HEALING TO SHIELD INCOMING DAMAGE
-function jps.LowestTimetoLive()
+function jps.LowestTimetoDie()
 	local lowestUnit = jpsName
-	local timetolive = 60
+	local timetodie = 60
 	
-	for unit, index in pairs(jps.RaidStatus) do
-		local timetoliveUnit = jps.TimeToLive(unit)
-		if (index["inrange"] == true) and timetoliveUnit < timetolive then
-			timetolive = timetoliveUnit
+	for unit,index in pairs(jps.RaidStatus) do
+		local timetodieUnit = jps.TimeToDie(unit)
+		if (index["inrange"] == true) and timetodieUnit < timetodie then
+			timetodie = timetodieUnit
 			lowestUnit = unit
 		end
 	end
