@@ -347,11 +347,6 @@ end
 -- SLIDER UPDATE INTERVAL
 ---------------------------------------------------
 
-function jps_round(val, decimal)
-  local exp = decimal and 10^decimal or 1
-  return math.ceil(val * exp - 0.5) / exp
-end
-
 local slider = CreateFrame("Slider","UpdateInterval",JPSEXTInfoFrame,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate  
 
 slider:ClearAllPoints()

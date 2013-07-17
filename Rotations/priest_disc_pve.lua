@@ -1,6 +1,7 @@
 local L = MyLocalizationTable
 
-function priest_disc_pve()
+--function priest_disc_pve()
+jps.registerRotation("PRIEST","DISCIPLINE",function()
 
 ----------------------
 -- Average heal
@@ -40,7 +41,7 @@ local health_deficiency = UnitHealthMax(jps_Target) - UnitHealth(jps_Target)
 local health_pct = jps.hpInc(jps_Target)
 
 local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
-local jps_FriendTTD = jps.LowestTimetoLive() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
+local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
 local TimeToDiePlayer = jps.TimeToDie("player")
 
 local Tanktable = { ["focus"] = 100, ["player"] = 100, ["target"] = 100, ["targetarget"] = 100, ["mouseover"] = 100 }
@@ -660,9 +661,9 @@ local spellTable_moving =
 		--spell,target = parseSpellTable(spellTableActive)
 		spell, target = parseSpellTable(spellTable)
 	end
-
 	return spell,target
-end
+	
+end, "Disc Priest PvE", true, false)
 
 -- "Leap of Faith" -- "Saut de foi" 
 -- "Mass Dispel"  -- Dissipation de masse 32375

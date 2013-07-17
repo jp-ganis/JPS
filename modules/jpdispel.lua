@@ -19,8 +19,8 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
-local L = MyLocalizationTable
 
+local L = MyLocalizationTable
 
 --------------------------
 -- Dispel Functions LOOP
@@ -152,7 +152,7 @@ end
 ------------------------------------
 
 -- arena1 to arena5 - A member of the opposing team in an Arena match
--- { 528, jps.DispelOffensive(unit) , {"arena1","arena2","arena3"} },  -- Dissipation de la magie 528
+-- { 528, jps.DispelOffensive(unit) , {"arena1","arena2","arena3"} },
 function jps.DispelOffensive(unit)
 	if not jps.canDPS(unit) then return false end
 	for _, buff in pairs(jps_BuffToDispel_Name) do
@@ -161,7 +161,6 @@ function jps.DispelOffensive(unit)
 	end
 	return false
 end
-
 
 function jps.dispelActive() 
 	if not jps.Interrupts then return false end

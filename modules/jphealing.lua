@@ -27,10 +27,10 @@ function update_healtable(...)
 	local healVal = select(15, ...)
     if Healtable[healname] == nil then
 		Healtable[healname] = { 	["healname"]= healname,
-										["healtotal"]= healVal,
-										["healcount"]= 1,
-										["averageheal"]=healVal
-									}
+									["healtotal"]= healVal,
+									["healcount"]= 1,
+									["averageheal"]=healVal
+								}
     else
 		Healtable[healname]["healtotal"] = Healtable[healname]["healtotal"] + healVal
 		Healtable[healname]["healcount"] = Healtable[healname]["healcount"] + 1
@@ -355,5 +355,3 @@ function jps_RaidTest()
 	print("|cFFFF0000","EnemyTarget_","|cffffffff",enemytargeted,"|cFFFF0000","EnemyTargetMe_","|cffffffff",enemytargetMe)
 
 end
-
-
