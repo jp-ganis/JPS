@@ -88,7 +88,6 @@ jps.Timers = {}
 Healtable = {}
 jps.EnemyTable =  {}
 jps.RaidTimeToDie = {}
-jps.RaidTimeToLive = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
 jps.settings = {}
@@ -116,6 +115,7 @@ jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withi
 -- Latency
 jps.CastBar = {}
 jps.CastBar.latency = 0
+jps.CastBar.latencySpell = nil
 jps.CastBar.nextSpell = ""
 jps.CastBar.nextTarget = ""
 jps.CastBar.currentSpell = ""
@@ -315,11 +315,13 @@ function jps_Combat()
 	  return 
    end
    
-   if (IsMounted() == 1 and jps.getConfigVal("dismount in combat") == 0) or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
+	-- STOP Combat
+	if (IsMounted() == 1 and jps.getConfigVal("dismount in combat") == 0) or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
+	
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
-	-- Casting
-	-- if UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil then jps.Casting = true else jps.Casting = false end
+
+	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = jps.CastBar.latency
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
@@ -328,6 +330,7 @@ function jps_Combat()
 	else
 		jps.Casting = false
 	end
+	
    -- Check spell usability 
    if string.len(jps.customRotationFunc) > 10 then
 	   jps.ThisCast,jps.Target = jps.customRotation() 
@@ -338,8 +341,11 @@ function jps_Combat()
 	   jps.firstInitializingLoop = false
 	   return nil
 	end
+	
    -- RAID UPDATE
 	jps.UpdateHealerBlacklist()
+	-- in case you want to play only with /jps pew the RaidStatus table will be updated
+	if (not jps.Enabled) or (not jps.Combat) then jps.SortRaidStatus() end
    
    -- Movement
    jps.Moving = GetUnitSpeed("player") > 0
