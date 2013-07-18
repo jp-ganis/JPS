@@ -447,3 +447,5 @@ if jps.debuff("Doom") and form == 0 then jps.Opening = false end
    spell,target = parseSpellTable(spellTable)
    return spell,target
 end,"Demo Raid (untested)")
+
+jps.registerStaticTable("WARLOCK","DEMONOLOGY",wl.interruptSpellTable,"Interrupt Only")

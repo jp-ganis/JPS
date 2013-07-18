@@ -32,6 +32,9 @@ local spellTable = {
     {jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
     {wl.spells.emberTap, 'jps.Defensive and jps.hp() <= 0.30 and jps.burningEmbers() > 0' },
 
+    -- Soulstone
+    wl.soulStone("target"),
+
     -- Rain of Fire
     {wl.spells.rainOfFire, 'IsShiftKeyDown() and jps.buffDuration(wl.spells.rainOfFire) < 1 and not GetCurrentKeyBoardFocus()'  },
     {wl.spells.rainOfFire, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
@@ -96,3 +99,4 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
     return parseStaticSpellTable(spellTable)
 end,"Destruction 5.3")
 
+jps.registerStaticTable("WARLOCK","DESTRUCTION",wl.interruptSpellTable,"Interrupt Only")

@@ -128,7 +128,7 @@ end
 --------------------------
 -- PROFILING FUNCTIONS 
 --------------------------
-jps.enableProfiling = false
+local enableProfiling = false
 local memoryUsageTable = {}
 local memoryStartTable = {}
 local function startProfileMemory(key)
@@ -144,9 +144,12 @@ local function endProfileMemory(key)
 end
 
 local reportInterval = 5
+local maxProfileDuration = 60
 local lastReportUpdate = 0
+local totalProfileDuration = 0
 function jps.reportMemoryUsage(elapsed)
     lastReportUpdate = lastReportUpdate + elapsed
+    totalProfileDuration = totalProfileDuration + elapsed
     if lastReportUpdate > reportInterval then
         lastReportUpdate = 0
         print("Memory Usage Report:")
@@ -156,6 +159,15 @@ function jps.reportMemoryUsage(elapsed)
         memoryStartTable = {}
         memoryUsageTable = {}
     end
+    if totalProfileDuration >= maxProfileDuration then
+        enableProfiling = false
+    end
+end
+
+function jps.enableProfiling()
+    totalProfileDuration = 0
+    lastReportUpdate = 0
+    enableProfiling = true
 end
 
 --------------------------
@@ -175,20 +187,20 @@ jpsFrame:SetScript("OnUpdate", function(self, elapsed)
         end
         self.TimeSinceLastUpdate = 0
     end
-    if jps.enableProfiling then jps.reportMemoryUsage(elapsed) end
+    if enableProfiling then jps.reportMemoryUsage(elapsed) end
 end)
 
 --- Event Handler
 jpsFrame:SetScript("OnEvent", function(self, event, ...)
     if eventTable[event] then
-        if jps.enableProfiling then startProfileMemory(event) end
+        if enableProfiling then startProfileMemory(event) end
         for _,fn in pairs(eventTable[event]) do
             local status, error = pcall(fn, ...)
             if not status then
                 LOG.error("Error on event %s, function %s", error, fn)
             end
         end
-        if jps.enableProfiling then endProfileMemory(event) end
+        if enableProfiling then endProfileMemory(event) end
     end
     -- Execute this code everytime?
     if (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
@@ -203,12 +215,14 @@ end)
 jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(timeStamp, event, ...)
     if jps.Enabled and UnitAffectingCombat("player") == 1 and combatLogEventTable[event] then
         LOG.debug("CombatLogEventUntfiltered: %s", event)
+        if enableProfiling then startProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
         for _,fn in pairs(combatLogEventTable[event]) do
             local status, error = pcall(fn, timeStamp, event, ...)
             if not status then
                 LOG.error("Error on COMBAT_LOG_EVENT_UNFILTERED sub-event %s, function %s", error, fn)
             end
         end
+        if enableProfiling then endProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
     end
 end)
 
