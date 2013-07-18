@@ -19,14 +19,37 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
+
 local L = MyLocalizationTable
 
+--------------------------------------
+-- Loss of Control check (e.g. PvP) --
+--------------------------------------
+-- API changes http://www.wowinterface.com/forums/showthread.php?t=45176
+-- local LossOfControlType, _, LossOfControlText, _, LossOfControlStartTime, LossOfControlTimeRemaining, duration, _, _, _ = C_LossOfControl.GetEventInfo(1)
+-- LossOfControlType : --STUN_MECHANIC --STUN --PACIFYSILENCE --SILENCE --FEAR --CHARM --PACIFY --CONFUSE --POSSESS --SCHOOL_INTERRUPT --DISARM --ROOT
 
+function jps.StunEvents() -- ONLY FOR PLAYER
+	local locTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
+	local numEvents = C_LossOfControl.GetNumEvents()
+	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
+	if (numEvents > 0) and (timeRemaining ~= nil) then
+		if 	locType == SCHOOL_INTERRUPT then
+			--print("SPELL_FAILED_INTERRUPTED",locType)
+			jps.createTimer("Spell_Interrupt", 2 )
+		end
+		for i,j in ipairs(locTypeTable) do
+			if locType == j and timeRemaining > 1 then
+			--print("locType: ",locType,"timeRemaining: ",timeRemaining)
+			return true end
+		end
+	end
+	return false
+end
 
-
--- check if unit loosed control
+-- Check if unit loosed control
 -- unit = http://www.wowwiki.com/UnitId
--- message = type of spell =  "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm" 
+-- message = type of spell = "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm"
 function jps.LoseControl(unit,message)
 	if not jps.UnitExists(unit) then return false,0 end
 	if message == nil then message = "CC" end 
@@ -70,32 +93,6 @@ function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", 
 return targetControlled, timeControlled
 end
 
---------------------------------------
--- Loss of Control check (e.g. PvP) --
---------------------------------------
--- API changes http://www.wowinterface.com/forums/showthread.php?t=45176
--- local LossOfControlType, _, LossOfControlText, _, LossOfControlStartTime, LossOfControlTimeRemaining, duration, _, _, _ = C_LossOfControl.GetEventInfo(1)
--- LossOfControlType : --STUN_MECHANIC --STUN --PACIFYSILENCE  --SILENCE --FEAR  --CHARM --PACIFY --CONFUSE  --POSSESS --SCHOOL_INTERRUPT  --DISARM  --ROOT 
-
-function jps.StunEvents() -- ONLY FOR PLAYER
-	local locTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
-	local numEvents = C_LossOfControl.GetNumEvents()
-	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
-	if (numEvents > 0) and (timeRemaining ~= nil) then
-		if 	locType == SCHOOL_INTERRUPT then
-			--print("SPELL_FAILED_INTERRUPTED",locType)
-			jps.createTimer("Spell_Interrupt", 2 )
-		end
-		for i,j in ipairs(locTypeTable) do
-			if locType == j and timeRemaining > 1 then
-			--print("locType: ",locType,"timeRemaining: ",timeRemaining)
-			return true end
-		end
-	end
-	return false
-end
-
-
 function jps.shouldKick(unit)
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
@@ -130,5 +127,3 @@ function jps.shouldKickLag(unit)
 	end 
 	return false
 end
-
-

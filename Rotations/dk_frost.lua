@@ -23,14 +23,14 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	
 	--AOE
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
-	
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
 	
 	-- Self heal
 	{ "Death Pact",'jps.UseCDs and jps.hp() < 0.6 and UnitExists("pet") ~= nil'},
-	-- Self heals
 	{ "Death Siphon",'jps.Defensive and jps.hp() < 0.8'},
 	{ "Death Strike",'jps.Defensive and jps.hp() < 0.7'},
 	

@@ -23,17 +23,18 @@ end
 ------------------------------
 
 function update_healtable(...)
-	local eventtable =  {...}
-    if Healtable[eventtable[13]] == nil then
-		Healtable[eventtable[13]] = { 	["healname"]= eventtable[13],
-										["healtotal"]= eventtable[15],
-										["healcount"]= 1,
-										["averageheal"]=eventtable[15]
-									}
+	local healname = select(13, ...)
+	local healVal = select(15, ...)
+    if Healtable[healname] == nil then
+		Healtable[healname] = { 	["healname"]= healname,
+									["healtotal"]= healVal,
+									["healcount"]= 1,
+									["averageheal"]=healVal
+								}
     else
-		Healtable[eventtable[13]]["healtotal"] = Healtable[eventtable[13]]["healtotal"] + eventtable[15]
-		Healtable[eventtable[13]]["healcount"] = Healtable[eventtable[13]]["healcount"] + 1
-		Healtable[eventtable[13]]["averageheal"] = Healtable[eventtable[13]]["healtotal"] / Healtable[eventtable[13]]["healcount"]
+		Healtable[healname]["healtotal"] = Healtable[healname]["healtotal"] + healVal
+		Healtable[healname]["healcount"] = Healtable[healname]["healcount"] + 1
+		Healtable[healname]["averageheal"] = Healtable[healname]["healtotal"] / Healtable[healname]["healcount"]
     end
 end
 
@@ -180,7 +181,6 @@ end
 function jps.FindSubGroup()
 	if not IsInRaid() then return 0 end
 	
-	local groupVal = 0
 	local gr1 = 0
 	local gr2 = 0
 	local gr3 = 0
@@ -216,7 +216,7 @@ function jps.FindSubGroup()
 			table.insert(groupTableToHeal,i)
 		end
 	end
-return groupToHeal, groupTableToHeal
+return groupToHeal, groupTableToHeal -- RETURN Group with at least 3 unit in range
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH POH IN RAID
@@ -227,11 +227,9 @@ function jps.FindSubGroupTarget(lowHealthDef)
 	local tt_count = 0
 	local lowestHP = lowHealthDef
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowestHP) then
+		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt = unit
 			lowestHP = unitTable["hpct"]
-		end
-		if  (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt_count = tt_count + 1
 		end
 	end
@@ -357,5 +355,3 @@ function jps_RaidTest()
 	print("|cFFFF0000","EnemyTarget_","|cffffffff",enemytargeted,"|cFFFF0000","EnemyTargetMe_","|cffffffff",enemytargetMe)
 
 end
-
-

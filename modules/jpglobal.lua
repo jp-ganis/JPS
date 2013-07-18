@@ -146,6 +146,12 @@ function inArray(needle, haystack)
 	end
 	return false
 end
+
+function jps_round(val, decimal)
+  local exp = decimal and 10^decimal or 1
+  return math.ceil(val * exp - 0.5) / exp
+end
+
 ------------------------------
 -- GUID
 ------------------------------
