@@ -154,6 +154,9 @@ local spellTable = {
     {wl.spells.createHealthstone, 'jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= wl.spells.createHealthstone'},
     {jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
 
+    -- Soulstone
+    wl.soulStone("target"),
+
     -- COE Debuff
     {"nested", 'not jps.MultiTarget and jps.buffDuration(wl.spells.soulburn) == 0', {
         { wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")'},
@@ -239,3 +242,4 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
     return parseStaticSpellTable(spellTable)
 end,"Affliction 5.3")
 
+jps.registerStaticTable("WARLOCK","AFFLICTION",wl.interruptSpellTable,"Interrupt Only")
