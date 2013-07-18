@@ -6,7 +6,7 @@ function warrior.rangedTarget()
 		return "target"
 	elseif jps.canDPS("focustarget") then
 		return "focustarget"
-	else jps.canDPS("targettarget") then
+	elseif jps.canDPS("targettarget") then
 		return "targettarget"
 	end
 end

@@ -34,6 +34,7 @@ wl.spells["soulshatter"] = toSpellName(29858)
 wl.spells["singeMagic"] = toSpellName(132411)
 wl.spells["sacrificialPact"] = toSpellName(108416)
 wl.spells["burningRush"] = toSpellName(111400)
+wl.spells["soulStone"] = toSpellName(20707)
 --Affliction
 wl.spells["corruption"] = toSpellName(172)
 wl.spells["darkSoulMisery"] = toSpellName(113860)
@@ -119,13 +120,6 @@ wl.attackFocus = jps.cachedValue(function()
     return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
 end)
 
-
--- Helper to prevent Recasts
-function wl.isRecast(spell,target)
-    return jps.LastCast == spell and jps.LastTarget == target
-end
-
-
 -- Deactivate Burning Rush after n seconds of not moving
 local burningRushNotMovingSeconds = 0
 function wl.deactivateBurningRushIfNotMoving(seconds)
@@ -142,12 +136,19 @@ function wl.deactivateBurningRushIfNotMoving(seconds)
 end
 
 -- Interrupt SpellTable for all specs
-local interruptSpellTable = {
+wl.interruptSpellTable = {
     -- Interrupts
     wl.getInterruptSpell("target"),
     wl.getInterruptSpell("focus"),
     wl.getInterruptSpell("mouseover"),
 }
-jps.registerStaticTable("WARLOCK","AFFLICTION",interruptSpellTable,"Interrupt Only")
-jps.registerStaticTable("WARLOCK","DEMONOLOGY",interruptSpellTable,"Interrupt Only")
-jps.registerStaticTable("WARLOCK","DESTRUCTION",interruptSpellTable,"Interrupt Only")
+
+-- Soulstone Table
+function wl.soulStone(unit)
+    if not unit then unit = "target" end
+    local soulStoneTable = {wl.spells.soulStone, false, unit}
+    return function()
+        soulStoneTable[2] = IsControlKeyDown() ~=nil and jps.cooldown(wl.spells.soulStone) == 0 and UnitIsDeadOrGhost(unit) == 1 and UnitPlayerControlled(unit)
+        return soulStoneTable
+    end
+end

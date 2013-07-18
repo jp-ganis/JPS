@@ -128,7 +128,7 @@ end
 --------------------------
 -- PROFILING FUNCTIONS 
 --------------------------
-jps.enableProfiling = false
+local enableProfiling = false
 local memoryUsageTable = {}
 local memoryStartTable = {}
 local function startProfileMemory(key)
@@ -144,9 +144,12 @@ local function endProfileMemory(key)
 end
 
 local reportInterval = 5
+local maxProfileDuration = 60
 local lastReportUpdate = 0
+local totalProfileDuration = 0
 function jps.reportMemoryUsage(elapsed)
     lastReportUpdate = lastReportUpdate + elapsed
+    totalProfileDuration = totalProfileDuration + elapsed
     if lastReportUpdate > reportInterval then
         lastReportUpdate = 0
         print("Memory Usage Report:")
@@ -156,6 +159,15 @@ function jps.reportMemoryUsage(elapsed)
         memoryStartTable = {}
         memoryUsageTable = {}
     end
+    if totalProfileDuration >= maxProfileDuration then
+        enableProfiling = false
+    end
+end
+
+function jps.enableProfiling()
+    totalProfileDuration = 0
+    lastReportUpdate = 0
+    enableProfiling = true
 end
 
 --------------------------
@@ -175,20 +187,20 @@ jpsFrame:SetScript("OnUpdate", function(self, elapsed)
         end
         self.TimeSinceLastUpdate = 0
     end
-    if jps.enableProfiling then jps.reportMemoryUsage(elapsed) end
+    if enableProfiling then jps.reportMemoryUsage(elapsed) end
 end)
 
 --- Event Handler
 jpsFrame:SetScript("OnEvent", function(self, event, ...)
     if eventTable[event] then
-        if jps.enableProfiling then startProfileMemory(event) end
+        if enableProfiling then startProfileMemory(event) end
         for _,fn in pairs(eventTable[event]) do
             local status, error = pcall(fn, ...)
             if not status then
                 LOG.error("Error on event %s, function %s", error, fn)
             end
         end
-        if jps.enableProfiling then endProfileMemory(event) end
+        if enableProfiling then endProfileMemory(event) end
     end
     -- Execute this code everytime?
     if (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
@@ -203,12 +215,14 @@ end)
 jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(timeStamp, event, ...)
     if jps.Enabled and UnitAffectingCombat("player") == 1 and combatLogEventTable[event] then
         LOG.debug("CombatLogEventUntfiltered: %s", event)
+        if enableProfiling then startProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
         for _,fn in pairs(combatLogEventTable[event]) do
             local status, error = pcall(fn, timeStamp, event, ...)
             if not status then
                 LOG.error("Error on COMBAT_LOG_EVENT_UNFILTERED sub-event %s, function %s", error, fn)
             end
         end
+        if enableProfiling then endProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
     end
 end)
 
@@ -281,10 +295,9 @@ local function leaveCombat()
     jps.Opening = true
     jps.Combat = false
     jps.gui_toggleCombat(false)
-    jps.RaidStatus = {}
-    jps.RaidTarget = {}
     jps.EnemyTable = {}
     jps.clearTimeToLive()
+    jps.SortRaidStatus() -- wipe jps.RaidRoster and jps.RaidStatus
     if jps.getConfigVal("timetodie frame visible") == 1 then
         JPSEXTInfoFrame:Hide()
     end
@@ -388,6 +401,50 @@ jps.registerEvent("UI_ERROR_MESSAGE", function(event_error)
     end
 end)
 
+-- "UNIT_SPELLCAST_SENT"
+jps.registerEvent("UNIT_SPELLCAST_SENT", function(...)
+		local unitID = select(1,...)
+		local spellname = select(2,...)
+
+		jps.CastBar.latencySpell = spellname
+		if unitID == "player" and spellname then jps.CastBar.sentTime = GetTime() end
+end)
+
+-- "UNIT_SPELLCAST_START"
+jps.registerEvent("UNIT_SPELLCAST_START", function(...)
+		local unitID = select(1,...)
+		local spellname = select(2,...)
+
+		if unitID == "player" and (spellname == jps.CastBar.latencySpell) then 
+			jps.CastBar.startTime = GetTime() 
+		else
+			jps.CastBar.startTime = nil
+			jps.CastBar.latency = 0
+		end
+
+		if jps.CastBar.startTime then
+			jps.CastBar.latency = jps.CastBar.startTime - jps.CastBar.sentTime
+			jps.CastBar.latencySpell = nil
+		else
+			jps.CastBar.latency = 0
+		end
+end)
+
+-- "UNIT_SPELLCAST_INTERRUPTED" -- "UNIT_SPELLCAST_STOP"
+local function latencySpell ()
+		jps.CastBar.startTime = nil
+		jps.CastBar.latency = 0
+end
+jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", leaveCombat)
+jps.registerEvent("UNIT_SPELLCAST_STOP", collectGarbage)
+
+-- LOOT_OPENED
+jps.registerEvent("LOOT_OPENED", function()
+    if (IsFishingLoot()) then
+        jps.Fishing = true
+    end
+end)
+
 -- UNIT_SPELLCAST_SUCCEEDED
 jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
     --if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
@@ -440,24 +497,6 @@ jps.registerEvent("UNIT_HEALTH_FREQUENT", function(unit)
     end
 end)
 
--- UNIT_SPELLCAST_SENT latency castbar
-jps.registerEvent("UNIT_SPELLCAST_SENT",  function(...) 
-	jps.CastBar.sentTime = GetTime()
-end)
--- UNIT_SPELLCAST_START latency castbar
-jps.registerEvent("UNIT_SPELLCAST_START",  function(...) 
-	local name, _, text, texture, startTime, endTime, _, castID, interrupt = UnitCastingInfo("player")
-	if (not name) then jps.CastBar.latency = 0 end
-	local now = GetTime()
-	
-	if (jps.CastBar.sentTime) then
-		local latency = now - jps.CastBar.sentTime
-		jps.CastBar.latency = latency
-	else
-		jps.CastBar.latency = 0
-	end
-end)
-
 -- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 jps.registerEvent("PLAYER_LEVEL_UP", function(level)
     if level == "10" then
@@ -507,7 +546,6 @@ jps.registerCombatLogEventUnfiltered("SPELL_DAMAGE", aggroTimer)
 -- REMOVE DIED UNIT OR OUT OF RANGE UNIT OF TABLES
 jps.registerCombatLogEventUnfiltered("UNIT_DIED", function(...)
     if select(8,...) ~= nil then
-        local mobName = jps_stringTarget(select(9,...),"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
         local mobGuid = select(8,...) -- eventtable[8] == destGUID 
         jps_removeKey(jps.RaidTimeToDie,mobGuid)
         jps_removeKey(jps.RaidTarget,mobGuid)
