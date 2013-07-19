@@ -297,10 +297,11 @@ local function leaveCombat()
     jps.gui_toggleCombat(false)
     jps.EnemyTable = {}
     jps.clearTimeToLive()
-    jps.SortRaidStatus() -- wipe jps.RaidRoster and jps.RaidStatus
-    if jps.getConfigVal("timetodie frame visible") == 1 then
-        JPSEXTInfoFrame:Hide()
-    end
+    jps.SortRaidStatus() -- wipe jps.RaidTarget and jps.RaidStatus
+	-- these lines hide the timetodie frame when in Combat
+    -- if jps.getConfigVal("timetodie frame visible") == 1 then
+        -- JPSEXTInfoFrame:Hide()
+    -- end
     jps.combatStart = 0
 end
 jps.registerEvent("PLAYER_REGEN_ENABLED", leaveCombat)
