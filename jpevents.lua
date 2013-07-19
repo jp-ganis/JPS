@@ -1,21 +1,13 @@
---[[
-	JPS - WoW Protected Lua DPS AddOn
-	Copyright (C) 2011 Jp Ganis
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
+--[[[
+@module Events
+@description 
+JPS Event Handling. If you need to react to specific events or want to execute a function this module might help you.
+Instead of creating your own frame and event-handler you can just hook into the JPS main frame and register functions
+here.[br]
+[br]
+This module also contains profiling support for the events. If enabled you will get the memory consumption from all events summarized 
+- [i]Attention:[/i] This has a serious impact on FPS!
 ]]--
-
 -- Logger
 local LOG=jps.Logger(jps.LogLevel.ERROR)
 -- JPS Frame
@@ -34,10 +26,19 @@ local L = MyLocalizationTable
 -- (UN)REGISTER FUNCTIONS 
 --------------------------
 
---- Register OnUpdate Function
--- Adds the given function to the update table if it
--- wasn't already registered.
--- @param fn function which should be executed on update
+--[[[
+@function jps.registerOnUpdate
+@description 
+Register OnUpdate Function[br]
+Adds the given function to the update table if it wasn't already registered.[br]
+[br][i]Usage:[/i][br]
+[code]
+jps.registerOnUpdate(function()[br]
+print("Update")[br]
+end)[br]
+[/code]
+@param fn function to be executed on update
+]]--
 function jps.registerOnUpdate(fn)
 	if not updateTable[fn] then
 		updateTable[fn] = fn
@@ -45,11 +46,21 @@ function jps.registerOnUpdate(fn)
 	end
 end
 
---- Unregister OnUpdate OnUpdate
--- Removes the given event function from the update table if it
--- was registered earlier. 
--- Has no effect if the function wasn't registered
--- @param fn function to unregister
+--[[[
+@function jps.unregisterOnUpdate
+@description 
+Unregister OnUpdate Function[br]
+Removes the given event function from the update table if it was registered earlier. Has no effect if the function wasn't registered.[br]
+[br][i]Usage:[/i][br]
+[code]
+function myOnUpdate() ... end[br]
+...[br]
+jps.registerOnUpdate(myOnUpdate)[br]
+...[br]
+jps.unregisterOnUpdate(myOnUpdate)[br]
+[/code]
+@param fn function to unregister
+]]--
 function jps.unregisterOnUpdate(fn)
 	if updateTable[fn] then
 		updateTable[fn] = nil
@@ -57,11 +68,19 @@ function jps.unregisterOnUpdate(fn)
 	end
 end
 
---- Register event
--- Adds the given event function to the event table if it
--- wasn't already registered.
--- @param event event name
--- @param fn function which should be executed on event
+--[[[
+@function jps.registerEvent
+@description 
+Adds the given event function to the event table if it wasn't already registered.[br]
+[br][i]Usage:[/i][br]
+[code]
+jps.registerEvent("LOOT_OPENED", function()[br]
+print("You opened Loot!")[br]
+end)[br]
+[/code]
+@param event event name
+@param fn function to be executed on update
+]]-
 function jps.registerEvent(event, fn)
 	if not eventTable[event] then
 		eventTable[event] = {}
@@ -73,12 +92,21 @@ function jps.registerEvent(event, fn)
 	end
 end
 
---- Unregister event
--- Removes the given event function from the event table if it
--- was registered earlier. 
--- Has no effect if the function wasn't registered
--- @param event event name
--- @param fn function to unregister
+--[[[
+@function jps.unregisterEvent
+@description 
+Removes the given event function from the event table if it was registered earlier. Has no effect if the function wasn't registered.[br]
+[br][i]Usage:[/i][br]
+[code]
+function myLootOpened() ... end[br]
+...[br]
+jps.registerEvent("LOOT_OPENED", myLootOpened)[br]
+...[br]
+jps.unregisterEvent("LOOT_OPENED", myLootOpened)[br]
+[/code]
+@param event event name
+@param fn function to unregister
+]]--
 function jps.unregisterEvent(event, fn)
 	if eventTable[event] and eventTable[event][fn] then
 		eventTable[event][fn] = nil
@@ -91,11 +119,19 @@ function jps.unregisterEvent(event, fn)
 	end
 end
 
---- Register event subtype for COMBAT_LOG_EVENT_UNFILTERED
--- Adds the given event function to the COMBAT_LOG_EVENT_UNFILTERED table if it
--- wasn't already registered.
--- @param event The name of the combat sub-event
--- @param fn function which should be executed on event
+--[[[
+@function jps.registerCombatLogEventUnfiltered
+@description 
+Register event subtype for COMBAT_LOG_EVENT_UNFILTERED - Adds the given event function to the COMBAT_LOG_EVENT_UNFILTERED table if it wasn't already registered.[br]
+[br][i]Usage:[/i][br]
+[code]
+jps.registerCombatLogEventUnfiltered("SWING_DAMAGE", function()[br]
+print("Swing Damage - yay!")[br]
+end)[br]
+[/code]
+@param event name of the combat sub-event
+@param fn function which should be executed on event
+]]--
 function jps.registerCombatLogEventUnfiltered(event, fn)
 	if not combatLogEventTable[event] then
 		combatLogEventTable[event] = {}
@@ -107,12 +143,22 @@ function jps.registerCombatLogEventUnfiltered(event, fn)
 	end
 end
 
---- Unregister event subtype for COMBAT_LOG_EVENT_UNFILTERED
--- Removes the given event function from the COMBAT_LOG_EVENT_UNFILTERED table if it
--- was registered earlier. 
--- Has no effect if the function wasn't registered
--- @param event The name of the combat sub-event
--- @param fn function to unregister
+
+--[[[
+@function jps.unregisterCombatLogEventUnfiltered
+@description 
+Removes the given event function from the COMBAT_LOG_EVENT_UNFILTERED table if it was registered earlier. Has no effect if the function wasn't registered.[br]
+[br][i]Usage:[/i][br]
+[code]
+function mySwingDamage() ... end[br]
+...[br]
+jps.registerCombatLogEventUnfiltered("SWING_DAMAGE", mySwingDamage)[br]
+...[br]
+jps.unregisterCombatLogEventUnfiltered("SWING_DAMAGE", mySwingDamage)[br]
+[/code]
+@param event event name
+@param fn function to unregister
+]]--
 function jps.unregisterCombatLogEventUnfiltered(event, fn)
 	 if combatLogEventTable[event] and combatLogEventTable[event][fn] then
 		combatLogEventTable[event][fn] = nil
@@ -129,11 +175,12 @@ end
 -- PROFILING FUNCTIONS 
 --------------------------
 local enableProfiling = false
+local enableUnfilteredProfiling = false
 local memoryUsageTable = {}
 local memoryStartTable = {}
+local memoryUsageInterval = 0
 local function startProfileMemory(key)
-	UpdateAddOnMemoryUsage()
-	if not memoryStartTable[key] then memoryStartTable[key] = GetAddOnMemoryUsage("JPS") end 
+	if not memoryStartTable[key] then UpdateAddOnMemoryUsage(); memoryStartTable[key] = GetAddOnMemoryUsage("JPS") end 
 end
 
 local function endProfileMemory(key)
@@ -143,7 +190,7 @@ local function endProfileMemory(key)
 	memoryUsageTable[key] = GetAddOnMemoryUsage("JPS") - memoryStartTable[key]
 end
 
-local reportInterval = 5
+local reportInterval = 15
 local maxProfileDuration = 60
 local lastReportUpdate = 0
 local totalProfileDuration = 0
@@ -156,18 +203,32 @@ function jps.reportMemoryUsage(elapsed)
 		for key,usage in pairs(memoryUsageTable) do
 			print(" * " .. key .. ": " .. usage .. " KB in " .. reportInterval .. " seconds" )
 		end
+	    UpdateAddOnMemoryUsage()
+		print(" *** TOTAL: " .. (GetAddOnMemoryUsage("JPS")-memoryUsageInterval) .. " KB in " .. reportInterval .. " seconds" )
+		memoryUsageInterval = GetAddOnMemoryUsage("JPS")
 		memoryStartTable = {}
 		memoryUsageTable = {}
 	end
 	if totalProfileDuration >= maxProfileDuration then
 		enableProfiling = false
+		enableUnfilteredProfiling = false
 	end
 end
 
-function jps.enableProfiling()
+--[[[
+@function jps.enableProfiling
+@description 
+Enables profiling for one minute. Every 15 seconds you will get the memory consumption from all events summarized 
+- [i]Attention:[/i] This has a serious impact on FPS!
+@param unfiltered [code]True[/code] if COMBAT_LOG_UNFILTERED events should be split up ([i]BIG PERFORMANCE DECREASE[/i]) - defaults to [code]False[/code]
+]]--
+function jps.enableProfiling(unfiltered)
 	totalProfileDuration = 0
 	lastReportUpdate = 0
 	enableProfiling = true
+	enableUnfilteredProfiling = unfiltered
+	UpdateAddOnMemoryUsage()
+	memoryUsageInterval = GetAddOnMemoryUsage("JPS")
 end
 
 --------------------------
@@ -215,14 +276,14 @@ end)
 jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", function(timeStamp, event, ...)
 	if jps.Enabled and UnitAffectingCombat("player") == 1 and combatLogEventTable[event] then
 		LOG.debug("CombatLogEventUntfiltered: %s", event)
-		if enableProfiling then startProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
+		if enableUnfilteredProfiling and enableProfiling then startProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
 		for _,fn in pairs(combatLogEventTable[event]) do
 			local status, error = pcall(fn, timeStamp, event, ...)
 			if not status then
 				LOG.error("Error on COMBAT_LOG_EVENT_UNFILTERED sub-event %s, function %s", error, fn)
 			end
 		end
-		if enableProfiling then endProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
+		if enableUnfilteredProfiling and enableProfiling then endProfileMemory("COMBAT_LOG_EVENT_UNFILTERED::"..event) end
 	end
 end)
 
