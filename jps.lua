@@ -334,7 +334,7 @@ function jps_Combat()
 	-- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	-- in case you want to play only with /jps pew the RaidStatus table will be updated
-	if (not jps.Enabled) or (not jps.Combat) then jps.SortRaidStatus() end
+	if not jps.Enabled or not jps.Combat then jps.SortRaidStatus() end
    
 	-- Check spell usability 
 	if string.len(jps.customRotationFunc) > 10 then

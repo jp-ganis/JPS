@@ -289,20 +289,19 @@ end)
 
 -- Leave Combat
 local function leaveCombat()
-    TurnLeftStop()
-    TurnRightStop()
-    CameraOrSelectOrMoveStop()
-    jps.Opening = true
-    jps.Combat = false
-    jps.gui_toggleCombat(false)
-    jps.EnemyTable = {}
-    jps.clearTimeToLive()
-    jps.SortRaidStatus() -- wipe jps.RaidTarget and jps.RaidStatus
-	-- these lines hide the timetodie frame when in Combat
-    -- if jps.getConfigVal("timetodie frame visible") == 1 then
-        -- JPSEXTInfoFrame:Hide()
-    -- end
-    jps.combatStart = 0
+	TurnLeftStop()
+	TurnRightStop()
+	CameraOrSelectOrMoveStop()
+	jps.Opening = true
+	jps.Combat = false
+	jps.gui_toggleCombat(false)
+	jps.EnemyTable = {}
+	jps.clearTimeToLive()
+	jps.SortRaidStatus() -- wipe jps.RaidTarget and jps.RaidStatus
+	if jps.getConfigVal("timetodie frame visible") == 1 then
+		JPSEXTInfoFrame:Hide()
+		end
+	jps.combatStart = 0
 end
 jps.registerEvent("PLAYER_REGEN_ENABLED", leaveCombat)
 jps.registerEvent("PLAYER_REGEN_ENABLED", collectGarbage)
@@ -436,8 +435,8 @@ local function latencySpell ()
 		jps.CastBar.startTime = nil
 		jps.CastBar.latency = 0
 end
-jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", leaveCombat)
-jps.registerEvent("UNIT_SPELLCAST_STOP", collectGarbage)
+jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", latencySpell)
+jps.registerEvent("UNIT_SPELLCAST_STOP", latencySpell)
 
 -- LOOT_OPENED
 jps.registerEvent("LOOT_OPENED", function()

@@ -455,7 +455,7 @@ function jps.DropdownRotationTogle(key, status)
 end
 
 function jps.TimeToDieToggle(key, status)
-	if status == 1 and (InCombatLockdown()==1) then
+	if status == 1 and InCombatLockdown() == 1 then
 		JPSEXTInfoFrame:Show()
 	else
 		JPSEXTInfoFrame:Hide()
