@@ -233,21 +233,23 @@ function jps.raid.initialize()
 end
 
 -- load instance info , we should read instance name & check if we fight an encounter
+jps.raid.instance = {}
 function jps.raid.getInstanceInfo()
 	local name, instanceType , difficultyID = GetInstanceInfo()
 	local targetName = UnitName("target")
 	if targetName ~= nil and UnitPlayerControlled("target") == false then
 		jps.foundBoss = true
 	end
-	jps.raid.instance = {instance = name , enemy = targetName, difficulty = diffTable[difficultyID]}
+	jps.raid.instance["instance"] = name
+	jps.raid.instance["enemy"] = targetName
+	jps.raid.instance["difficulty"] = diffTable[difficultyID]
+
 	return jps.raid.instance
 end
 
 function jps.raid.isValidEncounter()
 	return jps.targetIsRaidBoss(jps.RaidTargetUnit()), jps.RaidTargetUnit()
 end
-
-
 
 -- supported by jps
 function jps.raid.isSupported()

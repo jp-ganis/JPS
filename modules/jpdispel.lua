@@ -115,15 +115,14 @@ end
 --------------------------
 
 -- Don't Dispel if unit is affected by some debuffs
+jps.stopDispelTable = {
+	30108,131736, 	-- "Unstable Affliction"
+	33763,94447, 	-- "Lifebloom"
+	34914,124465, 	-- "Vampiric Touch"
+}
 function jps.NoDispelFriendly(unit)
 	if not jps.canHeal(unit) then return false end
-	local dontDispelDebuff = 
-	{	
-		30108,131736, 	-- "Unstable Affliction"
-		33763,94447, 	-- "Lifebloom"
-		34914,124465, 	-- "Vampiric Touch"
-	} 							
-	for _,debuff in pairs(dontDispelDebuff) do
+	for _,debuff in pairs(jps.stopDispelTable) do
 		if jps.debuff(debuff,unit) then return true end -- Don't dispel if friend is affected by "Unstable Affliction" or "Vampiric Touch" or "Lifebloom"
 	end
 	return false

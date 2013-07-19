@@ -29,8 +29,8 @@ local L = MyLocalizationTable
 -- local LossOfControlType, _, LossOfControlText, _, LossOfControlStartTime, LossOfControlTimeRemaining, duration, _, _, _ = C_LossOfControl.GetEventInfo(1)
 -- LossOfControlType : --STUN_MECHANIC --STUN --PACIFYSILENCE --SILENCE --FEAR --CHARM --PACIFY --CONFUSE --POSSESS --SCHOOL_INTERRUPT --DISARM --ROOT
 
+jps.stunTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
 function jps.StunEvents() -- ONLY FOR PLAYER
-	local locTypeTable = {"STUN_MECHANIC", "STUN", "PACIFYSILENCE", "SILENCE", "FEAR", "CHARM", "PACIFY", "CONFUSE", "ROOT"}
 	local numEvents = C_LossOfControl.GetNumEvents()
 	local locType, spellID, text, iconTexture, startTime, timeRemaining, duration, lockoutSchool, priority, displayType = C_LossOfControl.GetEventInfo(numEvents)
 	if (numEvents > 0) and (timeRemaining ~= nil) then
@@ -38,7 +38,7 @@ function jps.StunEvents() -- ONLY FOR PLAYER
 			--print("SPELL_FAILED_INTERRUPTED",locType)
 			jps.createTimer("Spell_Interrupt", 2 )
 		end
-		for i,j in ipairs(locTypeTable) do
+		for i,j in ipairs(jps.stunTypeTable) do
 			if locType == j and timeRemaining > 1 then
 			--print("locType: ",locType,"timeRemaining: ",timeRemaining)
 			return true end
@@ -71,9 +71,10 @@ function jps.LoseControl(unit,message)
 	return targetControlled, timeControlled
 end
 
+jps.looseControlTypes = {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
 function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
 	if not jps.UnitExists(unit) then return false,0 end
-	if table == nil then table = {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"} end
+	if table == nil then table = jps.looseControlTypes end
 	-- Check debuffs
 	local targetControlled = false
 	local timeControlled = 0

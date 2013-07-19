@@ -99,8 +99,9 @@ function Tooltip_Parse(trinket)
 	return parseTrinketText(trinket, L["Use"])
 end
 
+jps.itemStringTableManaTrinket = {L["Use"], "spirit"}
 function jps.isManaRegTrinket(trinket)
-	local result = parseTrinketText(trinket, {L["Use"], "spirit"}) or parseTrinketText(trinket, {L["Use"], "mana"}) 
+	local result = parseTrinketText(trinket, jps.itemStringTableManaTrinket ) or parseTrinketText(trinket, {L["Use"], "mana"}) 
 	return result
 end
 
@@ -112,8 +113,9 @@ function jps.trinketAbsorbDmg(trinket)
 	return parseTrinketText(trinket, {L["Use"], "absorb"})
 end
 
+jps.itemStringTablePVPTrinket = {L["Use"], "Removes all movement impairing"}
 function jps.isPVPInsignia(trinket)
-	return parseTrinketText(trinket, {L["Use"], "Removes all movement impairing"})
+	return parseTrinketText(trinket, jps.itemStringTablePVPTrinket)
 end
 
 --[[
