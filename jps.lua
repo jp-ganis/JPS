@@ -357,8 +357,16 @@ function jps_Combat()
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if #jps.NextSpell >= 1 then
 			if jps.NextSpell[1] then
-				jps.Cast(jps.NextSpell[1])
-				table.remove(jps.NextSpell, 1)
+				if jps.canCast(jps.NextSpell[1], jps.Target) then
+					jps.Cast(jps.NextSpell[1])
+					write("Next Spell "..jps.NextSpell[1].. " was casted")
+					table.remove(jps.NextSpell, 1)
+				else
+					if jps.cooldown(jps.NextSpell[1]) > 3 then
+						table.remove(jps.NextSpell, 1)
+					end
+					jps.Cast(jps.ThisCast)
+				end
 			else
 				jps.NextSpell[1] = nil
 			end
