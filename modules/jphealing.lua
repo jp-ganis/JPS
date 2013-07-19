@@ -1,22 +1,3 @@
---------------------------
--- LOCALIZATION
---------------------------
-
-local L = MyLocalizationTable
-
--- ENEMY UNIT with LOWEST HEALTH
-function jps.LowestInRaidTarget() 
-	local mytarget = nil
-	local lowestHP = 1 
-		for unit,index in pairs(jps.RaidTarget) do
-			local unit_Hpct = index.hpct
-			if unit_Hpct < lowestHP then
-				lowestHP = unit_Hpct
-				mytarget = index.unit
-			end
-		end
-	return mytarget
-end
 
 ------------------------------
 -- SPELLTABLE -- contains the average value of healing spells
@@ -117,8 +98,8 @@ end
 function jps.LowestInRaidStatus() 
 	local lowestUnit = jpsName
 	local lowestHP = 1
-	for unit, unitTable in pairs(jps.RaidStatus) do
-		if (unitTable["inrange"] == true) and unitTable["hpct"] < lowestHP then -- if thisHP < lowestHP 
+	for unit,unitTable in pairs(jps.RaidStatus) do
+		if (unitTable["inrange"] == true) and unitTable["hpct"] < lowestHP then
 			lowestHP = Ternary(jps.isHealer, unitTable["hpct"], jps.hp(unit)) -- if isHealer is disabled get health value from jps.hp() (some "non-healer" rotations uses LowestInRaidStatus)
 			lowestUnit = unit
 		end

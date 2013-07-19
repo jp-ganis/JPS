@@ -1,5 +1,5 @@
 --[[
-         JPS - WoW Protected Lua DPS AddOn
+    JPS - WoW Protected Lua DPS AddOn
     Copyright (C) 2011 Jp Ganis
 
     This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
-local L = MyLocalizationTable
 
+local L = MyLocalizationTable
 
 ---------------------------
 -- FUNCTIONS CLASS SPEC

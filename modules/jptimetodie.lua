@@ -41,23 +41,23 @@ function jps.updateInfoText()
 		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec\n"
 	else
 		infoTexts = infoTexts.."TimeToDie: n/a".."\n"
-	end	
+	end
+	if jps.getConfigVal("show Latency in JPS UI") == 1 then
+		if jps.CastBar.latency ~= 0 then
+			local latency = jps_round(jps.CastBar.latency,2)
+			infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency.."\n"
+		end
+	end
 	if jps.getConfigVal("show current cast in JPS UI") == 1 then
-		local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget.."\n"
+		local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget
 		local message = "|cffffffff"..jps.CastBar.currentMessage
-		
-		infoTexts = infoTexts..currentCast
+		infoTexts = infoTexts..currentCast.."\n"
 		infoTexts = infoTexts..message.."\n"
 	end
 	if jps.isHealer and jps.getConfigVal("show Lowest Raid Member in UI") == 1  then
 		infoTexts = infoTexts.."|cffffffffLowestInRaid: |cffa335ee"..jps.LowestInRaidStatus().."\n"
 	end
-	if jps.getConfigVal("show Latency in JPS UI") == 1 then
-		if jps.CastBar.latency ~= 0 then
-			local latency = jps_round(jps.CastBar.latency,2)
-			infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency
-		end
-	end
+
 	infoFrameText:SetText(infoTexts)
 end
 
@@ -306,6 +306,29 @@ function jps.UnitTimeToLive(unit)
 end
 
 -- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
+function jps.UnitTimeToDie(unit)
+	if unit == nil then return 60 end
+	local guid = UnitGUID(unit)
+	local health_unit = UnitHealth(unit)
+	local timetodie = 60 -- e.g. 60 seconds
+	local totalDmg = 1 -- to avoid 0/0
+	local incomingDps = 1
+	if jps.RaidTimeToDie[guid] ~= nil then
+		local dataset = jps.RaidTimeToDie[guid]
+        local data = table.getn(dataset)
+        if #dataset > 1 then
+        	local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
+        	local totalTime = math.max(timeDelta, 1)
+			for i,j in ipairs(dataset) do
+				totalDmg = totalDmg + j[2]
+			end
+        	incomingDps = math.ceil(totalDmg / totalTime)
+        end
+        timetodie = math.ceil(health_unit / incomingDps)
+    end
+	return timetodie
+end
+
 function jps.TimeToDie(unit, percent)
 	local unitGuid = UnitGUID(unit)
 	local health = UnitHealth(unit)
@@ -323,7 +346,6 @@ function jps.TimeToDie(unit, percent)
 			timeToDie = 0
 		end
 	end
-	
 	if timeToDie ~= nil then return math.ceil(timeToDie) else return 100000 end
 end
 
@@ -333,7 +355,7 @@ function jps.LowestTimetoDie()
 	local timetodie = 60
 	
 	for unit,index in pairs(jps.RaidStatus) do
-		local timetodieUnit = jps.TimeToDie(unit)
+		local timetodieUnit = jps.UnitTimeToDie(unit)
 		if (index["inrange"] == true) and timetodieUnit < timetodie then
 			timetodie = timetodieUnit
 			lowestUnit = unit

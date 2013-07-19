@@ -322,7 +322,7 @@ function jps_Combat()
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
 
 	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
-	local latency = jps.CastBar.latency
+	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
 	elseif (jps.CastTimeLeft() - latency) > 0 then 
@@ -331,38 +331,38 @@ function jps_Combat()
 		jps.Casting = false
 	end
 	
-   -- Check spell usability 
-   if string.len(jps.customRotationFunc) > 10 then
-	   jps.ThisCast,jps.Target = jps.customRotation() 
-   else
-	   jps.ThisCast,jps.Target = jps.activeRotation().getSpell() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
-   end
-   if jps.firstInitializingLoop == true then
-	   jps.firstInitializingLoop = false
-	   return nil
-	end
-	
-   -- RAID UPDATE
+	-- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	-- in case you want to play only with /jps pew the RaidStatus table will be updated
 	if (not jps.Enabled) or (not jps.Combat) then jps.SortRaidStatus() end
    
+	-- Check spell usability 
+	if string.len(jps.customRotationFunc) > 10 then
+	   jps.ThisCast,jps.Target = jps.customRotation() 
+	else
+	   jps.ThisCast,jps.Target = jps.activeRotation().getSpell() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+	end
+	if jps.firstInitializingLoop == true then
+		jps.firstInitializingLoop = false
+		return nil
+	end
+   
    -- Movement
    jps.Moving = GetUnitSpeed("player") > 0
    jps.MovingTarget = GetUnitSpeed("target") > 0
-   
-   if not jps.Casting and jps.ThisCast ~= nil then
-	   if #jps.NextSpell >= 1 then
-		   if jps.NextSpell[1] then
+
+	if not jps.Casting and jps.ThisCast ~= nil then
+		if #jps.NextSpell >= 1 then
+			if jps.NextSpell[1] then
 				jps.Cast(jps.NextSpell[1])
 				table.remove(jps.NextSpell, 1)
-		 else
-			 jps.NextSpell[1] = nil
-		 end
-	  else
-		 jps.Cast(jps.ThisCast)
-	  end
-   end
+			else
+				jps.NextSpell[1] = nil
+			end
+		else
+			jps.Cast(jps.ThisCast)
+		end
+	end
    
    -- Return spellcast.
    return jps.ThisCast,jps.Target
