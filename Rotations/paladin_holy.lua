@@ -148,8 +148,6 @@ hpala.spellTable = {
 	{ "Divine Favor",'jps.UseCDs and jps.CountInRaidStatus(0.7) > 2', hpala.player },
 	{ "Divine Favor",'jps.UseCDs and jps.hp(hpala.ourHealTarget()) < 0.5 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.player },
 
-	{ "Guardian of Ancient Kings",'jps.UseCDs and jps.avgRaidHP() < 0.6 ', hpala.ourHealTarget },
-
 	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0) and jps.useTrinket(0) ~= nil', "player"},
 	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1) and jps.useTrinket(1) ~= nil', "player"},
 	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= nil', "player"},
