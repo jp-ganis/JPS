@@ -21,7 +21,6 @@
 --------------------------
 local L = MyLocalizationTable
 
-
 function jps.glovesCooldown()
 	local start, duration, enabled = GetInventoryItemCooldown("player", 10)
 	if enabled==0 then return 999 end
@@ -55,7 +54,6 @@ function jps.useBagItem(itemName)
 	return nil
 end 
 
-
 --------------------------
 -- TRINKET
 --------------------------
@@ -65,6 +63,7 @@ end
 CreateFrame("GameTooltip", "ScanningTooltip", nil, "GameTooltipTemplate") -- Tooltip name cannot be nil
 ScanningTooltip:SetOwner( WorldFrame, "ANCHOR_NONE" )
 ScanningTooltip:ClearLines()
+
 function parseTrinketText(trinket,str)
 	local id = 13 + trinket
 	if trinket > 1 then return false end
@@ -91,7 +90,6 @@ function parseTrinketText(trinket,str)
             		found = true 
             	end
 			end
-			
 		end 
 	end
 	return found
@@ -179,7 +177,7 @@ function jps.useTrinket(trinketNum)
 	local slotName = "Trinket"..(trinketNum).."Slot" -- "Trinket0Slot" "Trinket1Slot"
 	
 	-- Get the slot ID
-	local slotId  = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
+	local slotId = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
 
 	return jps.useSlot(slotId)
 end

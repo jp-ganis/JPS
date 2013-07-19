@@ -1,5 +1,5 @@
 --[[
-	 JPS - WoW Protected Lua DPS AddOn
+	JPS - WoW Protected Lua DPS AddOn
 	Copyright (C) 2011 Jp Ganis
 
 	This program is free software: you can redistribute it and/or modify
@@ -56,7 +56,6 @@ function jps.findMeAggroTank(targetUnit)
 		return jps.findMeAggroTank()
 	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
-	
 	return aggroTank
 end
 
@@ -78,7 +77,7 @@ end
 
 function jps.findTanksInRaid() 
 	local myTanks = {}
-	for unitName, _ in pairs(jps.RaidStatus) do
+	for unitName,_ in pairs(jps.RaidStatus) do
 		local foundTank = false
 		if UnitGroupRolesAssigned(unitName) == "TANK" then
 			table.insert(myTanks, unitName);
@@ -129,7 +128,19 @@ function jps.RaidEnemyCount()
 	return enemycount,targetcount
 end
 
-
+-- ENEMY UNIT with LOWEST HEALTH
+function jps.LowestInRaidTarget() 
+local mytarget = nil
+local lowestHP = 1 
+	for unit,index in pairs(jps.RaidTarget) do
+		local unit_Hpct = index.hpct
+		if unit_Hpct < lowestHP then
+			lowestHP = unit_Hpct
+			mytarget = index.unit
+		end
+	end
+return mytarget
+end
 
 -- ENEMY MOST TARGETED
 function jps.RaidTargetUnit()
@@ -143,9 +154,6 @@ function jps.RaidTargetUnit()
 	end
 	return enemyWithMostTargets
 end
-
-
-
 
 -- ENEMY TARGETING THE PLAYER
 -- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
@@ -166,7 +174,6 @@ function jps.IstargetMe()
 end
 
 -- cast player abilities(for instance deff cd's) if raid encounter applied us a debuff or a ability cd is near finishing or finished
--- 
 
 jps.raid.hasDBM = false
 jps.raid.hasBigWings = false

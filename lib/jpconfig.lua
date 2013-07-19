@@ -455,7 +455,7 @@ function jps.DropdownRotationTogle(key, status)
 end
 
 function jps.TimeToDieToggle(key, status)
-	if status == 1 and UnitAffectingCombat("player") ~= nil then
+	if status == 1 and (InCombatLockdown()==1) then
 		JPSEXTInfoFrame:Show()
 	else
 		JPSEXTInfoFrame:Hide()
@@ -506,7 +506,6 @@ function jps.addSpellCheckboxToFrame(spellName)
     rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
     rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
     rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
-
     rotationButtonPositionY = rotationButtonPositionY - 30;
 end
 
