@@ -133,7 +133,6 @@ end
 -- SPELL TABLE -----
 ------------------------
 hpala.spellTable = {
-	["ToolTip"] = "Holy Paladin PVE Full",
 	-- Kicks                    
 	{ "Rebuke",'jps.shouldKick(hpala.rangedTarget())', hpala.rangedTarget },
 	{ "Rebuke",'jps.shouldKick("focus")', "focus" },
@@ -151,10 +150,10 @@ hpala.spellTable = {
 
 	{ "Guardian of Ancient Kings",'jps.UseCDs and jps.avgRaidHP() < 0.6 ', hpala.ourHealTarget },
 
-	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0)'},
-	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1)'},
-	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8'},
-	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8'},	
+	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0) and jps.useTrinket(0) ~= nil', "player"},
+	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1) and jps.useTrinket(1) ~= nil', "player"},
+	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= nil', "player"},
+	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= nil', "player"},	
 	-- Requires engineerins
 	{ jps.useSynapseSprings(),'jps.UseCDs'},
 	
