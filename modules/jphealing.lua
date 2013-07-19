@@ -121,25 +121,35 @@ function jps.avgRaidHP(noFilter)
 	local avgHP = 1
 	if GetNumGroupMembers() == 0 then return 1 end
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		unitHP = unitTable["hpct"]
-		if unitHP < minUnit then minUnit = unitHp end
-		raidHP = raidHP + unitHP
-		unitCount = unitCount + 1
+		if unitTable["inrange"] then
+			unitHP = unitTable["hpct"]
+			if unitHP then
+				if unitHP < minUnit and unitHP > 0 then minUnit = unitHP end
+				raidHP = raidHP + unitHP
+				unitCount = unitCount + 1
+			end
+		end
 	end
 	avgHP = raidHP / unitCount
+	if not avgHP then return 1 end
 	if unitCount > 10 or noFilter == true then
-		return avgHP
+		return avgHP 
 	end
 	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% hp difference to avg hp
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		unitHP = unitTable["hpct"]
-		if unitHp < (avgHP / 1.3 ) then
-			raidHP = raidHP - unitHP
-			unitCount = unitCount -1
+		if unitTable["inrange"] then
+			unitHP = unitTable["hpct"]
+			if unitHP then
+				if unitHP < (avgHP / 1.3 ) then
+					raidHP = raidHP - unitHP
+					unitCount = unitCount -1
+				end
+			end
 		end
 	end
-
-	return raidHP / unitCount
+	avgHP = raidHP / unitCount
+	if not avgHP then return 1 end
+	return avgHP
 end
 
 ------------------------------------
@@ -244,7 +254,7 @@ function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party
 	local unitname = select(1,UnitName(unit))
 	if jps.RaidStatus[unitname] then
 		jps.RaidStatus[unitname]["unit"] = unit -- RAID INDEX player, party..n, raid..n
-		jps.RaidStatus[unitname]["hpct"] = jps.hp(unit)
+		jps.RaidStatus[unitname]["hpct"] = jps.hp(unitname)
 		jps.RaidStatus[unitname]["subgroup"] = jps.RaidStatus[unitname].subgroup
 		jps.RaidStatus[unitname]["target"] = unit.."target"
 		jps.RaidStatus[unitname]["inrange"] = jps.canHeal(unit)
