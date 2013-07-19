@@ -58,7 +58,7 @@ class Log():
     def error(self, msg, *params):
         if self.logLevel <= 4:
             print "ERROR: %s" % (msg % (params))
-LOG = Log(1)
+LOG = Log(2)
 
 class DocElement():
     def __init__(self,content):
@@ -241,6 +241,7 @@ class RotationComment(DocElement):
         self.talents = self.getTagData("@talents",self.tagList)
         self.author = self.getTagData("@author",self.tagList)
         self.description = self.getTagData("@description",self.tagList)
+        self.deprecated = self.getTagData("@deprecated",self.tagList)
 
     def isValid(self):
         return self.name != None
@@ -251,7 +252,10 @@ class RotationComment(DocElement):
         if self.talents != None:
             talentUrl = " (<a href=\"%s#%s\" class=\"talent-url\">Talents</a>)" % (TALENT_CALCULATOR_URL, self.talents)
         msg = msg + "<div class=\"rotation-name\">'%s' <i>by %s</i>%s</div>\n" % (self.name,self.author,talentUrl)
-        msg = msg + "<div class=\"rotation-description\">%s</div>\n" % self.description
+        description = self.description
+        if self.deprecated != None:
+            description = "<i>This Rotation is DEPRECATED! %s</i><br /><br />%s" % (self.deprecated, description) 
+        msg = msg + "<div class=\"rotation-description\">%s</div>\n" % description
         msg = msg + "</div>\n"
         return msg
 

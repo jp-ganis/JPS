@@ -94,4 +94,13 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
     return parseStaticSpellTable(spellTable)
 end,"Destruction 5.3")
 
+
+--[[[
+@rotation Interrupt Only
+@class warlock
+@spec destruction
+@author Kirk24788
+@description 
+This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
+]]]
 jps.registerStaticTable("WARLOCK","DESTRUCTION",wl.interruptSpellTable,"Interrupt Only")

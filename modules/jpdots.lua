@@ -13,7 +13,7 @@ are deprecated you should instead convert your rotation to a static spell table 
 function (#ref:jps.dotTracker.castTableStatic).
 ]]]
 
-
+--JPTODO: Replace Spaces with Tabs in jpdots.lua
 local dotTracker = {}
 dotTracker.log = jps.Logger(jps.LogLevel.ERROR)
 dotTracker.isInitialized = false
