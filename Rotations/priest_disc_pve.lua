@@ -48,11 +48,11 @@ local Tanktable = { ["focus"] = 100, ["player"] = 100, ["target"] = 100, ["targe
 if isInBG and playerhealth_pct < 0.40 then
 	jps_TANK = player
 elseif jps.Defensive then -- WARNING FOCUS RETURN FALSE IF NOT IN GROUP OR RAID BECAUSE OF UNITINRANGE(UNIT)
-	Tanktable["player"] = jps_round(jps.hp("player"),3)
-	if jps.canHeal("focus") then Tanktable["focus"] = jps_round(jps.hp("focus"),3) else Tanktable["focus"] = 100 end
-	if jps.canHeal("target") then Tanktable["target"] = jps_round(jps.hp("target"),3) else Tanktable["target"] = 100 end
-	if jps.canHeal("targettarget") then Tanktable["targettarget"] = jps_round(jps.hp("targettarget"),3) else Tanktable["targettarget"] = 100 end
-	if jps.canHeal("mouseover") then Tanktable["mouseover"] = jps_round(jps.hp("mouseover"),3) else Tanktable["mouseover"] = 100 end
+	Tanktable["player"] = jps.roundValue(jps.hp("player"),3)
+	if jps.canHeal("focus") then Tanktable["focus"] = jps.roundValue(jps.hp("focus"),3) else Tanktable["focus"] = 100 end
+	if jps.canHeal("target") then Tanktable["target"] = jps.roundValue(jps.hp("target"),3) else Tanktable["target"] = 100 end
+	if jps.canHeal("targettarget") then Tanktable["targettarget"] = jps.roundValue(jps.hp("targettarget"),3) else Tanktable["targettarget"] = 100 end
+	if jps.canHeal("mouseover") then Tanktable["mouseover"] = jps.roundValue(jps.hp("mouseover"),3) else Tanktable["mouseover"] = 100 end
 	local lowestHP = 1
 	for unit,hpct in pairs(Tanktable) do
 		local thisHP = hpct
