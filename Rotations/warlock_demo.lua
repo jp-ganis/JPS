@@ -398,7 +398,7 @@ end
 --------------   function SpellStopCasting for unwanted soulfire ------------------
 -----------------------------------------------------------------------------------
 function StopCasting ()
-if jps.IsCastingSpell(6353,"player") and jps.castTimeLeft(player) >= 3
+if jps.IsCastingSpell(6353,"player") and jps.CastTimeLeft(player) >= 3
    then return true end
       return false
     end
