@@ -97,7 +97,7 @@ local function cancelChannelingIfNecessary()
     end
     if stopChanneling then
         SpellStopCasting()
-        jps.NextSpell = {}
+        jps.NextSpell = nil
     end
 end
 
@@ -229,7 +229,7 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
 
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
-        jps.NextSpell = {}
+        jps.NextSpell = nil
     end
     
     cancelChannelingIfNecessary()

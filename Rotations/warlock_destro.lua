@@ -88,7 +88,7 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
 
     if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
         SpellStopCasting()
-        jps.NextSpell = {}
+        jps.NextSpell = nil
     end
 
     return parseStaticSpellTable(spellTable)

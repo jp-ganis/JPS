@@ -22,7 +22,7 @@ local L = MyLocalizationTable
 jps = {}
 jps.Version = "1.3.0"
 jps.Revision = "r546"
-jps.NextSpell = {}
+jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
 jps.Enabled = false
@@ -297,8 +297,8 @@ hooksecurefunc("UseAction", function(...)
 		local stype,id,_ = GetActionInfo(select(1, ...))
 		if stype == "spell" then
 			local name = select(1,GetSpellInfo(id))
-			if jps.NextSpell[#jps.NextSpell] ~= name then -- # = number of spells in jps.NextSpell
-				table.insert(jps.NextSpell, name)
+			if jps.NextSpell ~= name then
+				jps.NextSpell = name
 				if jps.Combat then write("Set",name,"for next cast.") end
 			end
 		end
@@ -355,20 +355,16 @@ function jps_Combat()
 	jps.MovingTarget = GetUnitSpeed("target") > 0
 	
 	if not jps.Casting and jps.ThisCast ~= nil then
-		if #jps.NextSpell >= 1 then
-			if jps.NextSpell[1] then
-				if jps.canCast(jps.NextSpell[1], jps.Target) then
-					jps.Cast(jps.NextSpell[1])
-					write("Next Spell "..jps.NextSpell[1].. " was casted")
-					table.remove(jps.NextSpell, 1)
-				else
-					if jps.cooldown(jps.NextSpell[1]) > 3 then
-						table.remove(jps.NextSpell, 1)
-					end
-					jps.Cast(jps.ThisCast)
-				end
+		if jps.NextSpell ~= nil then
+			if jps.canCast(jps.NextSpell, jps.Target) then
+				jps.Cast(jps.NextSpell)
+				write("Next Spell "..jps.NextSpell.. " was casted")
+				jps.NextSpell = nil
 			else
-				jps.NextSpell[1] = nil
+				if jps.cooldown(jps.NextSpell) > 3 then
+					jps.NextSpell = nil
+				end
+				jps.Cast(jps.ThisCast)
 			end
 		else
 			jps.Cast(jps.ThisCast)

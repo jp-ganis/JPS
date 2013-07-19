@@ -45,11 +45,11 @@ function wlk.init()
             if spellID == 5782 then -- Fear
                 wlk.doomLordFearFree = true
                 SpellStopCasting()
-                jps.NextSpell = {}
+                jps.NextSpell = nil
             elseif spellID == 710 then -- Banish
                 wlk.doomLordBanishFree = true
                 SpellStopCasting()
-                jps.NextSpell = {}
+                jps.NextSpell = nil
             end
         end
     end
@@ -433,7 +433,7 @@ function wlk.updateState()
                 wlk.haltJPS = true
                 wlk.cataclysm = false
                 SpellStopCasting()
-                jps.NextSpell = {}
+                jps.NextSpell = nil
             elseif isPetSkillActive("PET_ACTION_MOVE_TO") then
                 wlk.haltJPS = false
             end
@@ -521,7 +521,7 @@ function wlk.updateState()
     if not jps.debuff("Enslave Demon","pet") and wlk.currentPhase > 0 then
         if not jps.IsCastingSpell(wl.spells.enslaveDemon, "player") and scanTargets(targetByID, mobs.pitLord) then
             SpellStopCasting()
-            jps.NextSpell = {}
+            jps.NextSpell = nil
             return false
         end
     end
