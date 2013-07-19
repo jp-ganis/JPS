@@ -22,10 +22,10 @@ end
 
 -- Resets the count of each healing spell to 1 makes sure that the average takes continuously into account changes in stats due to buffs etc
 function reset_healtable(self)
- for k,v in pairs(Healtable) do
-	Healtable[k]["healtotal"] = Healtable[k]["averageheal"]
-	Healtable[k]["healcount"] = 1
- end
+	for k,v in pairs(Healtable) do
+		Healtable[k]["healtotal"] = Healtable[k]["averageheal"]
+		Healtable[k]["healcount"] = 1
+	end
 end
 
 -- Displays the different health values - mainly for tweaking/debugging
@@ -243,7 +243,7 @@ jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY TARGE
 function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5
 	local unitname = select(1,UnitName(unit))
 	if jps.RaidStatus[unitname] then
-		jps.RaidStatus[unitname]["unit"] = unit, -- RAID INDEX player, party..n, raid..n
+		jps.RaidStatus[unitname]["unit"] = unit -- RAID INDEX player, party..n, raid..n
 		jps.RaidStatus[unitname]["hpct"] = jps.hp(unit)
 		jps.RaidStatus[unitname]["subgroup"] = jps.RaidStatus[unitname].subgroup
 		jps.RaidStatus[unitname]["target"] = unit.."target"
