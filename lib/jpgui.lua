@@ -30,6 +30,11 @@ jpsIcon:SetScript("OnDragStart", jpsIcon.StartMoving)
 jpsIcon:SetScript("OnDragStop", jpsIcon.StopMovingOrSizing)
 jpsIcon:SetPoint("CENTER")
 
+function setIconScale()
+	jpsIcon:SetScale(jps.getConfigVal("jpsIconSize"))
+end
+jps.addTofunctionQueue(setIconScale,"settingsLoaded") 
+
 jpsIcon.texture = jpsIcon:CreateTexture("ARTWORK") -- create the spell icon texture
 jpsIcon.texture:SetPoint('TOPRIGHT', jpsIcon, -2, -2) -- inset it by 2px or pt or w/e the game uses
 jpsIcon.texture:SetPoint('BOTTOMLEFT', jpsIcon, 2, 2)
@@ -99,6 +104,11 @@ rotationDropdownHolder:SetScript("OnDragStart", function(self) self:StartMoving(
 rotationDropdownHolder:SetScript("OnDragStart", function(self) self:StartMoving() end)
 rotationDropdownHolder:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
+function setDropdownScale()
+	rotationDropdownHolder:SetScale(jps.getConfigVal("rotationDropdownSizeSlider"))
+end
+jps.addTofunctionQueue(setDropdownScale,"settingsLoaded") 
+
 DropDownRotationGUI = CreateFrame("FRAME", "JPS Rotation GUI", rotationDropdownHolder, "UIDropDownMenuTemplate")
 DropDownRotationGUI:ClearAllPoints()
 DropDownRotationGUI:SetPoint("CENTER",10,10)
@@ -137,7 +147,6 @@ UIDropDownMenu_SetSelectedID(DropDownRotationGUI, 1)
 UIDropDownMenu_SetWidth(DropDownRotationGUI, 100);
 UIDropDownMenu_SetButtonWidth(DropDownRotationGUI, 100)
 UIDropDownMenu_JustifyText(DropDownRotationGUI, "LEFT")
-
 
 ------------------------------------------------------
 --------------- ToggleCDs ----------------------------

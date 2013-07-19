@@ -32,6 +32,11 @@ JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
 	jps.updateTimeToLive(self, elapsed)
 end)
 JPSEXTInfoFrame:Hide()
+function setTimeToDieScale()
+	JPSEXTInfoFrame:SetScale(jps.getConfigVal("timetodieSizeSlider"))
+end
+jps.addTofunctionQueue(setTimeToDieScale,"settingsLoaded") 
+
 
 function jps.updateInfoText()
 	local infoTexts = ""
@@ -396,3 +401,5 @@ slider:SetScript("OnValueChanged", function(self,event)
 		slider_OnClick(self)
 	end
 end)
+
+jps.runFunctionQueue("timeToDieFrameLoaded")
