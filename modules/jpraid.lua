@@ -9,7 +9,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -52,7 +52,7 @@ function jps.findMeAggroTank(targetUnit)
 			aggroTank = possibleTankUnit
 		end
 	end
-	if aggroTank == "player" and jps_tableLen(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
+	if aggroTank == "player" and jps.tableLength(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
 		return jps.findMeAggroTank()
 	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
@@ -67,7 +67,7 @@ end
 
 function jps.findMeATank()
 	local allTanks = jps.findTanksInRaid() 
-	if jps_tableLen(allTanks) == 0 then
+	if jps.tableLength(allTanks) == 0 then
 		if jps.UnitExists("focus") then return "focus" end
 	else
 		return allTanks[1] 
@@ -166,7 +166,7 @@ function jps.IstargetMe()
 		end
 	end
 	for unit, index in pairs(jps.RaidTarget) do 
-		if  (unit == enemy_guid) then 
+		if (unit == enemy_guid) then 
 			return index.unit -- return "raid1target"
 		end 
 	end
@@ -256,7 +256,7 @@ function jps.raid.isSupported()
 	local supportedFight = false
 	local supportedSpec = false
 	local raidInfo = jps.raid.getInstanceInfo()
-	if  jps.raid.supportedEncounters[jps.raid.instance.instance] ~= nil then -- supported instance
+	if jps.raid.supportedEncounters[jps.raid.instance.instance] ~= nil then -- supported instance
 		if jps.raid.supportedEncounters[jps.raid.instance.instance][jps.raid.instance.enemy] ~= nil then -- supported encounter
 			supportedFight = true
 		end
@@ -300,7 +300,7 @@ function jps.raid.shouldCast(ability)
 		if jps.raid.supportedEncounters[jps.raid.instance.instance][jps.raid.instance.enemy] ~= nil then
 			encounterSpellName, encounterTypeOfAbility = parseStaticRaidTable(jps.raid.supportedEncounters[jps.raid.instance.instance][jps.raid.instance.enemy])
 			if encounterSpellName ~= nil then
-				if jps.raid.supportedAbilities[jps.Class][jps.Spec][spellname] ~= nil  then
+				if jps.raid.supportedAbilities[jps.Class][jps.Spec][spellname] ~= nil then
 					for spellnameTable, spellTable in pairs(jps.raid.supportedAbilities[jps.Class][jps.Spec][spellname]) do
 						if encounterTypeOfAbility == spellTable["spellType"] then
 							return true
@@ -332,7 +332,7 @@ jps.raid.frame:SetScript("OnUpdate", function(self, elapsed)
 	if jps.RaidMode and InCombatLockdown() == 1 then
 		if self.TimeSinceLastBigUpdate == nil then self.TimeSinceLastBigUpdate = 0 end
 		self.TimeSinceLastBigUpdate = self.TimeSinceLastBigUpdate + elapsed
-			if self.TimeSinceLastBigUpdate > jps.foundBossInterval  then
+			if self.TimeSinceLastBigUpdate > jps.foundBossInterval then
 				if jps.raid.validFight == false and jps.foundBossLoopsLeft > 0 then
 					jps.raid.fightEngaged()
 					jps.foundBossLoopsLeft = jps.foundBossLoopsLeft - 1

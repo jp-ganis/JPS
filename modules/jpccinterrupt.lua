@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
 --------------------------
@@ -97,7 +97,7 @@ end
 function jps.shouldKick(unit)
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
-    local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
+	local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == L["Release Aberrations"] then return false end 
 
@@ -112,7 +112,7 @@ end
 function jps.shouldKickLag(unit)
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
-    local target_spell, _, _, _, _, cast_endTime, _, _, unInterruptable = UnitCastingInfo(unit)
+	local target_spell, _, _, _, _, cast_endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, chanel_endTime, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == L["Release Aberrations"] then return false end 
 	

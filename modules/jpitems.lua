@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
 --------------------------
@@ -32,7 +32,7 @@ end
 local useBagItemMacros = {}
 function jps.useBagItem(itemName)
 	if type(itemName) == "number" then
-		itemName, _  = GetItemInfo(itemName) -- get localized name when ID is passed
+		itemName, _ = GetItemInfo(itemName) -- get localized name when ID is passed
 	end
 	local count = GetItemCount(itemName, false, false)
 	if count == 0 then return nil end -- we doesn't have this item in our bag
@@ -40,13 +40,13 @@ function jps.useBagItem(itemName)
 		for slot = 1,GetContainerNumSlots(bag) do
 			local item = GetContainerItemLink(bag,slot)
 			if item and item:find(itemName) then -- item place found
-				itemId = GetContainerItemID(bag, slot)  -- get itemID for retrieving item Cooldown
+				itemId = GetContainerItemID(bag, slot) -- get itemID for retrieving item Cooldown
 				local start, dur, isNotBlocked = GetItemCooldown(itemId) -- maybe we should use GetContainerItemCooldown() will test it
 				local cdDone = Ternary((start + dur ) > GetTime(), false, true)
 				local hasNoCD = Ternary(dur == 0, true, false)
 				if (cdDone or hasNoCD) and isNotBlocked == 1 then -- cd is done and item is not blocked (like potions infight even if CD is finished)
 					if not useBagItemMacros[itemName] then useBagItemMacros[itemName] = { "macro", "/use "..itemName } end
-                    return useBagItemMacros[itemName]
+					return useBagItemMacros[itemName]
 				end
 			end
 		end
@@ -74,21 +74,21 @@ function parseTrinketText(trinket,str)
 	for i=1,select("#",ScanningTooltip:GetRegions()) do 
 		local region=select(i,ScanningTooltip:GetRegions())
 		if region and region:GetObjectType()=="FontString" and region:GetText() then
-			local text =  region:GetText()
+			local text = region:GetText()
 			--if text ~=nil then print(text) end
 			if type(str) == "table" then 
 				local matchesRequired = table.getn(str)
 				local matchesFound = 0
 				for key, val in pairs(str) do 
 					if string.find(text, val) then 
-            			matchesFound = matchesFound +1 
-            		end
+						matchesFound = matchesFound +1 
+					end
 				end
 				if matchesFound == matchesRequired then found = true end
 			else 
 				if string.find(text, str) then 
-            		found = true 
-            	end
+					found = true 
+				end
 			end
 		end 
 	end
@@ -170,7 +170,7 @@ function jps.useSlot(num)
 
 	-- Use it
 	if not useSlotMacros[num] then useSlotMacros[num] = { "macro", "/use "..num } end
-    return useSlotMacros[num]
+	return useSlotMacros[num]
 end
 
 -- For trinket's. Pass 0 or 1 for the number.

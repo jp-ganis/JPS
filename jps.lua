@@ -175,13 +175,13 @@ function jps.detectSpec()
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
 	   jps.isTank = true
 	   jps.gui_toggleDef(true) 
-   end
-   jps.HarmSpell = jps_GetHarmSpell()
-   --write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
-   jps.setClassCooldowns()
-   jps_VARIABLES_LOADED()
-   if jps.initializedRotation == false then
-	   jps_Combat()
+	end
+	jps.HarmSpell = jps.GetHarmfulSpell()
+	--write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
+	jps.setClassCooldowns()
+	jps_VARIABLES_LOADED()
+	if jps.initializedRotation == false then
+		jps_Combat()
 	end
 end
 
@@ -196,55 +196,55 @@ function SlashCmdList.jps(cmd, editbox)
 		else msg = "d" end
 	end
 	if msg == "config" then
-	  InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
+		InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
 	elseif msg == "show" then
-	  jpsIcon:Show()
-	  write("Icon set to show")
+		jpsIcon:Show()
+		write("Icon set to show")
 	elseif msg == "hide" then
-	  jpsIcon:Hide()
-	  write("Icon set to hide")
+		jpsIcon:Hide()
+		write("Icon set to hide")
 	elseif msg== "disable" or msg == "d" then
-	  jps.Enabled = false
-	  jps.gui_toggleEnabled(false)
-	  print "jps Disabled."
+		jps.Enabled = false
+		jps.gui_toggleEnabled(false)
+		write("dislabed")
 	elseif msg== "enable" or msg == "e" then
-	  jps.Enabled = true
-	  jps.gui_toggleEnabled(true)
-	  print "jps Enabled."
+		jps.Enabled = true
+		jps.gui_toggleEnabled(true)
+		write("enabled")
 	elseif msg == "respec" then
-	  jps.detectSpec()
+		jps.detectSpec()
 	elseif msg == "multi" or msg == "aoe" then
-	  jps.gui_toggleMulti()
+		jps.gui_toggleMulti()
 	elseif msg == "cds" then
-	  jps.gui_toggleCDs()
+		jps.gui_toggleCDs()
 	elseif msg == "int" then
-	  jps.gui_toggleInt()
+		jps.gui_toggleInt()
 	elseif msg == "pvp" then
-	  jps.togglePvP()
-	  write("PvP mode is now set to",tostring(jps.PvP))
+		jps.togglePvP()
+		write("PvP mode is now set to",tostring(jps.PvP))
 	elseif msg == "def" then
-   	  jps.gui_toggleDef()
-	  write("Defensive set to",tostring(jps.Defensive))
+		jps.gui_toggleDef()
+		write("Defensive set to",tostring(jps.Defensive))
 	elseif msg == "heal" then
-	  jps.isHealer = not jps.isHealer
-	  write("Healing set to", tostring(jps.isHealer))
+		jps.isHealer = not jps.isHealer
+		write("Healing set to", tostring(jps.isHealer))
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
 	elseif msg == "fishing" or msg == "fish" then
 	  jps.Fishing = not jps.Fishing
-	  write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
+		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
 	elseif msg == "debug" then
-	  jps.Debug = not jps.Debug
-	  write("Debug mode set to",tostring(jps.Debug))
+		jps.Debug = not jps.Debug
+		write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "face" then
 		jps.gui_toggleRot()
 		write("jps.FaceTarget set to",tostring(jps.FaceTarget))
 	elseif msg == "db" then
-   		jps.ResetDB = not jps.ResetDB
-   		jps_VARIABLES_LOADED()
-   		write("jps.ResetDB set to",tostring(jps.ResetDB))
-   		jps.Macro("/reload")
+		jps.ResetDB = not jps.ResetDB
+		jps_VARIABLES_LOADED()
+		write("jps.ResetDB set to",tostring(jps.ResetDB))
+		jps.Macro("/reload")
 	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
 	elseif msg == "raid"  or msg == "raidmode" then
@@ -284,22 +284,25 @@ function SlashCmdList.jps(cmd, editbox)
 	end
 end
 
+
+-- cache for WoW API functions that return always the same results for the given params
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
-   return unpack(spellcache[a])
+	return unpack(spellcache[a])
 end
 
+-- set's jps.NextSpell if user manually uses a spell/item
 hooksecurefunc("UseAction", function(...)
-if jps.Enabled and (select(3, ...) ~= nil) and (InCombatLockdown()==1) and jps.IsCasting("player") then
-   local stype,id,_ = GetActionInfo( select(1, ...) )
-   if stype == "spell" then
-	  local name = select(1,GetSpellInfo(id))
-	  if jps.NextSpell[#jps.NextSpell] ~= name then -- # valable que pour table ipairs table[1]
-		 table.insert(jps.NextSpell, name)
-		 if jps.Combat then write("Set",name,"for next cast.") end
-	  end
-   end
-end
+	if jps.Enabled and (select(3, ...) ~= nil) and InCombatLockdown() == 1 then
+		local stype,id,_ = GetActionInfo(select(1, ...))
+		if stype == "spell" then
+			local name = select(1,GetSpellInfo(id))
+			if jps.NextSpell[#jps.NextSpell] ~= name then -- # = number of spells in jps.NextSpell
+				table.insert(jps.NextSpell, name)
+				if jps.Combat then write("Set",name,"for next cast.") end
+			end
+		end
+	end
 end)
 
 ------------------------
@@ -307,20 +310,20 @@ end)
 ------------------------
 
 function jps_Combat() 
-   -- Check for the Rotation
-   if not jps.Class then return end
-   if not jps.activeRotation() then
-	  write("JPS does not have a rotation for your",jps.Spec,jps.Class)
-	  jps.Enabled = false
-	  return 
-   end
-   
+	-- Check for the Rotation
+	if not jps.Class then return end
+	if not jps.activeRotation() then
+		write("JPS does not have a rotation for your",jps.Spec,jps.Class)
+		jps.Enabled = false
+		return 
+	end
+
 	-- STOP Combat
 	if (IsMounted() == 1 and jps.getConfigVal("dismount in combat") == 0) or UnitIsDeadOrGhost("player")==1 or jps.buff(L["Drink"],"player") then return end
-	
+
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
-
+	
 	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
@@ -335,22 +338,22 @@ function jps_Combat()
 	jps.UpdateHealerBlacklist()
 	-- in case you want to play only with /jps pew the RaidStatus table will be updated
 	if not jps.Enabled or not jps.Combat then jps.SortRaidStatus() end
-   
+	
 	-- Check spell usability 
 	if string.len(jps.customRotationFunc) > 10 then
-	   jps.ThisCast,jps.Target = jps.customRotation() 
+		jps.ThisCast,jps.Target = jps.customRotation() 
 	else
-	   jps.ThisCast,jps.Target = jps.activeRotation().getSpell() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
+		jps.ThisCast,jps.Target = jps.activeRotation().getSpell() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
 	end
 	if jps.firstInitializingLoop == true then
 		jps.firstInitializingLoop = false
 		return nil
 	end
-   
-   -- Movement
-   jps.Moving = GetUnitSpeed("player") > 0
-   jps.MovingTarget = GetUnitSpeed("target") > 0
-
+	
+	-- Movement
+	jps.Moving = GetUnitSpeed("player") > 0
+	jps.MovingTarget = GetUnitSpeed("target") > 0
+	
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if #jps.NextSpell >= 1 then
 			if jps.NextSpell[1] then
@@ -363,9 +366,9 @@ function jps_Combat()
 			jps.Cast(jps.ThisCast)
 		end
 	end
-   
-   -- Return spellcast.
-   return jps.ThisCast,jps.Target
+	
+	-- Return spellcast.
+	return jps.ThisCast,jps.Target
 end
 
 function jps.addTofunctionQueue(fn,queueName) 
