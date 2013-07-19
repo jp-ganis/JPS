@@ -136,7 +136,7 @@ class DocFile(DocElement):
         while offset >= 0:
             offset = self.content.find("--[[[", offset)
             if offset >= 0:
-                end = self.content.find("]]]", offset)
+                end = self.content.find("]]--", offset)
                 if end == -1:
                     LOG.warn("Unmatched --[[[ in file '%s'", filename)
                     break

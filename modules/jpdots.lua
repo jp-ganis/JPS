@@ -11,7 +11,7 @@ for the lost GCD. If you don't have the DoT on the target or there is only 2 sec
 The DoT Tracker can be used with normal tables (#ref:jps.dotTracker.castTable) but since normal tables
 are deprecated you should instead convert your rotation to a static spell table and use the appropriate
 function (#ref:jps.dotTracker.castTableStatic).
-]]]
+]]--
 
 --JPTODO: Replace Spaces with Tabs in jpdots.lua
 local dotTracker = {}
@@ -311,7 +311,7 @@ jps.dotTracker.castTable("Immolate"),[br]
 @param unit [i]Optional:[/i] Unit to cast upon, if [code]nil[/code] all of [code]target[/code], 
             [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code] will be tried in this order
 @returns Spell-Table Function for static Spell Tables
-]]]
+]]--
 function dotTracker.castTableStatic(spellId, unit)
     -- find actual spell id, it was given as spell table key or spell table entry
     if not tonumber(spellId) then
@@ -371,7 +371,7 @@ jps.dotTracker.castTable("Immolate"),[br]
 @param unit [i]Optional:[/i] Unit to cast upon, if [code]nil[/code] all of [code]target[/code], 
             [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code] will be tried in this order
 @returns Spell-Table Element, e.g.: [code]{"Immolate", false, "mouseover"}[/code]
-]]]
+]]--
 --JPTODO: Remove dotTracker.castTable when all Rotations use static tables
 function dotTracker.castTable(spellId, unit)
     return dotTracker.castTableStatic(spellId, unit)()

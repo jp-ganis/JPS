@@ -1,22 +1,3 @@
---[[
-Warlock Affliction Rotations:
-
-Warlock PvE Rotation:
- * ALT: Stop all casts and only use instants (useful for Dark Animus Interrupting Jolt)
- * jps.Interrupts - Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)
- * jps.Defensive - Create Healthstone if necessary, cast mortal coil
- * jps.UseCDs - use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated!
-
-Interrupt Only:
- * Interrupt target, focus or mouseover with FelHunter or Observer only (you still need to check jps.Interrupt!)
-
-
-]]--
-
-
-
-
-
 -- Returns the status of the three dots on the given unit - returns: oneDotMissing, allDotsMissing
 local function getDotStatus(unit)
     local dotTracker = jps.dotTracker
@@ -242,7 +223,7 @@ Modifiers:[br]
 [*] [code]jps.Interrupts[/code]: Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)[br]
 [*] [code]jps.Defensive[/code]: Create Healthstone if necessary and cast mortal coil[br]
 [*] [code]jps.UseCDs[/code]: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated![br]
-]]]
+]]--
 jps.registerRotation("WARLOCK","AFFLICTION",function()
     wl.deactivateBurningRushIfNotMoving(1)
 
@@ -263,5 +244,5 @@ end,"Affliction 5.3")
 @author Kirk24788
 @description 
 This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
-]]]
+]]--
 jps.registerStaticTable("WARLOCK","AFFLICTION",wl.interruptSpellTable,"Interrupt Only")
