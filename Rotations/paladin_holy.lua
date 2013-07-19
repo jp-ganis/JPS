@@ -163,11 +163,10 @@ hpala.spellTable = {
 	-- Multi Heals
 
 	{ "Light's Hammer",'IsShiftKeyDown() ~= nil', hpala.ourHealTarget },
-	{ "Light of Dawn",'jps.avgRaidHP() < 0.80 and jps.holyPower() > 2', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
-	{ "Light of Dawn",'jps.avgRaidHP() < 0.80 and jps.buff("Divine Purpose")', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
-	{ "Holy Radiance",'jps.avgRaidHP() < 0.6', hpala.ourHealTarget },  	
-	{ "Holy Radiance",'jps.MultiTarget and jps.avgRaidHP() < 0.90', hpala.ourHealTarget },  -- only here jps.MultiTarget since it is a jps.mana() inefficent spell but sometimes we need to spam it!
-	{ "Holy Shock",'jps.buff("Daybreak") and jps.hp(hpala.ourHealTarget()) < 0.9', hpala.ourHealTarget }, -- heals with daybreak buff other targets
+	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.holyPower() > 2', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.buff("Divine Purpose")', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
+	{ "Holy Radiance",'jps.CountInRaidStatus(0.7) > 4', hpala.ourHealTarget },  	
+	{ "Holy Radiance",'jps.MultiTarget and jps.CountInRaidStatus(0.7) > 2', hpala.ourHealTarget },  	
 
 	-- Buffs
 	{ "Seal of Insight",'GetShapeshiftForm() ~= 3', hpala.player },
@@ -187,6 +186,9 @@ hpala.spellTable = {
 	{ "Eternal Flame",'jps.holyPower() > 2 and not jps.buff("Eternal Flame", hpala.ourHealTarget())  and jps.hp(hpala.ourHealTarget()) < 0.97', hpala.ourHealTarget },
 	{ "Eternal Flame",'jps.buff("Divine Purpose") and not jps.buff("Eternal Flame", hpala.ourHealTarget())  and jps.hp(hpala.ourHealTarget()) < 0.97', hpala.ourHealTarget },
 	{ "Word of Glory",'jps.buff("Divine Purpose") and jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget }, 
+
+-- Daybreak Proc
+	{ "Holy Shock",'jps.buff("Daybreak") and jps.hp(hpala.ourHealTarget()) < 0.9', hpala.ourHealTarget }, -- heals with daybreak buff other targets
 
 -- Spells
 	{ "Cleanse",'jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil', jps.DispelFriendlyTarget()  , "dispelling unit " },
@@ -218,12 +220,9 @@ jps.registerRotation("PALADIN","HOLY",function()
 	if (GetTime() - hpala.timestamp) > hpala.UpdateInterval then
 		hpala.update()
 		hpala.timestamp = GetTime()
+		hpala.checkBeaconUnit()
+		hpala.shouldInterruptCasting(hpala.interruptTable)
 	end
-	--------------------------------------------------------------------------------------------
-	---- Stop Casting to save mana - curently no AOE spell support!
-	-------------------------------------------------------------------------------------------	
-	--hpala.shouldInterruptCasting(hpala.interruptTable)
-	--hpala.checkBeaconUnit()
 
 	spell,target = parseStaticSpellTable(hpala.spellTable)
 	
