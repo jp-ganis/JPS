@@ -189,37 +189,36 @@ end
 ----------------------
 -- CAST
 ----------------------
-
+-- "Death and Decay" 43265 -- DK
+-- "Mass Dispel" 32375 -- Priest
+-- "Power Word: Barrier" 62618 -- Priest
+-- "Flamestrike" 2120 -- Mage
+-- "Rain of Fire" 104233 -- Mage
+-- "Dizzying Haze" 118022 -- Brewmaster
+-- "Light's Hammer" 114158 -- Paladin
+-- "Healing Rain" 73921 -- Shaman
+-- "wild mushroom" 88747 -- Druid
+-- "Explosive Trap" 13813 - Hunter
+-- "Ice Trap" 13809 - Hunter
+-- "Snake Trap" 34600 - Hunter
+-- "Freezing Trap" 1499 - Hunter
+-- "Summon Jade Serpent Statue" - 115313 Monk
+-- "Healing Sphere" - 115460 Monk
+-- "demoralizing banner" - 114203 warrior
+-- "mocking banner" - 114192 warrior 
+-- "heroic leap" - 6544 warrior
+-- "Freeze" - 33395 Frost Mage
+-- "Rune Of Power" 116011- Mage
+-- "Rain of Fire" 5740 -- Warlock
+-- "Lightwell" 724 - Priest
+-- "Holy Word: Sanctuary" 88685 - Priest
+jps.spellNeedSelectTable = {88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
 function jps.spell_need_select(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = string.lower(spell) end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
-	-- "Death and Decay" 43265 -- DK
-	-- "Mass Dispel" 32375 -- Priest
-	-- "Power Word: Barrier" 62618 -- Priest
-	-- "Flamestrike" 2120 -- Mage
-	-- "Rain of Fire" 104233 -- Mage
-	-- "Dizzying Haze" 118022 -- Brewmaster
-	-- "Light's Hammer" 114158 -- Paladin
-	-- "Healing Rain" 73921 -- Shaman
-	-- "wild mushroom" 88747 -- Druid
-	-- "Explosive Trap" 13813 - Hunter
-	-- "Ice Trap" 13809 - Hunter
-	-- "Snake Trap" 34600 - Hunter
-	-- "Freezing Trap" 1499 - Hunter
-	-- "Summon Jade Serpent Statue" - 115313 Monk
-	-- "Healing Sphere" - 115460 Monk
-	-- "demoralizing banner" - 114203 warrior
-	-- "mocking banner" - 114192 warrior 
-	-- "heroic leap" - 6544 warrior
-	-- "Freeze" - 33395 Frost Mage
-	-- "Rune Of Power" 116011- Mage
-	-- "Rain of Fire" 5740 -- Warlock
-	-- "Lightwell" 724 - Priest
-	-- "Holy Word: Sanctuary" 88685 - Priest
 
-	local tableSelect = {88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
-	for i,j in ipairs (tableSelect) do
+	for i,j in ipairs (jps.spellNeedSelectTable) do
 		if spellname == string.lower(tostring(select(1,GetSpellInfo(j)))) then return true end 
 	end
 return false
