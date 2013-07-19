@@ -1,20 +1,29 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
+
+
+--[[
+@module jps Auras
+@description 
+Unit Aura related functions
+]]--
+
+
 
 --------------------------
 -- LOCALIZATION
@@ -24,10 +33,6 @@ local L = MyLocalizationTable
 --------------------------
 -- BUFF DEBUFF
 --------------------------
--- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitAura("unit", index or "name"[, "rank"[, "filter"]])
--- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitDebuff("unit", index or ["name", "rank"][, "filter"]) 
--- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitBuff("unit", index or ["name", "rank"][, "filter"])
-
 function jps.buffId(spellId,unit)
 	local spellname = nil
 	if type(spellId) == "number" then spellname = tostring(select(1,GetSpellInfo(spellId))) end
@@ -39,7 +44,20 @@ function jps.buffId(spellId,unit)
 	end
 return false
 end
+--[[
+@function jps.buff
+@description 
+checks if a unit has a buff applied
+[br][i]Usage:[/i][br]
+[code]
+jps.buff("Enrage","player")
 
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the buff is applied (on nil / default unit = player)
+
+@returns boolean: true if buff applied, false if not
+]]--
 function jps.buff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -49,6 +67,20 @@ function jps.buff(spell,unit)
 	return false
 end
 
+--[[
+@function jps.debuff
+@description 
+checks if a unit has a debuff applied
+[br][i]Usage:[/i][br]
+[code]
+jps.debuff("Sunder Armor","target")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuff is applied (on nil / default unit = target)
+
+@returns boolean: true if debuff applied, false if not
+]]--
 function jps.debuff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -58,6 +90,20 @@ function jps.debuff(spell,unit)
 	return false
 end
 
+--[[
+@function jps.debuff
+@description 
+checks if a unit has a debuff applied by the player
+[br][i]Usage:[/i][br]
+[code]
+jps.debuff("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuff is applied (on nil / default unit = player)
+
+@returns boolean: true if debuff applied + applied by the player, false if not
+]]--
 function jps.mydebuff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -67,6 +113,20 @@ function jps.mydebuff(spell,unit)
 	return false
 end
 
+--[[
+@function jps.myBuffDuration
+@description 
+checks the duration off a buff applied by the player on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.buffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the buff is applied (on nil / default unit = player)
+
+@returns integer: buff duration
+]]--
 function jps.myBuffDuration(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -81,6 +141,20 @@ function jps.myBuffDuration(spell,unit)
 	return duration
 end
 
+--[[
+@function jps.myDebuffDuration
+@description 
+checks the duration off a debuff applied by the player on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.myDebuffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuff is applied (on nil / default unit = player)
+
+@returns integer: debuff duration
+]]--
 function jps.myDebuffDuration(spell,unit) 
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -95,6 +169,20 @@ function jps.myDebuffDuration(spell,unit)
 	return duration
 end
 
+--[[
+@function jps.buffDuration
+@description 
+checks the duration off a buff on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.buffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the buff is applied (on nil / default unit = player)
+
+@returns integer: buff duration
+]]--
 function jps.buffDuration(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -107,6 +195,21 @@ function jps.buffDuration(spell,unit)
 	if duration < 0 then return 0 end
 	return duration
 end
+
+--[[
+@function jps.debuffDuration
+@description 
+checks the duration off a debuff on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.debuffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuffdebuff is applied (on nil / default unit = player)
+
+@returns integer: debuff duration
+]]--
 
 function jps.debuffDuration(spell,unit) 
 	local spellname = nil
@@ -141,6 +244,7 @@ function jps.buffStacks(spell,unit)
 	return count
 end
 
+-- checks the whole raid for a buff (e.g. stamina buffed)
 function jps.buffTracker(buff)
 	for unit,index in pairs(jps.RaidStatus) do
 		if (index["inrange"] == true) and jps.myBuffDuration(buff,unit) > 0 then
@@ -150,10 +254,10 @@ function jps.buffTracker(buff)
 end
 
 function jps.bloodlusting()
-	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria") or jps.buff("Drums of Rage")
+	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria") or jps.buff("Drums of Rage") -- drums coming with 5.4
 end
 
-
+-- check if a unit has at least one buff from a table (first param)
 function jps.buffLooper(tableName, unit)
 	for _, buffName in pairs(tableName) do
 		if jps.buff(buffName, unit) then
@@ -207,44 +311,44 @@ jps.raidBuffs = {
 
 
 -- functions for raid buffs
+jps.staminaBuffs = {"Power Word: Fortitude", "Commanding Shout", "Qiraji Fortitude", "Dark Intent"}
 function jps.hasStaminaBuff(unit)
-	local validBuffs = {"Power Word: Fortitude", "Commanding Shout", "Qiraji Fortitude", "Dark Intent"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.staminaBuffs, unit)
 end
 
+jps.statsBuffs = {"Mark of the Wild", "Legacy of the Emperor", "Blessing of Kings", "Embrace of the Shale Spider"}
 function jps.hasStatsBuff(unit)
-	local validBuffs = {"Mark of the Wild", "Legacy of the Emperor", "Blessing of Kings", "Embrace of the Shale Spider"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.statsBuffs, unit)
 end
 
+jps.attackPowerBuffs = {"Horn of Winter", "Trueshot Aura", "Battle Shout"}
 function jps.hasAttackPowerBuff(unit)
-	local validBuffs = {"Horn of Winter", "Trueshot Aura", "Battle Shout"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.attackPowerBuffs, unit)
 end
 
+jps.hasteBuffs = {"Unholy Aura", "Swiftblade's Cunning", "Unleashed Rage","Cackling Howl","Serpent's Swiftness"}
 function jps.hasHasteBuff(unit)
-	local validBuffs = {"Unholy Aura", "Swiftblade's Cunning", "Unleashed Rage","Cackling Howl","Serpent's Swiftness"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.hasteBuffs, unit)
 end
 
+jps.spellHasteBuffs = {"Moonkin Aura", "Elemental Oath", "Mind Quickening","Energizing Spores"}
 function jps.hasSpellHasteBuff(unit)
-	local validBuffs = {"Moonkin Aura", "Elemental Oath", "Mind Quickening","Energizing Spores"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.spellHasteBuffs, unit)
 end
 
+jps.critBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Leader of the Pack","Legacy of the White Tiger","Fearless Roar","Still Water","Terrifying Roar","Furious Howl"}
 function jps.hasCritBuff(unit)
-	local validBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Leader of the Pack","Legacy of the White Tiger","Fearless Roar","Still Water","Terrifying Roar","Furious Howl"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.critBuffs, unit)
 end
 
+jps.spellPowerBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Burning Wrath", "Dark Intent", "Still Water"}
 function jps.hasSpellPowerBuff(unit)
-	local validBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Burning Wrath", "Dark Intent", "Still Water"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.spellPowerBuffs, unit)
 end
 
+jps.masteryBuffs = {"Blessing of Might","Grace of Air","Roar of Courage","Spirit Beast Blessing"}
 function jps.hasMasteryBuff(unit)
-	local validBuffs = {"Blessing of Might","Grace of Air","Roar of Courage","Spirit Beast Blessing"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.masteryBuffs, unit)
 end
 
 function jps.hasSpellPowerCritBuff(unit)

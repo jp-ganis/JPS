@@ -107,7 +107,68 @@ function jps_createConfigFrame()
 	jps.addRotationDropdownFrame()
 	jps.addSettingsFrame()
 	jps.addcustomRotationFrame()
+	jps.addUIFrame()
 	
+end
+
+
+function jps.addSlider(sliderName, parentObj, xPos, yPos, defaultVal, stepSize, minVal, maxVal, lowText,HighText,title, onChangeFunc)
+	local sliderObj = CreateFrame("Slider",sliderName,parentObj,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate 
+
+	sliderObj:SetScale(1)
+	sliderObj:SetMinMaxValues(minVal,maxVal)
+	sliderObj.minValue, sliderObj.maxValue = sliderObj:GetMinMaxValues()
+	sliderObj:SetValue(defaultVal)
+	sliderObj:SetValueStep(stepSize)
+	sliderObj:EnableMouse(true)
+	sliderObj:SetPoint("TOPLEFT", parentObj, xPos, yPos)
+	getglobal(sliderObj:GetName() .. 'Low'):SetText(lowText)
+	getglobal(sliderObj:GetName() .. 'High'):SetText(HighText)
+	getglobal(sliderObj:GetName() .. 'Text'):SetText(title)
+	sliderObj:SetScript("OnValueChanged", onChangeFunc)
+	sliderObj:Show()
+	return sliderObj
+end
+
+---------------------------
+-- UI Settings Frame
+---------------------------
+function jps.addUIFrame()
+	jpsUIFrame = CreateFrame("Frame", "jpsUIFrame", jpsConfigFrame)
+	jpsUIFrame.parent  = jpsConfigFrame.name
+	jpsUIFrame.name = "JPS UI Panel"
+	local title = jpsUIFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 20, -10) 
+	title:SetText("JPS CUSTOM ROTATION PANEL")
+	jpsUIFrameInfo = jpsUIFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	jpsUIFrameInfo:SetHeight(46)
+	jpsUIFrameInfo:SetWidth(570)
+	jpsUIFrameInfo:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	jpsUIFrameInfo:SetPoint("RIGHT", jpsUIFrame, -32, 0)
+	jpsUIFrameInfo:SetNonSpaceWrap(true)
+	jpsUIFrameInfo:SetJustifyH("LEFT")
+	jpsUIFrameInfo:SetJustifyV("TOP")
+	jpsUIFrameInfo:SetText('Adjust the look of the JPS UI')
+	
+	
+	iconSizeSlider = jps.addSlider("iconSizeSlider",jpsUIFrame,30,-90, jps.getConfigVal("jpsIconSize") , 0.1, 0.5,1.5,"0.5","1.5","Main UI Scale", function(self, value)
+		jpsIcon:SetScale(value)
+		jps.setConfigVal("jpsIconSize",value)
+	end)
+	
+	rotationDropdownSizeSlider = jps.addSlider("rotationDropdownSizeSlider",jpsUIFrame,30,-155, jps.getConfigVal("rotationDropdownSizeSlider") , 0.1, 0.5,1.5,"0.5","1.5","Rotation Dropdown Scale", function(self, value)
+		rotationDropdownHolder:SetScale(value)
+		jps.setConfigVal("rotationDropdownSizeSlider",value)
+	end)
+	
+	timetodieSizeSlider = jps.addSlider("timetodieSizeSlider",jpsUIFrame,30,-215, jps.getConfigVal("timetodieSizeSlider") , 0.1, 0.5,1.5,"0.5","1.5","TimeToDie UI Scale", function(self, value)
+		JPSEXTInfoFrame:SetScale(value)
+		jps.setConfigVal("timetodieSizeSlider",value)
+	end)
+	
+	
+	InterfaceOptions_AddCategory(jpsUIFrame)
+
 end
 
 ---------------------------
@@ -455,7 +516,7 @@ function jps.DropdownRotationTogle(key, status)
 end
 
 function jps.TimeToDieToggle(key, status)
-	if status == 1 and UnitAffectingCombat("player") ~= nil then
+	if status == 1 and InCombatLockdown() == 1 then
 		JPSEXTInfoFrame:Show()
 	else
 		JPSEXTInfoFrame:Hide()
@@ -506,7 +567,6 @@ function jps.addSpellCheckboxToFrame(spellName)
     rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
     rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
     rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
-
     rotationButtonPositionY = rotationButtonPositionY - 30;
 end
 
@@ -583,6 +643,7 @@ function jps_VARIABLES_LOADED()
 	jps_LOAD_PROFILE()
 	jps_SAVE_PROFILE()
 	jps.loadDefaultSettings()
+	jps.runFunctionQueue("settingsLoaded")
 	jps_variablesLoaded = true
 end
 

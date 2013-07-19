@@ -30,7 +30,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
 	
 	-- Self heal
-	{ "Death Pact",'jps.UseCDs and jps.hp() < 0.6 and UnitExists("pet") ~= nil'},
+	{ "Death Pact",'jps.Defensive and jps.hp() < 0.4 and UnitExists("pet") ~= nil'},
 	{ "Death Siphon",'jps.Defensive and jps.hp() < 0.8'},
 	{ "Death Strike",'jps.Defensive and jps.hp() < 0.7'},
 	

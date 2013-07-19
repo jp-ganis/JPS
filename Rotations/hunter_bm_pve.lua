@@ -96,7 +96,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		-- Healthstone
 		{ jps.useBagItem("Healthstone") , 	jps.hp("player") < 0.50 }, -- restores 20% of total health
 		-- 
-		{ "Silencing Shot", 				jps.shouldKick() and jps.castTimeLeft("target") < 1.4 }, -- Tier 2 talent
+		{ "Silencing Shot", 				jps.shouldKick() and jps.CastTimeLeft("target") < 1.4 }, -- Tier 2 talent
 		-- Trinkets and Engineering Gloves
 		-- On-use Trinkets.
 		{ jps.useTrinket(0), jps.UseCDs },

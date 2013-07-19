@@ -370,7 +370,7 @@ local spellTable_moving =
 	--{ 59544, select(2,GetSpellBookItemInfo(giftnaaru))~=nil and (playerhealth_pct < 0.80) , player },
 
 }
-	--local spellTable_moving = jps_deepCopy(spellTable[1])
+	--local spellTable_moving = jps.deepTableCopy(spellTable[1])
 	if jps.Moving then
 		jps.Tooltip = spellTable_moving["ToolTip"]
 		spell, target = parseSpellTable(spellTable_moving)

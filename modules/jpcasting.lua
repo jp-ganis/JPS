@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
 --------------------------
@@ -72,24 +72,24 @@ function jps.IsChannelingSpell(spell,unit)
 	return false
 end
 
+jps.polySpellIds = { 
+	[51514] = "Hex" ,
+	[118]	= "Polymorph" ,
+	[61305] = "Polymorph: Black Cat" ,
+	[28272] = "Polymorph: Pig" ,
+	[61721] = "Polymorph: Rabbit" ,
+	[61780] = "Polymorph: Turkey" ,
+	[28271] = "Polymorph: Turtle" , 
+}
+
 function jps.IsCastingPoly(unit)
 	if not jps.canDPS(unit) then return false end
 	local istargeting = unit.."player"
 	local delay = 0
 	local Class, _ = UnitClass(unit) -- NOT USEFULL BECAUSE ONLY MAGE & SHAMAN CAST THESES SPELLS
-	local tablePoly = 
-	{  
-		[51514]  = "Hex" ,
-		[118]    = "Polymorph" ,
-		[61305]  = "Polymorph: Black Cat" ,
-		[28272]  = "Polymorph: Pig" ,
-		[61721]  = "Polymorph: Rabbit" ,
-		[61780]  = "Polymorph: Turkey" ,
-		[28271]  = "Polymorph: Turtle" , 
-	}
-
+	
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
-	for spellID,spellname in pairs(tablePoly) do
+	for spellID,spellname in pairs(jps.polySpellIds) do
 		if spell == tostring(select(1,GetSpellInfo(spellID))) then
 			delay = jps.CastTimeLeft(unit) - jps.Lag
 		break end
@@ -99,6 +99,7 @@ function jps.IsCastingPoly(unit)
 	return false
 end
 
+-- returns cooldown off a spell 
 function jps.cooldown(spell) -- start, duration, enable = GetSpellCooldown("name") or GetSpellCooldown(id)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -120,15 +121,15 @@ function jps_IsSpellKnown(spell)
 		if type(spell) == "string" then spellname = spell end
 		if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 			for index = offset+1, numSpells+offset do
-	            -- Get the Global Spell ID from the Player's spellbook 
-	            local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-	            local slotType = select(1,GetSpellBookItemInfo(index, booktype))
-	            local name = select(1,GetSpellBookItemName(index, booktype))
-	            if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
-	                mySpell = spellname
-	                break -- Breaking out of the for/do loop, because we have a match 
-	            end 
-	        end
+				-- Get the Global Spell ID from the Player's spellbook 
+				local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+				local slotType = select(1,GetSpellBookItemInfo(index, booktype))
+				local name = select(1,GetSpellBookItemName(index, booktype))
+				if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
+					mySpell = spellname
+					break -- Breaking out of the for/do loop, because we have a match 
+				end 
+			end
 	return mySpell
 end
 

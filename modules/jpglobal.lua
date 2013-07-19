@@ -19,22 +19,13 @@
 --------------------------
 -- LOCALIZATION
 --------------------------
+
 local L = MyLocalizationTable
 
 --------------------------
 -- TABLE FUNCTIONS
 --------------------------
-
-function jps_tableSum(table)
-	if table == nil then return 0 end
-	local total = 0
-	for i,j in ipairs(table) do
-		total = total + table[i]
-	end
-	return total
-end 
-
-function jps_removeKey(table, key)
+function jps.removeTableKey(table, key)
 	if key == nil then return end
     local element = table[key]
     table[key] = nil
@@ -42,7 +33,7 @@ function jps_removeKey(table, key)
 end
 
 --get table length
-function jps_tableLen(table)
+function jps.tableLength(table)
 	if table == nil then return 0 end
     local count = 0
     for k,v in pairs(table) do 
@@ -51,7 +42,7 @@ function jps_tableLen(table)
     return count
 end
 
-function jps_deepCopy(object)
+function jps.deepTableCopy(object)
     local lookup_table = {}
     local function _copy(object)
         if type(object) ~= "table" then
@@ -73,7 +64,7 @@ end
 -- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
 --------------------------
 
-function jps_stringTarget(unit,case)
+function jps.stringSplit(unit,case)
 	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
 	local threatUnit = tostring(unit)
 	local playerName = threatUnit
@@ -92,8 +83,6 @@ function jps_stringTarget(unit,case)
 	end
 return playerName
 end
-
-
 
 ------------------------------
 -- BenPhelps' Timer Functions
@@ -147,9 +136,10 @@ function inArray(needle, haystack)
 	return false
 end
 
-function jps_round(val, decimal)
-  local exp = decimal and 10^decimal or 1
-  return math.ceil(val * exp - 0.5) / exp
+function jps.roundValue(num, idp)
+    local mult = 10^(idp or 0)
+    if num >= 0 then return math.floor(num * mult + 0.5) / mult
+    else return math.ceil(num * mult - 0.5) / mult end
 end
 
 ------------------------------

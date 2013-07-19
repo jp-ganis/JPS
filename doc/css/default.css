@@ -67,8 +67,9 @@ div.module-description {
 
 /* Module Function */
 div.module-function {
-    margin-top: 50px;
-    margin-left: 40px;
+	background: #efefef;
+	padding: 50px 50px;
+	margin-bottom: 10px;
 }
 
 /* Module Function Title */
