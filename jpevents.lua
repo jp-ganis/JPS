@@ -448,11 +448,10 @@ end)
 -- UNIT_SPELLCAST_SUCCEEDED
 jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
 	--if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
-	jps.CurrentCast[1] = select(1, ...)
-	jps.CurrentCast[2] = select(2, ...)
-	jps.CurrentCast[3] = select(3, ...)
-	jps.CurrentCast[4] = select(4, ...)
-	jps.CurrentCast[5] = select(5, ...)
+	if not jps.CurrentCast then jps.CurrentCast = {} end
+	if ... == "player" then
+		jps.CurrentCast[1], jps.CurrentCast[2], _ , _, jps.CurrentCast[5], _ = ...
+	end
 	
 	if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
 		SaveView(2)
@@ -464,7 +463,7 @@ jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
 		CameraOrSelectOrMoveStop()
 	end
 	jps.isNotBehind = false
-	 jps.isBehind = true
+	jps.isBehind = true
 end)
 
 -- RAIDSTATUS UPDATE

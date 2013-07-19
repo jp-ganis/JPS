@@ -1,3 +1,12 @@
+
+--[[[
+@rotation Demo Raid (untested)
+@class warlock
+@spec demonology
+@deprecated
+@description 
+Demo Rotation.
+]]]
 jps.registerRotation("WARLOCK","DEMONOLOGY",function()
    
 
@@ -448,4 +457,12 @@ if jps.debuff("Doom") and form == 0 then jps.Opening = false end
    return spell,target
 end,"Demo Raid (untested)")
 
+--[[[
+@rotation Interrupt Only
+@class warlock
+@spec demonology
+@author Kirk24788
+@description 
+This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
+]]]
 jps.registerStaticTable("WARLOCK","DEMONOLOGY",wl.interruptSpellTable,"Interrupt Only")

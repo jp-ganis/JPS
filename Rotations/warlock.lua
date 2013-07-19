@@ -1,6 +1,6 @@
 wl = {}
 wl.maxIntCastLength = 1
-
+--JPTODO: Replace Spaces with Tabs in warlock_*.lua
 wl.dottableUnits = {
     "target",
     "focus",

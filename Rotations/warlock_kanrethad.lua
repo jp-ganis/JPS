@@ -318,7 +318,18 @@ local dpsWildImpTable = {
         {wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player")' },
         {wl.spells.incinerate },
 }
-
+--[[[
+@rotation Kanrethad Ebonlocke
+@class warlock
+@spec destruction
+@author Kirk24788
+@description 
+As the name already suggest - this is a special Rotation designed for the green fire questline endboss. It has been tested it with 
+iLvl 495 and 529 - both iLvl will work without Purification Potions. If you go below 495 you should consider Buff-Food, Flask and
+a Purification Potion and you should be fine.
+The Rotation will take care of targeting and your Rotation, you only have to move!
+For more information please visit the PG Forums. There you can find a detailed explanation with images.
+]]]
 jps.registerStaticTable("WARLOCK","DESTRUCTION",{
     -- Fake Spell to execute updateState() -- HACK: init() will be only executed once, when the condition is parsed!!!
     {"No Spell", 'wlk.updateState() and wlk.init()'},
