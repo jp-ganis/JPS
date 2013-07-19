@@ -6,7 +6,7 @@
 @deprecated
 @description 
 Demo Rotation.
-]]]
+]]--
 jps.registerRotation("WARLOCK","DEMONOLOGY",function()
    
 
@@ -464,5 +464,5 @@ end,"Demo Raid (untested)")
 @author Kirk24788
 @description 
 This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
-]]]
+]]--
 jps.registerStaticTable("WARLOCK","DEMONOLOGY",wl.interruptSpellTable,"Interrupt Only")
