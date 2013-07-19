@@ -82,7 +82,7 @@ Modifiers:[br]
 [*] [code]jps.Interrupts[/code]: Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)[br]
 [*] [code]jps.Defensive[/code]: Create Healthstone if necessary, cast mortal coil and use ember tap[br]
 [*] [code]jps.UseCDs[/code]: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated![br]
-]]]
+]]--
 jps.registerRotation("WARLOCK","DESTRUCTION",function()
     wl.deactivateBurningRushIfNotMoving(1)
 
@@ -102,5 +102,5 @@ end,"Destruction 5.3")
 @author Kirk24788
 @description 
 This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
-]]]
+]]--
 jps.registerStaticTable("WARLOCK","DESTRUCTION",wl.interruptSpellTable,"Interrupt Only")
