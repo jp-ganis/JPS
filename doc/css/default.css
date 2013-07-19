@@ -1,0 +1,182 @@
+* {
+    font-family: "Arial", "Verdana", sans-serif;
+}
+
+code {
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+
+/* Inline Code */
+div.tt {
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+/* #ref: Reference Links */
+a.ref {
+}
+
+
+/* Document Title */
+div.title {
+    font-size: 26px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+/* Section */
+div.section {
+    margin-top: 50px;
+    margin-bottom: 25px;
+    margin-left: 10px;
+}
+
+/* Section Title */
+div.section-title {
+    margin-bottom: 20px;
+    margin-left: -5px;
+    font-size: 25px;
+    font-weight: bold;
+    font-variant:small-caps;
+}
+
+
+/* Command List */
+ul.command-list {
+    list-style-type: none;
+}
+
+/* Module */
+div.module {
+    margin-left: 10px;
+}
+
+/* Module Title */
+div.module-name {
+    margin-left: -5px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    font-variant:small-caps;
+}
+
+/* Module Description */
+div.module-description {
+    text-align:justify;
+}
+
+/* Module Function */
+div.module-function {
+    margin-top: 50px;
+    margin-left: 40px;
+}
+
+/* Module Function Title */
+div.module-function-name {
+    margin-left: -35px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+/* Module Function Description */
+div.module-function-description {
+    text-align:justify;
+}
+
+/* Module Function Section ("Parameters:"/"Returns:" Header) */
+div.module-function-section {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* Module Function Parameter List */
+ul.module-function-parameters {
+    list-style-type: none;
+}
+
+/* Module Function Parameter List Item */
+li.module-function-parameter {
+}
+
+/* Module Function Return Value */
+div.module-function-returns {
+    margin-left: 40px;
+}
+
+
+
+/* Rotation */
+div.rotation {
+    margin-left: 55px;
+    margin-bottom: 30px;
+}
+
+/* Rotation Title */
+div.rotation-name {
+    margin-left: -30px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Rotation Description */
+div.rotation-description {
+    text-align:justify;
+}
+
+/* Rotation Talent URL */
+a.talent-url {
+    color:#0000FF;
+}
+
+/* Rotation Spec*/
+div.rotation-spec {
+}
+/* Rotation Spec Title*/
+div.rotation-spec-title {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    font-variant:small-caps;
+    text-transform:capitalize;
+}
+/* Rotation Class*/
+div.rotation-class {
+    margin-left: 10px;
+}
+/* Rotation Class Title */
+div.rotation-class-title {
+    margin-left: -5px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    font-variant:small-caps;
+    text-transform:capitalize;
+}
+
+
+
+/* TODO Section */
+div.todo {
+    margin-left: 20px;
+}
+
+/* TODO Filename */
+div.todo-file {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+/* TODO List */
+ul.todo-list {
+    margin-top: -5px;
+    margin-bottom: 15px;
+}
+
+/* TODO List Item */
+li.todo-item {
+}

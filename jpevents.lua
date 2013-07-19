@@ -448,8 +448,12 @@ end)
 -- UNIT_SPELLCAST_SUCCEEDED
 jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
     --if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
-    jps.CurrentCast = {...}
-
+    if not jps.CurrentCast then jps.CurrentCast = {} end
+    -- Only 1,2 and 5 are used...why copy the rest?
+    if ... == "player" then
+        jps.CurrentCast[1], jps.CurrentCast[2], _ , _, jps.CurrentCast[5], _ = ...
+    end
+    
     if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
         SaveView(2)
         if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then

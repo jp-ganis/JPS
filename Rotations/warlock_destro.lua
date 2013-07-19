@@ -1,25 +1,3 @@
---[[
-Warlock Destruction Rotations:
-
-Warlock PvE Rotation:
- * SHIFT: Cast Rain of Fire @ Mouse - ONLY if RoF Duration is less than 1 seconds
- * CTRL-SHIFT: Cast Rain of Fire @ Mouse - ignoring the current RoF duration
- * CTRL: Havoc @ Mouse
- * ALT: Stop all casts and only use instants (useful for Dark Animus Interrupting Jolt)
- * jps.Interrupts - Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)
- * jps.Defensive - Create Healthstone if necessary, cast mortal coil and use ember tap
- * jps.UseCDs - use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated!
-
-Interrupt Only:
- * Interrupt target, focus or mouseover with FelHunter or Observer only (you still need to check jps.Interrupt!)
-
-Known Bugs:
- * [ADDON_ACTION_FORBIDDEN] AddOn "JPS" tried to call the protected function "CameraOrSelectOrMoveStop()".
-    This will occur regulary if you cast Rain of Fire while moving...still works so it's just annoying
-
-
-]]--
-
 local spellTable = {
     -- Interrupts
     wl.getInterruptSpell("target"),
@@ -87,7 +65,24 @@ local spellTable = {
 }
 
 
-
+--[[[
+@rotation Destruction 5.3
+@class warlock
+@spec destruction
+@talents Vb!112101!ZbS
+@author Kirk24788
+@description 
+This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP.
+[br]
+Modifiers:[br]
+[*] [code]SHIFT[/code]: Cast Rain of Fire @ Mouse - [b]ONLY[/b] if RoF Duration is less than 1 seconds[br]
+[*] [code]CTRL-SHIFT[/code]: Cast Rain of Fire @ Mouse - ignoring the current RoF duration[br]
+[*] [code]CTRL[/code]: If target is dead or ghost cast Soulstone, else cast Havoc @ Mouse[br]
+[*] [code]ALT[/code]: Stop all casts and only use instants (useful for Dark Animus Interrupting Jolt)[br]
+[*] [code]jps.Interrupts[/code]: Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)[br]
+[*] [code]jps.Defensive[/code]: Create Healthstone if necessary, cast mortal coil and use ember tap[br]
+[*] [code]jps.UseCDs[/code]: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated![br]
+]]]
 jps.registerRotation("WARLOCK","DESTRUCTION",function()
     wl.deactivateBurningRushIfNotMoving(1)
 

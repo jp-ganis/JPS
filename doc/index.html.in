@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>JPS Documentation</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="title">= JPS - A PLUA ADDON FOR WORLD OF WARCRAFT =</div>
+
+<p>This addon in combination with enabled protected LUA will help you get the most out of your WoW experience. See commands below for a full list of available commands.</p>
+
+<p>Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd and many more for all their contributions to keeping this project going!</p>
+
+<p>*** VERSION 1.3 - Huge updates from PCMD/Htordeux. *** *** All credit for this version to them. ***</p>
+
+<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</p>
+
+<p>Copyright (C) 2011 James Ganis</p>
+<div class="section">
+<div class="section-title">Usage</div>
+With protected LUA enabled (through and external hack, not included with this package) this addon will play on your behalf, detecting your class and spec simply attacking a target will cause the mod to take over. Using all the best spells and abilities with split second timing to ensure maximum DPS, TPS or HPS for your class and spec.
+</div>
+
+<div class="section">
+<div class="section-title">Commands</div>
+<ul class="command-list"> 
+  <li><code>/jps enable</code> (or <code>/jps e</code>) Enables JPS</li> 
+  <li><code>/jps disable</code> (or <code>/jps d</code>) Disables JPS</li> 
+  <li><code>/jps toggle</code> (or <code>/jps t</code>) Toggle whether JPS is enabled or not</li>
+  <li><code>/jps multi</code> Toggle support for AOE</li>
+  <li><code>/jps cds</code> Use cooldowns in rotations</li>
+  <li><code>/jps interrupts</code> (or <code>/jps int</code>) Interrupt spell casting where possible</li>
+  <li><code>/jps pew</code> manually start attacking with jps your current target (for ingame macros)</li>
+  <li><code>/jps face</code> auto rotate your toon until you face your current target</li>
+  <li><code>/jps defensive</code> (or <code>/jps def</code>) toggle defensiv mode (def / heal usage)</li>
+  <li><code>/jps pvp</code> toggle pvp mode manually</li>
+  <li><code>/jps version</code> prints your current JPS version/revision</li>
+  <li><code>/jps db</code> resets ingame addon database</li>
+  <li><code>/jps reset</code> resets position of JPS icons / jps UI</li>
+  <li><code>/jps debug</code> Enable debug output</li>
+  <li><code>/jps help</code> show help</li>
+</ul>
+</div>
+%s
+</body>
+</html>

@@ -1,11 +1,18 @@
---[[
- DoT Tracker for DoT Classes
- 
- Currently supported:
-    * Warlock
-        * Destruction
-        * Affliction
-]]--
+--[[[
+@module DoT Tracker
+@description 
+DoT Tracker for DoT-Classes. Currently only Destruction-Warlocks and Affliction-Warlocks are supported.
+[br][br]
+The DoT Tracker will track your DoT's on all valid units ([code]target[/code], [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code]) and will tell you when to recast the spell.
+If it is pandemic safe and you don't loose DPS your DoT's will always be re-applied. If it is not pandemic safe
+the DoT will only be re-applied if you gain at least 225K DPS - based on 150K average DPS this should compensate
+for the lost GCD. If you don't have the DoT on the target or there is only 2 seconds left it will be applied ignoring any DPS difference.
+[br][br]
+The DoT Tracker can be used with normal tables (#ref:jps.dotTracker.castTable) but since normal tables
+are deprecated you should instead convert your rotation to a static spell table and use the appropriate
+function (#ref:jps.dotTracker.castTableStatic).
+]]]
+
 
 local dotTracker = {}
 dotTracker.log = jps.Logger(jps.LogLevel.ERROR)
@@ -284,6 +291,27 @@ function dotTracker.setStaticResult(spellId, name, condition, unit)
 end
 
 
+--[[[
+@function jps.dotTracker.castTableStatic
+@description 
+Generates a static Spell Table Function for the given DoT for old-style Spell Tables.[br]
+The DoT Tracker will track your DoT's on all valid units ([code]target[/code], [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code]) and will tell you when to recast the spell.
+If it is pandemic safe and you don't loose DPS your DoT's will always be re-applied. If it is not pandemic safe
+the DoT will only be re-applied if you gain at least 225K DPS - based on 150K average DPS this should compensate
+for the lost GCD. If you don't have the DoT on the target or there is only 2 seconds left it will be applied ignoring any DPS difference.[br]
+[br][i]Usage:[/i][br]
+[code]
+local staticSpellTable = {[br]
+...[br]
+jps.dotTracker.castTable("Immolate"),[br]
+...[br]
+}[br]
+[/code]
+@param spellID Spell-ID to cast, can be a spell name, a spell id
+@param unit [i]Optional:[/i] Unit to cast upon, if [code]nil[/code] all of [code]target[/code], 
+            [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code] will be tried in this order
+@returns Spell-Table Function for static Spell Tables
+]]]
 function dotTracker.castTableStatic(spellId, unit)
     -- find actual spell id, it was given as spell table key or spell table entry
     if not tonumber(spellId) then
@@ -322,6 +350,29 @@ function dotTracker.castTableStatic(spellId, unit)
 end
 
 
+--[[[
+@function jps.dotTracker.castTable
+@deprecated Use: #ref:jps.dotTracker.castTableStatic
+@description 
+Generates a Spell Table Element for the given DoT for old-style Spell Tables.[br]
+The DoT Tracker will track your DoT's on all valid units ([code]target[/code], [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code]) and will tell you when to recast the spell.
+If it is pandemic safe and you don't loose DPS your DoT's will always be re-applied. If it is not pandemic safe
+the DoT will only be re-applied if you gain at least 225K DPS - based on 150K average DPS this should compensate
+for the lost GCD. If you don't have the DoT on the target or there is only 2 seconds left it will be applied ignoring any DPS difference.[br]
+[br][i]Usage:[/i][br]
+[code]
+local spellTable = {[br]
+...[br]
+jps.dotTracker.castTable("Immolate"),[br]
+...[br]
+}[br]
+[/code]
+@param spellID Spell-ID to cast, can be a spell name, a spell id
+@param unit [i]Optional:[/i] Unit to cast upon, if [code]nil[/code] all of [code]target[/code], 
+            [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code] will be tried in this order
+@returns Spell-Table Element, e.g.: [code]{"Immolate", false, "mouseover"}[/code]
+]]]
+--JPTODO: Remove dotTracker.castTable when all Rotations use static tables
 function dotTracker.castTable(spellId, unit)
     return dotTracker.castTableStatic(spellId, unit)()
 end
