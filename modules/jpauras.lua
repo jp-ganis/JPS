@@ -16,6 +16,15 @@
 	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
+
+--[[[
+@module jps Auras
+@description 
+Unit Aura related functions
+]]]
+
+
+
 --------------------------
 -- LOCALIZATION
 --------------------------
@@ -35,7 +44,20 @@ function jps.buffId(spellId,unit)
 	end
 return false
 end
+--[[[
+@function jps.buff
+@description 
+checks if a unit has a buff applied
+[br][i]Usage:[/i][br]
+[code]
+jps.buff("Enrage","player")
 
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the buff is applied (on nil / default unit = player)
+
+@returns boolean: true if buff applied, false if not
+]]]
 function jps.buff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -45,6 +67,20 @@ function jps.buff(spell,unit)
 	return false
 end
 
+--[[[
+@function jps.debuff
+@description 
+checks if a unit has a debuff applied
+[br][i]Usage:[/i][br]
+[code]
+jps.debuff("Sunder Armor","target")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuff is applied (on nil / default unit = target)
+
+@returns boolean: true if debuff applied, false if not
+]]]
 function jps.debuff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -54,7 +90,20 @@ function jps.debuff(spell,unit)
 	return false
 end
 
--- debuff @ unit applied by player
+--[[[
+@function jps.debuff
+@description 
+checks if a unit has a debuff applied by the player
+[br][i]Usage:[/i][br]
+[code]
+jps.debuff("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuff is applied (on nil / default unit = player)
+
+@returns boolean: true if debuff applied + applied by the player, false if not
+]]]
 function jps.mydebuff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -64,7 +113,20 @@ function jps.mydebuff(spell,unit)
 	return false
 end
 
--- buff duration @ unit, applied by player
+--[[[
+@function jps.myBuffDuration
+@description 
+checks the duration off a buff applied by the player on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.buffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the buff is applied (on nil / default unit = player)
+
+@returns integer: buff duration
+]]]
 function jps.myBuffDuration(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -79,7 +141,20 @@ function jps.myBuffDuration(spell,unit)
 	return duration
 end
 
--- debuff duration @ unit, applied by player
+--[[[
+@function jps.myDebuffDuration
+@description 
+checks the duration off a debuff applied by the player on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.myDebuffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuff is applied (on nil / default unit = player)
+
+@returns integer: debuff duration
+]]]
 function jps.myDebuffDuration(spell,unit) 
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -94,7 +169,20 @@ function jps.myDebuffDuration(spell,unit)
 	return duration
 end
 
--- debuff @ unit 
+--[[[
+@function jps.buffDuration
+@description 
+checks the duration off a buff on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.buffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the buff is applied (on nil / default unit = player)
+
+@returns integer: buff duration
+]]]
 function jps.buffDuration(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -108,7 +196,20 @@ function jps.buffDuration(spell,unit)
 	return duration
 end
 
--- debuff duration @ unit
+--[[[
+@function jps.debuffDuration
+@description 
+checks the duration off a debuff on a unit 
+[br][i]Usage:[/i][br]
+[code]
+jps.debuffDuration("Sunder Armor","player")
+
+[/code]
+@param spell spellname or spell-ID (not case sensitive)
+@param unit [i]Optional:[/i] Unit to check if the debuffdebuff is applied (on nil / default unit = player)
+
+@returns integer: debuff duration
+]]]
 function jps.debuffDuration(spell,unit) 
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
