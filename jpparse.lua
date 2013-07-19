@@ -148,7 +148,7 @@ function jps.canDPS(unit)
 	if not jps.UnitExists(unit) then return false end
 	if jps.PvP then 
 		local iceblock = tostring(select(1,GetSpellInfo(45438))) -- ice block mage
-		local divineshield = tostring(select(1,GetSpellInfo(642))) -- divine shild paladin
+		local divineshield = tostring(select(1,GetSpellInfo(642))) -- divine shield paladin
 		if jps.buff(divineshield,unit) then return false end
 		if jps.buff(iceblock,unit) then return false end
 	end
