@@ -80,7 +80,7 @@ end)[br]
 [/code]
 @param event event name
 @param fn function to be executed on update
-]]-
+]]--
 function jps.registerEvent(event, fn)
 	if not eventTable[event] then
 		eventTable[event] = {}
