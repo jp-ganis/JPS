@@ -72,24 +72,24 @@ function jps.IsChannelingSpell(spell,unit)
 	return false
 end
 
+jps.polySpellIds = {  
+	[51514]  = "Hex" ,
+	[118]    = "Polymorph" ,
+	[61305]  = "Polymorph: Black Cat" ,
+	[28272]  = "Polymorph: Pig" ,
+	[61721]  = "Polymorph: Rabbit" ,
+	[61780]  = "Polymorph: Turkey" ,
+	[28271]  = "Polymorph: Turtle" , 
+}
+
 function jps.IsCastingPoly(unit)
 	if not jps.canDPS(unit) then return false end
 	local istargeting = unit.."player"
 	local delay = 0
 	local Class, _ = UnitClass(unit) -- NOT USEFULL BECAUSE ONLY MAGE & SHAMAN CAST THESES SPELLS
-	local tablePoly = 
-	{  
-		[51514]  = "Hex" ,
-		[118]    = "Polymorph" ,
-		[61305]  = "Polymorph: Black Cat" ,
-		[28272]  = "Polymorph: Pig" ,
-		[61721]  = "Polymorph: Rabbit" ,
-		[61780]  = "Polymorph: Turkey" ,
-		[28271]  = "Polymorph: Turtle" , 
-	}
-
+	
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
-	for spellID,spellname in pairs(tablePoly) do
+	for spellID,spellname in pairs(jps.polySpellIds) do
 		if spell == tostring(select(1,GetSpellInfo(spellID))) then
 			delay = jps.CastTimeLeft(unit) - jps.Lag
 		break end
