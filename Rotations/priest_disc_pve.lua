@@ -42,17 +42,17 @@ local health_pct = jps.hpInc(jps_Target)
 
 local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
 local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
-local TimeToDiePlayer = jps.TimeToDie("player")
+local TimeToDiePlayer = jps.UnitTimeToDie("player")
 
 local Tanktable = { ["focus"] = 100, ["player"] = 100, ["target"] = 100, ["targetarget"] = 100, ["mouseover"] = 100 }
 if isInBG and playerhealth_pct < 0.40 then
 	jps_TANK = player
 elseif jps.Defensive then -- WARNING FOCUS RETURN FALSE IF NOT IN GROUP OR RAID BECAUSE OF UNITINRANGE(UNIT)
-	Tanktable["player"] = jps_round(jps.hp("player"),3)
-	if jps.canHeal("focus") then Tanktable["focus"] = jps_round(jps.hp("focus"),3) else Tanktable["focus"] = 100 end
-	if jps.canHeal("target") then Tanktable["target"] = jps_round(jps.hp("target"),3) else Tanktable["target"] = 100 end
-	if jps.canHeal("targettarget") then Tanktable["targettarget"] = jps_round(jps.hp("targettarget"),3) else Tanktable["targettarget"] = 100 end
-	if jps.canHeal("mouseover") then Tanktable["mouseover"] = jps_round(jps.hp("mouseover"),3) else Tanktable["mouseover"] = 100 end
+	Tanktable["player"] = jps.roundValue(jps.hp("player"),3)
+	if jps.canHeal("focus") then Tanktable["focus"] = jps.roundValue(jps.hp("focus"),3) else Tanktable["focus"] = 100 end
+	if jps.canHeal("target") then Tanktable["target"] = jps.roundValue(jps.hp("target"),3) else Tanktable["target"] = 100 end
+	if jps.canHeal("targettarget") then Tanktable["targettarget"] = jps.roundValue(jps.hp("targettarget"),3) else Tanktable["targettarget"] = 100 end
+	if jps.canHeal("mouseover") then Tanktable["mouseover"] = jps.roundValue(jps.hp("mouseover"),3) else Tanktable["mouseover"] = 100 end
 	local lowestHP = 1
 	for unit,hpct in pairs(Tanktable) do
 		local thisHP = hpct
@@ -203,7 +203,10 @@ local function unitFor_Mending(unit)
 end
 
 local function unitLoseControl(unit) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
-	if jps.LoseControlTable(unit) then return true end
+	if jps.LoseControl(unit,"CC") then return true end
+	if jps.LoseControl(unit,"Snare") then return true end
+	if jps.LoseControl(unit,"Root") then return true end
+	if jps.LoseControl(unit,"Silence") then return true end
 	return false
 end
 
@@ -472,6 +475,8 @@ end
 if jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and (health_pct_TANK < 0.75) and (manapool > 0.20) then 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING HEAL",0, 0.5, 0.8)
+-- Avoid interrupt Channeling
+elseif UnitChannelInfo("player")~= nil then return nil
 -- Avoid Overhealing 
 elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.Target == jps_TANK) then 
 	SpellStopCasting()

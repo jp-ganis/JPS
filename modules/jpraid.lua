@@ -1,5 +1,5 @@
 --[[
-	 JPS - WoW Protected Lua DPS AddOn
+	JPS - WoW Protected Lua DPS AddOn
 	Copyright (C) 2011 Jp Ganis
 
 	This program is free software: you can redistribute it and/or modify
@@ -9,7 +9,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -52,11 +52,10 @@ function jps.findMeAggroTank(targetUnit)
 			aggroTank = possibleTankUnit
 		end
 	end
-	if aggroTank == "player" and jps_tableLen(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
+	if aggroTank == "player" and jps.tableLength(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
 		return jps.findMeAggroTank()
 	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
-	
 	return aggroTank
 end
 
@@ -68,7 +67,7 @@ end
 
 function jps.findMeATank()
 	local allTanks = jps.findTanksInRaid() 
-	if jps_tableLen(allTanks) == 0 then
+	if jps.tableLength(allTanks) == 0 then
 		if jps.UnitExists("focus") then return "focus" end
 	else
 		return allTanks[1] 
@@ -78,7 +77,7 @@ end
 
 function jps.findTanksInRaid() 
 	local myTanks = {}
-	for unitName, _ in pairs(jps.RaidStatus) do
+	for unitName,_ in pairs(jps.RaidStatus) do
 		local foundTank = false
 		if UnitGroupRolesAssigned(unitName) == "TANK" then
 			table.insert(myTanks, unitName);
@@ -129,7 +128,19 @@ function jps.RaidEnemyCount()
 	return enemycount,targetcount
 end
 
-
+-- ENEMY UNIT with LOWEST HEALTH
+function jps.LowestInRaidTarget() 
+local mytarget = nil
+local lowestHP = 1 
+	for unit,index in pairs(jps.RaidTarget) do
+		local unit_Hpct = index.hpct
+		if unit_Hpct < lowestHP then
+			lowestHP = unit_Hpct
+			mytarget = index.unit
+		end
+	end
+return mytarget
+end
 
 -- ENEMY MOST TARGETED
 function jps.RaidTargetUnit()
@@ -144,9 +155,6 @@ function jps.RaidTargetUnit()
 	return enemyWithMostTargets
 end
 
-
-
-
 -- ENEMY TARGETING THE PLAYER
 -- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
 -- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
@@ -158,7 +166,7 @@ function jps.IstargetMe()
 		end
 	end
 	for unit, index in pairs(jps.RaidTarget) do 
-		if  (unit == enemy_guid) then 
+		if (unit == enemy_guid) then 
 			return index.unit -- return "raid1target"
 		end 
 	end
@@ -166,7 +174,6 @@ function jps.IstargetMe()
 end
 
 -- cast player abilities(for instance deff cd's) if raid encounter applied us a debuff or a ability cd is near finishing or finished
--- 
 
 jps.raid.hasDBM = false
 jps.raid.hasBigWings = false
@@ -226,13 +233,17 @@ function jps.raid.initialize()
 end
 
 -- load instance info , we should read instance name & check if we fight an encounter
+jps.raid.instance = {}
 function jps.raid.getInstanceInfo()
 	local name, instanceType , difficultyID = GetInstanceInfo()
 	local targetName = UnitName("target")
 	if targetName ~= nil and UnitPlayerControlled("target") == false then
 		jps.foundBoss = true
 	end
-	jps.raid.instance = {instance = name , enemy = targetName, difficulty = diffTable[difficultyID]}
+	jps.raid.instance["instance"] = name
+	jps.raid.instance["enemy"] = targetName
+	jps.raid.instance["difficulty"] = diffTable[difficultyID]
+
 	return jps.raid.instance
 end
 
@@ -240,14 +251,12 @@ function jps.raid.isValidEncounter()
 	return jps.targetIsRaidBoss(jps.RaidTargetUnit()), jps.RaidTargetUnit()
 end
 
-
-
 -- supported by jps
 function jps.raid.isSupported()
 	local supportedFight = false
 	local supportedSpec = false
 	local raidInfo = jps.raid.getInstanceInfo()
-	if  jps.raid.supportedEncounters[jps.raid.instance.instance] ~= nil then -- supported instance
+	if jps.raid.supportedEncounters[jps.raid.instance.instance] ~= nil then -- supported instance
 		if jps.raid.supportedEncounters[jps.raid.instance.instance][jps.raid.instance.enemy] ~= nil then -- supported encounter
 			supportedFight = true
 		end
@@ -291,7 +300,7 @@ function jps.raid.shouldCast(ability)
 		if jps.raid.supportedEncounters[jps.raid.instance.instance][jps.raid.instance.enemy] ~= nil then
 			encounterSpellName, encounterTypeOfAbility = parseStaticRaidTable(jps.raid.supportedEncounters[jps.raid.instance.instance][jps.raid.instance.enemy])
 			if encounterSpellName ~= nil then
-				if jps.raid.supportedAbilities[jps.Class][jps.Spec][spellname] ~= nil  then
+				if jps.raid.supportedAbilities[jps.Class][jps.Spec][spellname] ~= nil then
 					for spellnameTable, spellTable in pairs(jps.raid.supportedAbilities[jps.Class][jps.Spec][spellname]) do
 						if encounterTypeOfAbility == spellTable["spellType"] then
 							return true
@@ -323,7 +332,7 @@ jps.raid.frame:SetScript("OnUpdate", function(self, elapsed)
 	if jps.RaidMode and InCombatLockdown() == 1 then
 		if self.TimeSinceLastBigUpdate == nil then self.TimeSinceLastBigUpdate = 0 end
 		self.TimeSinceLastBigUpdate = self.TimeSinceLastBigUpdate + elapsed
-			if self.TimeSinceLastBigUpdate > jps.foundBossInterval  then
+			if self.TimeSinceLastBigUpdate > jps.foundBossInterval then
 				if jps.raid.validFight == false and jps.foundBossLoopsLeft > 0 then
 					jps.raid.fightEngaged()
 					jps.foundBossLoopsLeft = jps.foundBossLoopsLeft - 1

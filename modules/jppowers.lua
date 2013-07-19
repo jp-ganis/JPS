@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+	Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
 --------------------------
@@ -40,10 +40,10 @@ function jps.hpInc(unit,message)
 	local hpInc = UnitGetIncomingHeals(unit)
 	if not hpInc then hpInc = 0 end
 	if message == "abs" then
-    	return UnitHealthMax(unit) - (UnitHealth(unit) + hpInc)
+		return UnitHealthMax(unit) - (UnitHealth(unit) + hpInc)
 	else
-    	return (UnitHealth(unit) + hpInc)/UnitHealthMax(unit)
-    end
+		return (UnitHealth(unit) + hpInc)/UnitHealthMax(unit)
+	end
 end
 
 function jps.rage()
