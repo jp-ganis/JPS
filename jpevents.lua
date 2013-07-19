@@ -448,8 +448,12 @@ end)
 -- UNIT_SPELLCAST_SUCCEEDED
 jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
     --if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
-    jps.CurrentCast = {...}
-
+    jps.CurrentCast[1] = select(1, ...)
+    jps.CurrentCast[2] = select(2, ...)
+    jps.CurrentCast[3] = select(3, ...)
+    jps.CurrentCast[4] = select(4, ...)
+    jps.CurrentCast[5] = select(5, ...)
+    
     if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
         SaveView(2)
         if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then
@@ -484,12 +488,14 @@ jps.registerEvent("UNIT_HEALTH_FREQUENT", function(unit)
                 countTargets = jps.RaidTarget[unittarget_guid]["count"]
             end
             
-            jps.RaidTarget[unittarget_guid] = { 
-                ["unit"] = unittarget,
-                ["hpct"] = unittarget_hpct,
-                ["count"] = countTargets + 1
-            }
-        
+            if jps.RaidTarget[unittarget_guid] == nil then
+            	jps.RaidTarget[unittarget_guid] = {}
+            end
+            
+            jps.RaidTarget[unittarget_guid]["unit"] = unittarget
+            jps.RaidTarget[unittarget_guid]["hpct"] = unittarget_hpct
+            jps.RaidTarget[unittarget_guid]["count"] = countTargets  + 1
+            
         else
             jps_removeKey(jps.RaidTarget,unittarget_guid)
             jps_removeKey(jps.EnemyTable,unittarget_guid)
@@ -565,7 +571,10 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED",  function(...)
     and destFlags and (bit.band(destFlags,COMBATLOG_OBJECT_AFFILIATION_OUTSIDER) == 0)
     and jps.canHeal(destName) and (sourceGUID ~= nil) then
         local enemyFriend = jps_stringTarget(destName,"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
-        jps.EnemyTable[sourceGUID] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
+        if jps.EnemyTable[sourceGUID] == nil then
+        	jps.EnemyTable[sourceGUID] = {}
+        end
+        jps.EnemyTable[sourceGUID]["friend"] = enemyFriend  -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
     end
 	local action = select(2, ...)
 	local periodic = select(15, ...)
