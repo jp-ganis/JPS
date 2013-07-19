@@ -7,7 +7,8 @@ function update_healtable(...)
 	local healname = select(13, ...)
 	local healVal = select(15, ...)
     if Healtable[healname] == nil then
-		Healtable[healname] = { 	["healname"]= healname,
+		Healtable[healname] = { 	
+									["healname"]= healname,
 									["healtotal"]= healVal,
 									["healcount"]= 1,
 									["averageheal"]=healVal
@@ -242,17 +243,11 @@ jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend }  -- TABLE OF ENEMY TARG
 function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5
 	local unitname = select(1,UnitName(unit))
 	if jps.RaidStatus[unitname] then
-	local subgroup = jps.RaidStatus[unitname].subgroup
-	local unit_hpct = jps.hp(unit)
-	local unittarget = unit.."target"
-	local inrange_friend = jps.canHeal(unit)
-		jps.RaidStatus[unitname] = {
-			["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-			["hpct"] = unit_hpct,
-			["subgroup"] = subgroup,
-			["target"] = unittarget,
-			["inrange"] = inrange_friend
-		}
+		jps.RaidStatus[unitname]["unit"] = unit, -- RAID INDEX player, party..n, raid..n
+		jps.RaidStatus[unitname]["hpct"] = jps.hp(unit)
+		jps.RaidStatus[unitname]["subgroup"] = jps.RaidStatus[unitname].subgroup
+		jps.RaidStatus[unitname]["target"] = unit.."target"
+		jps.RaidStatus[unitname]["inrange"] = jps.canHeal(unit)
 	end
 end
 
@@ -294,9 +289,9 @@ function jps.SortRaidStatus()
 
 	for i=nps,npe do
 		if i==0 then
-		unit = "player"
+			unit = "player"
 		else
-		unit = group_type..i
+			unit = group_type..i
 		end
 		
 		local subgroup = select(3,GetRaidRosterInfo(i))
@@ -304,14 +299,14 @@ function jps.SortRaidStatus()
 		local unit_hpct = jps.hp(unit)
 		local unittarget = unit.."target"
 		local inrange_friend = jps.canHeal(unit)
-		
-			jps.RaidStatus[unitname] = {
-				["unit"] = unit, -- RAID INDEX player, party..n, raid..n
-				["hpct"] = unit_hpct,
-				["subgroup"] = subgroup,
-				["target"] = unittarget,
-				["inrange"] = inrange_friend
-			}
+
+		jps.RaidStatus[unitname] = {
+			["unit"] = unit, -- RAID INDEX player, party..n, raid..n
+			["hpct"] = unit_hpct,
+			["subgroup"] = subgroup,
+			["target"] = unittarget,
+			["inrange"] = inrange_friend
+		}
 	end
 end
 
