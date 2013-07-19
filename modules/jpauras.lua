@@ -207,44 +207,44 @@ jps.raidBuffs = {
 
 
 -- functions for raid buffs
+jps.staminaBuffs = {"Power Word: Fortitude", "Commanding Shout", "Qiraji Fortitude", "Dark Intent"}
 function jps.hasStaminaBuff(unit)
-	local validBuffs = {"Power Word: Fortitude", "Commanding Shout", "Qiraji Fortitude", "Dark Intent"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.staminaBuffs, unit)
 end
 
+jps.statsBuffs = {"Mark of the Wild", "Legacy of the Emperor", "Blessing of Kings", "Embrace of the Shale Spider"}
 function jps.hasStatsBuff(unit)
-	local validBuffs = {"Mark of the Wild", "Legacy of the Emperor", "Blessing of Kings", "Embrace of the Shale Spider"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.statsBuffs, unit)
 end
 
+jps.attackPowerBuffs = {"Horn of Winter", "Trueshot Aura", "Battle Shout"}
 function jps.hasAttackPowerBuff(unit)
-	local validBuffs = {"Horn of Winter", "Trueshot Aura", "Battle Shout"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.attackPowerBuffs, unit)
 end
 
+jps.hasteBuffs = {"Unholy Aura", "Swiftblade's Cunning", "Unleashed Rage","Cackling Howl","Serpent's Swiftness"}
 function jps.hasHasteBuff(unit)
-	local validBuffs = {"Unholy Aura", "Swiftblade's Cunning", "Unleashed Rage","Cackling Howl","Serpent's Swiftness"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.hasteBuffs, unit)
 end
 
+jps.spellHasteBuffs = {"Moonkin Aura", "Elemental Oath", "Mind Quickening","Energizing Spores"}
 function jps.hasSpellHasteBuff(unit)
-	local validBuffs = {"Moonkin Aura", "Elemental Oath", "Mind Quickening","Energizing Spores"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.spellHasteBuffs, unit)
 end
 
+jps.critBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Leader of the Pack","Legacy of the White Tiger","Fearless Roar","Still Water","Terrifying Roar","Furious Howl"}
 function jps.hasCritBuff(unit)
-	local validBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Leader of the Pack","Legacy of the White Tiger","Fearless Roar","Still Water","Terrifying Roar","Furious Howl"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.critBuffs, unit)
 end
 
+jps.spellPowerBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Burning Wrath", "Dark Intent", "Still Water"}
 function jps.hasSpellPowerBuff(unit)
-	local validBuffs = {"Arcane Brilliance", "Dalaran Brilliance", "Burning Wrath", "Dark Intent", "Still Water"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.spellPowerBuffs, unit)
 end
 
+jps.masteryBuffs = {"Blessing of Might","Grace of Air","Roar of Courage","Spirit Beast Blessing"}
 function jps.hasMasteryBuff(unit)
-	local validBuffs = {"Blessing of Might","Grace of Air","Roar of Courage","Spirit Beast Blessing"}
-	return jps.buffLooper(validBuffs, unit)
+	return jps.buffLooper(jps.masteryBuffs, unit)
 end
 
 function jps.hasSpellPowerCritBuff(unit)
