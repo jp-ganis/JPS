@@ -179,7 +179,9 @@ local castCarapace = false
 if (FriendTable[jps_TANK] ~= nil) and (health_pct_TANK > 0.75) then castCarapace = true end
 
 local function unitFor_SpiritShell(unit) -- Applied to FriendUnit
-	if (FriendTable[unit] ~= nil) and (jps.RaidStatus[unit].hpct > 0.75) then return true end
+	if jps.RaidStatus[unit] ~= nil then
+		if (FriendTable[unit] ~= nil) and (jps.RaidStatus[unit].hpct > 0.75) then return true end
+	end
 	return false
 end
 
