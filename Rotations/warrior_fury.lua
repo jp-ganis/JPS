@@ -9,6 +9,7 @@ function warrior.rangedTarget()
 	elseif jps.canDPS("targettarget") then
 		return "targettarget"
 	end
+	return "target"
 end
 
 jps.registerStaticTable("WARRIOR","FURY",
