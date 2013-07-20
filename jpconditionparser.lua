@@ -1,3 +1,10 @@
+--[[[
+@module Static Spell Tables
+@description
+Static Tables hava a significant advantage over old-style rotations - memory usage and to some extend execution time. Instead of 
+creating a new Table every Update Interval the table is only created once and used over and over again. This needs some major modifications
+to your rotation - you can find all relevant information on Transforming your Rotations in the PG forums.
+]]--
 local parser = {}
 parser.testMode = false
 
@@ -55,7 +62,51 @@ end
 
 parser.compiledTables = {}
 
--- Pick a spell from a priority table.
+--[[[
+@function parseStaticSpellTable
+@description 
+Parses a static spell table and returns the spell which should be cast or nil if no spell can be cast. 
+Spell Tables are Tables containing other Tables:[br]
+[code]
+{[br]
+[--]...[br]
+[--]{[SPELL], [CONDITION], [TARGET]},[br]
+[--]{"nested", [CONDITION], [NESTED SPELL TABLE]},[br]
+[--]{[MACRO], [CONDITION], [TARGET]},[br]
+[--]...[br]
+}[br]
+[/code]
+e.g:[br]
+[code]
+{[br]
+[--]...[br]
+[--]{"Greater Heal", 'jps.hp("target") <= 0.5', "target"},[br]
+[--]{{"macro", "/cast Flash Heal"}, 'jps.hp("player") < 0.6', "player"},[br]
+[--]{"nested", 'jps.MultiTarget', {...}},[br]
+[--]...[br]
+}[br]
+[/code][br]
+[i]SPELL[/i]:[br]
+Can either be a spell name or a spell id - id's are preferred since they will work on all client languages! This can also be 
+the keyword [code]"nested"[/code] - in this case the third paramter is not the target, but a nested spell table which should
+be executed if the condition is true.[br]
+[br]
+[i]MACRO[/i]:[br]
+Macro is a table (see example) which replaces the spell and has two elements: they keyword [code]"macro"[/code] and the macro itself.[br]
+[br]
+[i]CONDITION[/i]:[br]
+The condition determines if the spell should be executed - it can either be a boolean value, a function returning a boolean value 
+or a string. The string must contain a valid boolean expression which will then be re-evaluated every update interval. If there is no
+condition the spell will be used on cooldown[br]
+[br]
+[i]TARGET[/i]:[br]
+A WoW unit String or player name - can also be a function which returns this string! If there is no target [code]"target"[/code] 
+will be used as a default value.[br]
+[br]
+ 
+@param hydraTable static spell table
+@returns Tupel [code]spell,target[/code] if a spell should be cast, else [code]nil[/code]
+]]--
 function parseStaticSpellTable( hydraTable )
     if jps.firstInitializingLoop == true then return nil,"target" end
     if not parser.compiledTables[tostring(hydraTable)] then 
@@ -91,6 +142,7 @@ function parseStaticSpellTable( hydraTable )
 end
 
 -- Pick a spell from a priority table.
+--JPTODO: Document parseStaticRaidTable
 function parseStaticRaidTable( hydraTable )
     if not parser.compiledTables[tostring(hydraTable)] then 
         jps.compileRaidSpellTable(hydraTable)
@@ -485,6 +537,15 @@ function jps.compileRaidSpellTable(unparsedTable)
 end
 
 
+--[[[
+@function jps.cachedValue
+@description 
+This function generates a function which will store a value which might be too expensive to generate everytime. You must provide
+a function which generates the value which will be called every [code]updateInterval[/code] seconds to refresh the cached value.
+@param fn function which generates the value
+@param updateInterval [i]Optional:[/i] max age in seconds before the value is fetched again from the function - defaults to [code]jps.UpdateInterval[/code]
+@returns A function which will return the cached value
+]]--
 function jps.cachedValue(fn,updateInterval)
     if not updateInterval then updateInterval = jps.UpdateInterval end
     local value = fn()
