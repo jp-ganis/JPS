@@ -141,8 +141,20 @@ function parseStaticSpellTable( hydraTable )
     return nil
 end
 
--- Pick a spell from a priority table.
---JPTODO: Document parseStaticRaidTable
+--[[[
+@function parseStaticRaidTable
+@description 
+Parses a spellTable from a jps raid encounter. (jpraid.data.lua) [br]
+<strong>Spell</strong><br>
+spell is the encounter spellname<br>
+<strong>Condition</strong><br>
+conditions are either functions or booleans, similar like in normal spelltables but without macros or nested tables. The conditions could be like<br>
+[code]jps.raid.getTimer("Quills") < 2[/code]<br>
+<strong>SpellType</strong><br>
+spellType is the type of a "counter-ability" jps raid should execute to prevent incoming damage. (runSpeed, physicalDmgReduce etc.) Defined in jpraid.data.lua (jps.raid.supportedAbilities)
+@param hydraTable static spell table from jpraid.data.lua (jps.raid.supportedEncounters)
+@returns Tupel [code]spell,spellType[/code] if a spell should be cast, else [code]nil[/code]
+]]--
 function parseStaticRaidTable( hydraTable )
     if not parser.compiledTables[tostring(hydraTable)] then 
         jps.compileRaidSpellTable(hydraTable)

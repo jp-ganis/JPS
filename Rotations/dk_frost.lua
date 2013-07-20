@@ -1,3 +1,21 @@
+
+--[[[
+@rotation Frost PVE 5.3
+@class death knight
+@spec Frost
+@talents d!210011
+@author PCMD
+@description 
+This is a Raid-Rotation based on Simcraft results. While Bloodlusting it uses a potion of Mogu Power inside raids and a flask if you got one inside your bags.<br>
+It switches automatically to Frost presence. Unit's in focus or target are automatically battle-rezzed
+[br]
+Modifiers:[br]
+[*] [code]SHIFT[/code]: Casts Death and Decay[br]
+[*] [code]ALT[/code]:Places your Anti-Magic Zone[br]
+[*] [code]jps.Interrupts[/code]: Casts from target, focus will be interrupted br]
+[*] [code]jps.Defensive[/code]: uses Death Pact, Death Siphon(if skilled) and Death Strike(be careful this could reduce your dps)[br]
+]]--
+
 -- Talents:
 -- Tier 1: Plague Leech or Unholy Blight
 -- Tier 2: Anti-Magic Zone ( lichborne is a small dps loss , purgatory risky because of the debuff ) 
@@ -94,7 +112,18 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
 	{ "empower rune weapon",'jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
 }, "PVE 2H Simcraft")
-	
+--[[[
+@rotation Frost PVP 5.3
+@class death knight
+@spec Frost
+@talents d!210011
+@author PCMD
+@description 
+This is a small PVP Rotation without big changes to the normal but it allows you to choose the presence and it casts Necrotic Strike.
+[br]
+Modifiers:[br]
+[*] [code]SHIFT[/code]: Casts Death and Decay[br]
+]]--
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Horn of Winter",'not jps.buff("Horn of Winter")'},
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget'},
@@ -145,10 +174,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	-- Self heals
 	{ "Death Siphon",'jps.hp() < 0.8'},
 	{ "Death Strike",'jps.hp() < 0.7'},
-	
-	-- Dual wield specific. Disabling for now.
-	-- Frost Strike when we have a Killing Machine proc.
-	-- { "Frost Strike",'jps.buff("Killing Machin	e")'},
+
 	{ "Obliterate",'jps.runicPower() <= 76'},
 	{ "Obliterate",'jps.buff("Killing Machine")'},
 	{ "Obliterate",'jps.bloodlusting()'},
@@ -169,7 +195,16 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.bloodlusting()'},
 				
 }, "PVP 2h", false, true)
-	
+--[[[
+@rotation Diseases & Interrupt Rotation 5.3
+@class death knight
+@spec Frost
+@talents d!210011
+@author PCMD
+@description 
+This Rotation only spread's your diseases & interrupt units. The rest you have to do on your own.
+<br> [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
+]]--
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	-- Kicks
 	{ "mind freeze",'jps.shouldKick()'},
@@ -185,7 +220,4 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Outbreak",'jps.myDebuffDuration("Blood Plague") < 3'},
 	{ "Unholy Blight",'jps.myDebuffDuration("Frost Fever") < 3'},
 	{ "Unholy Blight",'jps.myDebuffDuration("Blood Plague") < 3'},
-	{ "Howling Blast",'jps.myDebuffDuration("Frost Fever") <= 1'},
-	{ "Howling Blast",'jps.buff("Freezing Fog") and jps.runicPower() < 88'},
-	{ "Plague Strike",'jps.myDebuffDuration("Blood Plague") <= 1'},
 }, "Kick Buff Debuff")
