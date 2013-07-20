@@ -164,6 +164,22 @@ class Module(DocFile):
             for start,end in self.sections[1:]:
                 LOG.debug("Function %d-%d in '%s':", start,end,filename)
                 self.functions.append(ModuleFunction(self.content[start:end]))
+            # Check functions
+            functionsInFile = getFunctions(filename)
+            undocumentedFunctionsInFile = getFunctions(filename)
+            functionCountInFile = len(functionsInFile)
+            functionCountCommented = 0
+            for mf in self.functions:
+                functionCountCommented = functionCountCommented + 1 # also count invalid!
+                if mf.isValid():
+                    if not mf.name in functionsInFile:
+                        LOG.warn("Module '%s' documents global function '%s', but doesn't exist in the file!", filename, mf.name)
+                    else:
+                        undocumentedFunctionsInFile.remove(mf.name)                
+            if functionCountInFile > functionCountCommented:
+                LOG.warn("Module '%s' has %d global functions, but only %d are commented! Undocumented: %s",filename, functionCountInFile, functionCountCommented, ", ".join(undocumentedFunctionsInFile)[2:])
+            if functionCountInFile < functionCountCommented:
+                LOG.warn("Module '%s' only has %d global functions, but %d are commented!",filename, functionCountInFile, functionCountCommented)
 
     def isValid(self):
         return hasattr(self, "name") and self.name != None
@@ -261,6 +277,17 @@ class RotationComment(DocElement):
         return msg
 
 
+
+def getFunctions(filename):
+    functions = []
+    for line in open(filename,"r").readlines():
+        if line.startswith("function"):
+            res = re.search("(?<=function)[^(]*",line)
+            if res:
+                fn = res.group(0).strip()
+                LOG.debug("Found Function in '%s': %s", filename,fn)
+                functions.append(fn)
+    return functions
 
 def getFileTodoDoc(filename):
     todos = []

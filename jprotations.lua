@@ -81,6 +81,7 @@ local function tableCount(rotationTable, key)
     return table.getn(rotationTable[key])
 end
 
+--[[[ Internal function: Allows the DropDown to change the active rotation ]]--
 function jps.setActiveRotation(idx)
     local maxCount = 0
     if jps.PvP then
@@ -118,13 +119,15 @@ function jps.registerRotation(class,spec,fn,tooltip,pve,pvp,config)
     jps.resetRotationTable()
 end
 
+
+--[[[ Internal function: Resets the active Rotation, e.g. if the drop down was changed ]]--
 function jps.resetRotationTable()
     jps.initializedRotation = false
     jps.setActiveRotation(activeRotation)
     jps.activeRotation()
 end
 
-
+--[[[ Debug Function - prints all Rotations sorted by class and spec ]]--
 function jps.printRotations()
     for ci,class in ipairs(classNames) do
         local msg = class .. ": "
@@ -183,6 +186,8 @@ function jps.registerStaticTable(class,spec,spellTable,tooltip,pve,pvp,config)
     jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,pve,pvp,config)
 end
 
+
+--[[[ Internal function: Returns the active Rotation for use in the Combat Loop ]]--
 function jps.activeRotation(rotationTable)
     if rotationTable == nil then
         if jps.PvP then return jps.activeRotation(pvpRotations) else return jps.activeRotation(pveRotations) end
