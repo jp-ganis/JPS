@@ -2,8 +2,8 @@ import re
 import glob
 import os
 
-MODULE_GLOBS = ["../modules/*.lua"]
-ADVANCED_GLOBS = ["../jpconditionparser.lua","../jplogging.lua","../jpparse.lua","../jpevents.lua"]
+MODULE_GLOBS = ["../jpconditionparser.lua","../jprotations.lua","../modules/*.lua"]
+ADVANCED_GLOBS = ["../jplogging.lua","../jpparse.lua","../jpevents.lua"]
 ROTATION_GLOBS = ["../Rotations/*.lua"]
 TODO_GLOBS = ["../*.lua","../*/*.lua"]
 TALENT_CALCULATOR_URL = "http://eu.battle.net/wow/en/tool/talent-calculator"

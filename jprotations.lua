@@ -1,3 +1,10 @@
+--[[[
+@module Rotation Registry
+@description 
+Rotations are stored in a central registry - each class/spec combination can have multiple Rotations.
+Most of the rotations are registered on load, but you can also (un)register Rotations during runtime.
+You could even outsource your rotations to a separate addon if you want to.
+]]--
 local pveRotations = {}
 local pvpRotations = {}
 local activeRotation = 1
@@ -85,6 +92,19 @@ function jps.setActiveRotation(idx)
     activeRotation = idx
 end
 
+--[[[
+@function jps.registerRotation
+@description 
+Registers the given Rotation. If you register more than one Rotation per Class/Spec you will get a Drop-Down Menu where you can
+choose your Rotation.
+@param class Uppercase english classname or <a href="http://www.wowpedia.org/ClassId">Class ID</a>
+@param spec Uppercase english spec name (no abbreviations!) or spec id
+@param fn Rotation function
+@param tooltip Unique Name for this Rotation
+@param pve [i]Optional:[/i] [code]True[/code] if this should be registered as PvE rotation else [code]False[/code] - defaults to  [code]True[/code]
+@param pvp [i]Optional:[/i] [code]True[/code] if this should be registered as PvP rotation else [code]False[/code] - defaults to  [code]True[/code]
+@param config [i]Optional:[/i] Key/Value Pair Table which contains Config which can be used in your rotation #see:jps.getRotationValue - defaults to [code]{}[/code]
+]]--
 function jps.registerRotation(class,spec,fn,tooltip,pve,pvp,config)
     local key = toKey(class, spec)
     if pve==nil then pve = true end
@@ -118,6 +138,16 @@ function jps.printRotations()
     end
 end
 
+--[[[
+@function jps.unregisterRotation
+@description 
+Unregister the Rotation with the given tooltip. You can choose to only unregister the rotation for PvE or PvP.
+@param class Uppercase english classname or <a href="http://www.wowpedia.org/ClassId">Class ID</a>
+@param spec Uppercase english spec name (no abbreviations!) or spec id
+@param tooltip Name of the Rotation to unregister
+@param pve [i]Optional:[/i] [code]True[/code] if this should only be unregistered from the PvE rotations else [code]False[/code] - defaults to  [code]True[/code]
+@param pvp [i]Optional:[/i] [code]True[/code] if this should only be unregistered from the PvP rotations else [code]False[/code] - defaults to  [code]True[/code]
+]]--
 function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
     local key = toKey(class, specId)
     if pve==nil then pve = true end
@@ -136,12 +166,21 @@ function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
     end end
 end
 
-function jps.registerTable(class,spec,spellTable,tooltip,pve,pvp,config)
-    jps.registerRotation(class,spec,function() return parseSpellTable(spellTable) end,tooltip,pve,pvp,config)
-end
-
-function jps.registerStaticTable(class,spec,spellTable,tooltip,config,pve,pvp)
-    jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,config,pve,pvp)
+--[[[
+@function jps.registerStaticTable
+@description
+Short-hand function for registering static spell tables which usually only have a function with [code]return parseStaticSpellTable(spellTable)[/code].
+For mor info look at #see:jps.registerRotation.
+@param class Uppercase english classname or <a href="http://www.wowpedia.org/ClassId">Class ID</a>
+@param spec Uppercase english spec name (no abbreviations!) or spec id
+@param spellTabel static spell table
+@param tooltip Unique Name for this Rotation
+@param pve [i]Optional:[/i] [code]True[/code] if this should be registered as PvE rotation else [code]False[/code] - defaults to  [code]True[/code]
+@param pvp [i]Optional:[/i] [code]True[/code] if this should be registered as PvP rotation else [code]False[/code] - defaults to  [code]True[/code]
+@param config [i]Optional:[/i] Key/Value Pair Table which contains Config which can be used in your rotation #see:jps.getRotationValue - defaults to [code]{}[/code]
+]]--
+function jps.registerStaticTable(class,spec,spellTable,tooltip,pve,pvp,config)
+    jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,pve,pvp,config)
 end
 
 function jps.activeRotation(rotationTable)
@@ -171,6 +210,18 @@ function jps.activeRotation(rotationTable)
     jps.initializedRotation = true
 
     if not rotationTable[getCurrentKey()][activeRotation] then return nil end
-    jps.Tooltip = rotationTable[getCurrentKey()][jps.Count].tooltip
+    jps.Tooltip = rotationTable[getCurrentKey()][activeRotation].tooltip
     return rotationTable[getCurrentKey()][activeRotation]
+end
+
+--[[[
+@function jps.getRotationValue
+@description
+If you supplied your rotation with a config table, you can access it's values with this function.
+@param key Key for the config table
+@returns Config value for the given key
+]]--
+function jps.getRotationValue(key)
+    if not rotationTable[getCurrentKey()][activeRotation] or rotationTable[getCurrentKey()][activeRotation].config return nil end
+    return rotationTable[getCurrentKey()][activeRotation].config[key]
 end
