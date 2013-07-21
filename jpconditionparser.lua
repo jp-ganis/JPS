@@ -23,8 +23,12 @@ function fnConditionEval(conditions)
         return true
     elseif type(conditions) == "boolean" then
         return conditions
-    else
+    elseif type(conditions) == "number" then
+        return conditions ~= 0
+    elseif type(conditions) == "function" then
         return conditions()
+    else
+        return false
     end
 end
 
@@ -53,7 +57,7 @@ function fnParseMacro(macro, condition, target)
                 end
             end
         else
-            return "/cast " .. tostring(GetSpellInfo(macro))
+            jps.Macro("/cast " .. tostring(GetSpellInfo(macro)))
         end
 
         if changeTargets then jps.Macro("/targetlasttarget") end
@@ -125,6 +129,7 @@ function parseStaticSpellTable( hydraTable )
         elseif spellTable[1] == "nested" then
             if fnConditionEval(spellTable[2]) then
                 spell, target = parseStaticSpellTable( spellTable[3] )
+                conditions = spell ~=nil
             end
         -- Default: {spell[[, condition[, target]]}
         else
@@ -134,7 +139,7 @@ function parseStaticSpellTable( hydraTable )
         end
 
         -- Return spell if conditions are true and spell is castable.
-        if spell ~= nil and fnConditionEval(conditions) and jps.canCast(spell,target) then
+        if spell ~= nil and conditions and jps.canCast(spell,target) then
             return spell,target 
         end
     end

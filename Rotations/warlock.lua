@@ -148,7 +148,7 @@ function wl.soulStone(unit)
     if not unit then unit = "target" end
     local soulStoneTable = {wl.spells.soulStone, false, unit}
     return function()
-        soulStoneTable[2] = IsControlKeyDown() ~=nil and jps.cooldown(wl.spells.soulStone) == 0 and UnitIsDeadOrGhost(unit) == 1 and UnitPlayerControlled(unit)
+        soulStoneTable[2] = IsControlKeyDown() ~=nil and jps.cooldown(wl.spells.soulStone) == 0 and UnitIsDeadOrGhost(unit) == 1 and UnitIsFriend("player",unit) == 1
         return soulStoneTable
     end
 end
