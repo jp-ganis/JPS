@@ -350,7 +350,6 @@ function parseMultiUnitTable( spellTable )
 		table.insert( unitTable, 1, spell )
 		table.insert( unitTable, 2, unitFunction(unit) )
 		table.insert( unitTable, 3, unit )
-		-- WARNING THE TABLE NEED A VALID MASSAGE TO CONCATENATE IN PARSEMULTIUNITTABLE
 		table.insert( unitTable, 4, message..unit )
 		table.insert( sirenTable, unitTable )
 	end

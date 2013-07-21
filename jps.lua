@@ -206,11 +206,11 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg== "disable" or msg == "d" then
 		jps.Enabled = false
 		jps.gui_toggleEnabled(false)
-		write("dislabed")
+		write("jps Disabled.")
 	elseif msg== "enable" or msg == "e" then
 		jps.Enabled = true
 		jps.gui_toggleEnabled(true)
-		write("enabled")
+		write("jps Enabled.")
 	elseif msg == "respec" then
 		jps.detectSpec()
 	elseif msg == "multi" or msg == "aoe" then
@@ -232,7 +232,7 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
 	elseif msg == "fishing" or msg == "fish" then
-	  jps.Fishing = not jps.Fishing
+		jps.Fishing = not jps.Fishing
 		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
@@ -254,7 +254,6 @@ function SlashCmdList.jps(cmd, editbox)
 		else
 			write("Raid Mode is now disabled")
 		end
-		
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
@@ -337,7 +336,7 @@ function jps_Combat()
 	-- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	-- in case you want to play only with /jps pew the RaidStatus table will be updated
-	if not jps.Enabled or not jps.Combat then jps.SortRaidStatus() end
+	if not jps.Enabled then jps.SortRaidStatus() end
 	
 	-- Check spell usability 
 	if string.len(jps.customRotationFunc) > 10 then
