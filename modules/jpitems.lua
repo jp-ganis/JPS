@@ -95,7 +95,7 @@ function parseTrinketText(trinket,str)
 	return found
 end
 
-function Tooltip_Parse(trinket)
+function jps.trinketUse(trinket)
 	return parseTrinketText(trinket, L["Use"])
 end
 

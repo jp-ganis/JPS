@@ -30,9 +30,9 @@ end
 
 -- Displays the different health values - mainly for tweaking/debugging
 function print_healtable(self)
- for k,v in pairs(Healtable) do
-	print(k,"|cffff8000", Healtable[k]["healtotal"]," ", Healtable[k]["healcount"]," ", Healtable[k]["averageheal"])
- end
+	for k,v in pairs(Healtable) do
+		print(k,"|cffff8000", Healtable[k]["healtotal"]," ", Healtable[k]["healcount"]," ", Healtable[k]["averageheal"])
+	end
 end
 
 -- Returns the average heal value of given spell. 
@@ -49,18 +49,18 @@ end
 ----------------------------
 
 function jps.UpdateHealerBlacklist(self)
- if #jps.HealerBlacklist > 0 then
-	for i = #jps.HealerBlacklist, 1, -1 do
-		 if GetTime() - jps.HealerBlacklist[i][2] > jps.BlacklistTimer then
-			if jps.Debug then print("Releasing ", jps.HealerBlacklist[i][1]) end
-			table.remove(jps.HealerBlacklist,i)
-		 end
+	if #jps.HealerBlacklist > 0 then
+		for i = #jps.HealerBlacklist, 1, -1 do
+			if GetTime() - jps.HealerBlacklist[i][2] > jps.BlacklistTimer then
+				if jps.Debug then print("Releasing ", jps.HealerBlacklist[i][1]) end
+				table.remove(jps.HealerBlacklist,i)
+			end
+		end
 	end
- end
 end
 
 function jps.PlayerIsBlacklisted(unit)
- for i = 1, #jps.HealerBlacklist do
+	for i = 1, #jps.HealerBlacklist do
 		if jps.HealerBlacklist[i][1] == unit then
 			return true
 		end
@@ -96,7 +96,7 @@ function jps.CountInRaidStatus(lowHealthDef)
 end
 
 -- LOWEST PERCENTAGE in RaidStatus
-function jps.LowestInRaidStatus() 
+function jps.LowestInRaidStatus()
 	local lowestUnit = jpsName
 	local lowestHP = 1
 	for unit,unitTable in pairs(jps.RaidStatus) do
@@ -133,16 +133,16 @@ function jps.avgRaidHP(noFilter)
 	avgHP = raidHP / unitCount
 	if not avgHP then return 1 end
 	if unitCount > 10 or noFilter == true then
-		return avgHP 
+		return avgHP
 	end
 	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% hp difference to avg hp
 	for unit, unitTable in pairs(jps.RaidStatus) do
 		if unitTable["inrange"] then
 			unitHP = unitTable["hpct"]
 			if unitHP then
-				if unitHP < (avgHP / 1.3 ) then
+				if unitHP < (avgHP / 1.3) then
 					raidHP = raidHP - unitHP
-					unitCount = unitCount -1
+					unitCount = unitCount - 1
 				end
 			end
 		end

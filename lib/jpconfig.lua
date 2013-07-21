@@ -504,7 +504,7 @@ function jps.addRotationDropdownFrame()
 end
 
 ---------------------------
--- HIDE/SHOP DROPDOWN SPELLS
+-- HIDE/SHOW DROPDOWN SPELLS
 ---------------------------
 
 function jps.DropdownRotationTogle(key, status)

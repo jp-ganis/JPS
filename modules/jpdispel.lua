@@ -38,14 +38,14 @@ function jps.canDispel( unit, ... )
 end
 
 function jps.FindMeDispelTarget(dispeltypes) -- jps.FindMeDispelTarget({"Magic"}, {"Poison"}, {"Disease"})
-	 for unit,index in pairs(jps.RaidStatus) do
+	for unit,index in pairs(jps.RaidStatus) do
 		if (index["inrange"] == true) and jps.canDispel(unit,dispeltypes) then return unit end
 	end
 end
 
 function jps.MagicDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
-		if not jps.canHeal(unit) then return false end
-		if debuffunit == nil then debuffunit = "Magic" end
+	if not jps.canHeal(unit) then return false end
+	if debuffunit == nil then debuffunit = "Magic" end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
@@ -59,8 +59,8 @@ function jps.MagicDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 end
 
 function jps.DiseaseDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
-		if not jps.canHeal(unit) then return false end
-		if debuffunit == nil then debuffunit = "Disease" end
+	if not jps.canHeal(unit) then return false end
+	if debuffunit == nil then debuffunit = "Disease" end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
@@ -74,8 +74,8 @@ function jps.DiseaseDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 end
 
 function jps.PoisonDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
-		if not jps.canHeal(unit) then return false end
-		if debuffunit == nil then debuffunit = "Poison" end
+	if not jps.canHeal(unit) then return false end
+	if debuffunit == nil then debuffunit = "Poison" end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
@@ -96,14 +96,14 @@ function jps.DispelMagicTarget()
 end 
 
 function jps.DispelDiseaseTarget()
-if jps.getConfigVal("Dispel Disease") == 0 then return false end
+	if jps.getConfigVal("Dispel Disease") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.DiseaseDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelPoisonTarget()
-if jps.getConfigVal("Dispel Poison") == 0 then return false end
+	if jps.getConfigVal("Dispel Poison") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.PoisonDispel(unit) then return unit end
 	end
