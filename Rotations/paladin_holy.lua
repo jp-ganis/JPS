@@ -15,7 +15,6 @@
 	---- Key modifiers
 	--------------------------------------------------------------------------------------------
 	
-	-- left ALT key		- for beacon of light on mouseover
 	-- left Shift Key 		- for Light's Hammer
 	-- left CTRL key for light of dawn
 	
@@ -78,17 +77,6 @@ function hpala.myTank()
 	return hpala.myTankValue
 end
 
-function hpala.checkBeaconUnit()
-	----------------------
-	-- dont change manually set beacon on a mouseover
-	----------------------
-	if jps.beaconTarget ~=  nil then
-		if not jps.buff("Beacon of Light", jps.beaconTarget) or not jps.canHeal(jps.beaconTarget) then
-			jps.beaconTarget = nil
-		end
-	end
-end
-
 function hpala.myLowestImportantUnit()
 	return hpala.myLowestImportantUnitValue
 end
@@ -137,6 +125,13 @@ hpala.spellTable = {
 	{ "Rebuke",'jps.shouldKick(hpala.rangedTarget())', hpala.rangedTarget },
 	{ "Rebuke",'jps.shouldKick("focus")', "focus" },
 	{ "Fist of Justice",'jps.shouldKick(hpala.rangedTarget()) and jps.cooldown("Rebuke")~=0', hpala.rangedTarget },
+
+-- Spells
+	{ "Cleanse",'jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil', jps.DispelFriendlyTarget()  , "dispelling unit " },
+	-- dispel ALL DEBUFF of FriendUnit
+	{ "Cleanse",'jps.dispelActive() and jps.DispelMagicTarget() ~= nil', jps.DispelMagicTarget() , "dispelling unit" },
+	{ "Cleanse",'jps.dispelActive() and jps.DispelPoisonTarget() ~= nil', jps.DispelPoisonTarget() , "dispelling unit" },
+	{ "Cleanse",'jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil', jps.DispelDiseaseTarget() , "dispelling unit" },
 	
 -- Cooldowns                     
 	{ "Lay on Hands",'jps.hp(hpala.myLowestImportantUnit()) < 0.20 and jps.UseCDs', hpala.myLowestImportantUnit, "casted lay on hands!" },
@@ -163,12 +158,11 @@ hpala.spellTable = {
 	{ "Light's Hammer",'IsShiftKeyDown() ~= nil', hpala.ourHealTarget },
 	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.holyPower() > 2', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.buff("Divine Purpose")', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
-	{ "Holy Radiance",'jps.CountInRaidStatus(0.7) > 4', hpala.ourHealTarget },  	
-	{ "Holy Radiance",'jps.MultiTarget and jps.CountInRaidStatus(0.7) > 2', hpala.ourHealTarget },  	
+	--{ "Holy Radiance",'jps.CountInRaidStatus(0.7) > 4', hpala.ourHealTarget },  	
+	{ "Holy Radiance",'jps.MultiTarget and jps.CountInRaidStatus(0.71) > 2', hpala.ourHealTarget },  	
 
 	-- Buffs
 	{ "Seal of Insight",'GetShapeshiftForm() ~= 3', hpala.player },
-	{ "Beacon of Light",'jps.canHeal("mouseover") and IsAltKeyDown() ~= nil and not jps.buff("Beacon of Light","mouseover")', "mouseover" , "set beacon of light to our mouseover" },  -- set beacon of light on mouseover
 	{ "Beacon of Light",'UnitIsUnit(hpala.myTank(),hpala.player())~=1 and not jps.buff("Beacon of Light",hpala.myTank()) and jps.beaconTarget == nil', hpala.myTank }, 
 	{ "Eternal Flame",'jps.holyPower() > 2 and not jps.buff("Eternal Flame", hpala.myTank())', hpala.myTank },
 	{ "Eternal Flame",'jps.buff("Divine Purpose") and not jps.buff("Eternal Flame", hpala.myTank())', hpala.myTank },
@@ -181,20 +175,12 @@ hpala.spellTable = {
 	{ "Divine Light",'jps.buff("Infusion of Light") and jps.hp(hpala.ourHealTarget()) < 0.6', hpala.ourHealTarget }, 
 
 -- Divine Purpose Proc
-	{ "Eternal Flame",'jps.holyPower() > 2 and not jps.buff("Eternal Flame", hpala.ourHealTarget())  and jps.hp(hpala.ourHealTarget()) < 0.97', hpala.ourHealTarget },
 	{ "Eternal Flame",'jps.buff("Divine Purpose") and not jps.buff("Eternal Flame", hpala.ourHealTarget())  and jps.hp(hpala.ourHealTarget()) < 0.97', hpala.ourHealTarget },
 	{ "Word of Glory",'jps.buff("Divine Purpose") and jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget }, 
 
 -- Daybreak Proc
 	{ "Holy Shock",'jps.buff("Daybreak") and jps.hp(hpala.ourHealTarget()) < 0.9', hpala.ourHealTarget }, -- heals with daybreak buff other targets
 
--- Spells
-	{ "Cleanse",'jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil', jps.DispelFriendlyTarget()  , "dispelling unit " },
-	-- dispel ALL DEBUFF of FriendUnit
-	{ "Cleanse",'jps.dispelActive() and jps.DispelMagicTarget() ~= nil', jps.DispelMagicTarget() , "dispelling unit" },
-	{ "Cleanse",'jps.dispelActive() and jps.DispelPoisonTarget() ~= nil', jps.DispelPoisonTarget() , "dispelling unit" },
-	{ "Cleanse",'jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil', jps.DispelDiseaseTarget() , "dispelling unit" },
-	
 	-- tank + focus + target
 	{ "Flash of Light",'jps.hp(hpala.ourHealTarget()) < 0.35 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.78  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
@@ -218,14 +204,10 @@ jps.registerRotation("PALADIN","HOLY",function()
 	if (GetTime() - hpala.timestamp) > hpala.UpdateInterval then
 		hpala.update()
 		hpala.timestamp = GetTime()
-		hpala.checkBeaconUnit()
 		hpala.shouldInterruptCasting(hpala.interruptTable)
 	end
 
 	spell,target = parseStaticSpellTable(hpala.spellTable)
-	
-	if spell == "Beacon of Light" then
-		jps.beaconTarget = target
-	end
+
 	return spell,target
 end, "Default")
