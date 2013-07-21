@@ -336,7 +336,7 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.55
 		-- "Soins rapides" 2061 -- "Sursis" 59889 "Borrowed"
 		{ 2061, jps.buff(59889,player) , jps_TANK , "Emergency_Soins Rapides_Borrowed_"..jps_TANK },
 		-- "Cascade" 121135
-		{ 121135, (UnitIsUnit(jps_TANK,player)~=1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
+		{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
 		-- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
 		{ 2061, jps.buffId(89485) , jps_TANK , "Emergency_Soins Rapides_Focal_"..jps_TANK },
 		-- "Soins de lien"
@@ -410,7 +410,7 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		
 	-- OTHERS
 		-- "Cascade" 121135
-		{ 121135, (UnitIsUnit(jps_TANK,player)~=1) and (health_deficiency_TANK > average_flashheal) and (countInRange > 2), jps_TANK , "Cascade_Carapace_"..jps_TANK },
+		{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_Carapace_"..jps_TANK },
 		-- "Renew"
 		{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Carapace_Renovation_"..jps_TANK },
 		-- "Don des naaru"
@@ -547,7 +547,7 @@ local spellTable =
 -- "Pénitence" 47540
 	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
 -- "Cascade" 121135 "Escalade"
-	{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Prière de guérison" 33076
 	{ "nested", true , parse_mending() },
 -- "Don des naaru" 59544
@@ -622,7 +622,7 @@ local spellTable_moving =
 	-- "Pénitence" 47540 avec talent possible caster en moving
 	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK },
 	-- "Escalade" 121135 "Cascade"
-	{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2) , jps_TANK  },
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2) , jps_TANK  },
 	-- "Power Word: Shield" 17 -- Ame affaiblie 6788)
 	{ "nested", true , parse_shield() },		
 	-- "Prière de guérison" 33076
