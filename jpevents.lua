@@ -194,6 +194,7 @@ local reportInterval = 15
 local maxProfileDuration = 60
 local lastReportUpdate = 0
 local totalProfileDuration = 0
+--[[[ Internal - Memory Usage Report ]]--
 function jps.reportMemoryUsage(elapsed)
 	lastReportUpdate = lastReportUpdate + elapsed
 	totalProfileDuration = totalProfileDuration + elapsed
