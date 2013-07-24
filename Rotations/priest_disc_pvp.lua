@@ -99,8 +99,6 @@ for name,index in pairs(jps.RaidStatus) do
 if (index["inrange"] == true) then table.insert(FriendUnit,name) end
 end
 
-local ArenaUnit = {"arena1","arena2","arena3"}
-
 -- JPS.CANDPS NE MARCHE QUE POUR PARTYn et RAIDn..TARGET PAS POUR UNITNAME..TARGET
 local EnemyUnit = {}
 for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end -- EnemyUnit[1]
@@ -547,12 +545,10 @@ local spellTable =
 	{ 2061, jps.buffId(89485) and not jps.buff(47515,jps_TANK) , jps_TANK , "Soins Rapides_Focal_Egide_"..jps_TANK },
 	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Focal_MultiUnit_" },
--- "Pénitence" 47540
-	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
--- "Cascade" 121135 "Escalade"
-	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Prière de guérison" 33076
 	{ "nested", true , parse_mending() },
+-- "Cascade" 121135 "Escalade"
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Don des naaru" 59544
 	{ 59544, (select(2,GetSpellBookItemInfo(giftnaaru))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK },
 
@@ -567,6 +563,8 @@ local spellTable =
 -- parse_DMG
 	{ "nested", jps.FaceTarget and (health_pct_TANK > 0.75) , parse_dmg() },
 
+-- "Pénitence" 47540
+	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
 -- "Focalisation intérieure" 89485 -- 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
 	{ 89485, UnitAffectingCombat(player)==1 and (jps.cooldown(89485) == 0) , player },
 -- "Prière de soins" 596
@@ -603,10 +601,10 @@ local spellTable_moving =
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and canFear and not(unitLoseControl(rangedTarget)) , rangedTarget },
 
 -- AGGRO PLAYER
-	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
-	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
+	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
+	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
 
 -- EMERGENCY PLAYER
 	{ 33206, (playerhealth_pct < 0.40) and (UnitAffectingCombat(player)==1) , player} , -- "Suppression de la douleur"

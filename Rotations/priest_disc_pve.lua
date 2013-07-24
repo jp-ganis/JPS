@@ -266,7 +266,7 @@ local table=
 	-- Dispel "Purifier" 527
 	{ 527, jps.DispelFriendly , FriendUnit , "dispelFriendly_MultiUnit_" }, -- jps.DispelFriendly is a function must be alone in condition
 	{ 527, unitFor_Dispel , FriendUnit , "dispelMagic_Cond_Multi_" }, 
-	{ 527, isInBG and jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition -- Dispel all Magic debuff
+	{ 527, jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition -- Dispel all Magic debuff
 
 }
 return table
@@ -547,10 +547,10 @@ local spellTable =
 	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Focal_MultiUnit_" },
 -- "Pénitence" 47540
 	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
--- "Cascade" 121135 "Escalade"
-	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Prière de guérison" 33076
 	{ "nested", true , parse_mending() },
+-- "Cascade" 121135 "Escalade"
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Don des naaru" 59544
 	{ 59544, (select(2,GetSpellBookItemInfo(giftnaaru))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK },
 
@@ -601,10 +601,10 @@ local spellTable_moving =
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and canFear and not(unitLoseControl(rangedTarget)) , rangedTarget },
 
 -- AGGRO PLAYER
-	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
-	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
+	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
+	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
 
 -- EMERGENCY PLAYER
 	{ 33206, (playerhealth_pct < 0.40) and (UnitAffectingCombat(player)==1) , player} , -- "Suppression de la douleur"
@@ -668,7 +668,7 @@ local spellTable_moving =
 		spell, target = parseSpellTable(spellTable)
 	end
 	return spell,target
-	
+
 end, "Disc Priest PvE", true, false)
 
 -- "Leap of Faith" -- "Saut de foi" 

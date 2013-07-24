@@ -8,7 +8,7 @@ to your rotation - you can find all relevant information on Transforming your Ro
 local parser = {}
 parser.testMode = false
 
-function fnTargetEval(target)
+local function fnTargetEval(target)
     if target == nil then
         return "target"
     elseif type(target) == "function" then
@@ -18,7 +18,7 @@ function fnTargetEval(target)
     end
 end
 
-function fnConditionEval(conditions)
+local function fnConditionEval(conditions)
     if conditions == nil or conditions == "onCD" then
         return true
     elseif type(conditions) == "boolean" then
@@ -32,7 +32,7 @@ function fnConditionEval(conditions)
     end
 end
 
-function fnParseMacro(macro, condition, target)
+local function fnParseMacro(macro, condition, target)
     if condition then
         -- Workaround for TargetUnit is still PROTECTED despite goblin active
         local changeTargets = target ~= "target" and jps.UnitExists(target) 
@@ -304,13 +304,14 @@ end
     parameterlist = <value> | <value> ',' <parameterlist>
 ]]
 
-
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function parser.pop(tokens)
     local t,v = unpack(tokens[1])
     table.remove(tokens, 1)
     return t,v
 end
 
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function parser.lookahead(tokens)
     if tokens[1] then
         local t,v = unpack(tokens[1])
@@ -320,15 +321,17 @@ function parser.lookahead(tokens)
     end
 end
 
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function parser.lookaheadType(tokens)
     return parser.lookahead(tokens)
 end
 
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function parser.lookaheadData(tokens)
     return select(2,parser.lookahead(tokens))
 end
 
--- conditions = <condition> | <condition> 'and' <conditions> | <condition> 'or' <conditions>
+---[[[ Internal Parsing function - DON'T USE !!! conditions = <condition> | <condition> 'and' <conditions> | <condition> 'or' <conditions> ]]--
 function parser.conditions(tokens, bracketLevel)
     local condition1 = parser.condition(tokens, bracketLevel)
 
@@ -360,7 +363,7 @@ function parser.conditions(tokens, bracketLevel)
     end
 end
 
--- condition = 'not' <condition> | '(' <conditions> ')' | <comparison>
+---[[[ Internal Parsing function - DON'T USE !!! -- condition = 'not' <condition> | '(' <conditions> ')' | <comparison> ]]--
 function parser.condition(tokens, bracketLevel)
     local t, v = parser.lookahead(tokens)
     if t == "keyword" and v == "not" then
@@ -374,8 +377,8 @@ function parser.condition(tokens, bracketLevel)
     end
 end
 
--- comparison = <value> <comparator> <value>
--- comparator = '<' | '<=' | '=' | '==' | '~=' | '>=' | '>'
+
+---[[[ Internal Parsing function - DON'T USE !!! -- comparison = <value> <comparator> <value> -- comparator = '<' | '<=' | '=' | '==' | '~=' | '>=' | '>' ]]--
 function parser.comparison(tokens)
     local value1 = parser.value(tokens)
     local t = parser.lookaheadType(tokens)
@@ -408,7 +411,7 @@ function parser.comparison(tokens)
     end
 end
 
--- value      = <identifier> | STRING | NUMBER | BOOLEAN | 'nil'
+---[[[ Internal Parsing function - DON'T USE !!! -- value      = <identifier> | STRING | NUMBER | BOOLEAN | 'nil']]--
 function parser.value(tokens)
     local t, v = parser.lookahead(tokens)
     if t == "number" or t == "string" then
@@ -427,7 +430,7 @@ function parser.value(tokens)
     return parser.identifier(tokens)
 end
 
--- identifier = IDEN | IDEN'.'<accessor> | IDEN '(' ')' | IDEN'('<parameterlist>')
+---[[[ Internal Parsing function - DON'T USE !!! -- identifier = IDEN | IDEN'.'<accessor> | IDEN '(' ')' | IDEN'('<parameterlist>')]]--
 function parser.identifier(tokens)
     local t, v = parser.pop(tokens)
     if t ~= "iden" then
@@ -453,7 +456,7 @@ function parser.identifier(tokens)
 
 end
 
--- accessor = IDEN | IDEN.<accessor>
+---[[[ Internal Parsing function - DON'T USE !!! -- accessor = IDEN | IDEN.<accessor>]]--
 function parser.accessor(tokens, base)
     local t, v = parser.pop(tokens)
     if t ~= "iden" then
@@ -468,7 +471,7 @@ function parser.accessor(tokens, base)
 end
 
 
--- parameterlist = <value> | <value> ',' <parameterlist>
+---[[[ Internal Parsing function - DON'T USE !!! -- parameterlist = <value> | <value> ',' <parameterlist>]]--
 function parser.parameterlist(tokens)
     if parser.lookaheadType(tokens) == ")" then
         parser.pop(tokens)
@@ -489,7 +492,7 @@ end
 
 
 
-
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function jps.conditionParser(str)
     if type(str) == "function" then return str end
     local tokens = {}
@@ -512,7 +515,7 @@ function jps.conditionParser(str)
     return fn
 end
 
-
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function jps.compileSpellTable(unparsedTable)
     local spell = nil
     local conditions = nil
@@ -534,6 +537,7 @@ function jps.compileSpellTable(unparsedTable)
     return unparsedTable
 end
 
+---[[[ Internal Parsing function - DON'T USE !!! ]]--
 function jps.compileRaidSpellTable(unparsedTable)
     local spell = nil
     local conditions = nil
