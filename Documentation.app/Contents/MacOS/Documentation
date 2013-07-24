@@ -1,0 +1,8 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import os
+curPath = os.path.dirname(os.path.abspath( __file__ ))
+docPath = os.path.abspath(curPath + "/../../../doc")
+os.chdir(docPath)
+execfile("gendoc.py")
+os.system("open index.html")
