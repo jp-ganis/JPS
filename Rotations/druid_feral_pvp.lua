@@ -1,6 +1,27 @@
--- SEE BOTTOM FOR USER NOTES
--- SwollNMember
--- Thanks to jpganis for the original version and attack conditionals.
+--[[[
+@rotation Default PvP
+@class DRUID
+@spec FERAL
+@talents U!20.120!YXQr
+@author SwollNMember
+@description 
+Thanks to jpganis for the original version and attack conditionals.[br]
+User Notes:[br]
+[*] Put DPS trinket in top trinket slot and PvP loss of control trinket in bottom slot.[br]
+[*] Hold down shift key to force multitarget attacks.[br]
+[*] Force of Nature is cast when targeting the ground anywhere in the world frame.[br]
+[*] Primary attack conditionals consolidated into functions to provide clarity and reduce clutter.[br]
+[*] Auto-shifts out of roots and returns to cat, bear or aquatic form.[br]
+[*] Casts shred when behind target, otherwise casts mangle.[br]
+[*] When King of the Jungle is active subs ravage for shred and mangle.[br]
+[*] [code]CTRL-SHIFT[/code]: Cast Rain of Fire @ Mouse - ignoring the current RoF duration[br]
+[*] [code]CTRL[/code]: If target is dead or ghost cast Soulstone, else cast Havoc @ Mouse[br]
+[*] [code]ALT[/code]: Stop all casts and only use instants (useful for Dark Animus Interrupting Jolt)[br]
+[*] [code]jps.Interrupts[/code]: Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)[br]
+[*] [code]jps.Defensive[/code]: Create Healthstone if necessary, cast mortal coil and use ember tap[br]
+[*] [code]jps.UseCDs[/code]: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated![br]
+]]--
+
 
 jps.registerRotation("DRUID","FERAL", function()
 	local spell = nil
@@ -276,18 +297,4 @@ local spellTable =
 
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end,"Default",false,true)
-
-------------------------
--- USER NOTES ----------
-------------------------
--- Optimized for Wild Charge, Nature's Swiftness, Faerie Swarm, Incarnation, Mighty Bash and Heart of the Wild talents.
--- Recommended Glyphs: Barkskin, Prowl, Savagery, Stag.
--- Put DPS trinket in top trinket slot and PvP loss of control trinket in bottom slot.
--- Hold down shift key to force multitarget attacks.
--- Force of Nature is cast when targeting the ground anywhere in the world frame.
--- FEATURES
--- Primary attack conditionals consolidated into functions to provide clarity and reduce clutter.
--- Auto-shifts out of roots and returns to cat, bear or aquatic form.
--- Casts shred when behind target, otherwise casts mangle.
--- When King of the Jungle is active subs ravage for shred and mangle.
+end,"Default PvP",false,true)

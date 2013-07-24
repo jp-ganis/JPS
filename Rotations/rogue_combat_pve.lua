@@ -1,23 +1,20 @@
--- jpganis
--- Ty to SIMCRAFT for this rotation
-       -- Using the same rotation as Noxxic http://Noxxic.com
-       -- Talents: all are optional
-       -- Tier 1: Shadow Focus
-       -- Tier 2: Deadly Throw
-       -- Tier 3: Leeching poison i usually prefer elusiveness though
-       -- Tier 4: shadowstep
-       -- Tier 5: dirty tricks
-       -- Tier 6: marked for death-i usually use anticipation
-       
-       -- Major Glyphs: Glyph of Adrenaline Rush, others are preference, if you take elusiveness use Glyph of Feint though
-       
-       -- Usage info: ToT will be cast on focus
-       -- Enable cooldowns to use defensive cooldown along with vanish, preparation, trinkets, and combat spec specific cooldowns (ex: Adrenaline Rush)
-       
-       --todo:
-       -- Multi-target
-       -- ToT on Focus
-       -- Vanish only cast if shadowstep is off cooldown
+--[[[
+@rotation PVE single target/PVE 2-5 targets/PVE 5+ targets
+@class rogue
+@spec combat
+@talents c!201121!R
+@author jpganis
+@description 
+Using the same rotation as Noxxic, talents are optional - i usually prefer elusiveness for tier 3 and anticipation for 
+tier 6, if you take elusiveness use Glyph of Feint though.[br]
+[br]
+Usage info:[br]
+[*]ToT will be cast on focus[br]
+[*]Enable cooldowns to use defensive cooldown along with vanish, preparation, trinkets, and combat spec specific cooldowns (ex: Adrenaline Rush)[br]
+[br]
+TODO:[br]
+[*]Vanish only cast if shadowstep is off cooldown[br]
+]]--
 
 jps.registerRotation("ROGUE","COMBAT",function()
        

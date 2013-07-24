@@ -1,3 +1,11 @@
+--[[[
+@rotation Default PvP
+@class HUNTER
+@spec BEASTMASTERY
+@description 
+Put DPS trinket in top trinket slot and if not human, put PvP trinket in bottom slot.
+]]--
+
 jps.registerRotation("HUNTER","BEASTMASTERY", function()
 -- valve
 	local player = jpsName
@@ -150,6 +158,4 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end	,"Default",false,true)
-
--- Put DPS trinket in top trinket slot and if not human, put PvP trinket in bottom slot.
+end	,"Default PvP",false,true)

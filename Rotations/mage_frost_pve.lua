@@ -1,5 +1,11 @@
--- SEE BOTTOM FOR USER NOTES
--- by: SwollNMember WoW v5.2 compliant
+--[[[
+@rotation Frost Mage PvE
+@class mage
+@spec frost
+@author SwollNMember
+@description 
+SimCraft 5.3
+]]--
 
 ma_fr = {}
 -- Enemy Tracking
@@ -69,8 +75,17 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "fire blast", 'jps.Moving'}, 
 	{ "ice lance", 'jps.Moving'}, 
-},"Frost Mage PVE",true,false)
+},"Frost Mage PvE",true,false)
 
+
+--[[[
+@rotation Noxxic PvE
+@class mage
+@spec frost
+@author Kirk24788
+@description 
+Based on Noxxic 5.3
+]]--
 
 jps.registerStaticTable("MAGE","FROST",{
 	-- Noxxic
@@ -122,4 +137,4 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "fire blast", 'jps.Moving'}, 
 	{ "ice lance", 'jps.Moving'}, 
-},"Noxxic PVE",true,false)
+},"Noxxic PvE",true,false)

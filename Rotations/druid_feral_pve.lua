@@ -1,5 +1,12 @@
-  --Ty to MEW Feral Sim
-	-- jpganis
+--[[[
+@rotation Default PvE
+@class DRUID
+@spec FERAL
+@author jpganis
+@description 
+Ty to MEW Feral Sim
+]]--
+	
 jps.registerRotation("DRUID","FERAL", function()
 	local spell = nil
 	local target = nil
@@ -189,4 +196,4 @@ jps.registerRotation("DRUID","FERAL", function()
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 
-end	,"Default",true,false)
+end	,"Default PvE",true,false)

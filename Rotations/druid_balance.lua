@@ -1,7 +1,13 @@
--- jpganis
--- simcrafty
--- TODO: add tab-dotting everything.
-
+--[[[
+@rotation Default
+@class DRUID
+@spec BALANCE
+@author jpganis
+@description 
+SimCraft[br]
+[br]
+TODO: Add tab-dotting everything
+]]--
 jps.registerRotation("DRUID","BALANCE", function()
 	
 	local spell = nil
