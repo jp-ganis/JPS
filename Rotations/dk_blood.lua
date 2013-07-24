@@ -58,7 +58,7 @@ dkBloodSpellTable[1] = {
 	{"Dancing Rune Weapon",'jps.UseCDs'},
 	
 	-- Requires engineering
-	{ jps.useSynapseSprings(),'jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},
@@ -105,9 +105,12 @@ dkBloodSpellTable[2] = {
 	-- Blood presence
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
+	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.buff("Crimson Scourge")'},
+
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "focus" },
-	{ "Raise Ally",'UnitIsDeadOrGhost("mouseover") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "mouseover"},
+	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target"},
 	-- raid spells 
 	{"Anti-Magic Shell",'jps.raid.shouldCast("anti-magic shell") and jps.UseCDs'},
 	{"Death's Advance",'jps.raid.shouldCast("Death\'s Advance") and jps.UseCDs'},
@@ -117,9 +120,9 @@ dkBloodSpellTable[2] = {
 	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"}, 
 	{"Rune Tap",'jps.hp() < 0.8'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.4'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.raid.shouldCast("icebound fortitude") and jps.glyphInfo(43536) and not jps.buff("Anti-Magic Shell")'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.55'},
 	
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
@@ -130,10 +133,10 @@ dkBloodSpellTable[2] = {
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
 	-- Aggro cooldowns
-	{"Raise Dead",'jps.UseCDs and dk.hasGhoul()'},
+	{"Raise Dead",'jps.UseCDs and dk.hasGhoul() and jps.hp() < 0.6'},
 	
 	-- Requires engineering
-	{ jps.useSynapseSprings(),'jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},
@@ -146,6 +149,10 @@ dkBloodSpellTable[2] = {
 	{"Unholy Blight",'jps.myDebuffDuration("blood plague") < 2'},
 	{"Outbreak",'jps.myDebuffDuration("frost fever") < 2'},
 	{"Outbreak",'jps.myDebuffDuration("blood plague") < 2'},
+
+	{"Horn of Winter",'jps.runicPower() < 40 and jps.hp()> 0.90'},
+	{"Blood Boil",'jps.buff("Crimson Scourge") and jps.IsSpellInRange("Blood Boil","target")'},	
+
 }
 
 dkBloodSpellTable[3] = {
