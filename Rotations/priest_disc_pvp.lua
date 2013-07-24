@@ -41,7 +41,7 @@ local health_deficiency = UnitHealthMax(jps_Target) - UnitHealth(jps_Target)
 local health_pct = jps.hp(jps_Target)
 
 local jps_TANK = jps.findMeATank() -- IF NOT "FOCUS" RETURN PLAYER AS DEFAULT
-local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE or TIMETOLIVE
+local jps_FriendTTD = jps.LowestTimetoDie() -- FRIEND UNIT WITH THE LOWEST TIMETODIE
 local TimeToDiePlayer = jps.UnitTimeToDie("player")
 
 local Tanktable = { ["focus"] = 100, ["player"] = 100, ["target"] = 100, ["targetarget"] = 100, ["mouseover"] = 100 }
@@ -98,8 +98,6 @@ local FriendUnit = {}
 for name,index in pairs(jps.RaidStatus) do 
 if (index["inrange"] == true) then table.insert(FriendUnit,name) end
 end
-
-local ArenaUnit = {"arena1","arena2","arena3"}
 
 -- JPS.CANDPS NE MARCHE QUE POUR PARTYn et RAIDn..TARGET PAS POUR UNITNAME..TARGET
 local EnemyUnit = {}
@@ -181,7 +179,9 @@ local castCarapace = false
 if (FriendTable[jps_TANK] ~= nil) and (health_pct_TANK > 0.75) then castCarapace = true end
 
 local function unitFor_SpiritShell(unit) -- Applied to FriendUnit
-	if (FriendTable[unit] ~= nil) and (jps.RaidStatus[unit].hpct > 0.75) then return true end
+	if jps.RaidStatus[unit] ~= nil then
+		if (FriendTable[unit] ~= nil) and (jps.RaidStatus[unit].hpct > 0.75) then return true end
+	end
 	return false
 end
 
@@ -258,6 +258,7 @@ local table=
 	-- "Mass Dispel" 32375 "Dissipation de masse"
 	--{ 32375, unitFor_MassDispel , {player,jps_TANK} , "MassDispel_MultiUnit_" },
 	-- "Leap of Faith" 73325 -- "Saut de foi" -- "Leap of Faith" with Glyph dispel Stun -- jps.glyphInfo(119850)
+	 -- unitFor_Leap includes if isInPvE then return false end
 	{ 73325 , unitFor_Leap , FriendUnit , "Leap_LoseControl__Cond_Multi_" },
 	-- OFFENSIVE Dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
@@ -266,6 +267,7 @@ local table=
 	{ 527, jps.DispelFriendly , FriendUnit , "dispelFriendly_MultiUnit_" }, -- jps.DispelFriendly is a function must be alone in condition
 	{ 527, unitFor_Dispel , FriendUnit , "dispelMagic_Cond_Multi_" }, 
 	{ 527, jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition -- Dispel all Magic debuff
+	{ 527, isInBG and jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition -- Dispel all Magic debuff
 
 }
 return table
@@ -336,7 +338,7 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.55
 		-- "Soins rapides" 2061 -- "Sursis" 59889 "Borrowed"
 		{ 2061, jps.buff(59889,player) , jps_TANK , "Emergency_Soins Rapides_Borrowed_"..jps_TANK },
 		-- "Cascade" 121135
-		{ 121135, (UnitIsUnit(jps_TANK,player)~=1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
+		{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
 		-- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
 		{ 2061, jps.buffId(89485) , jps_TANK , "Emergency_Soins Rapides_Focal_"..jps_TANK },
 		-- "Soins de lien"
@@ -410,7 +412,7 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		
 	-- OTHERS
 		-- "Cascade" 121135
-		{ 121135, (UnitIsUnit(jps_TANK,player)~=1) and (health_deficiency_TANK > average_flashheal) and (countInRange > 2), jps_TANK , "Cascade_Carapace_"..jps_TANK },
+		{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_Carapace_"..jps_TANK },
 		-- "Renew"
 		{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Carapace_Renovation_"..jps_TANK },
 		-- "Don des naaru"
@@ -502,7 +504,7 @@ local spellTable =
 	--{ jps.useTrinket(1), jps.UseCDs , player },
 	{ jps.useTrinket(1), isInBG and jps.UseCDs and stunMe , player },
 -- "Passage dans le Vide" -- "Void Shift" 108968
-	{ 108968, (health_pct_TANK < 0.40) and (player_Aggro + player_IsInterrupt == 0) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Void Shift_"..jps_TANK  },
+	{ 108968, (player_Aggro + player_IsInterrupt == 0) and (health_pct_TANK < 0.40) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Void Shift_"..jps_TANK  },
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236
@@ -544,11 +546,8 @@ local spellTable =
 	{ 2061, jps.buffId(89485) and not jps.buff(47515,jps_TANK) , jps_TANK , "Soins Rapides_Focal_Egide_"..jps_TANK },
 	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
 	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Focal_MultiUnit_" },
--- "Pénitence" 47540
-	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
--- "Cascade" 121135 "Escalade"
-	{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Prière de guérison" 33076
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 	{ "nested", true , parse_mending() },
 -- "Don des naaru" 59544
 	{ 59544, (select(2,GetSpellBookItemInfo(giftnaaru))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK },
@@ -563,7 +562,8 @@ local spellTable =
 	{ "nested", true , parse_dispel() },
 -- parse_DMG
 	{ "nested", jps.FaceTarget and (health_pct_TANK > 0.75) , parse_dmg() },
-
+	"Pénitence" 47540
+	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
 -- "Focalisation intérieure" 89485 -- 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
 	{ 89485, UnitAffectingCombat(player)==1 and (jps.cooldown(89485) == 0) , player },
 -- "Prière de soins" 596
@@ -589,7 +589,7 @@ local spellTable_moving =
 -- TRINKETS -- jps.useTrinket(0) est "Trinket0Slot" est slotId  13 -- "jps.useTrinket(1) est "Trinket1Slot" est slotId  14
 	{ jps.useTrinket(1), isInBG and jps.UseCDs and stunMe , player },
 -- "Passage dans le Vide" -- "Void Shift" 108968
-	{ 108968, (health_pct_TANK < 0.40) and (player_Aggro + player_IsInterrupt == 0) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Moving_Void Shift_"..jps_TANK  },
+	{ 108968, (player_Aggro + player_IsInterrupt == 0) and (health_pct_TANK < 0.40) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Moving_Void Shift_"..jps_TANK  },
 -- "Pierre de soins" 5512
 	{ {"macro","/use item:5512"}, select(1,IsUsableItem(5512))==1 and jps.itemCooldown(5512)==0 and (playerhealth_pct < 0.50) , player },
 -- "Prière du désespoir" 19236
@@ -600,10 +600,10 @@ local spellTable_moving =
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and not jps.debuff(8122,rangedTarget) and canFear and not(unitLoseControl(rangedTarget)) , rangedTarget },
 
 -- AGGRO PLAYER
-	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
 	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
+	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
 
 -- EMERGENCY PLAYER
 	{ 33206, (playerhealth_pct < 0.40) and (UnitAffectingCombat(player)==1) , player} , -- "Suppression de la douleur"
@@ -622,7 +622,7 @@ local spellTable_moving =
 	-- "Pénitence" 47540 avec talent possible caster en moving
 	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK },
 	-- "Escalade" 121135 "Cascade"
-	{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2) , jps_TANK  },
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2) , jps_TANK  },
 	-- "Power Word: Shield" 17 -- Ame affaiblie 6788)
 	{ "nested", true , parse_shield() },		
 	-- "Prière de guérison" 33076
@@ -646,12 +646,12 @@ local spellTable_moving =
 	{ "nested", true , parse_dispel() },
 	
 -- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
-	{ 32379, isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
-	{ 32379, isInBG and jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
+	{ 32379, jps.FaceTarget and  isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
+	{ 32379, jps.FaceTarget and  isInBG and jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
 -- DAMAGE "Pénitence" 47540 -- FARMING OR PVP -- NOT PVE
-	{ 47540, isInBG and jps.canDPS(rangedTarget) , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
+	{ 47540, jps.FaceTarget and  isInBG and jps.canDPS(rangedTarget) , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
 -- DAMAGE "Mot de l'ombre: Douleur" 589 -- FARMING OR PVP -- NOT PVE
-	{ 589, isInBG and jps.canDPS(rangedTarget) and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget },
+	{ 589,  jps.FaceTarget and isInBG and jps.canDPS(rangedTarget) and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget },
 
 -- "Feu intérieur" 588 -- "Volonté intérieure" 73413
 	{ 588, not jps.buff(588,player) and not jps.buff(73413,player) , player }, 

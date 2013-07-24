@@ -15,9 +15,9 @@ jps.registerRotation("PRIEST","HOLY",function()
 		local unitsBelow70 = 0
 		local unitsBelow50 = 0
 		local unitsBelow30 = 0
-		for unit, unitTable in pairs(jps.RaidStatus) do
+		for unit, index in pairs(jps.RaidStatus) do
 			--Only check the relevant units
-			if jps.canHeal(unit) then
+			if (index["inrange"] == true) then
 				local thisHP = jps.hp(unit)
 				-- Number of people below x%
 				if thisHP < 0.3 then unitsBelow30 = unitsBelow30 + 1 end

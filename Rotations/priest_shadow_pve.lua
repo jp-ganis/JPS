@@ -21,8 +21,8 @@ jps.registerRotation("PRIEST","SHADOW",function()
 	local ArenaUnit = {"arena1","arena2","arena3"}
 
 	local FriendUnit = {}
-	for name,_ in pairs(jps.RaidStatus) do 
-	if jps.canHeal(unit) then table.insert(FriendUnit,name) end
+	for name,index in pairs(jps.RaidStatus) do 
+	if (index["inrange"] == true) then table.insert(FriendUnit,name) end
 	end
 
 	local EnemyUnit = {}
