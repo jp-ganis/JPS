@@ -2,13 +2,13 @@ wl = {}
 wl.maxIntCastLength = 1
 --JPTODO: Replace Spaces with Tabs in warlock_*.lua
 wl.dottableUnits = {
-    "target",
-    "focus",
-    "mouseover",
-    "boss1",
-    "boss2",
-    "boss3",
-    "boss4",
+	"target",
+	"focus",
+	"mouseover",
+	"boss1",
+	"boss2",
+	"boss3",
+	"boss4",
 }
 
 local function toSpellName(id) name = GetSpellInfo(id); return name end
@@ -67,88 +67,88 @@ wl.spells["lifeblood"] = toSpellName(121279)
 
 
 function wl.hasKilJaedensCunning()
-    local selected, talentIndex = GetTalentRowSelectionInfo(6)
-    return talentIndex == 17
+	local selected, talentIndex = GetTalentRowSelectionInfo(6)
+	return talentIndex == 17
 end
 
 
 local function npcId(unit)
-    if UnitExists(unit) then return tonumber(UnitGUID(unit):sub(6, 10), 16) end
-    return -1
+	if UnitExists(unit) then return tonumber(UnitGUID(unit):sub(6, 10), 16) end
+	return -1
 end
 
 local interruptSpellTables = {}
 function wl.getInterruptSpell(unit)
-    return function()
-        if not interruptSpellTables[unit] then interruptSpellTables[unit] = {{"macro", "/cast " .. wl.spells.commandDemon }, false , unit} end
-        local canInterrupt = false
-        if jps.canCast(wl.spells.opticalBlast, unit) then -- Observer Pet 
-            canInterrupt = true
-        elseif jps.canCast(wl.spells.spellLock, unit) then -- Felhunter Pet
-            canInterrupt = true
-        elseif jps.canCast(wl.spells.commandDemon, unit) and select(3,GetSpellInfo(wl.spells.commandDemon))=="Interface\\Icons\\Spell_Shadow_MindRot" then -- GoSac Felhunter
-            canInterrupt = true
-        end
-        local shouldInterrupt = jps.Interrupts and jps.shouldKick(unit) and jps.CastTimeLeft(unit) < wl.maxIntCastLength
-        interruptSpellTables[unit][2] = canInterrupt and shouldInterrupt
-        return interruptSpellTables[unit]
-    end
+	return function()
+		if not interruptSpellTables[unit] then interruptSpellTables[unit] = {{"macro", "/cast " .. wl.spells.commandDemon }, false , unit} end
+		local canInterrupt = false
+		if jps.canCast(wl.spells.opticalBlast, unit) then -- Observer Pet 
+			canInterrupt = true
+		elseif jps.canCast(wl.spells.spellLock, unit) then -- Felhunter Pet
+			canInterrupt = true
+		elseif jps.canCast(wl.spells.commandDemon, unit) and select(3,GetSpellInfo(wl.spells.commandDemon))=="Interface\\Icons\\Spell_Shadow_MindRot" then -- GoSac Felhunter
+			canInterrupt = true
+		end
+		local shouldInterrupt = jps.Interrupts and jps.shouldKick(unit) and jps.CastTimeLeft(unit) < wl.maxIntCastLength
+		interruptSpellTables[unit][2] = canInterrupt and shouldInterrupt
+		return interruptSpellTables[unit]
+	end
 end
 
 -- stop spam curse of the elements at invalid targets @ mop
 function wl.isCotEBlacklisted(unit) 
-    local table_noSpamCotE = {
-        56923, -- Twilight Sapper
-        56341, 56575, -- Burning Tendons 4.3.0/5.2.0
-        53889, -- Corrupted Blood
-        60913, -- Energy Charge
-        60793, -- Celestial Protector
-    }
-    for i,j in pairs(table_noSpamCotE) do
-        if npcId(unit) == j then return true end
-    end
-    return false
+	local table_noSpamCotE = {
+		56923, -- Twilight Sapper
+		56341, 56575, -- Burning Tendons 4.3.0/5.2.0
+		53889, -- Corrupted Blood
+		60913, -- Energy Charge
+		60793, -- Celestial Protector
+	}
+	for i,j in pairs(table_noSpamCotE) do
+		if npcId(unit) == j then return true end
+	end
+	return false
 end
 
 function wl.isTrivial(unit)
-    local minHp = 1000000
-    if IsInGroup() or IsInRaid() then minHp = minHp * GetNumGroupMembers() end
-    return  UnitHealth(unit) <= minHp
+	local minHp = 1000000
+	if IsInGroup() or IsInRaid() then minHp = minHp * GetNumGroupMembers() end
+	return	UnitHealth(unit) <= minHp
 end
 
 wl.attackFocus = jps.cachedValue(function()
-    return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
+	return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
 end)
 
 -- Deactivate Burning Rush after n seconds of not moving
 local burningRushNotMovingSeconds = 0
 function wl.deactivateBurningRushIfNotMoving(seconds)
-    if not seconds then seconds = 0 end
-    if jps.Moving or not jps.buff(wl.spells.burningRush) then
-        burningRushNotMovingSeconds = 0
-    else
-        if burningRushNotMovingSeconds >= seconds then
-            RunMacroText("/cancelaura Burning Rush")
-        else
-            burningRushNotMovingSeconds = burningRushNotMovingSeconds + jps.UpdateInterval
-        end
-    end
+	if not seconds then seconds = 0 end
+	if jps.Moving or not jps.buff(wl.spells.burningRush) then
+		burningRushNotMovingSeconds = 0
+	else
+		if burningRushNotMovingSeconds >= seconds then
+			RunMacroText("/cancelaura Burning Rush")
+		else
+			burningRushNotMovingSeconds = burningRushNotMovingSeconds + jps.UpdateInterval
+		end
+	end
 end
 
 -- Interrupt SpellTable for all specs
 wl.interruptSpellTable = {
-    -- Interrupts
-    wl.getInterruptSpell("target"),
-    wl.getInterruptSpell("focus"),
-    wl.getInterruptSpell("mouseover"),
+	-- Interrupts
+	wl.getInterruptSpell("target"),
+	wl.getInterruptSpell("focus"),
+	wl.getInterruptSpell("mouseover"),
 }
 
 -- Soulstone Table
 function wl.soulStone(unit)
-    if not unit then unit = "target" end
-    local soulStoneTable = {wl.spells.soulStone, false, unit}
-    return function()
-        soulStoneTable[2] = IsControlKeyDown() ~=nil and jps.cooldown(wl.spells.soulStone) == 0 and UnitIsDeadOrGhost(unit) == 1 and UnitIsFriend("player",unit) == 1
-        return soulStoneTable
-    end
+	if not unit then unit = "target" end
+	local soulStoneTable = {wl.spells.soulStone, false, unit}
+	return function()
+		soulStoneTable[2] = IsControlKeyDown() ~=nil and jps.cooldown(wl.spells.soulStone) == 0 and UnitIsDeadOrGhost(unit) == 1 and UnitIsFriend("player",unit) == 1
+		return soulStoneTable
+	end
 end

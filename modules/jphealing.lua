@@ -30,9 +30,9 @@ end
 
 -- Displays the different health values - mainly for tweaking/debugging
 function print_healtable(self)
- for k,v in pairs(Healtable) do
-	print(k,"|cffff8000", Healtable[k]["healtotal"]," ", Healtable[k]["healcount"]," ", Healtable[k]["averageheal"])
- end
+	for k,v in pairs(Healtable) do
+		print(k,"|cffff8000", Healtable[k]["healtotal"]," ", Healtable[k]["healcount"]," ", Healtable[k]["averageheal"])
+	end
 end
 
 -- Returns the average heal value of given spell. 
@@ -49,18 +49,18 @@ end
 ----------------------------
 
 function jps.UpdateHealerBlacklist(self)
- if #jps.HealerBlacklist > 0 then
-	for i = #jps.HealerBlacklist, 1, -1 do
-		 if GetTime() - jps.HealerBlacklist[i][2] > jps.BlacklistTimer then
-			if jps.Debug then print("Releasing ", jps.HealerBlacklist[i][1]) end
-			table.remove(jps.HealerBlacklist,i)
-		 end
+	if #jps.HealerBlacklist > 0 then
+		for i = #jps.HealerBlacklist, 1, -1 do
+			if GetTime() - jps.HealerBlacklist[i][2] > jps.BlacklistTimer then
+				if jps.Debug then print("Releasing ", jps.HealerBlacklist[i][1]) end
+				table.remove(jps.HealerBlacklist,i)
+			end
+		end
 	end
- end
 end
 
 function jps.PlayerIsBlacklisted(unit)
- for i = 1, #jps.HealerBlacklist do
+	for i = 1, #jps.HealerBlacklist do
 		if jps.HealerBlacklist[i][1] == unit then
 			return true
 		end
@@ -96,7 +96,7 @@ function jps.CountInRaidStatus(lowHealthDef)
 end
 
 -- LOWEST PERCENTAGE in RaidStatus
-function jps.LowestInRaidStatus() 
+function jps.LowestInRaidStatus()
 	local lowestUnit = jpsName
 	local lowestHP = 1
 	for unit,unitTable in pairs(jps.RaidStatus) do
@@ -121,25 +121,35 @@ function jps.avgRaidHP(noFilter)
 	local avgHP = 1
 	if GetNumGroupMembers() == 0 then return 1 end
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		unitHP = unitTable["hpct"]
-		if unitHP < minUnit then minUnit = unitHp end
-		raidHP = raidHP + unitHP
-		unitCount = unitCount + 1
+		if unitTable["inrange"] then
+			unitHP = unitTable["hpct"]
+			if unitHP then
+				if unitHP < minUnit and unitHP > 0 then minUnit = unitHP end
+				raidHP = raidHP + unitHP
+				unitCount = unitCount + 1
+			end
+		end
 	end
 	avgHP = raidHP / unitCount
+	if not avgHP then return 1 end
 	if unitCount > 10 or noFilter == true then
 		return avgHP
 	end
 	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% hp difference to avg hp
 	for unit, unitTable in pairs(jps.RaidStatus) do
-		unitHP = unitTable["hpct"]
-		if unitHp < (avgHP / 1.3 ) then
-			raidHP = raidHP - unitHP
-			unitCount = unitCount -1
+		if unitTable["inrange"] then
+			unitHP = unitTable["hpct"]
+			if unitHP then
+				if unitHP < (avgHP / 1.3) then
+					raidHP = raidHP - unitHP
+					unitCount = unitCount - 1
+				end
+			end
 		end
 	end
-
-	return raidHP / unitCount
+	avgHP = raidHP / unitCount
+	if not avgHP then return 1 end
+	return avgHP
 end
 
 ------------------------------------
@@ -244,7 +254,7 @@ function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party
 	local unitname = select(1,UnitName(unit))
 	if jps.RaidStatus[unitname] then
 		jps.RaidStatus[unitname]["unit"] = unit -- RAID INDEX player, party..n, raid..n
-		jps.RaidStatus[unitname]["hpct"] = jps.hp(unit)
+		jps.RaidStatus[unitname]["hpct"] = jps.hp(unitname)
 		jps.RaidStatus[unitname]["subgroup"] = jps.RaidStatus[unitname].subgroup
 		jps.RaidStatus[unitname]["target"] = unit.."target"
 		jps.RaidStatus[unitname]["inrange"] = jps.canHeal(unit)

@@ -358,6 +358,7 @@ local function leaveCombat()
 	jps.Combat = false
 	jps.gui_toggleCombat(false)
 	jps.EnemyTable = {}
+	jps.NextSpell = nil
 	jps.clearTimeToLive()
 	jps.SortRaidStatus() -- wipe jps.RaidTarget and jps.RaidStatus
 	if jps.getConfigVal("timetodie frame visible") == 1 then

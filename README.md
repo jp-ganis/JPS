@@ -44,13 +44,7 @@ HPS for your class and spec.
 ==============================================================================
 
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
-* add "jps.RotationActive(spellTable)" to every rotation
-* turn off on toons with level < 10
-* BUG: JPS breaks the roll window for disenchant while infight & rejects invites
-
-***tester***
-
-pcmd: dk blood, dk frost, mage fire, mage frost, holy paladin, destro warlock
+* BUG: some rotation could cause a fps drop
 
 ==============================================================================
 = COMMANDS                                                                   =
