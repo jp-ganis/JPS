@@ -1,23 +1,16 @@
-	
-	--------------------------------------------------------------------------------------------
-	---- Information                     
-	--------------------------------------------------------------------------------------------
-	---- Talents:
-	---- Tier 1: Pursuit of Justice
-	---- Tier 2: Fist of Justice
-	---- Tier 3: Sacred Shield / Eternal Flame
-	---- Tier 4: Unbreakable Spirit
-	---- Tier 5: Divine Purpose
-	---- Tier 6: Light's Hammer
-	
-		
-	--------------------------------------------------------------------------------------------
-	---- Key modifiers
-	--------------------------------------------------------------------------------------------
-	
-	-- left Shift Key 		- for Light's Hammer
-	-- left CTRL key for light of dawn
-	
+--[[[
+@rotation Default
+@class paladin
+@spec holy
+@talents ba!202121
+@author PCMD
+@description 
+This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP.
+[br]
+Modifiers:[br]
+[*] [code]LEFT-SHIFT[/code]: Light's Hammer[br]
+[*] [code]LEFT-CTRL[/code]: Light of Dawn[br]
+]]--
 hpala = {}
 hpala.interruptTable = {{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}}
 hpala.importantHealTargetsValue =  {}

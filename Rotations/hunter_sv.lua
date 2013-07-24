@@ -1,3 +1,25 @@
+--[[[
+@rotation Default
+@class HUNTER
+@spec SURVIVAL
+@author tropic
+@talents Yb!001100!dfgkmM
+@description
+Features:[br]
+[*] auto misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid[br]
+[*] Auto use "Healthstone" at 50% hp
+[*] mend pet when hp is less than 90%[br]
+[*] interrupt spellcasting with Silencing Shot[br]
+[*] Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc. (manually use "Readiness")[br]
+[br]
+Trap Keys:[br]
+[*][code]SHIFT:[/code] Explosive Trap[br]
+[*][code]ALT:[/code] Freezing Trap[br]
+[*][code]CONTROL:[/code] Snake Trap[br]
+[*][code]SHIFT-CONTROL:[/code] Ice Trap[br]
+]]--
+
+
 jps.registerRotation("HUNTER","SURVIVAL", function()
 -- by tropic
 jps.Tooltip = "::Survival Hunter (PvE)::\n- Shift-key: \"Explosive Trap\"\n- Alt-key: \"Freezing Trap\"\n- Control-key: \"Snake Trap\"\n- Shift+Control-key: \"Ice Trap\"\nMisdirect to Pet when soloing or misdirect to \"focus\" in party/raid.\nUse CDs: Blows all cooldowns: trinkets, eng. gloves, \n  talents, pots (if boss) etc. (manually use \"Readiness\") \nAuto use \"Healthstone\" at 50% hp, \"Mend Pet\" at 90% hp.\nInterrupt spell cast with \"Silencing Shot\".\nCheck file for talents and glyphs..."
