@@ -1,10 +1,12 @@
--- Updated for MoP
--- Tier 1: Astral Shift
--- Tier 2: Windwalk Totem
--- Tier 3: Call of the Elements
--- Tier 4: Echo of the Elements
--- Tier 5: Healing Tide Totem
--- by  duplicate
+--[[[
+@rotation Default
+@class SHAMAN
+@spec ELEMENTAL
+@talents W!22020.
+@author duplicate
+@description 
+Updated for MoP
+]]--
 
 function weaponMainhandEnchant()
 	return select(1, GetWeaponEnchantInfo())

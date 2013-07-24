@@ -1,3 +1,19 @@
+--[[[
+@rotation BM Hunter PVE 5.3
+@class HUNTER
+@spec BEASTMASTERY
+@author tropic
+@description
+Features:[br]
+[*] auto misdirect to pet if soloing[br]
+[*] misdirect to "focus" e.g. in party/raid[br]
+[*] mend pet when hp is less than 90%[br]
+[*] interrupt spellcasting with Silencing Shot[br]
+[*] use CDs incl. Lifeblood (herbalism)[br]
+[*] hot-keys for traps[br]
+]]--
+
+
 jps.registerRotation("HUNTER","BEASTMASTERY", function()
 	---------------
 	local spell = spell,target

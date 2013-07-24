@@ -1,7 +1,13 @@
+--[[[
+@rotation Default
+@class HUNTER
+@spec MARKSMANSHIP
+@author Chiffon, Scribe, jpganis
+@description 
+SimCraft
+]]--
+
 jps.registerRotation("HUNTER","MARKSMANSHIP", function()
-	-- Marksmanship Hunter by Chiffon with additions by Scribe
-	--jpganis
-	--SIMCRAFT
 	------------------------------------------
 	local up = UnitPower
 	local r = jps.Macro;
