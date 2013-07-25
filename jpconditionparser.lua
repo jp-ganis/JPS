@@ -19,7 +19,7 @@ local function fnTargetEval(target)
 end
 
 local function fnConditionEval(conditions)
-    if conditions == nil or conditions == "onCD" then
+    if conditions == nil then
         return true
     elseif type(conditions) == "boolean" then
         return conditions
@@ -493,8 +493,10 @@ end
 
 
 ---[[[ Internal Parsing function - DON'T USE !!! ]]--
+local function alwaysTrue() return true end
 function jps.conditionParser(str)
     if type(str) == "function" then return str end
+    if str == "onCD" then return alwaysTrue() end
     local tokens = {}
     local i = 0
     
