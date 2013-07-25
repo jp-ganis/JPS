@@ -16,7 +16,7 @@ jps.registerStaticTable("WARRIOR","FURY",
 	{
 		-- Interrupts
 		{"Pummel",'jps.shouldKick()'},
-		{"Pummel",'jps.shouldKick("focus"), "focus"'},
+		{"Pummel",'jps.shouldKick("focus")', "focus"},
 		{"Disrupting Shout",'jps.shouldKick()'},
 		{"Disrupting Shout",'jps.shouldKick("focus")', "focus"},
 		
