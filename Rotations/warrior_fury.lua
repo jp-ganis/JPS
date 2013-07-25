@@ -16,9 +16,9 @@ jps.registerStaticTable("WARRIOR","FURY",
 	{
 		-- Interrupts
 		{"Pummel",'jps.shouldKick()'},
-		{"Pummel",'jps.shouldKick("focus"), "focus"'},
+		{"Pummel",'jps.shouldKick("focus")', "focus"},
 		{"Disrupting Shout",'jps.shouldKick()'},
-		{"Disrupting Shout",'jps.shouldKick("focus"), "focus"'},
+		{"Disrupting Shout",'jps.shouldKick("focus")', "focus"},
 		
 		-- Cooldowns and Utility
 		{"Impending Victory",'jps.buff("Victorious") and jps.rage() >= 10 and jps.hp("player") < 0.8', warrior.rangedTarget },
