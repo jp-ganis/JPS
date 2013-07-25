@@ -567,8 +567,8 @@ end)
 
 -- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 jps.registerEvent("PLAYER_LEVEL_UP", function(level)
+	jps.Level = level
 	if level == "10" then
-		jps.Level = level
 		jps.detectSpec()
 		jps.Enabled = true
 		jps.detectSpecDisabled = false
