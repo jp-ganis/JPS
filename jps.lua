@@ -87,7 +87,6 @@ jps.HealerBlacklist = {}
 jps.Timers = {}
 Healtable = {}
 jps.EnemyTable =  {}
-jps.RaidTimeToDie = {}
 jps.initializedRotation = false
 jps.firstInitializingLoop = true
 jps.settings = {}
@@ -111,6 +110,8 @@ rotationDropdownHolder = nil
 jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withing 30 seconds
+jps.TimeToDieData = {}
+jps.RaidTimeToDie = {}
 
 -- Latency
 jps.CastBar = {}

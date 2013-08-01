@@ -40,6 +40,7 @@ All comments are regarded as a Rotation, supported Tags:
 @rotation     - Name of the rotation
 @class        - Class-Name (english!)
 @spec         - Full Spec Name (english!)
+@talents      - Talent Calculater String from the official Talent Calculater (http://eu.battle.net/wow/en/tool/talent-calculator#U!20.120!YXQr becomes U!20.120!YXQr)
 @deprecated   - Adds a warning to the documentation, that this rotation is deprecated, Any text after the tag is added to this warning
 @description  - Extended Description of the rotation
 

@@ -1,12 +1,15 @@
+--[[[
+@rotation Default
+@class monk
+@spec WINDWALKER
+@description
+Using the same rotation as SimulationCraft. Tested with a 480 ilvl against a raid target dummy with only self buffs (and 
+ghetto enchants). imulationCraft with these settings gives a DPS of 72k. This script gives a DPS of 62k. So we're 10k off target.
+This script in LFR easily does between 70-85k single target.
+]]--
+
 jps.registerRotation("MONK","WINDWALKER",function()
 	if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
-	
-	-- Using the same rotation as SimulationCraft. http://simulationcraft.org
-	
-	-- Tested with a 480 ilvl against a raid target dummy with only self buffs (and ghetto enchants).
-	-- SimulationCraft with these settings gives a DPS of 72k.
-	-- This script gives a DPS of 62k. So we're 10k off target.
-	-- This script in LFR easily does between 70-85k single target.
 	
 	local energy = UnitMana("player")
 	local energyPerSec = 13

@@ -260,6 +260,8 @@ class RotationComment(DocElement):
         self.specName = self.getTagData("@spec",self.tagList).lower()
         self.talents = self.getTagData("@talents",self.tagList)
         self.author = self.getTagData("@author",self.tagList)
+        if not self.author:
+            self.author = "Unknown"
         self.description = self.getTagData("@description",self.tagList)
         self.deprecated = self.getTagData("@deprecated",self.tagList)
 
@@ -347,7 +349,6 @@ def getRotationDoc():
                 classDoc = classDoc + "<div class=\"rotations-spec\">\n"
                 classDoc = classDoc + "  <div class=\"rotation-spec-title %s\">%s</div>\n" % (classSpecKey, specName)
                 classDoc = classDoc + doc
-                classDoc = classDoc + "  </div>\n"
                 classDoc = classDoc + "</div>\n"
         if classDoc != "":
             rotationsDoc = rotationsDoc + "<div class=\"rotation-class\">\n"

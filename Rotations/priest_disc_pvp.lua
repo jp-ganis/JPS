@@ -23,7 +23,6 @@ local giftnaaru = tostring(select(1,GetSpellInfo(59544))) -- giftnaaru 59544
 local desesperate = tostring(select(1,GetSpellInfo(19236))) -- "Prière du désespoir" 19236
 local bindingheal = tostring(select(1,GetSpellInfo(32546))) -- "Soins de lien" 32546
 local grace = tostring(select(1,GetSpellInfo(77613))) -- Grâce 77613 -- jps.buffStacks(grace,jps_TANK)
-local divineAegis = tostring(select(1,GetSpellInfo(47753))) -- Egide Divine 47753
 
 ----------------------------
 -- TANK
@@ -144,16 +143,6 @@ end
 
 -- if PlayerObject:GetMovementFlags () ==  0x400 then print("STUNNED") end
 
----------------------
--- DISPEL
----------------------
-
---local dispelOffensive = jps.DispelOffensive(rangedTarget) -- return true/false
---local dispelMagic_Me = jps.MagicDispel(player) -- return true/false 
---local dispelMagic_TANK = jps.MagicDispel(jps_TANK) -- return true/false
---local dispelMagic_Target = jps.DispelMagicTarget() -- return unit
---local dispelFriendly_Target = jps.DispelFriendlyTarget() -- return unit
-
 -------------------
 -- DEBUG
 -------------------
@@ -234,6 +223,19 @@ local function unitFor_Foca_Flash(unit)
 	return false
 end
 
+local function unitCastingCC(unit)
+	if not jps.canDPS(unit) then return false end
+	if (jps.cooldown(89485) ~= 0) then return false end
+	local istargeting = unit.."target"
+	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+	for spellID,spellname in pairs(jps_CastingSpellCC) do
+		if spell == tostring(select(1,GetSpellInfo(spellID))) then
+			if UnitIsUnit(istargeting, "player")==1 then return true end
+		end
+	end
+	return false
+end
+
 
 ------------------------
 -- LOCAL TABLE FUNCTIONS
@@ -258,16 +260,14 @@ local table=
 	-- "Mass Dispel" 32375 "Dissipation de masse"
 	--{ 32375, unitFor_MassDispel , {player,jps_TANK} , "MassDispel_MultiUnit_" },
 	-- "Leap of Faith" 73325 -- "Saut de foi" -- "Leap of Faith" with Glyph dispel Stun -- jps.glyphInfo(119850)
-	 -- unitFor_Leap includes if isInPvE then return false end
-	{ 73325 , unitFor_Leap , FriendUnit , "Leap_LoseControl__Cond_Multi_" },
+	{ 73325 , unitFor_Leap , FriendUnit , "Leap_LoseControl_MultiUnit_" }, -- unitFor_Leap includes if isInPvE then return false end
 	-- OFFENSIVE Dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
-	{ 528 , jps.DispelOffensive , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
+	{ 528 , jps.DispelOffensive , EnemyUnit , "|cFFFF0000dispel_Offensive_MultiUnit_" },
 	-- Dispel "Purifier" 527
 	{ 527, jps.DispelFriendly , FriendUnit , "dispelFriendly_MultiUnit_" }, -- jps.DispelFriendly is a function must be alone in condition
-	{ 527, unitFor_Dispel , FriendUnit , "dispelMagic_Cond_Multi_" }, 
+	{ 527, unitFor_Dispel , FriendUnit , "dispelMagic_MultiUnit_" }, -- according to jps.LoseControlTable
 	{ 527, jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition -- Dispel all Magic debuff
-	{ 527, isInBG and jps.MagicDispel , {player,jps_TANK} , "dispelMagic_MultiUnit_" }, -- jps.MagicDispel is a function must be alone in condition -- Dispel all Magic debuff
 
 }
 return table
@@ -276,23 +276,23 @@ end
 local function parse_dmg()
 local table=
 {
-	-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
+	-- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
 	{ 32379, isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
 	{ 32379, isInBG and jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
 	-- "Flammes sacrées" 14914 -- "Evangélisme" 81661
-	{ 14914, jps.canDPS(rangedTarget) , rangedTarget ,"|cFFFF0000DPS_Flammes_"..rangedTarget },
-	{ 14914, jps.canDPS , EnemyUnit , "|cFFFF0000DPS_EnemyUnit_Flammes_" },
+	{ 14914, jps.canDPS(rangedTarget) , rangedTarget , "|cFFFF0000DPS_Flammes_"..rangedTarget },
+	{ 14914, jps.canDPS , EnemyUnit , "|cFFFF0000DPS_Flammes_MultiUnit_" },
 	-- "Mot de pouvoir : Réconfort" -- "Power Word: Solace" 129250 -- REGEN MANA
 	--{ 129250, jps.canDPS(rangedTarget) , rangedTarget, "|cFFFF0000DPS_Solace_"..rangedTarget },
-	--{ 129250, jps.canDPS , EnemyUnit, "|cFFFF0000DPS_Solace_" },
+	--{ 129250, jps.canDPS , EnemyUnit, "|cFFFF0000DPS_Solace_MultiUnit_" },
 	-- "Pénitence" 47540
-	{ 47540, isInBG and jps.canDPS(rangedTarget) , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
-	-- "Mot de l'ombre: Douleur" 589 -- FARMING OR PVP -- NOT PVE
-	{ 589, isInBG and jps.canDPS(rangedTarget) and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget },
+	{ 47540, isInBG and jps.canDPS(rangedTarget) , rangedTarget, "|cFFFF0000DPS_Penance_"..rangedTarget },
+	-- "Mot de l'ombre: Douleur" 589
+	{ 589, isInBG and jps.canDPS(rangedTarget) and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget , "|cFFFF0000DPS_Douleur_"..rangedTarget },
 	-- "Cascade" 121135 "Escalade"
-	{ 121135, isInBG and jps.canDPS(rangedTarget) and (enemycount > 2) , rangedTarget , "Cascade_"..rangedTarget },
+	{ 121135, isInBG and jps.canDPS(rangedTarget) and (enemycount > 2) , rangedTarget , "|cFFFF0000DPS_Cascade_"..rangedTarget },
 	-- "Châtiment" 585	
-	{ 585, jps.canDPS(rangedTarget) , rangedTarget,"|cFFFF0000DPS_Chatiment_"..rangedTarget },
+	{ 585, jps.canDPS(rangedTarget) , rangedTarget, "|cFFFF0000DPS_Chatiment_"..rangedTarget },
 }
 return table
 end
@@ -304,10 +304,8 @@ local function parse_player_aggro() -- return table
 		{ {"macro",{33206,17},"player"}, (playerhealth_pct < 0.40) and jps.cooldown(33206)==0 and (jps.cooldown(17) == 0) and not jps.debuff(6788,player) and not jps.buff(17,player) , player , "|cff0070ddSequence_Pain_Shield_"..player  },
 		-- "Suppression de la douleur" 33206
 		{ 33206, (playerhealth_pct < 0.35) , player , "Aggro_Pain_" },
-		-- "Suppression de la douleur" 33206
-		{ 33206, (playerhealth_pct < 0.55) and stunMe , player , "Aggro_Pain_Stun_" },
 		-- "Focalisation intérieure" 89485 -- buff player 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
-		{ 89485, (jps.cooldown(89485) == 0) , player , "Aggro_Foca_" },
+		{ 89485, true , player , "Aggro_Foca_" },
 		-- "Oubli" 586 "Shield" 17 -- PVP
 		{ {"macro",{586,17},"player"}, IsSpellKnown(108942) and (jps.cooldown(586) == 0) and (jps.cooldown(17) == 0) and not jps.debuff(6788,player) and not jps.buff(17,player) , player , "|cff0070ddSequence_Oubli_Shield_"..player },
 		-- "Oubli" 586 -- PVP -- Fantasme 108942 -- vous dissipez tous les effets affectant le déplacement sur vous-même et votre vitesse de déplacement ne peut être réduite pendant 5 s
@@ -322,11 +320,11 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.55
 	local table=
 	{
 		-- "Suppression de la douleur" 33206
-		{ 33206, (jps.cooldown(33206) == 0) and (UnitAffectingCombat(player)==1) and (health_pct_TANK < 0.35) , jps_TANK , "Emergency_Pain_"},
+		{ 33206, (health_pct_TANK < 0.35) , jps_TANK , "Emergency_Pain_"..jps_TANK },
 		-- "Soins supérieurs" 2060 -- buff player 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
-		{ 2060, (health_pct_TANK > 0.35) and jps.buffId(96267) and (jps.buffDuration(96267) > 2.5) , jps_TANK, "Emergency_Soins Sup_FocaBuff_"..jps_TANK },
+		{ 2060, (health_pct_TANK > 0.35) and jps.buffId(96267) and (jps.buffDuration(96267) > 2.5) , jps_TANK , "Emergency_Soins Sup_FocaBuff_"..jps_TANK },
 		-- "Soins rapides" 2061 -- buff player 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
-		{ 2060, jps.buffId(96267) and (jps.buffDuration(96267) > 1.5) , jps_TANK, "Emergency_Soins Rapides_FocaBuff_"..jps_TANK },
+		{ 2060, jps.buffId(96267) and (jps.buffDuration(96267) > 1.5) , jps_TANK , "Emergency_Soins Rapides_FocaBuff_"..jps_TANK },
 		-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 		{ 2061, jps.buff(114255) , jps_TANK, "Emergency_Soins Rapides_Waves_"..jps_TANK },
 		-- "Shield" 17
@@ -340,23 +338,23 @@ local function parse_emergency_TANK() -- return table -- (health_pct_TANK < 0.55
 		-- "Cascade" 121135
 		{ 121135, isInBG and (UnitIsUnit(jps_TANK,player)~=1) , jps_TANK , "Emergency_Cascade_"..jps_TANK },
 		-- "Soins rapides" 2061 -- "Focalisation intérieure" 89485
-		{ 2061, jps.buffId(89485) , jps_TANK , "Emergency_Soins Rapides_Focal_"..jps_TANK },
+		{ 2061, jps.buffId(89485) , jps_TANK , "Emergency_Soins Rapides_Foca_"..jps_TANK },
 		-- "Soins de lien"
-		{ 32546 , unitFor_Binding , FriendUnit , "Emergency_Lien_Cond_Multi_" },
+		{ 32546 , unitFor_Binding , FriendUnit , "Emergency_Lien_MultiUnit_" },
 		-- "Soins rapides" 2061
-		{ 2061, (health_pct_TANK < 0.35) , jps_TANK , "Emergency_Soins Rapides_34%_"..jps_TANK },
+		{ 2061, (health_pct_TANK < 0.35) , jps_TANK , "Emergency_Soins Rapides_35%_"..jps_TANK },
 		-- "Prière de guérison" 33076
 		{ 33076, not jps.buff(33076,jps_TANK) , jps_TANK , "Emergency_Mending_"..jps_TANK },
 		-- jps.MagicDispel
-		{ 527, jps.MagicDispel(jps_TANK) , jps_TANK, "dispelMagic_"..jps_TANK }, 
+		{ 527, jps.MagicDispel(jps_TANK) , jps_TANK, "Emergency_dispelMagic_"..jps_TANK }, 
 		-- "Don des naaru"
 		{ 59544, select(2,GetSpellBookItemInfo(giftnaaru))~=nil , jps_TANK , "Emergency_Naaru_"..jps_TANK },
 		-- "Renew"
 		{ 139, not jps.buff(139,jps_TANK) , jps_TANK , "Emergency_Renew_"..jps_TANK },
 		-- DAMAGE -- "Flammes sacrées" 14914 -- "Evangélisme" 81661
-		{ 14914, jps.canDPS , EnemyUnit , "|cFFFF0000DPS_Emergency_EnemyUnit_Flammes_" },
+		{ 14914, jps.canDPS , EnemyUnit , "|cFFFF0000DPS_Emergency_Flammes_MultiUnit_" },
 		-- "Mot de pouvoir : Réconfort" -- "Power Word: Solace" 129250 -- REGEN MANA
-		--{ 129250, jps.canDPS ,  EnemyUnit, "|cFFFF0000DPS_Solace_" },
+		--{ 129250, jps.canDPS ,  EnemyUnit, "|cFFFF0000DPS_Emergency_Solace_MultiUnit_" },
 		-- "Soins supérieurs" 2060 
 		{ 2060, true , jps_TANK , "Emergency_Soins Sup_"..jps_TANK },
 	}
@@ -366,8 +364,8 @@ end
 local function parse_shield() -- return table
 	local table=
 	{
-		{ 17, UnitIsUnit(jps_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff(6788,"focustargettarget") and not jps.buff(17,"focustargettarget"), "focustargettarget"},
-		{ 17, jps.Defensive and not jps.debuff(6788,jps_TANK) and not jps.buff(17,jps_TANK) , jps_TANK },
+		{ 17, UnitIsUnit(jps_TANK, "focustargettarget")~=1 and jps.canHeal("focustargettarget") and not jps.debuff(6788,"focustargettarget") and not jps.buff(17,"focustargettarget"), "focustargettarget_" },
+		{ 17, jps.Defensive and not jps.debuff(6788,jps_TANK) and not jps.buff(17,jps_TANK) , "Shield_Defensive_"..jps_TANK },
 		{ 17, timerShield == 0 and not jps.debuff(6788,jps_TANK) and not jps.buff(17,jps_TANK) , jps_TANK , "Shield_Timer_"..jps_TANK },
 		{ 17, timerShield == 0 and not jps.debuff(6788,player) and not jps.buff(17,player) , player , "Shield_Timer_"..player },
 	}
@@ -377,9 +375,9 @@ end
 local function parse_mending() -- return table
 	local table=
 	{
-		{ 33076, jps.Defensive and (totalAbsorbTank < average_flashheal) and not jps.buff(33076,jps_TANK) , jps_TANK , "Mending_Def_"..jps_TANK },
+		{ 33076, jps.Defensive and (totalAbsorbTank < average_flashheal) and not jps.buff(33076,jps_TANK) , jps_TANK , "Mending_Defensive_"..jps_TANK },
 		{ 33076, (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank < average_flashheal) and not jps.buff(33076,jps_TANK) , jps_TANK , "Mending_Health_"..jps_TANK },
-		{ 33076, unitFor_Mending , FriendUnit , "Mending_Friend_" },
+		{ 33076, unitFor_Mending , FriendUnit , "Mending_MultiUnit_" },
 	}
 return table
 end
@@ -396,11 +394,11 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 		{ 2061, jps.buff(114255) , jps_TANK, "Carapace_Soins Rapides_Waves_"..jps_TANK },
 		-- POH
-		{ 596, (jps.LastCast~=prayerofhealing) and jps.canHeal(Shell_Target) , Shell_Target , "Carapace_POH_Target" },
+		{ 596, (jps.LastCast~=prayerofhealing) and jps.canHeal(Shell_Target) , Shell_Target , "Carapace_POH_Target_" },
 		-- "Soins rapides" -- 4P PvP mana cost flash heal 50% with SpiritShell
-		{ 2061, not jps.buff(114908,jps_TANK) and isInBG , jps_TANK , "Carapace_NotBuff_Soins Rapides_"..jps_TANK },
+		{ 2061, not jps.buff(114908,jps_TANK) and isInBG , jps_TANK , "Carapace_NoBuff_Soins Rapides_"..jps_TANK },
 		-- "Soins supérieurs" 2060
-		{ 2060, not jps.buff(114908,jps_TANK) and isInPvE , jps_TANK , "Carapace_NotBuff_Soins Sup_"..jps_TANK },
+		{ 2060, not jps.buff(114908,jps_TANK) and isInPvE , jps_TANK , "Carapace_NoBuff_Soins Sup_"..jps_TANK },
 		
 	--TANK Buff Spirit Shell 114908
 		-- "Soins supérieurs" 2060
@@ -408,7 +406,7 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		-- "Soins Rapides" 2061 -- 4P PvP mana cost flash heal 50%
 		{ 2061, jps.buff(114908,jps_TANK) and (totalAbsorbTank < average_flashheal) and (player_Aggro + player_IsInterrupt > 0) , jps_TANK , "Carapace_Buff_Soins Rapides_"..jps_TANK },
 		-- "Penance" 47540
-		{ 47540, jps.buff(114908,jps_TANK) and (health_pct_TANK < 0.75) , jps_TANK , "Carapace_Penance_"..jps_TANK },
+		{ 47540, jps.buff(114908,jps_TANK) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Carapace_Penance_"..jps_TANK },
 		
 	-- OTHERS
 		-- "Cascade" 121135
@@ -429,6 +427,8 @@ local function parse_group() -- return table -- (jps.LastCast==prayerofhealing)
 	local table=
 	{
 		{ 121135, true , jps_TANK , "Cascade_POH_"..jps_TANK },
+		-- CancelUnitBuff(player,spiritshell)
+		{ {"macro","/cancelaura "..spiritshell,"player"}, jps.buffId(109964) , player , "Macro_CancelAura_Carapace_POH_" }, 
 		{ 2061, jps.buff(114255) , jps_TANK, "Soins Rapides_Waves_POH_"..jps_TANK }, -- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 		{ 17, not jps.buff(59889,player) and not jps.debuff(6788,jps_TANK) and not jps.buff(17,jps_TANK), jps_TANK , "Shield_POH_"..jps_TANK },	-- "Sursis" 59889 "Borrowed"
 		{ 17, not jps.buff(59889,player)  and not jps.buff(17,player) and not jps.debuff(6788,player) , player , "Shield_POH_"..player }, -- si le jps_TANK est debuff Ame affaiblie et pas jps.buff(59889,player)
@@ -454,7 +454,7 @@ local function parse_flasheal() -- return table
 local table=
 {
 	{ 2061, jps.buff(114255) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK }, -- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
-	{ 2061, jps.buff(89485,player) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK }, -- "Focalisation intérieure" 89485
+	{ 2061, jps.buff(89485,player) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK , "Soins Rapides_Foca_"..jps_TANK }, -- "Focalisation intérieure" 89485
 	{ 2061, jps.buff(59889,player) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK , "Soins Rapides_Borrowed_"..jps_TANK }, -- "Sursis" 59889 "Borrowed"
 	{ 2061, (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK , "Soins Rapides_"..jps_TANK },
 }
@@ -464,7 +464,7 @@ end
 local function parse_greatheal() -- return table
 local table=
 {
-	{ 2060, jps.buff(89485,player) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK, "Soins Sup_Focal_"..jps_TANK  },
+	{ 2060, jps.buff(89485,player) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK, "Soins Sup_Foca_"..jps_TANK  },
 	{ 2060, jps.buff(59889,player) and (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK, "Soins Sup_Borrowed_"..jps_TANK  },
 	{ 2060, (health_deficiency_TANK > average_flashheal) and (totalAbsorbTank == 0) , jps_TANK, "Soins Sup_"..jps_TANK  },
 }
@@ -516,41 +516,45 @@ local spellTable =
 -- "Torve-esprit" 123040 -- "Ombrefiel" 34433 "Shadowfiend"
 	{ 34433, (manapool < 0.75) and canCastShadowfiend , rangedTarget },
 	{ 123040, (manapool < 0.75) and canCastShadowfiend , rangedTarget },
-	
+
+-- STUN PLAYER
+	{ 33206, isInBG and stunMe and (playerhealth_pct < 0.55) , player , "Aggro_Pain_Stun_" },
+	{ 89485, unitCastingCC , EnemyUnit , "Foca_EnemyCast_CC_" },
 -- AGGRO PLAYER
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
 	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
 	{ "nested", isInBG and (player_Aggro +  player_IsInterrupt > 0) , parse_player_aggro() },
+-- "Infusion de puissance" 10060 
+	{ 10060, (health_pct_TANK < 0.75) and (jps.cooldown(10060) == 0) and (manapool > 0.20) , player , "Puissance_" },
+-- ARCHANGE "Archange" 81700 -- "Evangélisme" 81661 buffStacks == 5
+	{ 81700, (health_pct_TANK < 0.75) and (jps.buffStacks(81661) == 5) , player, "ARCHANGE_" },
+-- EMERGENCY TARGET
+	{ "nested", (health_pct_TANK < 0.55) and (groupToHeal == false) , parse_emergency_TANK() },
+	{ "nested", (health_pct_TANK < 0.55) and (groupToHeal == true) , parse_POH() },
+	
 -- DAMAGE 
 	{ "nested", jps.FaceTarget and (health_pct_TANK > 0.75) and (timerShield > 0) and (not jps.buff(81700)) and (not jps.buffId(109964)) , parse_dmg() },
 	{ "nested", jps.FaceTarget and (health_pct_TANK > 0.75) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , parse_dmg() },
 
--- "Infusion de puissance" 10060 
-	{ 10060, (health_pct_TANK < 0.75) and (jps.cooldown(10060) == 0) and (manapool > 0.20) , player , "Puissance_" },
--- ARCHANGE "Archange" 81700 -- "Evangélisme" 81661 buffStacks == 5
-	{ 81700, (health_pct_TANK < 0.75) and UnitAffectingCombat(player)==1 and (jps.buffStacks(81661) == 5) , player, "ARCHANGE" },
--- EMERGENCY TARGET
-	{ "nested", (health_pct_TANK < 0.55) and (groupToHeal == false) , parse_emergency_TANK() },
-	{ "nested", (health_pct_TANK < 0.55) and (groupToHeal == true) , parse_POH() },
-
 -- CARAPACE	-- "Carapace spirituelle" spell & buff player 109964 buff target 114908
 	{ "nested", jps.buffId(109964) , parse_shell() },
 	{ {"macro",{109964,2060},jps_TANK}, castCarapace and (jps.cooldown(109964) == 0) , jps_TANK , "|cff0070ddSequence_Carapace_Soins Sup_"..jps_TANK },
-	{ 109964, unitFor_SpiritShell , {player,jps_TANK}, "CARAPACE" },
+	{ 109964, unitFor_SpiritShell , {player,jps_TANK}, "CARAPACE_" },
 
 -- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
 	{ "nested", true , parse_shield() },
 -- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 	{ 2061, jps.buff(114255) and (jps.buffDuration(114255) < 4) , jps_TANK, "Soins Rapides_Waves_"..jps_TANK },
 -- "Soins rapides" 2061 -- "Focalisation intérieure" 89485 -- "Egide Divine" 47515
-	{ 2061, jps.buffId(89485) and not jps.buff(47515,jps_TANK) , jps_TANK , "Soins Rapides_Focal_Egide_"..jps_TANK },
-	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Focal_"..jps_TANK },
-	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Focal_MultiUnit_" },
+	{ 2061, jps.buffId(89485) and not jps.buff(47515,jps_TANK) , jps_TANK , "Soins Rapides_Foca_Egide_"..jps_TANK },
+	{ 2061, jps.buffId(89485) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins Rapides_Foca_"..jps_TANK },
+	{ 2061, unitFor_Foca_Flash , FriendUnit , "Soins Rapides_Foca_MultiUnit_" },
 -- "Prière de guérison" 33076
-	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 	{ "nested", true , parse_mending() },
+-- "Cascade" 121135 "Escalade"
+	{ 121135, isInBG and (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and (countInRange > 2), jps_TANK , "Cascade_"..jps_TANK },
 -- "Don des naaru" 59544
-	{ 59544, (select(2,GetSpellBookItemInfo(giftnaaru))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK },
+	{ 59544, (select(2,GetSpellBookItemInfo(giftnaaru))~=nil) and (health_deficiency_TANK > average_flashheal) , "Naaru_"..jps_TANK },
 
 -- "Flammes sacrées" 14914  -- "Evangélisme" 81661 -- It is important to note that the instant cast Holy Fire from Glyph of Holy Fire does consume Borrowed Time
 	{ 14914, jps.canDPS(rangedTarget) and not jps.buff(81661,player) , rangedTarget ,"|cFFFF0000DPS_Flammes_"..rangedTarget },
@@ -562,22 +566,23 @@ local spellTable =
 	{ "nested", true , parse_dispel() },
 -- parse_DMG
 	{ "nested", jps.FaceTarget and (health_pct_TANK > 0.75) , parse_dmg() },
-	"Pénitence" 47540
+
+-- "Pénitence" 47540
 	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"},
 -- "Focalisation intérieure" 89485 -- 96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
-	{ 89485, UnitAffectingCombat(player)==1 and (jps.cooldown(89485) == 0) , player },
+	{ 89485, UnitAffectingCombat(player)==1 and (jps.cooldown(89485) == 0) , player , "Foca_" },
 -- "Prière de soins" 596
 	{ "nested", (groupToHeal == true) , parse_POH() },
 -- "Soins de lien" 32546 -- Glyph of Binding Heal 
-	{ 32546 , unitFor_Binding , FriendUnit , "Lien_Cond_Multi_" },
+	{ 32546 , unitFor_Binding , FriendUnit , "Lien_MultiUnit_" },
 -- "Soins rapides" 2061 -- "Soins supérieurs" 2060
 	{ "nested", true , parse_greatheal() },
 -- "Rénovation" 139
-	{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , jps_TANK },
-	{ 139, not jps.buff(139,jps_TANK) and jps.debuff(6788,jps_TANK) and (jps.cooldown(33076) > 0) , jps_TANK }, -- debuff Ame affaiblie and Mending on CD
+	{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , "Renew_"..jps_TANK },
+	{ 139, not jps.buff(139,jps_TANK) and jps.debuff(6788,jps_TANK) and (jps.cooldown(33076) > 0) , "Renew_"..jps_TANK }, -- debuff Ame affaiblie and Mending on CD
 -- "Soins" 2050
-	{ 2050, jps.buff(139,jps_TANK) and jps.buffDuration(139,jps_TANK) < 3 and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins_Renew_" },
-	{ 2050, health_deficiency_TANK > average_flashheal , jps_TANK , "Soins_"},
+	{ 2050, jps.buff(139,jps_TANK) and jps.buffDuration(139,jps_TANK) < 3 and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Soins_Renew_"..jps_TANK },
+	{ 2050, health_deficiency_TANK > average_flashheal , jps_TANK , "Soins_"..jps_TANK },
 -- "Feu intérieur" 588
 	{ 588, not jps.buff(588,player) and not jps.buff(73413,player), player }, -- "Volonté intérieure" 73413
 -- "Gardien de peur" 6346 -- FARMING OR PVP -- NOT PVE
@@ -588,6 +593,9 @@ local spellTable_moving =
 {
 -- TRINKETS -- jps.useTrinket(0) est "Trinket0Slot" est slotId  13 -- "jps.useTrinket(1) est "Trinket1Slot" est slotId  14
 	{ jps.useTrinket(1), isInBG and jps.UseCDs and stunMe , player },
+-- STUN PLAYER
+	{ 33206, isInBG and stunMe and (playerhealth_pct < 0.55) , player , "Aggro_Pain_Stun_" },
+	{ 89485, unitCastingCC , EnemyUnit , "Foca_EnemyCast_CC_" },
 -- "Passage dans le Vide" -- "Void Shift" 108968
 	{ 108968, (player_Aggro + player_IsInterrupt == 0) and (health_pct_TANK < 0.40) and (UnitIsUnit(jps_TANK,player)~=1) and (playerhealth_pct > 0.80) , jps_TANK , "Moving_Void Shift_"..jps_TANK  },
 -- "Pierre de soins" 5512
@@ -601,12 +609,12 @@ local spellTable_moving =
 
 -- AGGRO PLAYER
 	{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
-	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
-	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
 	{ 17, isInBG and not jps.debuff(6788,player) and not jps.buff(17,player) , player },
+	{ "nested", isInBG and (TimeToDiePlayer < 5) , parse_player_aggro() },
+	{ "nested", isInBG and (player_Aggro + player_IsInterrupt > 0) , parse_player_aggro() },
 
 -- EMERGENCY PLAYER
-	{ 33206, (playerhealth_pct < 0.40) and (UnitAffectingCombat(player)==1) , player} , -- "Suppression de la douleur"
+	{ 33206, (playerhealth_pct < 0.35) and (UnitAffectingCombat(player)==1) , player} , -- "Suppression de la douleur"
 	{ 17, (playerhealth_deficiency > average_flashheal) and not jps.buff(17,player) and not jps.debuff(6788,player) , player}, -- Shield
 	{ 2061, (playerhealth_deficiency > average_flashheal) and jps.buff(114255) , player }, -- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 	{ 47540, (playerhealth_deficiency > average_flashheal) , player} , -- "Pénitence" 47540
@@ -616,7 +624,7 @@ local spellTable_moving =
 
 -- EMERGENCY TARGET
 	-- "Suppression de la douleur" 33206
-	{ 33206, (jps.cooldown(33206) == 0) and (UnitAffectingCombat(player)==1) and (health_pct_TANK < 0.40) , jps_TANK },
+	{ 33206, (jps.cooldown(33206) == 0) and (UnitAffectingCombat(player)==1) and (health_pct_TANK < 0.35) , jps_TANK },
 	-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
 	{ 2061, jps.buff(114255) , jps_TANK },
 	-- "Pénitence" 47540 avec talent possible caster en moving
@@ -646,12 +654,12 @@ local spellTable_moving =
 	{ "nested", true , parse_dispel() },
 	
 -- DAMAGE "Mot de l'ombre : Mort" 32379 -- FARMING OR PVP -- NOT PVE
-	{ 32379, jps.FaceTarget and  isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
-	{ 32379, jps.FaceTarget and  isInBG and jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
+	{ 32379, jps.FaceTarget and isInBG and jps.IsCastingPoly(rangedTarget) , rangedTarget , "|cFFFF0000castDeath_Polymorph_"..rangedTarget },
+	{ 32379, jps.FaceTarget and isInBG and jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
 -- DAMAGE "Pénitence" 47540 -- FARMING OR PVP -- NOT PVE
-	{ 47540, jps.FaceTarget and  isInBG and jps.canDPS(rangedTarget) , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
+	{ 47540, jps.FaceTarget and isInBG and jps.canDPS(rangedTarget) , rangedTarget,"|cFFFF0000DPS_Penance_"..rangedTarget },
 -- DAMAGE "Mot de l'ombre: Douleur" 589 -- FARMING OR PVP -- NOT PVE
-	{ 589,  jps.FaceTarget and isInBG and jps.canDPS(rangedTarget) and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget },
+	{ 589, jps.FaceTarget and isInBG and jps.canDPS(rangedTarget) and jps.myDebuffDuration(589,rangedTarget) == 0 , rangedTarget , "|cFFFF0000DPS_Douleur_"..rangedTarget },
 
 -- "Feu intérieur" 588 -- "Volonté intérieure" 73413
 	{ 588, not jps.buff(588,player) and not jps.buff(73413,player) , player }, 
@@ -666,7 +674,6 @@ local spellTable_moving =
 		--spell,target = parseSpellTable(spellTableActive)
 		spell, target = parseSpellTable(spellTable)
 	end
-
 	return spell,target
 
 end, "Disc Priest PvP", false, true)
@@ -679,7 +686,7 @@ end, "Disc Priest PvP", false, true)
 -- "Sursis" 59889 "Borrowed"
 -- "Egide divine" 47753 "Divine Aegis"
 -- "Spirit Shell" -- Carapace spirituelle -- Pendant les prochaines 15 s, vos Soins, Soins rapides, Soins supérieurs, et Prière de soins ne soignent plus mais créent des boucliers d’absorption qui durent 15 s
--- "Holy Fire" -- -- Flammes sacrées
+-- "Holy Fire" -- Flammes sacrées
 -- "Archangel" -- Archange -- Consomme votre Evangelisme, ce qui augmente les soins que vous prodiguez de 5% par charge d'Evangelisme consommée pendant 18 s.
 -- "Evangelism" -- Evangélisme -- dégâts directs avec Flammes sacrées ou Fouet mental, vous bénéficiez d'Evangélisme. Cumulable jusqu'à 5 fois. Dure 20 s
 -- "Atonement" -- Expiation -- dmg avec Châtiment, Flammes sacrées ou Pénitence, vous rendez instantanément à un membre du groupe ou du raid proche qui a peu de points de vie et qui se trouve à moins de 15 mètres de la cible ennemie un montant de points de vie égal à 100% des dégâts infligés.

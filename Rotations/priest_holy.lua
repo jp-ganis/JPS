@@ -15,7 +15,7 @@ jps.registerRotation("PRIEST","HOLY",function()
 		local unitsBelow70 = 0
 		local unitsBelow50 = 0
 		local unitsBelow30 = 0
-		for unit, index in pairs(jps.RaidStatus) do
+		for unit,index in pairs(jps.RaidStatus) do
 			--Only check the relevant units
 			if (index["inrange"] == true) then
 				local thisHP = jps.hp(unit)

@@ -92,7 +92,7 @@ local spellstop = UnitChannelInfo(player) -- it's a channeling spell so jps.Cast
 		canCastMindBlast = true
 	end
 
-if canCastMindBlast then
+if canCastMindBlast and UnitChannelInfo("player")== nil then
 	SpellStopCasting()
 	spell = 8092
 	target = rangedTarget
@@ -246,15 +246,14 @@ local spellTable = {
 -- "Mindbender" "Torve-esprit" 123040 -- "Ombrefiel" 34433 "Shadowfiend"
 	{ 34433, jps.cooldown(34433) == 0 and canCastShadowfiend , rangedTarget },
 	{ 123040, jps.cooldown(123040) == 0 and canCastShadowfiend , rangedTarget },
-	
--- Dispel
+
+-- DISPEL
 -- Offensive dispel -- "Dissipation de la magie" 528
 	{ 528, jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
 -- "Saut de foi" 73325
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Friendly_LoseControl__Cond_Multi_" },
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473
-	--{ {"func",527,jps.MagicDispel}, isInBG , FriendUnit , "dispelMagic_Cond_Multi_" },
 
 -- HEAL
 -- "Passage dans le Vide" -- "Void Shift" 108968
@@ -339,14 +338,13 @@ local spellTable_moving =
 	{ 34433, jps.cooldown(34433) == 0 and canCastShadowfiend , rangedTarget },
 	{ 123040, jps.cooldown(123040) == 0 and canCastShadowfiend , rangedTarget },
 	
--- Dispel
+-- DISPEL
 -- "Saut de foi" 73325
 	{ {"func", 73325 , unitFor_Leap}, isInBG , FriendUnit , "Friendly_LoseControl__Cond_Multi_" },
 -- Offensive dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
 	{ 528, isInBG and jps.DispelOffensive(rangedTarget) , rangedTarget, "|cFFFF0000dispel_Offensive_"..rangedTarget },
 	{ {"func", 528 , jps.DispelOffensive}, isInBG , EnemyUnit , "|cFFFF0000dispel_Offensive_Cond_Multi_" },
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473
-	--{ {"func",527,jps.MagicDispel}, isInBG , FriendUnit , "dispelMagic_Cond_Multi_" },
 	
 -- HEAL
 -- "Passage dans le Vide" -- "Void Shift" 108968

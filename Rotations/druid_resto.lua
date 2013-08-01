@@ -24,6 +24,8 @@ druid.spells["harmony"] = toSpellName(100977)
 druid.spells["innervate"] = toSpellName(29166)
 druid.spells["soulOfTheForrest"] = toSpellName(48504)
 druid.spells["ironbark"] = toSpellName(102342)
+druid.spells["wildMushroom"] = toSpellName(88747)
+druid.spells["wildMushroomBloom"] = toSpellName(102791)
 
 
 druid.groupHealTable = {"NoSpell", false, "player"}
@@ -75,7 +77,14 @@ end
 
 local dispelTable = {druid.spells.naturesCure}
 function druid.dispel()
-    local cleanseTarget = jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
+    local cleanseTarget = nil -- jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
+    if jps.DispelMagicTarget() then
+    	cleanseTarget = jps.DispelMagicTarget()
+    elseif jps.DispelDiseaseTarget() then
+    	cleanseTarget = jps.DispelDiseaseTarget()
+    elseif jps.DispelPoisonTarget()
+    	cleanseTarget = jps.DispelPoisonTarget()
+    end
     dispelTable[2] = cleanseTarget ~= nil
     dispelTable[3] = cleanseTarget
     return dispelTable
@@ -105,6 +114,15 @@ function druid.legacyDefaultHP()
     return jps.hpInc(druid.legacyDefaultTarget())
 end
 
+--[[[
+@rotation Legacy Rotation
+@class DRUID
+@spec RESTORATION
+@description 
+Makes you Top Healer...until you run out of mana. You have to use Innervate and Tranquility manually![br]
+]]--
+
+
 jps.registerStaticTable("DRUID","RESTORATION",{
 ["ToolTip"] = "Legacy Rotation",
     -- rebirth Ctrl-key + mouseover
@@ -130,6 +148,22 @@ jps.registerStaticTable("DRUID","RESTORATION",{
     --    { "nourish",            jps.hp(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
 }, "Legacy Rotation")
 
+
+--[[[
+@rotation Advanced Rotation
+@class DRUID
+@spec RESTORATION
+@talents UY!002010!gUTSPF
+@author Kirk24788
+@description 
+This is a Raid-Rotation, don't use it for PvP!. It's focus is mana conserve and minimum overheal. You might not end up as top healer but you shouldn't
+run out of mana. Don't worry, if there is something to heal, it will heal! Use Tranquility manually.
+[br]
+Modifiers:[br]
+[*] [code]SHIFT[/code]: Place Wild Mushroom[br]
+[*] [code]CTRL-SHIFT[/code]: Cast Wild Mushroom: Bloom[br]
+]]--
+
 jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
     { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("target") ~= nil and IsSpellInRange("rebirth", "target")', "target" },
@@ -143,8 +177,12 @@ jps.registerStaticTable("DRUID","RESTORATION",{
 
     -- Dispel
     druid.dispel,
+
+    -- Wild Mushrooms
+    {druid.spells.wildMushroomBloom, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
+    {druid.spells.wildMushroom, 'IsShiftKeyDown() and druid.activeMushrooms() < 3 and not GetCurrentKeyBoardFocus()'  },
     
-    -- Dispel
+    -- Innervate
     {druid.spells.innervate, 'jps.mana("player") < 0.75', "player"},
     
     -- Group Heal

@@ -1,6 +1,12 @@
+--[[[
+@rotation Default
+@class druid
+@spec guardian
+@author jpganis, Attip, peanutbird
+@description 
+Guardian Rotation
+]]--
 jps.registerRotation("DRUID","GUARDIAN",function()
-	-- attempted by jpganis, fixed by Attip, updated by peanutbird
-	
 	local spell = nil
 	local target = nil
 	
