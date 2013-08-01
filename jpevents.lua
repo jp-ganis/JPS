@@ -654,16 +654,16 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", function(...)
 		end
 	end
 	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
-		local unitGuid = GUID -- thisEvent[8] == destGUID
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
+		
+		local unitGuid = GUID -- thisEvent[8] == destGUID
 		if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
 		local dataset = jps.RaidTimeToDie[unitGuid]
 		local data = table.getn(dataset)
-		if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
+		if data >= jps.maxTDDLifetime then table.remove(dataset, jps.maxTDDLifetime) end
 		table.insert(dataset, 1, {GetTime(), dmgTTD})
-		jps.RaidTimeToDie[unitGuid] = dataset
-		--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
+		jps.RaidTimeToDie[unitGuid] = dataset --jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
 	end
 end)
 
