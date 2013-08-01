@@ -49,7 +49,7 @@ end
 
 -- Check if unit loosed control
 -- unit = http://www.wowwiki.com/UnitId
--- message = type of spell = "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm"
+-- type of spell = "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm"
 function jps.LoseControl(unit,message)
 	if not jps.UnitExists(unit) then return false,0 end
 	if message == nil then message = "CC" end 

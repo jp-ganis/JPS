@@ -77,7 +77,14 @@ end
 
 local dispelTable = {druid.spells.naturesCure}
 function druid.dispel()
-    local cleanseTarget = jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
+    local cleanseTarget = nil -- jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
+    if jps.DispelMagicTarget() then
+    	cleanseTarget = jps.DispelMagicTarget()
+    elseif jps.DispelDiseaseTarget() then
+    	cleanseTarget = jps.DispelDiseaseTarget()
+    elseif jps.DispelPoisonTarget()
+    	cleanseTarget = jps.DispelPoisonTarget()
+    end
     dispelTable[2] = cleanseTarget ~= nil
     dispelTable[3] = cleanseTarget
     return dispelTable

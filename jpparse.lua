@@ -393,9 +393,10 @@ function parseSpellTable( hydraTable )
 	local spell = nil
 	local conditions = nil
 	local target = nil
-	local message = nil
+	local message = ""
 
 	for _, spellTable in pairs(hydraTable) do
+		if type(spellTable) == "function" then spellTable = spellTable() end
 		spell = spellTable[1] 
 		conditions = spellTable[2]
 		target = spellTable[3]

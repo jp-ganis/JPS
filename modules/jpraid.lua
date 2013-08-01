@@ -21,6 +21,9 @@
 --------------------------
 local L = MyLocalizationTable
 
+----------------------
+-- Find TANK
+----------------------
 
 function jps.targetIsRaidBoss(target) 
 	if target == nil then target = "target" end
@@ -35,11 +38,6 @@ function jps.playerInLFR()
 	if dungeon.difficulty == "lfr25" then return true end
 	return false
 end
-
-
-----------------------
--- Find TANK
-----------------------
 
 function jps.findMeAggroTank(targetUnit)
 	local allTanks = jps.findTanksInRaid()
