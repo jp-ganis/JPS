@@ -11,8 +11,8 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 
 	-- Populate friendlies
 	local friendlies = {}
-	for name,_ in pairs(jps.RaidStatus) do 
-	if jps.canHeal(unit) then table.insert(friendlies,name) end
+	for name,index in pairs(jps.RaidStatus) do 
+	if (index["inrange"] == true) then table.insert(friendlies,name) end
 	end
 
 	-- Totems

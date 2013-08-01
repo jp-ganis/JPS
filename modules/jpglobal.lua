@@ -25,6 +25,7 @@ local L = MyLocalizationTable
 --------------------------
 -- TABLE FUNCTIONS
 --------------------------
+
 function jps.removeTableKey(table, key)
 	if key == nil then return end
     local element = table[key]
