@@ -82,7 +82,7 @@ function druid.dispel()
     	cleanseTarget = jps.DispelMagicTarget()
     elseif jps.DispelDiseaseTarget() then
     	cleanseTarget = jps.DispelDiseaseTarget()
-    elseif jps.DispelPoisonTarget()
+    elseif jps.DispelPoisonTarget() then
     	cleanseTarget = jps.DispelPoisonTarget()
     end
     dispelTable[2] = cleanseTarget ~= nil
