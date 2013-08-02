@@ -80,8 +80,8 @@ function druid.dispel()
     local cleanseTarget = nil -- jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
     if jps.DispelMagicTarget() then
     	cleanseTarget = jps.DispelMagicTarget()
-    elseif jps.DispelDiseaseTarget() then
-    	cleanseTarget = jps.DispelDiseaseTarget()
+    elseif jps.DispelCurseTarget() then
+    	cleanseTarget = jps.DispelCurseTarget()
     elseif jps.DispelPoisonTarget() then
     	cleanseTarget = jps.DispelPoisonTarget()
     end
