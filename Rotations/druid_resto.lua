@@ -152,7 +152,7 @@ jps.registerStaticTable("DRUID","RESTORATION",{
     { druid.spells.naturesSwiftness, 'druid.legacyDefaultHP() < 0.40' },
     { druid.spells.healingTouch, '(jps.buff(druid.spells.naturesSwiftness) or not jps.Moving) and druid.legacyDefaultHP() < 0.55', druid.legacyDefaultTarget },    
     { druid.spells.nourish, 'druid.legacyDefaultHP() < 0.85', druid.legacyDefaultTarget },
-    --    { "nourish",            jps.hp(tank) < 0.9 or jps.buffDuration("lifeb loom",tank) < 5, tank },
+    --    { "nourish",            jps.hp(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
 }, "Legacy Rotation")
 
 
