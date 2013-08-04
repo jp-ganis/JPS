@@ -91,6 +91,13 @@ function druid.dispel()
 end
 
 
+function druid.activeMushrooms()
+    local first = GetTotemInfo(1) and 1 or 0
+    local second = GetTotemInfo(2) and 1 or 0
+    local third = GetTotemInfo(3) and 1 or 0
+    return first + second + third
+end
+
 
 function druid.legacyDefaultTarget()
     --healer
