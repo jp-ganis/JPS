@@ -265,7 +265,7 @@ jpsFrame:SetScript("OnEvent", function(self, event, ...)
 		if enableProfiling then endProfileMemory(event) end
 	end
 	-- Execute this code everytime?
-	if (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
+	if jps.checkTimer("FacingBug") > 0 and jps.checkTimer("Facing") == 0 then
 		SaveView(2)
 		TurnLeftStop()
 		TurnRightStop()
@@ -351,9 +351,11 @@ end)
 
 -- Leave Combat
 local function leaveCombat()
-	TurnLeftStop()
-	TurnRightStop()
-	CameraOrSelectOrMoveStop()
+	if jps.checkTimer("FacingBug") > 0
+		TurnLeftStop()
+		TurnRightStop()
+		CameraOrSelectOrMoveStop()
+	end
 	jps.Opening = true
 	jps.Combat = false
 	jps.gui_toggleCombat(false)
@@ -516,7 +518,7 @@ jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
 		jps.CurrentCast[1], jps.CurrentCast[2], _ , _, jps.CurrentCast[5], _ = ...
 	end
 	
-	if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
+	if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] and jps.checkTimer("FacingBug") > 0 then
 		SaveView(2)
 		if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then
 			TurnLeftStop()
