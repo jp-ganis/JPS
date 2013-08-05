@@ -351,7 +351,7 @@ end)
 
 -- Leave Combat
 local function leaveCombat()
-	if jps.checkTimer("FacingBug") > 0
+	if jps.checkTimer("FacingBug") > 0 then
 		TurnLeftStop()
 		TurnRightStop()
 		CameraOrSelectOrMoveStop()
