@@ -1,3 +1,19 @@
+--[[[
+@rotation BM Hunter PVE 5.3
+@class HUNTER
+@spec BEASTMASTERY
+@author tropic
+@description
+Features:[br]
+[*] auto misdirect to pet if soloing[br]
+[*] misdirect to "focus" e.g. in party/raid[br]
+[*] mend pet when hp is less than 90%[br]
+[*] interrupt spellcasting with Silencing Shot[br]
+[*] use CDs incl. Lifeblood (herbalism)[br]
+[*] hot-keys for traps[br]
+]]--
+
+
 jps.registerRotation("HUNTER","BEASTMASTERY", function()
 	---------------
 	local spell = spell,target
@@ -88,8 +104,8 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ {"macro","/script PetPassiveMode()"},		petIsPassive == nil }, -- Set pet to passive
 		-- Misc
 		{ {"macro","/petattack"}, 			petShouldAttackMyTarget },
-		{ "Aspect of the Hawk", 			not jps.buff("Aspect of the Hawk") }, 
-		{ "Aspect of the Iron Hawk", 		not jps.buff("Aspect of the Iron Hawk") }, -- Tier 3 talent
+		{ "Aspect of the Hawk", not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") },
+		
 		-- Misdirect to pet if no "focus" -- for farming, best with Glyph of Misdirection
 		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
 		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },

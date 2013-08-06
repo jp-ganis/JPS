@@ -4,6 +4,48 @@
 <meta charset="UTF-8" />
 <title>JPS Documentation</title>
 <link rel="stylesheet" type="text/css" href="css/default.css">
+<script src="js/jquery-2.0.3.js"></script>
+<script>
+window.onload = function () {
+    // Looks for an element with the class "toc" and appends an empty list
+    $('.toc').append('<ul id="toc" class="toc-list"></ul>')
+    // find the new list
+    var TOC = $('ul#toc');
+    $.each($('div.section'), function(k,v) {
+        var heading = $(v).find('div.section-title');
+        var headingText = $(heading).text();
+        var headingID = headingText.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        $(v).attr("id", headingID);
+        TOC.append('<li><a class="toc-link" href="#' + headingID +'">' + headingText +  '</a></li>' );
+        var subList = '';
+        $(this).find('div.module').each(function() {
+            if (subList == '') {
+                subList = '<li><ul class="toc-sublist">';
+            }
+            var heading = $(this).find('div.module-name');
+            var headingText = $(heading).text();
+            var headingID = headingText.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            $(this).attr("id", headingID);
+            subList = subList + '<li><a class="toc-link" href="#' + headingID +'">' + headingText +  '</a></li>';
+        });
+        $(this).find('div.rotation-class').each(function() {
+            if (subList == '') {
+                subList = '<li><ul class="toc-sublist">';
+            }
+            var heading = $(this).find('div.rotation-class-title');
+            var headingText = $(heading).text();
+            var headingID = headingText.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            $(this).attr("id", headingID);
+            subList = subList + '<li><a class="toc-link" href="#' + headingID +'">' + headingText +  '</a></li>';
+        });
+        if (subList != '') {
+            subList = subList + '</ul>';
+            TOC.append(subList);
+        }
+    });
+  $(".toc").prepend('<div class=\"section-title\">Table of Contents</div>')
+}
+</script>
 </head>
 <body>
 <div class="title">= JPS - A PLUA ADDON FOR WORLD OF WARCRAFT =</div>
@@ -21,6 +63,9 @@
 <p>You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</p>
 
 <p>Copyright (C) 2011 James Ganis</p>
+
+<div class="toc"></div>
+
 <div class="section">
 <div class="section-title">Usage</div>
 With protected LUA enabled (through and external hack, not included with this package) this addon will play on your behalf, detecting your class and spec simply attacking a target will cause the mod to take over. Using all the best spells and abilities with split second timing to ensure maximum DPS, TPS or HPS for your class and spec.

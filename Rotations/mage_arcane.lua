@@ -1,4 +1,12 @@
---jpganis + SIMCRAFT
+--[[[
+@rotation Arcane PVE SingleTarget 5.3/Arcane PVE > 4 Targets 5.3
+@class mage
+@spec fire
+@author jpganis
+@description 
+SimCraft 5.3
+]]--
+
 jps.registerRotation("MAGE","ARCANE",function()
 	local spell = nil
 	local target = nil	

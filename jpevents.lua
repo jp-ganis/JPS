@@ -194,6 +194,7 @@ local reportInterval = 15
 local maxProfileDuration = 60
 local lastReportUpdate = 0
 local totalProfileDuration = 0
+--[[[ Internal - Memory Usage Report ]]--
 function jps.reportMemoryUsage(elapsed)
 	lastReportUpdate = lastReportUpdate + elapsed
 	totalProfileDuration = totalProfileDuration + elapsed
@@ -264,7 +265,7 @@ jpsFrame:SetScript("OnEvent", function(self, event, ...)
 		if enableProfiling then endProfileMemory(event) end
 	end
 	-- Execute this code everytime?
-	if (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
+	if jps.checkTimer("FacingBug") > 0 and jps.checkTimer("Facing") == 0 then
 		SaveView(2)
 		TurnLeftStop()
 		TurnRightStop()
@@ -350,9 +351,11 @@ end)
 
 -- Leave Combat
 local function leaveCombat()
-	TurnLeftStop()
-	TurnRightStop()
-	CameraOrSelectOrMoveStop()
+	if jps.checkTimer("FacingBug") > 0 then
+		TurnLeftStop()
+		TurnRightStop()
+		CameraOrSelectOrMoveStop()
+	end
 	jps.Opening = true
 	jps.Combat = false
 	jps.gui_toggleCombat(false)
@@ -383,7 +386,7 @@ jps.registerEvent("PLAYER_LEAVING_WORLD", jps_SAVE_PROFILE)
 -- Hide Static Popup - thx here to Phelps & ProbablyEngine
 local function hideStaticPopup(addon, eventBlocked)
 	jps.PLuaFlag = true
-	if addon == "JPS" then
+	if string.upper(addon) == "JPS" then
 		StaticPopup1:Hide()
 		LOG.debug("Addon Action Blocked: %s", eventBlocked)
 	end
@@ -515,7 +518,7 @@ jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
 		jps.CurrentCast[1], jps.CurrentCast[2], _ , _, jps.CurrentCast[5], _ = ...
 	end
 	
-	if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] then
+	if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] and jps.checkTimer("FacingBug") > 0 then
 		SaveView(2)
 		if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then
 			TurnLeftStop()
@@ -566,8 +569,8 @@ end)
 
 -- PLAYER_LEVEL_UP - if jps was disabled because of toon level < 10
 jps.registerEvent("PLAYER_LEVEL_UP", function(level)
+	jps.Level = level
 	if level == "10" then
-		jps.Level = level
 		jps.detectSpec()
 		jps.Enabled = true
 		jps.detectSpecDisabled = false
@@ -653,16 +656,16 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", function(...)
 		end
 	end
 	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
-		local unitGuid = GUID -- thisEvent[8] == destGUID
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
+		
+		local unitGuid = GUID -- thisEvent[8] == destGUID
 		if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
 		local dataset = jps.RaidTimeToDie[unitGuid]
 		local data = table.getn(dataset)
-		if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
+		if data >= jps.maxTDDLifetime then table.remove(dataset, jps.maxTDDLifetime) end
 		table.insert(dataset, 1, {GetTime(), dmgTTD})
-		jps.RaidTimeToDie[unitGuid] = dataset
-		--jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
+		jps.RaidTimeToDie[unitGuid] = dataset --jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
 	end
 end)
 

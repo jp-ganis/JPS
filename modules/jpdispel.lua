@@ -88,6 +88,21 @@ function jps.PoisonDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 	return false
 end
 
+function jps.CurseDispel(unit,debuffunit) 
+	if not jps.canHeal(unit) then return false end
+	if debuffunit == nil then debuffunit = "Curse" end
+	local auraName, icon, count, debuffType, expirationTime, castBy
+	local i = 1
+	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
+	while auraName do
+		if debuffType==debuffunit then 
+		return true end
+		i = i + 1
+		auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
+	end
+	return false
+end
+
 function jps.DispelMagicTarget()
 	if jps.getConfigVal("Dispel Magic") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
@@ -106,6 +121,13 @@ function jps.DispelPoisonTarget()
 	if jps.getConfigVal("Dispel Poison") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.PoisonDispel(unit) then return unit end
+	end
+end 
+
+function jps.DispelCurseTarget()
+	if jps.getConfigVal("Dispel Curse") == 0 then return false end
+	for unit,index in pairs(jps.RaidStatus) do	 
+		if (index["inrange"] == true) and jps.CurseDispel(unit) then return unit end
 	end
 end 
 

@@ -1,3 +1,11 @@
+--[[[
+@rotation Default PvP
+@class HUNTER
+@spec BEASTMASTERY
+@description 
+Put DPS trinket in top trinket slot and if not human, put PvP trinket in bottom slot.
+]]--
+
 jps.registerRotation("HUNTER","BEASTMASTERY", function()
 -- valve
 	local player = jpsName
@@ -104,8 +112,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ jps.DPSRacial, jps.UseCDs },
 		-- { jps.useTrinket(1), },
 		{ "trueshot aura", not jps.buff("trueshot aura") , player },
-		{ "aspect of the iron hawk", not jps.Moving and not jps.buff("aspect of the iron hawk"), player },
-		{ "aspect of the hawk", not jps.Moving and not jps.buff("aspect of the hawk") , player },
+		{ "Aspect of the Hawk", not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") },
 		{ "aspect of the fox", jps.Moving and not jps.buff("aspect of the fox") , player },
 		{ "fervor", focus < 65 and not jps.buff("fervor") , player },
 		{ "bestial wrath", focus > 60 and not jps.buff("the beast within") , player },
@@ -150,6 +157,4 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 
 	local spell,target = parseSpellTable(spellTable)
 	return spell,target
-end	,"Default",false,true)
-
--- Put DPS trinket in top trinket slot and if not human, put PvP trinket in bottom slot.
+end	,"Default PvP",false,true)

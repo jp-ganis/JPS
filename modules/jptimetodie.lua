@@ -1,10 +1,6 @@
--- Time To Die Update Function
 -----------------------
 -- TIME TO DIE FRAME
 -----------------------
-
-jps.UnitToLiveData = {}
-jps.timeToLiveMaxSamples = 30
 
 local JPSEXTInfoFrame = CreateFrame("frame","JPSEXTInfoFrame")
 JPSEXTInfoFrame:SetBackdrop({
@@ -13,7 +9,7 @@ JPSEXTInfoFrame:SetBackdrop({
 	insets={left=11, right=12, top=12, bottom=11}
 })
 JPSEXTInfoFrame:SetWidth(150)
-JPSEXTInfoFrame:SetHeight(60)
+JPSEXTInfoFrame:SetHeight(80)
 JPSEXTInfoFrame:SetPoint("CENTER",UIParent)
 JPSEXTInfoFrame:EnableMouse(true)
 JPSEXTInfoFrame:SetMovable(true)
@@ -23,7 +19,7 @@ JPSEXTInfoFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing()
 JPSEXTInfoFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 local infoFrameText = JPSEXTInfoFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal") -- "OVERLAY"
 infoFrameText:SetJustifyH("LEFT")
-infoFrameText:SetPoint("LEFT", 15, 0)
+infoFrameText:SetPoint("LEFT", 10, 0)
 infoFrameText:SetFont('Fonts\\ARIALN.ttf', 11, 'THINOUTLINE')
 local infoTTD = 60
 
@@ -113,16 +109,16 @@ function updateTimeToDie(elapsed, unit)
 	local health = UnitHealth(unit)
 
 	if health == UnitHealthMax(unit) or health == 0 then
-		jps.RaidTimeToDie[unitGuid] = nil
+		jps.TimeToDieData[unitGuid] = nil
 		return
 	end
 
 	local time = GetTime()
 
-	jps.RaidTimeToDie[unitGuid] = jps.timeToDieFunctions[jps.timeToDieAlgorithm][0](jps.RaidTimeToDie[unitGuid],health,time)
-	if jps.RaidTimeToDie[unitGuid] then
-		if jps.RaidTimeToDie[unitGuid]["timeSinceNoChange"] >= jps.maxTDDLifetime then
-			jps.RaidTimeToDie[unitGuid] = nil
+	jps.TimeToDieData[unitGuid] = jps.timeToDieFunctions[jps.timeToDieAlgorithm][0](jps.TimeToDieData[unitGuid],health,time)
+	if jps.TimeToDieData[unitGuid] then
+		if jps.TimeToDieData[unitGuid]["timeSinceNoChange"] >= jps.maxTDDLifetime then
+			jps.TimeToDieData[unitGuid] = nil
 		end
 	end
 end
@@ -259,24 +255,11 @@ jps.timeToDieFunctions["WeightedLeastSquares"] = {
 	end 
 }
 
-function jps.updateUnitTimeToLive(unit)
-	local guid = UnitGUID(unit)
-	if jps.UnitToLiveData[guid] == nil then jps.UnitToLiveData[guid] = {} end
-	local dataset = jps.UnitToLiveData[guid]
-	local data = table.getn(dataset)
-	if data > jps.timeToLiveMaxSamples then table.remove(dataset, jps.timeToLiveMaxSamples) end
-	table.insert(dataset, 1, {GetTime(), UnitHealth(unit)})
-	jps.UnitToLiveData[guid] = dataset
-end
-
 -- table.getn Returns the size of a table, If the table has an n field with a numeric value, this value is the size of the table.
 -- Otherwise, the size is the largest numerical index with a non-nil value in the table
--- we supply 3 arguments to the table.insert(table,position,value) function.
--- We can also use the table.remove(table,position) to remove elements from a table array.
--- jps.UnitToLiveData[guid] = { [1] = {GetTime(), UnitHealth(unit)} , [2] = {GetTime(), UnitHealth(unit)} , [3] = {GetTime(), UnitHealth(unit)} }
 
 function jps.clearTimeToLive()
-	jps.UnitToLiveData = {}
+	jps.TimeToDieData = {}
 	jps.RaidTimeToDie = {}
 	
 	jps.CastBar.latency = 0
@@ -286,29 +269,6 @@ function jps.clearTimeToLive()
 	jps.CastBar.currentSpell = ""
 	jps.CastBar.currentTarget = ""
 	jps.CastBar.currentMessage = ""
-end
-
-function jps.UnitTimeToLive(unit)
-	if unit == nil then return 60 end
-	local guid = UnitGUID(unit)
-	local health_unit = UnitHealth(unit)
-	local timetolive = 60 -- e.g. 60 seconds
-	local totalDmg = 1 -- to avoid 0/0
-	local incomingDps = 1
-	
-	if jps.UnitToLiveData[guid] ~= nil then
-		local dataset = jps.UnitToLiveData[guid]
-		local data = table.getn(dataset)
-		if #dataset > 1 then
-			local timeDelta = dataset[1][1] - dataset[data][1] -- (lasttime - firsttime)
-			local totalTime = math.max(timeDelta, 1)
-			totalDmg = dataset[data][2] - dataset[1][2] -- (UnitHealth_old - UnitHealth_last) = Health Loss
-			incomingDps = math.ceil(totalDmg / totalTime)
-			if incomingDps <= 0 then incomingDps = 1 end
-		end
-		timetolive = math.ceil(health_unit / incomingDps)
-	end
-	return timetolive
 end
 
 -- jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), eventtable[15] },[2] = {GetTime(), eventtable[15] },[3] = {GetTime(), eventtable[15] } }
@@ -337,22 +297,20 @@ end
 
 function jps.TimeToDie(unit, percent)
 	local unitGuid = UnitGUID(unit)
-	local health = UnitHealth(unit)
-	if health == UnitHealthMax(unit) then
-		return 100000
-	end
+	local health_unit = UnitHealth(unit)
+	local timetodie = 60 -- e.g. 60 seconds
 	local time = GetTime()
-	local timeToDie = jps.timeToDieFunctions[jps.timeToDieAlgorithm][1](jps.RaidTimeToDie[unitGuid],health,time)
+	local timeToDie = jps.timeToDieFunctions[jps.timeToDieAlgorithm][1](jps.TimeToDieData[unitGuid],health_unit,time)
 	
 	if percent ~= nil and timeToDie ~= nil then
-		curPercent = health/UnitHealthMax(unit)
+		curPercent = health_unit/UnitHealthMax(unit)
 		if curPercent > percent then
 			timeToDie = (curPercent-percent)/(curPercent/timeToDie)
 		else
 			timeToDie = 0
 		end
 	end
-	if timeToDie ~= nil then return math.ceil(timeToDie) else return 100000 end
+	if timeToDie ~= nil then return math.ceil(timeToDie) else return 60 end
 end
 
 -- FRIEND UNIT WITH THE LOWEST TIMETODIE -- USAGE FOR HEALING TO SHIELD INCOMING DAMAGE
@@ -377,7 +335,7 @@ end
 local slider = CreateFrame("Slider","UpdateInterval",JPSEXTInfoFrame,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate 
 
 slider:ClearAllPoints()
-slider:SetPoint("TOP",0,20)
+slider:SetPoint("TOP",0,10)
 --slider:SetWidth(120)
 --slider:SetHeight(12)
 slider:SetScale(0.8)

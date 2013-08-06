@@ -175,9 +175,12 @@ class Module(DocFile):
                     if not mf.name in functionsInFile:
                         LOG.warn("Module '%s' documents global function '%s', but doesn't exist in the file!", filename, mf.name)
                     else:
-                        undocumentedFunctionsInFile.remove(mf.name)                
+                        if mf.name in undocumentedFunctionsInFile: 
+                            undocumentedFunctionsInFile.remove(mf.name)
+                        else:
+                            LOG.warn("Module '%s' documents global function '%s', multiple times!", filename, mf.name)
             if functionCountInFile > functionCountCommented:
-                LOG.warn("Module '%s' has %d global functions, but only %d are commented! Undocumented: %s",filename, functionCountInFile, functionCountCommented, ", ".join(undocumentedFunctionsInFile)[2:])
+                LOG.warn("Module '%s' has %d global functions, but only %d are commented! Undocumented: %s",filename, functionCountInFile, functionCountCommented, ", ".join(undocumentedFunctionsInFile))
             if functionCountInFile < functionCountCommented:
                 LOG.warn("Module '%s' only has %d global functions, but %d are commented!",filename, functionCountInFile, functionCountCommented)
 
@@ -257,6 +260,8 @@ class RotationComment(DocElement):
         self.specName = self.getTagData("@spec",self.tagList).lower()
         self.talents = self.getTagData("@talents",self.tagList)
         self.author = self.getTagData("@author",self.tagList)
+        if not self.author:
+            self.author = "Unknown"
         self.description = self.getTagData("@description",self.tagList)
         self.deprecated = self.getTagData("@deprecated",self.tagList)
 
@@ -277,11 +282,17 @@ class RotationComment(DocElement):
         return msg
 
 
-
 def getFunctions(filename):
     functions = []
+    inComment = False
     for line in open(filename,"r").readlines():
-        if line.startswith("function"):
+        posStart = line.find("--[[")
+        posEnd = line.find("]]")
+        if posStart >= 0 and (posEnd <0 or posEnd < posStart):
+            inComment = True
+        elif posEnd >= 0:
+            inComment = False
+        if not inComment and line.startswith("function"):
             res = re.search("(?<=function)[^(]*",line)
             if res:
                 fn = res.group(0).strip()
@@ -338,7 +349,6 @@ def getRotationDoc():
                 classDoc = classDoc + "<div class=\"rotations-spec\">\n"
                 classDoc = classDoc + "  <div class=\"rotation-spec-title %s\">%s</div>\n" % (classSpecKey, specName)
                 classDoc = classDoc + doc
-                classDoc = classDoc + "  </div>\n"
                 classDoc = classDoc + "</div>\n"
         if classDoc != "":
             rotationsDoc = rotationsDoc + "<div class=\"rotation-class\">\n"

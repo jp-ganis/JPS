@@ -22,6 +22,10 @@ druid.spells["nourish"] = toSpellName(50464)
 druid.spells["clearcasting"] = toSpellName(16870)
 druid.spells["harmony"] = toSpellName(100977)
 druid.spells["innervate"] = toSpellName(29166)
+druid.spells["soulOfTheForrest"] = toSpellName(48504)
+druid.spells["ironbark"] = toSpellName(102342)
+druid.spells["wildMushroom"] = toSpellName(88747)
+druid.spells["wildMushroomBloom"] = toSpellName(102791)
 
 
 druid.groupHealTable = {"NoSpell", false, "player"}
@@ -31,6 +35,11 @@ function druid.groupHealTarget()
     if jps.canHeal(tank) and jps.hp(tank) <= 0.5 then healTarget = tank end
     if jps.hpInc("player") < 0.2 then healTarget = "player" end
     return healTarget
+end
+
+function druid.hastSotF()
+    local selected, talentIndex = GetTalentRowSelectionInfo(4)
+    return talentIndex == 10
 end
 
 function groupHeal()
@@ -68,12 +77,26 @@ end
 
 local dispelTable = {druid.spells.naturesCure}
 function druid.dispel()
-    local cleanseTarget = jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
+    local cleanseTarget = nil -- jps.FindMeDispelTarget({"Poison"},{"Curse"},{"Magic"})
+    if jps.DispelMagicTarget() then
+    	cleanseTarget = jps.DispelMagicTarget()
+    elseif jps.DispelCurseTarget() then
+    	cleanseTarget = jps.DispelCurseTarget()
+    elseif jps.DispelPoisonTarget() then
+    	cleanseTarget = jps.DispelPoisonTarget()
+    end
     dispelTable[2] = cleanseTarget ~= nil
     dispelTable[3] = cleanseTarget
     return dispelTable
 end
 
+
+function druid.activeMushrooms()
+    local first = GetTotemInfo(1) and 1 or 0
+    local second = GetTotemInfo(2) and 1 or 0
+    local third = GetTotemInfo(3) and 1 or 0
+    return first + second + third
+end
 
 
 function druid.legacyDefaultTarget()
@@ -98,7 +121,17 @@ function druid.legacyDefaultHP()
     return jps.hpInc(druid.legacyDefaultTarget())
 end
 
+--[[[
+@rotation Legacy Rotation
+@class DRUID
+@spec RESTORATION
+@description 
+Makes you Top Healer...until you run out of mana. You have to use Innervate and Tranquility manually![br]
+]]--
+
+
 jps.registerStaticTable("DRUID","RESTORATION",{
+["ToolTip"] = "Legacy Rotation",
     -- rebirth Ctrl-key + mouseover
     { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
@@ -122,8 +155,25 @@ jps.registerStaticTable("DRUID","RESTORATION",{
     --    { "nourish",            jps.hp(tank) < 0.9 or jps.buffDuration("lifebloom",tank) < 5, tank },
 }, "Legacy Rotation")
 
+
+--[[[
+@rotation Advanced Rotation
+@class DRUID
+@spec RESTORATION
+@talents UY!002010!gUTSPF
+@author Kirk24788
+@description 
+This is a Raid-Rotation, don't use it for PvP!. It's focus is mana conserve and minimum overheal. You might not end up as top healer but you shouldn't
+run out of mana. Don't worry, if there is something to heal, it will heal! Use Tranquility manually.
+[br]
+Modifiers:[br]
+[*] [code]SHIFT[/code]: Place Wild Mushroom[br]
+[*] [code]CTRL-SHIFT[/code]: Cast Wild Mushroom: Bloom[br]
+]]--
+
 jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
+    { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("target") ~= nil and IsSpellInRange("rebirth", "target")', "target" },
     { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
     -- Buffs
@@ -134,8 +184,12 @@ jps.registerStaticTable("DRUID","RESTORATION",{
 
     -- Dispel
     druid.dispel,
+
+    -- Wild Mushrooms
+    {druid.spells.wildMushroomBloom, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
+    {druid.spells.wildMushroom, 'IsShiftKeyDown() and druid.activeMushrooms() < 3 and not GetCurrentKeyBoardFocus()'  },
     
-    -- Dispel
+    -- Innervate
     {druid.spells.innervate, 'jps.mana("player") < 0.75', "player"},
     
     -- Group Heal
@@ -143,23 +197,25 @@ jps.registerStaticTable("DRUID","RESTORATION",{
         -- Lifebloom on tank
         { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeATank()) < 3 or jps.buffStacks(druid.spells.lifebloom,jps.findMeATank()) < 3', jps.findMeATank },
         -- Harmony!
-        { druid.spells.regrowth, 'jps.buffDuration(druid.spells.harmony) < 1', jps.findMeATank },
+        { druid.spells.nourish, 'jps.buffDuration(druid.spells.harmony) < 3', jps.findMeATank },
         -- Group Heal
-        { druid.spells.wildGrowth, 'true', druid.groupHealTarget },
+        { druid.spells.rejuvination, 'jps.hpInc(druid.groupHealTarget()) < 0.80 and not jps.buff(druid.spells.rejuvination,druid.groupHealTarget())', druid.groupHealTarget },
         { druid.spells.swiftmend, 'jps.buff(druid.spells.rejuvination,druid.groupHealTarget()) or jps.buff(druid.spells.regrowth,druid.groupHealTarget())', druid.groupHealTarget },
-        { druid.spells.rejuvination, 'jps.hpInc(druid.groupHealTarget()) < 0.95 and not jps.buff(druid.spells.rejuvination,druid.groupHealTarget())', druid.groupHealTarget },
+        { druid.spells.wildGrowth, 'druid.hastSotF() and jps.buff(druid.spells.soulOfTheForrest) or not druid.hastSotF()', druid.groupHealTarget },
     }},
 
     -- Focus Heal
     {"nested", 'jps.Defensive and druid.focusHealTarget() ~= nil', {
-        { druid.spells.regrowth, 'jps.buffDuration(druid.spells.harmony) < 1', druid.focusHealTarget },
+        { druid.spells.regrowth, 'jps.buffDuration(druid.spells.harmony) < 2 and not jps.buff(druid.spells.regrowth, druid.focusHealTarget())', druid.focusHealTarget },
+        { druid.spells.nourish, 'jps.buffDuration(druid.spells.harmony) < 3 and jps.buff(druid.spells.regrowth, druid.focusHealTarget())', druid.focusHealTarget },
+        { druid.spells.ironbark, 'jps.hp(jps.findMeATank())', jps.findMeATank },
         { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeATank()) < 3 or jps.buffStacks(druid.spells.lifebloom,jps.findMeATank()) < 3', jps.findMeATank },
         { druid.spells.rejuvination, 'jps.buffDuration(druid.spells.rejuvination,druid.focusHealTarget()) < 2', druid.focusHealTarget },
+        { druid.spells.swiftmend, 'jps.buff(druid.spells.rejuvination,druid.focusHealTarget()) or jps.buff(druid.spells.regrowth,druid.focusHealTarget())', druid.focusHealTarget },
         { druid.spells.naturesSwiftness, 'jps.hpInc(druid.focusHealTarget()) < 0.40' },
         { druid.spells.healingTouch, 'jps.buff(druid.spells.naturesSwiftness) and jps.hpInc(druid.focusHealTarget()) < 0.55', druid.focusHealTarget },
-        { druid.spells.regrowth, 'jps.hpInc(druid.focusHealTarget()) < 0.35 and jps.buff(druid.spells.clearcasting)', druid.focusHealTarget },
+        { druid.spells.regrowth, 'jps.hpInc(druid.focusHealTarget()) < 0.75 and jps.buff(druid.spells.clearcasting)', druid.focusHealTarget },
         { druid.spells.regrowth, 'jps.hpInc(druid.focusHealTarget()) < 0.55 and not jps.buff(druid.spells.regrowth, druid.focusHealTarget())', druid.focusHealTarget },
         { druid.spells.nourish, 'jps.hpInc(druid.focusHealTarget()) < 0.85', druid.focusHealTarget },
     }},
-    { druid.spells.regrowth, 'jps.Defensive and jps.buffDuration(druid.spells.harmony) < 1', jps.findMeATank },
 },"Advanced Rotation")

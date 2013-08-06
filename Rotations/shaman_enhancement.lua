@@ -1,22 +1,21 @@
+--[[[
+@rotation Default
+@class SHAMAN
+@spec ENHANCEMENT
+@talents WZ!220210!be
+@description 
+Simcraft and more[br]
+[br]
+Usage Info:[br]
+[*] Use CDs for trinkets, Feral Spirit and Fire Elemental Totem[br]
+[*] Use AoE for Magma Totem, Fire Nova and Chain Lightning on Maelstrom Stacks[br]
+[*] Searing and Magma Totem will not override Fire Elemental Totem[br]
+[br]
+Todo:[br]
+[*] Perhaps implement more survivability for soloing
+]]--
+
 jps.registerRotation("SHAMAN","ENHANCEMENT",function()
-	--simcraft and more
-	-- Talents:
-	-- Tier 1: Astral Shift
-	-- Tier 2: Windwalk Totem
-	-- Tier 3: Call of the Elements
-	-- Tier 4: Echo of the Elements
-	-- Tier 5: Ancestral Guidance
-	-- Tier 6: Unleashed Fury
-	-- Major Glyphs: Glyph of Chain Lightning, Glyph of Flame Shock
-	
-	-- Usage info:
-	-- Use CDs for trinkets, Feral Spirit and Fire Elemental Totem
-	-- Use AoE for Magma Totem, Fire Nova and Chain Lightning on Maelstrom Stacks
-	-- Searing and Magma Totem will not override Fire Elemental Totem
-	
-	-- Todo:
-	-- Perhaps implement more survivability for soloing
-	
 	local maelstromStacks = jps.buffStacks("maelstrom weapon")
 	local shockCD = jps.cooldown("earth shock")
 	local chainCD = jps.cooldown("chain lightning")

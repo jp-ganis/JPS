@@ -1,5 +1,12 @@
--- SEE BOTTOM FOR USER NOTES
--- by: SwollNMember WoW v5.2 compliant
+--[[[
+@rotation Default PvP
+@class mage
+@spec frost
+@author SwollNMember
+@description 
+WoW v5.2 compliant
+]]--
+
 jps.registerRotation("MAGE","FROST",function()
 
 -- Player Specific
@@ -177,4 +184,4 @@ jps.registerRotation("MAGE","FROST",function()
 	}
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
-end, "Default", false, true)
+end, "Default PvP", false, true)

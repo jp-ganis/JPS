@@ -9,10 +9,10 @@ the DoT will only be re-applied if you gain at least 225K DPS - based on 150K av
 for the lost GCD. If you don't have the DoT on the target or there is only 2 seconds left it will be applied ignoring any DPS difference.
 [br][br]
 The DoT Tracker can be used with normal tables (#ref:jps.dotTracker.castTable) but since normal tables
-are deprecated you should instead convert your rotation to a static spell table and use the appropriate
-function (#ref:jps.dotTracker.castTableStatic).
+are deprecated you should instead convert your rotation to a static spell table and use the appropriate function (#ref:jps.dotTracker.castTableStatic).
 ]]--
 local dotTracker = {}
+jps.dotTracker = dotTracker
 dotTracker.log = jps.Logger(jps.LogLevel.ERROR)
 dotTracker.isInitialized = false
 dotTracker.timer = 0
@@ -22,39 +22,39 @@ dotTracker.classSpecificSpells = nil
 dotTracker.classSpecificUpdateDotDamage = nil
 dotTracker.frame = CreateFrame("Frame", "dotTracker", UIParent)
 dotTracker.trackedSpells = {}
--- Current DoT Damage
+--[[[ Internal: Current DoT Damage ]]--
 function dotTracker.toDotDamage(id,dps,dur,tE) dotTracker.dotDamage[id] = {dps = dps, duration = dur, tickEvery = tE} end
 dotTracker.dotDamage = {}
 
--- Tracked Targets
+--[[[ Internal: Tracked Targets ]]--
 function dotTracker.toTarget(guid, spellid) dotTracker.targets[guid..spellid] = { dps = dotTracker.dotDamage[spellid].dps, age = GetTime(), strength = 100, pandemicSafe = false} end
 dotTracker.targets = {}
 
 -- Spell Table
-function dotTracker.toSpell(id,r,altId) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r, alternativeId = altId} end
+local function toSpell(id,r,altId) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r, alternativeId = altId} end
 dotTracker.spells = {}
 	-- Warlock Spells
-	dotTracker.spells["immolate"] = dotTracker.toSpell(348, true, 108686) -- Immolate + Fire and Brimstone
-	dotTracker.spells["felFlame"] = dotTracker.toSpell(77799)
-	dotTracker.spells["corruption"] = dotTracker.toSpell(172, true, 87389) -- Corruption from Seed of Corruption
-	dotTracker.spells["agony"] = dotTracker.toSpell(980, true)
-	dotTracker.spells["unstableAffliction"] = dotTracker.toSpell(30108)
-	dotTracker.spells["doom"] = dotTracker.toSpell(603)
+	dotTracker.spells["immolate"] = toSpell(348, true, 108686) -- Immolate + Fire and Brimstone
+	dotTracker.spells["felFlame"] = toSpell(77799)
+	dotTracker.spells["corruption"] = toSpell(172, true, 87389) -- Corruption from Seed of Corruption
+	dotTracker.spells["agony"] = toSpell(980, true)
+	dotTracker.spells["unstableAffliction"] = toSpell(30108)
+	dotTracker.spells["doom"] = toSpell(603)
 
 -- Buff Table
-function dotTracker.toBuff(id,increase,increasePerStack,filter) return { id = id, name = GetSpellInfo(id), filter = filter or "HELPFUL", increase = increase, increasePerStack = increasePerStack or 0} end
+local function toBuff(id,increase,increasePerStack,filter) return { id = id, name = GetSpellInfo(id), filter = filter or "HELPFUL", increase = increase, increasePerStack = increasePerStack or 0} end
 dotTracker.buffs = {}
-	dotTracker.buffs["fluidity"] = dotTracker.toBuff(138002, 0.4) -- +40%
-	dotTracker.buffs["nutriment"] = dotTracker.toBuff(140741, 1, 0.1, "HARMFUL") -- +100% +10% per stack
-	dotTracker.buffs["tricksOfTheTrade"] = dotTracker.toBuff(57934, 0.15) -- +15%
-	dotTracker.buffs["fearless"] = dotTracker.toBuff(118977, 0.6) -- +60%
+	dotTracker.buffs["fluidity"] = toBuff(138002, 0.4) -- +40%
+	dotTracker.buffs["nutriment"] = toBuff(140741, 1, 0.1, "HARMFUL") -- +100% +10% per stack
+	dotTracker.buffs["tricksOfTheTrade"] = toBuff(57934, 0.15) -- +15%
+	dotTracker.buffs["fearless"] = toBuff(118977, 0.6) -- +60%
 
 -- Supported Classes/Specs + Damage Calculation
-function dotTracker.toClass(fn,...) return { updateFunction = fn, spells = {...} } end
+local function toClass(fn,...) return { updateFunction = fn, spells = {...} } end
 
 dotTracker.supportedClasses = {}
 dotTracker.supportedClasses["WARLOCK"] = {
-	dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)
+	toClass(function(mastery, haste, crit, spellDamage, damageBuff)
 		local damageBonus = (1+crit/100)*(1+(mastery*3.1)/100)
 		local tickEvery = 2/(1+(haste/100))
 		
@@ -78,7 +78,7 @@ dotTracker.supportedClasses["WARLOCK"] = {
 	end, 
 	dotTracker.spells.agony,dotTracker.spells.corruption,dotTracker.spells.unstableAffliction),
 	
-	dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)
+	toClass(function(mastery, haste, crit, spellDamage, damageBuff)
 		local damageBonus = (1+crit/100)*(1+(mastery)/100)
 		local tickEvery = 2/(1+(haste/100))
 		local ticks = math.floor(24/tickEvery)
@@ -96,7 +96,7 @@ dotTracker.supportedClasses["WARLOCK"] = {
 		dotTracker.toDotDamage(dotTracker.spells.doom.id, dps, duration, tickEvery)
 	end, 
 	dotTracker.spells.corruption,dotTracker.spells.doom),
-	dotTracker.toClass(function(mastery, haste, crit, spellDamage, damageBuff)
+	toClass(function(mastery, haste, crit, spellDamage, damageBuff)
 		local damageBonus = (1+crit/100)*(1+(mastery+1)/100)
 		
 		local tickEvery = 3/(1+(haste/100))
@@ -122,10 +122,9 @@ dotTracker.dottableUnits = {
 
 local LOG = dotTracker.log
 
--- Initialize DotTracker (will only be executed once) and return dotTracker Object
-jps.dotTracker = dotTracker
 
 -- OnEvent Handler
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.handleEvent(self, event, ...)
 	if event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		local _, eventType, _, sourceGUID, _, _, _, destGUID, _, _, _, spellId = ...
@@ -168,6 +167,7 @@ function dotTracker.handleEvent(self, event, ...)
 end
 
 -- OnUpdate Handler - updates Tracked Target Spells
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.handleUpdate(self,elapsed)
 	dotTracker.timer = dotTracker.timer + elapsed;
 	if dotTracker.timer >= dotTracker.throttle then
@@ -179,6 +179,7 @@ function dotTracker.handleUpdate(self,elapsed)
 end
 
 -- Adds Spell to trackedSpells Table
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.trackSpell(id,target)
 	local spell = {}
 	if id > 0 then
@@ -192,6 +193,7 @@ function dotTracker.trackSpell(id,target)
 end
 
 -- Updates the Tracked Spell with current Spell Power Values
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.updateTrackedSpellsOnTargets(trackedSpell)
 	local guid = UnitGUID(trackedSpell.target)
 	local _,_,_,_,_,duration,expires = UnitDebuff(trackedSpell.target,trackedSpell.name,trackedSpell.rank,"player")
@@ -216,6 +218,7 @@ function dotTracker.updateTrackedSpellsOnTargets(trackedSpell)
 end
 
 -- Register Events and sets OnUpdate/OnEvent Handler
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.registerEvents()
 	LOG.info("Un-Registering DoT Tracker Hooks...")
 	dotTracker.myGUID = UnitGUID("player")
@@ -263,7 +266,7 @@ function dotTracker.registerEvents()
 	end
 end
 
--- Update Damage Values
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.updateDotDamage()
 	LOG.debug("Updating DoT Damage...")
 	local damageBuff = 1
@@ -280,6 +283,7 @@ end
 
 dotTracker.results = {}
 
+--[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.setStaticResult(spellId, name, condition, unit)
 	if not dotTracker.results[spellId] then dotTracker.results[spellId] = {} end
 	dotTracker.results[spellId][1] = name
@@ -310,7 +314,7 @@ jps.dotTracker.castTable("Immolate"),[br]
 			[code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code] will be tried in this order
 @returns Spell-Table Function for static Spell Tables
 ]]--
-function dotTracker.castTableStatic(spellId, unit)
+function jps.dotTracker.castTableStatic(spellId, unit)
 	-- find actual spell id, it was given as spell table key or spell table entry
 	if not tonumber(spellId) then
 		if tonumber(spellId.id) then 
@@ -371,10 +375,11 @@ jps.dotTracker.castTable("Immolate"),[br]
 @returns Spell-Table Element, e.g.: [code]{"Immolate", false, "mouseover"}[/code]
 ]]--
 --JPTODO: Remove dotTracker.castTable when all Rotations use static tables
-function dotTracker.castTable(spellId, unit)
+function jps.dotTracker.castTable(spellId, unit)
 	return dotTracker.castTableStatic(spellId, unit)()
 end
 
+--[[[ Internal Function - Recast Logic ]]--
 function dotTracker.shouldSpellBeCast(spellId, unit)
 	if not tonumber(spellId) then
 		if tonumber(spellId.id) then 

@@ -12,8 +12,38 @@ div.tt {
     font-family: "Courier New", "Lucida Console", monospace;
 }
 
+/* TOC */
+div.toc {
+    margin-left: 10px;
+    margin-top: 50px;
+    margin-bottom: 25px;
+}
+
+/* TOC Links */
+a.toc-link {
+    color: black; 
+    text-transform:capitalize;
+    text-decoration:none;
+}
+a.toc-link:hover { 
+    font-weight:bold; 
+    color:blue;
+}
+
+/* Command List */
+ul.toc-list {
+    list-style-type: none;
+}
+
+/* Command List */
+ul.toc-sublist {
+    margin-left: -10px;
+    list-style-type: none;
+}
+
 /* #ref: Reference Links */
 a.ref {
+    color: blue; 
 }
 
 

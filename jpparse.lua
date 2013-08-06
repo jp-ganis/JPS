@@ -160,6 +160,20 @@ function jps.canDPS(unit)
 	return true
 end
 
+local battleRezSpells = {
+tostring(select(1,GetSpellInfo(20484))), -- Druid: Rebirth
+tostring(select(1,GetSpellInfo(61999))), -- DK: Raise Ally
+tostring(select(1,GetSpellInfo(20707))), -- Warlock: Soulstone
+tostring(select(1,GetSpellInfo(126393))) -- Hunter: Eternal Guardian
+
+}
+local function isBattleRez(spell)
+    for _,v in ipairs(battleRezSpells) do
+        if v == spell then return true end
+    end
+    return false
+end
+
 -- check if a spell is castable @ unit 
 function jps.canCast(spell,unit)
 	if unit == nil then unit = "target" end
@@ -168,7 +182,7 @@ function jps.canCast(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	
 	if jps.PlayerIsBlacklisted(unit) then return false end -- ADDITION jps.PlayerIsBlacklisted(unit) in CANCAST
-	if not jps.UnitExists(unit) then return false end
+	if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
 	if spellname == nil then return false end
 	spellname = string.lower(spellname)
 
@@ -379,9 +393,10 @@ function parseSpellTable( hydraTable )
 	local spell = nil
 	local conditions = nil
 	local target = nil
-	local message = nil
+	local message = ""
 
 	for _, spellTable in pairs(hydraTable) do
+		if type(spellTable) == "function" then spellTable = spellTable() end
 		spell = spellTable[1] 
 		conditions = spellTable[2]
 		target = spellTable[3]

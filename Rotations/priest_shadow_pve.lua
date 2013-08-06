@@ -21,8 +21,8 @@ jps.registerRotation("PRIEST","SHADOW",function()
 	local ArenaUnit = {"arena1","arena2","arena3"}
 
 	local FriendUnit = {}
-	for name,_ in pairs(jps.RaidStatus) do 
-	if jps.canHeal(unit) then table.insert(FriendUnit,name) end
+	for name,index in pairs(jps.RaidStatus) do 
+	if (index["inrange"] == true) then table.insert(FriendUnit,name) end
 	end
 
 	local EnemyUnit = {}
@@ -91,7 +91,7 @@ local spellstop = UnitChannelInfo(player) -- it's a channeling spell so jps.Cast
 		canCastMindBlast = true
 	end
 
-if canCastMindBlast then
+if canCastMindBlast and UnitChannelInfo("player")== nil then
 	SpellStopCasting()
 	spell = 8092
 	target = rangedTarget
@@ -228,9 +228,8 @@ local spellTable = {
 	{ 34433, jps.cooldown(34433) == 0 and canCastShadowfiend , rangedTarget },
 	{ 123040, jps.cooldown(123040) == 0 and canCastShadowfiend , rangedTarget },
 	
--- Dispel
+-- DISPEL
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473
-	--{ {"func",527,jps.MagicDispel}, isInBG , FriendUnit , "dispelMagic_Cond_Multi_" },
 
 -- HEAL
 -- "Passage dans le Vide" -- "Void Shift" 108968
@@ -304,9 +303,8 @@ local spellTable_moving =
 	{ 34433, jps.cooldown(34433) == 0 and canCastShadowfiend , rangedTarget },
 	{ 123040, jps.cooldown(123040) == 0 and canCastShadowfiend , rangedTarget },
 	
--- Dispel
+-- DISPEL
 -- "Purifier" 527 -- UNAVAILABLE IN SHADOW FORM 15473
-	--{ {"func",527,jps.MagicDispel}, isInBG , FriendUnit , "dispelMagic_Cond_Multi_" },
 	
 -- HEAL
 -- "Passage dans le Vide" -- "Void Shift" 108968

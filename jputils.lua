@@ -459,6 +459,29 @@ jps_SpellControl = {
 	--[123456] = "PvE",		-- This is just an example, not a real spell
 }
 
+jps_CastingSpellCC = {
+
+-- Priest
+	[605] =		"CC",   -- Mind Control
+	-- Druid
+	[339] =		"CC",   -- Entangling Roots
+	[33786] =	"CC",   -- Cyclone
+	[2637] =	"CC", 	-- Hibernate
+	-- Hunter
+	[1499] =	"CC",   -- Freezing Trap
+	[13809] =	"CC",   -- Frost Trap
+	[34600] =	"CC",   -- Snake Trap
+	-- Mage
+	[118] =	"CC",   -- Polymorph
+	-- Warlock
+	[5782] =	"CC",   -- Fear
+	[5484] =	"CC",   -- Howl of Terror
+	-- Warrior
+
+	-- Shaman
+	[51514] =	"CC",   -- Hex
+}
+
 --------------------------------------------------------------------
 -- FUNCTION RETURNS SPEC OF UNITFRAME WHEN MOUSEOVER THE FRAME
 --------------------------------------------------------------------

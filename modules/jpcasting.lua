@@ -67,7 +67,7 @@ function jps.IsChannelingSpell(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
-	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitChannelInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
+	local name, _, _, _, startTime, endTime, _, interrupt = UnitChannelInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
 	if spellname == name and jps.ChannelTimeLeft(unit) > 0 then return true end
 	return false
 end
@@ -84,10 +84,8 @@ jps.polySpellIds = {
 
 function jps.IsCastingPoly(unit)
 	if not jps.canDPS(unit) then return false end
-	local istargeting = unit.."player"
+	local istargeting = unit.."target"
 	local delay = 0
-	local Class, _ = UnitClass(unit) -- NOT USEFULL BECAUSE ONLY MAGE & SHAMAN CAST THESES SPELLS
-	
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
 	for spellID,spellname in pairs(jps.polySpellIds) do
 		if spell == tostring(select(1,GetSpellInfo(spellID))) then
