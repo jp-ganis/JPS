@@ -133,8 +133,8 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		
 		--Cooldowns
 		{"Ancestral Swiftness", jps.UseCDs and jps.hpInc(tank) <= 0.50, me },
-		{"ascendance", jps.UseCDs and not moving and (getNumberOfPlayersNeedHealing(0.40) >= 8 or getNumberOfPlayersNeedHealing(0.40, 1) >= 4), me },
-		{"spirit link totem", jps.UseCDs and (getNumberOfPlayersNeedHealing(0.40) >= 8 or getNumberOfPlayersNeedHealing(0.40, 1) >= 4), me },
+		{"ascendance", jps.UseCDs and not moving and (jps.CountInRaidStatus(0.4) >= 8 or (jps.CountInRaidStatus(0.4) >= 4 and GetNumGroupMembers < 10)), me },
+		{"spirit link totem", jps.UseCDs and (jps.CountInRaidStatus(0.4) >= 8 or (jps.CountInRaidStatus(0.4) >= 4 and GetNumGroupMembers < 10)), me },
 		{"stormlash totem", jps.buff("bloodlust") or jps.buff("time warp") or jps.buff("ancient hysteria") },
 		{"unleashed fury", jps.UseCDs and jps.hpInc(tank) <= 0.50, me },
 		{"mana tide totem", jps.UseCDs and jps.mana() <= 0.40 },
@@ -152,7 +152,7 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{"healing surge", not moving and jps.hpInc(tank) <= 0.40, tank },
 		{"greater healing wave", not moving and jps.hpInc(tank) <= 0.70, tank },
 		{"healing surge", not moving and defaultHP <= 0.50 and defaultTarget ~= tank, defaultTarget },
-		{"chain heal", getNumberOfPlayersNeedHealing(0.80) >= 3, defaultTarget },
+		{"chain heal", jps.CountInRaidStatus(0.8) >= 3, defaultTarget },
 		{"unleash elements", defaultHP <= 0.75, defaultTarget },
 		{"greater healing wave", not moving and defaultHP <= 0.70, defaultTarget },
 		{"healing wave", not moving and defaultHP <= 0.85, defaultTarget },
