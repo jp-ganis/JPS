@@ -101,10 +101,11 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		-- Damage
 		{ "Shield of the Righteous",	holyPower > 3 },
 		
-		-- Damage
-		{ "Judgment" , "onCD"},      	
 		-- Damage (Single target)
 		{ "Crusader Strike", not jps.MultiTarget },
+
+		-- Damage
+		{ "Judgment" , "onCD"},      	
 
 		{ "Holy Wrath" , "onCD"},   
 
@@ -215,10 +216,11 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		-- Damage
 		{ "Shield of the Righteous",	holyPower > 3 },
 		
+		-- Damage (Single target)
+		{ "Crusader Strike", not jps.MultiTarget },
+
 		-- Damage
 		{ "Judgment" , "onCD"},      	
-		-- Damage (Single target)
-		{ "Crusader Strike", "onCD"},
 
 	}
    
@@ -312,11 +314,12 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		
 		-- Damage
 		{ "Shield of the Righteous",	holyPower > 3 },
-		
-		-- Damage
-		{ "Judgment" , "onCD"},      	
+
 		-- Damage (Single target)
 		{ "Crusader Strike", not jps.MultiTarget },
+
+		-- Damage
+		{ "Judgment" , "onCD"},      	
 
 		{ "Holy Wrath" , "onCD"},   
 
