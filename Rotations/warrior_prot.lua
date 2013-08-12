@@ -1,5 +1,5 @@
 
-jps.registerStaticTable("WARRIOR","PROTECTION",function()
+jps.registerRotation("WARRIOR","PROTECTION",function()
 	-- Gocargo
 		
 	local playerHealth = UnitHealth("player")/UnitHealthMax("player")
