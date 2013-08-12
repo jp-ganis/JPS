@@ -110,6 +110,22 @@ function hpala.shouldInterruptCasting(spellsToCheck)
 	end
 end
 
+local dispelTable = {"cleanse"}
+function hpala.dispel()
+	local cleanseTarget = nil -- jps.FindMeDispelTarget({"Poison"},{"Disease"},{"Magic"})
+	if jps.DispelMagicTarget() then
+		cleanseTarget = jps.DispelMagicTarget()
+	elseif jps.DispelPoisonTarget() then
+		cleanseTarget = jps.DispelPoisonTarget()
+	elseif jps.DispelDiseaseTarget() then
+		cleanseTarget = jps.DispelDiseaseTarget()
+	elseif jps.DispelFriendlyTarget() then
+		cleanseTarget = jps.DispelFriendlyTarget()
+	end
+	dispelTable[2] = cleanseTarget ~= nil and jps.dispelActive()
+	dispelTable[3] = cleanseTarget
+	return dispelTable
+end
 ------------------------
 -- SPELL TABLE -----
 ------------------------
@@ -119,12 +135,8 @@ hpala.spellTable = {
 	{ "Rebuke",'jps.shouldKick("focus")', "focus" },
 	{ "Fist of Justice",'jps.shouldKick(hpala.rangedTarget()) and jps.cooldown("Rebuke")~=0', hpala.rangedTarget },
 
--- Spells
-	{ "Cleanse",'jps.dispelActive() and jps.DispelFriendlyTarget() ~= nil', jps.DispelFriendlyTarget()  , "dispelling unit " },
-	-- dispel ALL DEBUFF of FriendUnit
-	{ "Cleanse",'jps.dispelActive() and jps.DispelMagicTarget() ~= nil', jps.DispelMagicTarget() , "dispelling unit" },
-	{ "Cleanse",'jps.dispelActive() and jps.DispelPoisonTarget() ~= nil', jps.DispelPoisonTarget() , "dispelling unit" },
-	{ "Cleanse",'jps.dispelActive() and jps.DispelDiseaseTarget() ~= nil', jps.DispelDiseaseTarget() , "dispelling unit" },
+-- Dispels
+	hpala.dispel,
 	
 -- Cooldowns                     
 	{ "Lay on Hands",'jps.hp(hpala.myLowestImportantUnit()) < 0.20 and jps.UseCDs', hpala.myLowestImportantUnit, "casted lay on hands!" },
