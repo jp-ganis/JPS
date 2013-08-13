@@ -40,7 +40,7 @@ jps.registerStaticTable("WARRIOR","ARMS",
 
 	
 	-- pop a heal when solo
-	{ "Impending Victory", ' jps.hp() <= .7 and GetNumSubgroupMembers() == 0', "target" }, 
+	{ "Impending Victory", ' jps.hp() <= 0.7 and GetNumSubgroupMembers() == 0', "target" },
 	
 	{ "Colossus Smash", ' jps.buff("Sudden Death") ', "target" }, -- Sudden Death procs
 	{ "Execute", "onCD", "target" }, -- only available less than 20% health, no need to check
