@@ -178,13 +178,13 @@ hpala.spellTable = {
 	{ "Flash of Light",'jps.hp(hpala.ourHealTarget()) < 0.35 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.78  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 	{ "Holy Shock",'jps.hp(hpala.ourHealTarget()) < 0.94  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
-	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.86  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
+	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.88  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 		
 	-- other raid / party
 	{ "Flash of Light",'jps.hp(hpala.ourHealTarget()) < 0.30', hpala.ourHealTarget },
 	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.55', hpala.ourHealTarget },
-	{ "Holy Shock",'jps.hp(hpala.ourHealTarget()) < 0.92', hpala.ourHealTarget },
-	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.86 and not hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget }, -- prevent spamming Holy Light on tanks
+	{ "Holy Shock",'jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget },
+	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.88 and not hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget }, -- prevent spamming Holy Light on tanks
 	{ "Word of Glory",'jps.holyPower() > 2 and jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget },
 	{ "Divine Plea",'jps.mana() < 0.60 and jps.CountInRaidStatus(0.8) < 1', hpala.player },
 }
