@@ -155,9 +155,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 		-- Unholy Blight when our diseases are about to fall off. (talent based)
  	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
  	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},		
-	-- On-use Trinkets.
-	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
-	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
+
 	
 	-- Requires engineerins
 	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
@@ -172,8 +170,8 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Plague Strike",'jps.myDebuffDuration("Blood Plague") <= 1'},
 	
 	-- Self heals
-	{ "Death Siphon",'jps.hp() < 0.8'},
-	{ "Death Strike",'jps.hp() < 0.7'},
+	{ "Death Siphon",'jps.hp() < 0.8 and jps.Defensive'},
+	{ "Death Strike",'jps.hp() < 0.7 and jps.Defensive'},
 
 	{ "Obliterate",'jps.runicPower() <= 76'},
 	{ "Obliterate",'jps.buff("Killing Machine")'},
