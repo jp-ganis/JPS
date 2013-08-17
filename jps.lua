@@ -299,7 +299,9 @@ hooksecurefunc("UseAction", function(...)
 			local name = select(1,GetSpellInfo(id))
 			if jps.NextSpell ~= name then
 				jps.NextSpell = name
-				if jps.Combat then write("Set",name,"for next cast.") end
+				if jps.Combat then 
+					--write("Set",name,"for next cast.") 
+				end
 			end
 		end
 	end
