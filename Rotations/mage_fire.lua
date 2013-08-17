@@ -9,7 +9,7 @@ local spellTable =
 	
 	-- Deff 
 	{ "Ice Barrier",      (UnitHealth("player") / UnitHealthMax("player") < 0.50)  and not jps.buff("Ice Barrier","player"), "player" },
-	{ "Healthstone",      jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
+	{ "Healthstone",      jps.hp() < 0.7 and GetItemCount("Healthstone", 0, 1) > 0 },
 
 	--buffs
 	{ "Molten Armor",     not jps.buff("Molten Armor","player"), "player" },
