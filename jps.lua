@@ -28,6 +28,7 @@ jps.UpdateInterval = 0.05
 jps.Enabled = false
 jps.Combat = false
 jps.Debug = false
+jps.DebugLevel = 1
 jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = true
@@ -235,9 +236,17 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "fishing" or msg == "fish" then
 		jps.Fishing = not jps.Fishing
 		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
+	elseif msg == "debug" and rest ~="" then
+		if tonumber(rest) then
+			jps.DebugLevel = rest
+			write("Debug level set to",tostring(rest))		
+		else
+			jps.DebugLevel = 1
+			write("Debug level set to 1")		
+		end
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
-		write("Debug mode set to",tostring(jps.Debug))
+		write("Debug mode set to",tostring(jps.Debug))	
 	elseif msg == "face" then
 		jps.gui_toggleRot()
 		write("jps.FaceTarget set to",tostring(jps.FaceTarget))

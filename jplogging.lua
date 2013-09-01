@@ -25,7 +25,7 @@ end
 
 local function logPrint(logLevel,msgLevel)
 	return function (msg,a,b,c,d,e,f,g,h)
-		if msgLevel >= logLevel or jps.Debug then
+		if msgLevel >= logLevel or ( jps.Debug and tonumber(msgLevel) >= tonumber(jps.DebugLevel))  then
 			local stackTrace = split(debugstack(2,1,0), ":")
 			local file	= split(stackTrace[1], "\\")
 			--local prefix = ""
