@@ -21,7 +21,7 @@
 --------------------------
 
 local L = MyLocalizationTable
-
+local LOG=jps.Logger(jps.LogLevel.ERROR)
 --------------------------
 -- Functions CAST
 --------------------------
@@ -185,9 +185,10 @@ function jps.canCast(spell,unit)
 	if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
 	if spellname == nil then return false end
 	spellname = string.lower(spellname)
-
-	--if jps.Debug then jps_canCast_debug(spell,unit) end
-
+	
+	if jps.Debug then
+		jps_canCast_debug(spell,unit) 
+	end
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
 	local usable, nomana = IsUsableSpell(spellname) -- usable, nomana = IsUsableSpell("spellName" or spellID)
@@ -295,19 +296,18 @@ function jps_canHeal_debug(unit)
 end
 
 function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
-	if spell == nil then write("spell is nil") return false end
-	if not jps.UnitExists(unit) then write("unit is not a valid target or nil") return false end
-	
-	write("|cffa335ee"..spell.." @ "..unit)
+	LOG.info("Can Cast Debug for %s @ $s ", spell, unit)
+	if spell == nil then LOG.info("spell is nil  %s @ $s", spell, unit)return false end
+	if not jps.UnitExists(unit) then LOG.info("invalid unit  %s @ $s", spell, unit) return false end
 
 	local usable, nomana = IsUsableSpell(spell) -- IsUsableSpell("spellName" or spellID)
-	if not usable then write(spell.." = Failed IsUsableSpell test") return false end
-	if nomana then write(spell.." = Failed Mana test") return false end
-	if jps.cooldown(spell)~=0 then write("Failed Cooldown test") return false end
-	if jps_SpellHasRange(spell)~=1 then write(spell.." = Failed SpellHasRange test") return false end
+	if not usable then LOG.info("spell is not sable  %s @ $s", spell, unit) return false end
+	if nomana then LOG.info("failed mana test  %s @ $s", spell, unit) return false end
+	if jps.cooldown(spell)~=0 then LOG.info("cooldown not finished  %s @ $s", spell, unit) return false end
+	if jps_SpellHasRange(spell)~=1 then LOG.info("spellhasRange check failed  %s @ $s", spell, unit) return false end
 
-	if jps_IsSpellInRange(spell,unit)~=1 then write(spell.." = Failed SpellinRange test") return false end
-	write("Passed all tests canCast ".."|cffa335ee"..spell)
+	if jps_IsSpellInRange(spell,unit)~=1 then LOG.info("not in range  %s @ $s", spell, unit) return false end
+	LOG.info("Passed all tests  %s @ $s", spell, unit)
 	return true
 end
 
