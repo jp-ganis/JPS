@@ -11,6 +11,7 @@ wl.dottableUnits = {
 }
 
 local function toSpellName(id) name = GetSpellInfo(id); return name end
+
 wl.spells = {}
 -- All Specs
 wl.spells["opticalBlast"] = toSpellName(119911)
@@ -62,6 +63,32 @@ wl.spells["shadowburn"] = toSpellName(17877)
 wl.spells["chaosBolt"] = toSpellName(116858)
 wl.spells["incinerate"] = toSpellName(29722)
 wl.spells["conflagrate"] = toSpellName(17962)
+--Demonology
+wl.spells["darkSoulKnowledge"] = toSpellName(113861)
+wl.spells["metamorphosis"] = toSpellName(103958)
+wl.spells["handOfGuldan"] = toSpellName(105174)
+wl.spells["shadowflame"] = toSpellName(47960)
+wl.spells["shadowBolt"] = toSpellName(686)
+wl.spells["soulFire"] = toSpellName(6353)
+wl.spells["doom"] = toSpellName(603)
+wl.spells["metaDoom"] = toSpellName(124913)
+wl.spells["touchOfChaos"] = toSpellName(103964)
+wl.spells["voidRay"] = toSpellName(115422)
+wl.spells["chaosWave"] = toSpellName(124916)
+wl.spells["immolationAura"] = toSpellName(104025)
+wl.spells["carrionSwarm"] = toSpellName(103967)
+wl.spells["commandDemon"] = toSpellName(119898)
+wl.spells["impSwarm"] = toSpellName(104316)
+wl.spells["auraOfTheElements"] = toSpellName(116202)
+wl.spells["curseOfEnfeeblement"] = toSpellName(109466)
+wl.spells["auraOfEnfeeblement"] = toSpellName(116198)
+wl.spells["hellfire"] = toSpellName(1949)
+wl.spells["demonicLeap"] = toSpellName(109151)
+wl.spells["grimoireFelguard"] = toSpellName(111898)
+wl.spells["grimoireOfService"] = toSpellName(108501)
+wl.spells["harvestLife"] = toSpellName(689)
+wl.spells["moltenCore"] = toSpellName(140074)
+
 -- Professions
 wl.spells["lifeblood"] = toSpellName(121279)
 
@@ -120,6 +147,11 @@ wl.attackFocus = jps.cachedValue(function()
 	return UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus")
 end)
 
+function wl.hasPet()
+	if UnitExists("pet") == nil then return false end
+	return true
+end
+	
 -- Deactivate Burning Rush after n seconds of not moving
 local burningRushNotMovingSeconds = 0
 function wl.deactivateBurningRushIfNotMoving(seconds)
