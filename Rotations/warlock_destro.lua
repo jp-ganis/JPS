@@ -43,7 +43,7 @@ local spellTable = {
 		{wl.spells.havoc, 'not jps.Moving and wl.attackFocus()', "focus" },
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.burningEmbers() > 0 and	jps.buffStacks(wl.spells.havoc)>=3'},
-		{"nested" 'not jps.Moving', {
+		{"nested", 'not jps.Moving', {
 			jps.dotTracker.castTableStatic("immolate"),
 		}},
 		{wl.spells.conflagrate },
