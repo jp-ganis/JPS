@@ -44,14 +44,16 @@ local spellTable = {
 
 	{"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
 		{wl.spells.havoc, 'not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
-		{wl.spells.havoc, 'wl.attackFocus()', "focus" },
+		{wl.spells.havoc, 'not jps.Moving and wl.attackFocus()', "focus" },
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
-		{wl.spells.chaosBolt, 'jps.burningEmbers() > 0 and	jps.buffStacks(wl.spells.havoc)>=3'},
-		jps.dotTracker.castTableStatic("immolate"),
+		{wl.spells.chaosBolt, 'not jps.Moving and jps.burningEmbers() > 0 and	jps.buffStacks(wl.spells.havoc)>=3'},
+		{"nested", 'not jps.Moving', {
+			jps.dotTracker.castTableStatic("immolate"),
+		}},
 		{wl.spells.conflagrate },
-		{wl.spells.chaosBolt, 'jps.buff(wl.spells.darkSoulInstability) and jps.emberShards() >= 19' },
-		{wl.spells.chaosBolt, 'jps.TimeToDie("target", 0.2) > 5.0 and jps.burningEmbers() >= 3 and jps.buffStacks(wl.spells.backdraft) < 3'},
-		{wl.spells.chaosBolt, 'jps.emberShards() >= 35'},
+		{wl.spells.chaosBolt, 'not jps.Moving and jps.buff(wl.spells.darkSoulInstability) and jps.emberShards() >= 19' },
+		{wl.spells.chaosBolt, 'not jps.Moving and jps.TimeToDie("target", 0.2) > 5.0 and jps.burningEmbers() >= 3 and jps.buffStacks(wl.spells.backdraft) < 3'},
+		{wl.spells.chaosBolt, 'not jps.Moving and jps.emberShards() >= 35'},
 		{wl.spells.incinerate },
 	}},
 	
@@ -70,7 +72,7 @@ local spellTable = {
 
 
 --[[[
-@rotation Destruction 5.3
+@rotation Destruction 5.4
 @class warlock
 @spec destruction
 @talents Vb!112101!ZbS
