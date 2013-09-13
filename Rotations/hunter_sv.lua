@@ -10,7 +10,8 @@ Features:[br]
 [*] Auto use "Healthstone" at 50% hp
 [*] mend pet when hp is less than 90%[br]
 [*] interrupt spellcasting with Silencing Shot[br]
-[*] Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc. (manually use "Readiness")[br]
+[*] Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc.
+[br]
 [br]
 Trap Keys:[br]
 [*][code]SHIFT:[/code] Explosive Trap[br]
@@ -22,7 +23,7 @@ Trap Keys:[br]
 
 jps.registerRotation("HUNTER","SURVIVAL", function()
 -- by tropic
-jps.Tooltip = "::Survival Hunter (PvE)::\n- Shift-key: \"Explosive Trap\"\n- Alt-key: \"Freezing Trap\"\n- Control-key: \"Snake Trap\"\n- Shift+Control-key: \"Ice Trap\"\nMisdirect to Pet when soloing or misdirect to \"focus\" in party/raid.\nUse CDs: Blows all cooldowns: trinkets, eng. gloves, \n  talents, pots (if boss) etc. (manually use \"Readiness\") \nAuto use \"Healthstone\" at 50% hp, \"Mend Pet\" at 90% hp.\nInterrupt spell cast with \"Silencing Shot\".\nCheck file for talents and glyphs..."
+jps.Tooltip = "::Survival Hunter (PvE)::\n- Shift-key: \"Explosive Trap\"\n- Alt-key: \"Freezing Trap\"\n- Control-key: \"Snake Trap\"\n- Shift+Control-key: \"Ice Trap\"\nMisdirect to Pet when soloing or misdirect to \"focus\" in party/raid.\nUse CDs: Blows all cooldowns: trinkets, eng. gloves, \n  talents, pots (if boss) etc.  \nAuto use \"Healthstone\" at 50% hp, \"Mend Pet\" at 90% hp.\nInterrupt spell cast with \"Silencing Shot\".\nCheck file for talents and glyphs..."
 --------------
 --- TALENTS --
 --------------
@@ -140,7 +141,6 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		{ "Lifeblood",			jps.UseCDs },	
 		-- Use pot
 		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.bloodlusting()) }, 	
---		{ "Readiness", 				jps.UseCDs }, -- Resets all cooldowns except Stampede. Use to chain DPS cooldowns.
 		{ "A Murder of Crows", 			jps.UseCDs and not jps.mydebuff("A Murder of Crows")}, -- Tier 5 talent
 		{ "Dire Beast", 			"onCD" }, -- Tier 4 talents
 --		{ "Rabid", 				jps.UseCDs }, -- Pet ability

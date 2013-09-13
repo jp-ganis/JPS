@@ -94,8 +94,6 @@ jps.registerRotation("HUNTER","MARKSMANSHIP", function()
 
 			{ "stampede" },
 
-			{ "readiness",
-				jps.buff("rapid fire") },
 
 			{ "kill shot" },
 
