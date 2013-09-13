@@ -418,7 +418,7 @@ function jps.addSettingsCheckbox(settingName)
             settingStatus = 1 
         end
         jps.notifySettingChanged(settingName, settingsStatus)
-        setsettingStatus(settingName, settingStatus)
+        jps.setConfigVal(settingName, settingsStatus)
     end  
     
     local function settingsJPS_IconOptions_CheckButton_OnShow()
