@@ -32,7 +32,7 @@ local spellTable = {
 	{wl.spells.felFlame, 'jps.Moving and not wl.hasKilJaedensCunning()' },
 	
 	-- CD's
-	{ {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and jps.UseCDs' },
+	{ {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and not jps.buff(wl.spells.darkSoulInstability) and jps.UseCDs' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{wl.spells.lifeblood, 'jps.UseCDs' },
 	{ jps.useSynapseSprings(), 'jps.UseCDs' },

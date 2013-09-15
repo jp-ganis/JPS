@@ -78,7 +78,7 @@ local demoSpellTable = {
 	{wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
 
 	-- CD's
-	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs' },
+	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
 	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= nil and  jps.UseCDs' },

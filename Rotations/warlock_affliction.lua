@@ -145,7 +145,7 @@ local spellTable = {
 	}},
 
 	-- CD's
-	{ {"macro","/cast " .. wl.spells.darkSoulMisery}, 'jps.cooldown(wl.spells.darkSoulMisery) == 0 and jps.UseCDs' },
+	{ {"macro","/cast " .. wl.spells.darkSoulMisery}, 'jps.cooldown(wl.spells.darkSoulMisery) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulMisery)' },
 	{ jps.DPSRacial, 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
 	{ jps.useSynapseSprings(), 'jps.UseCDs' },
