@@ -13,7 +13,7 @@
 		end
 		return false
 	end
-		
+	
 	function dk.updateRunes() 
 		dk.dr1 = select(3,GetRuneCooldown(1))
 		dk.dr2 = select(3,GetRuneCooldown(2))
@@ -30,7 +30,11 @@
 	end
 	
 	function dk.hasGhoul()
-		if UnitExists("pet") == nil then return false end
+		if jps.Spec == "Unholy" then
+			if UnitExists("pet") == nil then return false end
+		else
+			if select(1,GetTotemInfo(1)) == false then return false end
+		end
 		return true
 	end
 	
