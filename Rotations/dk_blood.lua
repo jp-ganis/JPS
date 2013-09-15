@@ -17,6 +17,7 @@
 dkBloodSpellTable = {}	
 dkBloodSpellTable[1] = {
 	-- Blood presence
+
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
 	-- Battle Rezz
@@ -43,15 +44,20 @@ dkBloodSpellTable[1] = {
 	{"Rune Tap",'jps.hp() < 0.8'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
+
 	
 	-- Interrupts
+
 	{"mind freeze",'jps.shouldKick()'},
+	{"mind freeze",'jps.shouldKick("focus")', "mouseover"},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
 	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
+	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
 	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
+	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-	
+
 	-- Aggro cooldowns
 	-- {"Dark Command",'--targetThreatStatus ~= 3 and not jps.targetTargetTank()'},
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
