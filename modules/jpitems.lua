@@ -153,15 +153,15 @@ local useSlotMacros = {}
 function jps.useSlot(num)
 	-- get the Trinket ID
 	local trinketId = GetInventoryItemID("player", num)
-	if not trinketId then return nil end
+	if not trinketId then return "" end
 
 	-- Check if it's on cooldown
 	local trinketCd = jps.itemCooldown(trinketId)
-	if trinketCd > 0 then return nil end
+	if trinketCd > 0 then return "" end
 
 	 -- Check if it's usable
 	local trinketUsable = GetItemSpell(trinketId)
-	if not trinketUsable then return nil end
+	if not trinketUsable then return "" end
 
 	-- Abort Disenchant (or any Spell Targeting) if active
 	if SpellIsTargeting() then

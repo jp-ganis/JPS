@@ -81,9 +81,9 @@ local demoSpellTable = {
 	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= nil and  jps.UseCDs' },
-	{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= nil  and jps.UseCDs' },
-	{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= nil  and  jps.UseCDs' },
+	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
+	{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= ""  and jps.UseCDs' },
+	{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= ""  and  jps.UseCDs' },
 	{"nested", 'jps.Opening == false',{
 		{ wl.spells.grimoireFelguard,'jps.UseCDs'},
 		{ wl.spells.impSwarm , 'jps.UseCDs'},

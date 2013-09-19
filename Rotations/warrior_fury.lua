@@ -51,9 +51,9 @@ jps.registerStaticTable("WARRIOR","FURY",
 		{"Bloodbath",'jps.UseCDs'},
 		
 		{ jps.getDPSRacial(),'jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
-		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
-		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
+		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
+		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
 		-- Requires herbalism
 		{"Lifeblood",'jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
 		
@@ -121,9 +121,9 @@ jps.registerStaticTable("WARRIOR","FURY",
 		{"Bloodbath",'jps.UseCDs'},
 		
 		{ jps.getDPSRacial(),'jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
-		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
-		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
+		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
+		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
 		{"Lifeblood",'jps.UseCDs and jps.debuffDuration("Colossus Smash") >= 5'},
 		
 		-- AoE Rotation

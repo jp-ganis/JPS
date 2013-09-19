@@ -64,7 +64,7 @@ dkBloodSpellTable[1] = {
 	{"Dancing Rune Weapon",'jps.UseCDs'},
 	
 	-- Requires engineering
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},

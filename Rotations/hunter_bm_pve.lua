@@ -118,7 +118,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
 		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.UseCDs },
+		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
 		-- Requires herbalism
 		{ "Lifeblood",			jps.UseCDs },	
 		-- Use pot

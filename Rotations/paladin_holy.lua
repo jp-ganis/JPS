@@ -148,12 +148,12 @@ hpala.spellTable = {
 	{ "Divine Favor",'jps.UseCDs and jps.CountInRaidStatus(0.7) > 2', hpala.player },
 	{ "Divine Favor",'jps.UseCDs and jps.hp(hpala.ourHealTarget()) < 0.5 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.player },
 
-	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0) and jps.useTrinket(0) ~= nil', "player"},
-	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1) and jps.useTrinket(1) ~= nil', "player"},
-	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= nil', "player"},
-	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= nil', "player"},	
+	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0) and jps.useTrinket(0) ~= ""', "player"},
+	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1) and jps.useTrinket(1) ~= ""', "player"},
+	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= ""', "player"},
+	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= ""', "player"},	
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},

@@ -176,6 +176,7 @@ end
 
 -- check if a spell is castable @ unit 
 function jps.canCast(spell,unit)
+	if spell == "" then return false end
 	if unit == nil then unit = "target" end
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
