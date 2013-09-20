@@ -5,7 +5,6 @@
 @description
 Usage info:[br]
 [*] [code]SHIFT[/code]:  "Dizzying Haze" at mouse position - AoE threat builder - "Hurl a keg of your finest brew"[br]
-[*] [code]CTRL[/code]: "Chi Wave" on mouseover friendlies and enemies (disabled for now)[br]
 ]]--
 jps.registerRotation("MONK","BREWMASTER",function()
  	if UnitCanAttack("player","target") ~= 1 or UnitIsDeadOrGhost("target") == 1 then return end
@@ -36,6 +35,8 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		
 		-- Elusive Brew with 10 or more stacks. 	
 		{ "Elusive Brew", 	jps.buffStacks("Elusive Brew") >= 10 },
+		
+		{ "Dizzying Haze" , IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil},
 		
 		-- Chi Brew if we have no chi (talent based). 
 		{ "Chi Brew", chi == 0 },
