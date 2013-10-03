@@ -42,6 +42,7 @@ dkBloodSpellTable[1] = {
 	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"}, 
 	{"Rune Tap",'jps.hp() < 0.8'},
+	{jps.useBagItem(5512), 'jps.hp("player") < 0.70'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
 
@@ -49,7 +50,6 @@ dkBloodSpellTable[1] = {
 	-- Interrupts
 
 	{"mind freeze",'jps.shouldKick()'},
-	{"mind freeze",'jps.shouldKick("focus")', "mouseover"},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
 	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
 	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
