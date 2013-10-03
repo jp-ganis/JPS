@@ -53,7 +53,7 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		-- Shift key
 		{ "Healing Rain",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		-- Left Control key
-		{ "chain heal",				IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil, defaultTarget },
+		{ "chain heal",				IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and defaultHP < 0.7, defaultTarget },
 		
 		{ "riptide", 				defaultHP < 0.95 and not jps.buff("RipTide"), defaultTarget },
 		{ "greater healing wave", 	defaultHP < 0.4, defaultTarget },
