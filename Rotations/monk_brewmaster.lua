@@ -25,7 +25,10 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		{ "Dampen Harm", jps.UseCDs and jps.hp() < .6 and not defensiveCDActive },
 		
 		-- Healthstone if you get low.
-		{ "Healthstone", jps.hp() < .5 and GetItemCount("Healthstone", 0) > 0 },
+		{ jps.useBagItem(5512), jps.hp("player") < 0.5 },
+		
+		-- Spinning Crane Kick for multi-target threat. 	
+		{ "Spinning Crane Kick", IsLeftControlKeyDown() ~= nil and not jps.buff("Spinning Crane Kick"),"player"},
 		
 		-- Insta-kill single target when available. 
 		{ "Touch of Death", jps.UseCDs and jps.buff("Death Note") and chi > 2 and not jps.MultiTarget },
@@ -36,7 +39,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		-- Elusive Brew with 10 or more stacks. 	
 		{ "Elusive Brew", 	jps.buffStacks("Elusive Brew") >= 10 },
 		
-		{ "Dizzying Haze" , IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil},
+		{ "Dizzying Haze" , IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil, "player"},
 		
 		-- Chi Brew if we have no chi (talent based). 
 		{ "Chi Brew", chi == 0 },
@@ -93,9 +96,6 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		
 		-- Chi Wave for threat and heal (talent based). 	
 		{ "Chi Burst", 	jps.hp() < .85 },
-		
-		-- Spinning Crane Kick for multi-target threat. 	
-		{ "Spinning Crane Kick", 	jps.MultiTarget },
 		
 		-- DPS Racial on cooldown. 
 		{ jps.DPSRacial, jps.UseCDs },
