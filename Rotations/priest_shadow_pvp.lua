@@ -188,10 +188,10 @@ local table =
 		{ 586, isInPvE and UnitThreatSituation(player)==3 , player },
 	-- "Oubli" 586 PVP
 		{ 586, (player_Aggro + player_IsInterrupt > 0) and (jps.useTrinket(1)== nil) , player },
-	-- "Mind Sear" 48045
-		{ 48045, jps.cooldown(48045) == 0 , rangedTarget  },
 	-- "Shadow Word: Pain" 589
 		{ 589, unitFor_ShadowWordPain, EnemyUnit , "|cFFFF0000Pain_MultiUnit_" },
+	-- "Mind Sear" 48045
+		{ 48045, jps.cooldown(48045) == 0 , rangedTarget  },
 
 	}
 return table
