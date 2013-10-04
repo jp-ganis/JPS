@@ -390,8 +390,12 @@ function jps.sliderUpdateToggle(key, status)
 	end
 end
 
-function jps.jphistoryToggle(key, status) 
-	jps.historyToggle(status)
+function jps.jphistoryToggle(key, status)
+	if type(jps.historyToggle) == "function" then
+		jps.historyToggle(status)
+	else return nil
+	end
+
 end
 
 ---------------------------
