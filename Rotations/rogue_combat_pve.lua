@@ -18,13 +18,14 @@ TODO:[br]
 
 jps.registerRotation("ROGUE","COMBAT",function()
        
-       local player, target
+    local spell = nil
+	local target = nil
        
-       local cp = GetComboPoints("player")
-       local rupture_duration = jps.debuffDuration("rupture")
-       local snd_duration = jps.buffDuration("slice and dice")
-       local energy = UnitPower("player")
-       local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or jps.buff("Smoke Bomb") or jps.buff("Shroud of Concealment")
+    local cp = GetComboPoints("player")
+    local rupture_duration = jps.debuffDuration("rupture")
+    local snd_duration = jps.buffDuration("slice and dice")
+    local energy = UnitPower("player")
+    local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or jps.buff("Smoke Bomb") or jps.buff("Shroud of Concealment")
        
        -- Spells should be ordered by priority.
        local spellTable = {
@@ -114,13 +115,14 @@ jps.registerRotation("ROGUE","COMBAT",function()
               { "Sinister Strike", cp < 5 },
            }
 
-       local spellTableActive = jps.RotationActive(spellTable)
-       return parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
+	return spell,target
 end, "PVE single target", true, false)
        
 jps.registerRotation("ROGUE","COMBAT",function()
        
-       local player, target
+		local spell = nil
+		local target = nil
        
        local cp = GetComboPoints("player")
        local rupture_duration = jps.debuffDuration("rupture")
@@ -204,13 +206,14 @@ jps.registerRotation("ROGUE","COMBAT",function()
               { "Sinister Strike", cp < 5 },   
        }
 
-       local spellTableActive = jps.RotationActive(spellTable)
-       return parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
+	return spell,target
 end, "PVE 2-5 targets", true, false)
        
 jps.registerRotation("ROGUE","COMBAT",function()
        
-       local player, target
+		local spell = nil
+		local target = nil
        
        local cp = GetComboPoints("player")
        local rupture_duration = jps.debuffDuration("rupture")
@@ -285,6 +288,6 @@ jps.registerRotation("ROGUE","COMBAT",function()
               { "Crimson Tempest", cp == 5 },  
 		}
 
-       local spellTableActive = jps.RotationActive(spellTable)
-       return parseSpellTable(spellTableActive)
+	spell,target = parseSpellTable(spellTable)
+	return spell,target
 end, "PVE 5+ targets", true, false)

@@ -17,7 +17,6 @@
 dkBloodSpellTable = {}	
 dkBloodSpellTable[1] = {
 	-- Blood presence
-
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
 	-- Battle Rezz
@@ -44,10 +43,8 @@ dkBloodSpellTable[1] = {
 	{"Rune Tap",'jps.hp() < 0.8'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
-
 	
 	-- Interrupts
-
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "mouseover"},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},

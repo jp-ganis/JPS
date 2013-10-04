@@ -1,34 +1,32 @@
-## Interface: 50300
+## Interface: 50400
 ## Title: |cffff8000JPS Addon
 ## Notes: Protect your LUA.
 ## SavedVariables: jpsDB
 ## Dependencies:
 
 jplocal.lua
+hack.lua
 jps.lua
-Data\jpraid.data.lua
 jplogging.lua
 jputils.lua
-jphealing.lua
 jpparse.lua
 jprotations.lua
-modules\jpauras.lua
-modules\jpcasting.lua
-modules\jpccinterrupt.lua
-modules\jpdispel.lua
-modules\jpdots.lua
-modules\jpglobal.lua
-modules\jphealing.lua
-modules\jpitems.lua
-modules\jppowers.lua
-modules\jpraid.lua
-modules\jpspellbook.lua
-modules\jptesting.lua
-modules\jptimetodie.lua
-
-jplogging.lua
 jplexer.lua
 jpconditionparser.lua
+
+Modules\jpglobal.lua
+Modules\jpauras.lua
+Modules\jpcasting.lua
+Modules\jpccinterrupt.lua
+Modules\jpdispel.lua
+modules\jpdots.lua
+Modules\jphealing.lua
+Modules\jpitems.lua
+Modules\jppowers.lua
+Modules\jpraid.lua
+Modules\jpspellbook.lua
+Modules\jptesting.lua
+Modules\jptimetodie.lua
 
 Lib\jpgui.lua
 Lib\jpconfig.lua
@@ -42,7 +40,6 @@ Rotations\dk_frost.lua
 Rotations\dk_unholy.lua
 
 Rotations\druid_balance.lua
-Rotations\druid_feral.lua
 Rotations\druid_feral_pve.lua
 Rotations\druid_feral_pvp.lua
 Rotations\druid_guardian.lua
@@ -55,9 +52,8 @@ Rotations\hunter_sv.lua
 
 Rotations\mage_arcane.lua
 Rotations\mage_fire.lua
-Rotations\mage_frost.lua
-Rotations\mage_frost_pve.lua
 Rotations\mage_frost_pvp.lua
+Rotations\mage_frost_pve.lua
 
 Rotations\monk_brewmaster.lua
 Rotations\monk_mistweaver.lua
@@ -69,6 +65,7 @@ Rotations\paladin_protadin_pvp.lua
 Rotations\paladin_ret_pve.lua
 Rotations\paladin_ret_pvp.lua
 
+Rotations\priest.lua
 Rotations\priest_disc_pve.lua
 Rotations\priest_disc_pvp.lua
 Rotations\priest_holy.lua
@@ -82,7 +79,6 @@ Rotations\rogue_sub.lua
 
 Rotations\shaman_elemental.lua
 Rotations\shaman_enhancement.lua
-Rotations\shaman_resto_arena.lua
 Rotations\shaman_resto_pve.lua
 Rotations\shaman_resto_pvp.lua
 
@@ -90,12 +86,12 @@ Rotations\warlock.lua
 Rotations\warlock_affliction.lua
 Rotations\warlock_demo.lua
 Rotations\warlock_destro.lua
-Rotations\warlock_kanrethad.lua
 
-Rotations\warrior_arms.lua
+Rotations\warrior.lua
 Rotations\warrior_arms_pve.lua
 Rotations\warrior_arms_pvp.lua
-Rotations\warrior_fury.lua
+Rotations\warrior_fury_pve.lua
+Rotations\warrior_fury_pvp.lua
 Rotations\warrior_prot.lua
 
 

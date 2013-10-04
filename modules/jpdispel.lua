@@ -104,33 +104,28 @@ function jps.CurseDispel(unit,debuffunit)
 end
 
 function jps.DispelMagicTarget()
-	if jps.getConfigVal("Dispel Magic") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.MagicDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelDiseaseTarget()
-	if jps.getConfigVal("Dispel Disease") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.DiseaseDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelPoisonTarget()
-	if jps.getConfigVal("Dispel Poison") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.PoisonDispel(unit) then return unit end
 	end
 end 
 
 function jps.DispelCurseTarget()
-	if jps.getConfigVal("Dispel Curse") == 0 then return false end
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.CurseDispel(unit) then return unit end
 	end
 end 
-
 
 --------------------------
 -- Dispel Functions TABLE

@@ -22,7 +22,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	local berserk = jps.buff("Berserk")
 	local tigersFury = jps.buff("Tiger's fury")
 	local predatorySwiftness = jps.buff("Predatory Swiftness")
-	local cenarionStacks = jps.buffStacks(108381) 
+	local cenarionStacks = jps.buffStacks("Dream of Cenarius") 
 	-- Dream of Cenarius
 	
 	local ripDuration = jps.myDebuffDuration("Rip")
@@ -191,8 +191,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	-- Mangle if not behind
 		{ "Mangle",  not jps.MultiTarget and jps.isNotBehind }  
 	}
-	
-	--if (event_error == SPELL_FAILED_NOT_BEHIND) then jps.Cast("mangle") end 
+
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 

@@ -368,16 +368,6 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	----------------------------------
 	---------- talent spy ------------
 	----------------------------------
-
-	function jps.talentInfo (talentInfo)
-		local numTalents = GetNumTalents();
-		for t = 1, numTalents do
-		  local name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq, previewRank, meetsPreviewPrereq= GetTalentInfo(t);
-		  if name == talentInfo and ( rank ) then return true end
-		end
-		return false
-	end
-
 	local dpsMoving = jps.talentInfo("Kil'jaeden's Cunning")
 	-------------------
 	-- trinket stack -

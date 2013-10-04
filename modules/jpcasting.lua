@@ -82,18 +82,62 @@ jps.polySpellIds = {
 	[28271] = "Polymorph: Turtle" , 
 }
 
+jps.CCSpellIds = {
+	-- Priest
+	[605]=	"Mind Control",
+	-- Druid
+	[339] =		"Entangling Roots",
+	[33786] =	"Cyclone",
+	[2637] =	"Hibernate",
+	-- Hunter
+	[1499] =	"Freezing Trap",
+	[13809] =	"Frost Trap",
+	[34600] =	"Snake Trap",
+	-- Mage
+	[118] =		"Polymorph",
+	[61305] = 	"Polymorph: Black Cat" ,
+	[28272] = 	"Polymorph: Pig" ,
+	[61721] = 	"Polymorph: Rabbit" ,
+	[61780] = 	"Polymorph: Turkey" ,
+	[28271] = 	"Polymorph: Turtle" , 
+	-- Warlock
+	[5782] =	"Fear",
+	[5484] =	"Howl of Terror",
+	-- Warrior
+
+	-- Shaman
+	[51514] =	"Hex"
+}
+
+-- Enemy Casting Polymorph Target is Player
 function jps.IsCastingPoly(unit)
-	if not jps.canDPS(unit) then return false end
-	local istargeting = unit.."target"
+	if not jps.canDPS(unit) then return false end 
 	local delay = 0
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+ 
 	for spellID,spellname in pairs(jps.polySpellIds) do
-		if spell == tostring(select(1,GetSpellInfo(spellID))) then
+		if UnitIsUnit(unit.."target", "player") == 1 and spell == tostring(select(1,GetSpellInfo(spellID))) and jps.CastTimeLeft(unit) > 0 then
 			delay = jps.CastTimeLeft(unit) - jps.Lag
 		break end
 	end
 
-	if delay < 0 and UnitIsUnit(istargeting, "player")==1 then return true end
+	if delay < 0 then return true end
+	return false
+end
+
+-- Enemy casting CrowdControl Spell 
+function jps.IsCastingControl(unit)
+	if not jps.canDPS(unit) then return false end
+	local delay = 0
+	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
+	
+	for spellID,spellname in pairs(jps.CCSpellIds) do
+		if spell == tostring(select(1,GetSpellInfo(spellID))) and jps.CastTimeLeft(unit) > 0 then
+			delay = jps.CastTimeLeft(unit)
+		break end
+	end
+	
+	if delay > 0 then return true end
 	return false
 end
 

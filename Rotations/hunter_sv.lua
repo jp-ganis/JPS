@@ -49,6 +49,7 @@ jps.Tooltip = "::Survival Hunter (PvE)::\n- Shift-key: \"Explosive Trap\"\n- Alt
 ---- SETUP ----
 ---------------
 local spell = nil
+local target = nil
 local focus = UnitMana("player")
 
 ---------------------
@@ -112,7 +113,6 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 -----------------
 
 	local spellTable =  {
-		["ToolTip"] = "SV Hunter PVE 5.3",
 		-- Preparation (flasks)
 		{ jps.useBagItem("Alchemist's Flask") , not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") and jps.UseCDs},
 		-- Revive pet
@@ -175,4 +175,4 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 	
-end, "Default")
+end, "SV Hunter PVE 5.3")

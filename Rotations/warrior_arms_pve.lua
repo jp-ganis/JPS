@@ -1,4 +1,4 @@
---gig3m
+
 jps.registerStaticTable("WARRIOR","ARMS",
 {
 	
