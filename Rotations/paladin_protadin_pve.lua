@@ -114,7 +114,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 	}
 	
    
-	local spell, target = parseSpellTable(spellTable)
+	spell, target = parseSpellTable(spellTable)
 	return spell, target
 end, "Default",true,false)
 
@@ -224,7 +224,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 
 	}
    
-	local spell, target = parseSpellTable(spellTable)
+	spell, target = parseSpellTable(spellTable)
 	return spell, target
 end, "Default no AOE/only Off Tank",true,false)
 
@@ -327,6 +327,6 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Consecration" , "onCD"},	
 	}
 	   
-	local spell, target = parseSpellTable(spellTable)
+	spell, target = parseSpellTable(spellTable)
 	return spell, target
 end, "PVE more Control(no deff cd's)",true,false)

@@ -1,11 +1,11 @@
 jps.registerRotation("PALADIN","RETRIBUTION",function()
 
+	local spell = nil
+	local target = nil
 	local holyPower = jps.holyPower()
 	local stance = GetShapeshiftForm() -- stance
 	
-	local spellTable = {}
-	spellTable[1] = {
-		["ToolTip"] = "Retribution Paladin PVE",
+	local spellTable = {
 
 		-- Paladin stance ( Seal)
 		{ "Seal of Truth", stance ~= 1 and stance ~=  2 , player },  --allows to switch between seal of truth or seal of Righteousness
@@ -45,7 +45,7 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 		{ jps.useTrinket(1), jps.UseCDs }, 
 	
 		-- Engineers may have synapse springs on their gloves (slot 10).
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs }, 
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs }, 
 	
 		-- Lifeblood CD. (herbalists)
 		{ "Lifeblood", jps.UseCDs }, 
@@ -75,9 +75,8 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 		 -- Damage
 		{ "Exorcism" },
 	}
-	
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
+
+	spell,target = parseSpellTable(spellTable)
 	return spell,target
 end, "Default",true,false)
 

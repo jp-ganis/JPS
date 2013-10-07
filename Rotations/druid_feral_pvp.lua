@@ -57,7 +57,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	local enemycount,targetcount = jps.RaidEnemyCount()
 
 	local isSpellHarmful = IsHarmfulSpell("target")
-	local lastcast = jps.CurrentCast[2]
+	local lastcast = jps.CurrentCast
 	local castSilence = jps.shouldKick("target")
 
 	local playerhealth_pct = jps.hp(player)
@@ -260,7 +260,7 @@ local spellTable =
 	{ "mark of the wild",		 	not jps.buff("mark of the wild") , player },
 	
 	-- Engineers may have synapse springs on their gloves (slot 10). 
-	{ jps.useSynapseSprings(),  jps.useSynapseSprings() ~= "" and jps.UseCDs },
+	{ jps.useSynapseSprings,  jps.useSynapseSprings ~= "" and jps.UseCDs },
 	
 	-- DPS Racial
 	{ jps.DPSRacial,  jps.UseCDs },

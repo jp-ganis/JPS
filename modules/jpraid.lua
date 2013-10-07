@@ -39,19 +39,16 @@ function jps.playerInLFR()
 	return false
 end
 
-function jps.findMeAggroTank(targetUnit)
+function jps.findMeAggroTank()
 	local allTanks = jps.findTanksInRaid()
 	local highestThreat = 0
 	local aggroTank = "player"
 	for _, possibleTankUnit in pairs(allTanks) do
-		local unitThreat = UnitThreatSituation(possibleTankUnit, targetUnit)
+		local unitThreat = UnitThreatSituation(possibleTankUnit)
 		if unitThreat and unitThreat > highestThreat then
 			highestThreat = unitThreat
 			aggroTank = possibleTankUnit
 		end
-	end
-	if aggroTank == "player" and jps.tableLength(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
-		return jps.findMeAggroTank()
 	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
 	return aggroTank
@@ -112,6 +109,7 @@ end
 -- RAID ENEMY COUNT 
 -----------------------
 -- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
+-- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY TARGETING FRIEND
 
 -- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
 function jps.RaidEnemyCount() 
@@ -170,6 +168,96 @@ function jps.IstargetMe()
 	end
 	return nil
 end
+
+-------------------
+-- RAIDS
+-------------------
+
+-- supported raids & encounters (only spell Ids for jps.raid.getTimer() !!! )
+
+jps.raid.supportedEncounters = {
+	["Isle of Giants"]= {
+		["Oondasta"]= {
+			{
+				{"Frill Blast", "magicShortCD" , 'jps.IsCastingSpell("Frill Blast","target") and jps.CastTimeLeft("Oondasta") < 1'},
+				{"Frill Blast", "reduceDamage" , 'jps.IsCastingSpell("Frill Blast","target") and jps.CastTimeLeft("Oondasta") < 1'},
+			},
+		},
+	},
+		
+	["Throne of Thunder"]= {
+		["Jin'rokh the Breaker"]=
+			{
+				{"Focused Lightning", "runspeed" , 'jps.debuff("Focused Lightning","player") '}, 
+				{"Lightning Storm", "magicShortCD", 'jps.raid.getTimer(137313) < 0.5 and jps.hp() < 0.85 and jps.isTank == false '},
+				{"Ionization", "dispelMagic", 'jps.raid.getTimer(138732) < 1 and jps.isTank == false and jps.hp("player","abs") > 480000 '}, --- no ionization @ HC on tanks!
+				{"Static Burst", "dispelMagic",'jps.raid.getTimer(137162) < 2 and jps.isTank == true and jps.unitGotAggro() '}, --- we can prevent every 2nd static burst with ams
+				{"Lightning Storm", "runspeed",' jps.raid.getTimer(137313) < 1 and jps.debuff("Fluidity", "player") '}
+			},
+		["Horridon"] = 
+			{
+			},
+		["Council Of Elders"]= {},
+		["Tortos"] = {},
+		["Megaera"] = {},
+		["Ji-Kun"] =
+			{
+				{"Quills", "magicShortCD" ,' jps.IsCastingSpell("Quills","target")'},
+				{"Talor Rake", "reduceDamage", 'jps.debuffStacks("Talor Rake") >= 2 and jps.unitGotAggro() and jps.hp() < 0.90'},
+				{"Downdraft", "runspeed" ,' jps.debuff("Downdraft") '}, 
+			},
+		["Durumu The Forgotten"] = {}
+	},
+	
+	-- just for testing
+	["Kalimdor"] = {
+		["Raider's Training Dummy"] = {
+			{"Demo", "magicShortCD", 'onCD'}, --casts an magic deff ability on cd @ raiders training dummy
+		}
+	},
+	["Mogu'shan Palace"] = {
+		["Haiyan the Unstoppable"] = {
+			{"Meteor", "runspeed", 'jps.raid.getTimer(120195) < 5'},
+			{"Conflagrate", "runspeed", 'jps.raid.getTimer(120201) < 5'},
+		},
+		["Kuai the Brute"] = {
+			{"Shockwave", "runspeed", 'jps.raid.getTimer(119922) < 2'}
+		},
+		["Ming the Cunning"] = {
+			{"Whirling Dervish CD", "runspeed", 'jps.raid.getTimer(119981) < 2'}
+		}
+	},
+}
+
+-- spell names lowercase (important)! 
+jps.raid.supportedAbilities = {
+	["Death Knight"] = {
+		["Blood"] =
+		{
+			["anti-magic shell"] = {{spellType="magicShortCD", spellAction="absorb"},{spellType="dispelMagic", spellAction="dispel"}},
+			["death's advance"] = {{spellType="runspeed"}},
+			["icebound fortitude"] = {{spellType="reduceDamage"}},
+			["icebound fortitude"] = {{spellType="breakStun"}},
+		},
+		["Frost"] =
+		{
+			["anti-magic shell"] = {{spellType="magicShortCD", spellAction="absorb"},{spellType="dispelMagic", spellAction="dispel"}},
+			["death's advance"] = {{spellType="runspeed"}},
+		},
+		["Unholy"] = 
+		{
+			["anti-magic shell"] = {{spellType="magicShortCD", spellAction="absorb"},{spellType="dispelMagic", spellAction="dispel"}},
+			["death's advance"] = {{spellType="runspeed"}},
+		}
+	}
+	,
+	["Paladin"] = {
+		["Holy"] = 
+		{
+			["speed of light"] = {{spellType="runspeed"}},
+		}
+	}
+}
 
 -- cast player abilities(for instance deff cd's) if raid encounter applied us a debuff or a ability cd is near finishing or finished
 

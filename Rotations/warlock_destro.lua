@@ -35,7 +35,7 @@ local spellTable = {
 	{ {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and not jps.buff(wl.spells.darkSoulInstability) and jps.UseCDs' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
+	{ jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
 	{ jps.useTrinket(0),	   'jps.UseCDs' },
 	{ jps.useTrinket(1),	   'jps.UseCDs' },
 	

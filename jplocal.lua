@@ -39,7 +39,13 @@ local L = MyLocalizationTable
 do
 	if (GetLocale() == "frFR") then
 		MyLocalizationTable = setmetatable({
-	-- Spell for healtable
+	-- Spells for crowd Control
+		["Strikes"] = "Effraie",
+		["Roots"] = "Immobilise",
+		["Transforms"] = "Transforme",
+		["Forces"] = "Force",
+		["Seduces"] = "Séduit", 
+	-- Spells for healtable
 		["Renew"] = "Rénovation",
 		["Heal"] = "Soins",
 		["Greater Heal"] = "Soins supérieurs",
@@ -68,7 +74,7 @@ do
 		["Freezing Trap"] = "Piège givrant",
 	-- Buff to dispel
 		["Archangel"] = "Archange",
-		["Frost Armor"] = "Armure de givre", -- Type de dissipation	n/d
+		["Frost Armor"] = "Armure de givre",
 		["Power Word: Shield"] = "Mot de pouvoir : Bouclier",
 		["Fear Ward"] = "Gardien de peur",
 		["Hand of Protection"] = "Main de protection",

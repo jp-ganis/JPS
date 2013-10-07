@@ -7,7 +7,9 @@ Put DPS trinket in top trinket slot and if not human, put PvP trinket in bottom 
 ]]--
 
 jps.registerRotation("HUNTER","BEASTMASTERY", function()
--- valve
+
+	local spell = nil
+	local target = nil
 	local player = jpsName
 	local pet = "pet"
 	local sps_duration = jps.debuffDuration("serpent sting")
@@ -48,7 +50,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 				if targetSpec == "enhancement" or targetSpec == "retribution" then return true end
 				if jps.buff("bear form","target") or jps.buff("cat form","target") then return true end
 		return false
-		end
+	end
 	
 	-- Should Spirit Mend
 		local playerhealth_pct = jps.hp(player)
@@ -60,7 +62,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 			if playerhealth_pct < 0.30 then spiritMendTarget = player return true end
 			if mousehealth_pct < 0.30 and UnitIsFriend("player","mouseover") then spiritMendTarget = "mouseover" return true end
 			return false
-		end
+	end
 	
 	------------------------
 	-- SPELL TABLE ---------
@@ -155,6 +157,6 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ "arcane shot", focus >= 46 , rangedTarget },
 	}
 
-	local spell,target = parseSpellTable(spellTable)
+	spell,target = parseSpellTable(spellTable)
 	return spell,target
 end	,"Default PvP",false,true)

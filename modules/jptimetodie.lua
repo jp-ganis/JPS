@@ -2,7 +2,7 @@
 -- TIME TO DIE FRAME
 -----------------------
 
-local JPSEXTInfoFrame = CreateFrame("frame","JPSEXTInfoFrame")
+JPSEXTInfoFrame = CreateFrame("frame","JPSEXTInfoFrame")
 JPSEXTInfoFrame:SetBackdrop({
 	bgFile="Interface\\DialogFrame\\UI-DialogBox-Background",
 	tile=1, tileSize=32, edgeSize=32,
@@ -22,12 +22,14 @@ infoFrameText:SetJustifyH("LEFT")
 infoFrameText:SetPoint("LEFT", 10, 0)
 infoFrameText:SetFont('Fonts\\ARIALN.ttf', 11, 'THINOUTLINE')
 local infoTTD = 60
+local infoTTL = 60
 
 JPSEXTFrame = CreateFrame("Frame", "JPSEXTFrame")
 JPSEXTFrame:SetScript("OnUpdate", function(self, elapsed)
 	jps.updateTimeToLive(self, elapsed)
 end)
 JPSEXTInfoFrame:Hide()
+
 function setTimeToDieScale()
 	JPSEXTInfoFrame:SetScale(jps.getConfigVal("timetodieSizeSlider"))
 end
@@ -36,30 +38,30 @@ jps.addTofunctionQueue(setTimeToDieScale,"settingsLoaded")
 
 function jps.updateInfoText()
 	local infoTexts = ""
-
-	if infoTTD ~= nil and infoTTD < 200000 then
+	if infoTTL ~= nil then
+		local TTLminutesDie = math.floor(infoTTL / 60)
+		local TTLsecondsDie = infoTTL - (TTLminutesDie*60)
+		infoTexts = infoTexts.."|cff9d9d9dTTL: "..TTLminutesDie.. "min "..TTLsecondsDie.. "sec - "
+	end
+	if infoTTD ~= nil then
 		local minutesDie = math.floor(infoTTD / 60)
 		local secondsDie = infoTTD - (minutesDie*60)
-		infoTexts = infoTexts.."TimeToDie: "..minutesDie.. "min "..secondsDie.. "sec\n"
-	else
-		infoTexts = infoTexts.."TimeToDie: n/a".."\n"
+		infoTexts = infoTexts.."TTD: "..minutesDie.. "min "..secondsDie.. "sec\n"
 	end
-	if jps.getConfigVal("show Latency in JPS UI") == 1 then
-		if jps.CastBar.latency ~= 0 then
-			local latency = jps.roundValue(jps.CastBar.latency,2)
-			infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency.."\n"
-		end
+	if jps.getConfigVal("Show Latency in UI") == 1 then
+		local latency = jps.roundValue(jps.CastBar.latency,2)
+		infoTexts = infoTexts.."|cffffffffLatency: ".."|cFFFF0000"..latency.."\n"
 	end
-	if jps.getConfigVal("show current cast in JPS UI") == 1 then
-		local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.."|cffa335ee @ "..jps.CastBar.currentTarget
+	if jps.getConfigVal("Show Current Cast in UI") == 1 then
+		local currentCast = "|cff1eff00"..jps.CastBar.currentSpell.. "|cffa335ee "..jps.CastBar.currentTarget
 		local message = "|cffffffff"..jps.CastBar.currentMessage
 		infoTexts = infoTexts..currentCast.."\n"
 		infoTexts = infoTexts..message.."\n"
 	end
-	if jps.isHealer and jps.getConfigVal("show Lowest Raid Member in UI") == 1 then
+	if jps.isHealer and jps.getConfigVal("Show Lowest Raid Member in UI") == 1 then
 		infoTexts = infoTexts.."|cffffffffLowestInRaid: |cffa335ee"..jps.LowestInRaidStatus().."\n"
+		infoTexts = infoTexts.."|cffffffffLowestFriend: |cffa335ee"..jps.LowestFriendlyStatus()
 	end
-
 	infoFrameText:SetText(infoTexts)
 end
 
@@ -71,6 +73,7 @@ function jps.updateTimeToLive(self, elapsed)
 			self.TimeToLiveSinceLastUpdate = 0
 		end
 		infoTTD = jps.TimeToDie("target")
+		infoTTL = jps.UnitTimeToDie("target")
 		jps.updateInfoText()
 	end
 end
@@ -199,7 +202,9 @@ jps.timeToDieFunctions["LeastSquared"] = {
 		if not dataset or not dataset.n then
 			return nil
 		else
-			local timeToDie = (dataset.health0 * dataset.mtime - dataset.mhealth * dataset.time0) / (dataset.health0 * dataset.time0 - dataset.mhealth * dataset.n) - time
+			local num = (dataset.health0 * dataset.time0 - dataset.mhealth * dataset.n)
+			if num == 0 then return nil end
+			local timeToDie = (dataset.health0 * dataset.mtime - dataset.mhealth * dataset.time0) / (num) - time
 			if timeToDie < 0 then
 				return nil
 			else
@@ -244,8 +249,9 @@ jps.timeToDieFunctions["WeightedLeastSquares"] = {
 		if not dataset or not dataset.health0 then
 			return nil
 		else
-		
-			local timeToDie = (dataset.mtime * dataset.health0 - dataset.time0 * dataset.mhealth) / (dataset.time0 * dataset.health0 - dataset.mhealth) - time
+			local num = (dataset.time0 * dataset.health0 - dataset.mhealth)
+			if num == 0 then return nil end
+			local timeToDie = (dataset.mtime * dataset.health0 - dataset.time0 * dataset.mhealth) / (num) - time
 			if timeToDie < 0 then
 				return nil
 			else
@@ -332,7 +338,7 @@ end
 -- SLIDER UPDATE INTERVAL
 ---------------------------------------------------
 
-local slider = CreateFrame("Slider","UpdateInterval",JPSEXTInfoFrame,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate 
+slider = CreateFrame("Slider","UpdateInterval",JPSEXTInfoFrame,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate 
 
 slider:ClearAllPoints()
 slider:SetPoint("TOP",0,10)
@@ -341,7 +347,7 @@ slider:SetPoint("TOP",0,10)
 slider:SetScale(0.8)
 slider:SetMinMaxValues(0.05, 0.5)
 slider.minValue, slider.maxValue = slider:GetMinMaxValues()
-slider:SetValue(0.2)
+slider:SetValue(0.1)
 slider:SetValueStep(0.05)
 slider:EnableMouse(true)
 local latency = jps.roundValue(jps.CastBar.latency,2)

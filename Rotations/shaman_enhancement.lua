@@ -60,7 +60,7 @@ jps.registerRotation("SHAMAN","ENHANCEMENT",function()
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
 		-- Synapse Springs CD. (engineering gloves) 
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs },
 		-- Lifeblood CD. (herbalists) 
 		{ "Lifeblood", jps.UseCDs },
 		-- DPS Racial CD. 

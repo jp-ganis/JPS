@@ -153,7 +153,7 @@ hpala.spellTable = {
 	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= ""', "player"},
 	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= ""', "player"},	
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},

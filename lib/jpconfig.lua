@@ -111,6 +111,71 @@ function jps_createConfigFrame()
 	
 end
 
+---------------------------------
+-- DROPDOWN ROTATIONS
+---------------------------------
+
+rotationDropdownHolder = CreateFrame("frame","rotationDropdownHolder")
+rotationDropdownHolder:SetWidth(150)
+rotationDropdownHolder:SetHeight(60)
+rotationDropdownHolder:SetPoint("CENTER",UIParent)
+rotationDropdownHolder:EnableMouse(true)
+rotationDropdownHolder:SetMovable(true)
+rotationDropdownHolder:RegisterForDrag("LeftButton")
+rotationDropdownHolder:SetScript("OnDragStart", function(self) self:StartMoving() end)
+rotationDropdownHolder:SetScript("OnDragStart", function(self) self:StartMoving() end)
+rotationDropdownHolder:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+
+function setDropdownScale()
+	rotationDropdownHolder:SetScale(jps.getConfigVal("rotationDropdownSizeSlider"))
+end
+jps.addTofunctionQueue(setDropdownScale,"settingsLoaded") 
+
+DropDownRotationGUI = CreateFrame("FRAME", "JPS Rotation GUI", rotationDropdownHolder, "UIDropDownMenuTemplate")
+DropDownRotationGUI:ClearAllPoints()
+DropDownRotationGUI:SetPoint("CENTER",10,10)
+local title = DropDownRotationGUI:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+title:SetPoint("TOPLEFT", 20, 10) 
+title:SetText("JPS ROTATIONS")	
+
+ function GUIRotation_OnClick(self)
+   UIDropDownMenu_SetSelectedID(DropDownRotationGUI, self:GetID())
+   jps.Count = self:GetID() -- HERE we get the jps.Count in the DropDownRotation
+   jps.setActiveRotation(self:GetID())
+   write("Changed your active Rotation to: "..jps.ToggleRotationName[jps.Count])
+end
+
+function GUIDropDown_Initialize(self, level)
+	local menuListGUI = {
+--	   jps.ToggleRotationName[1],
+--	   jps.ToggleRotationName[2],
+--	   jps.ToggleRotationName[3],
+--	   jps.ToggleRotationName[4],
+--	   jps.ToggleRotationName[5],
+	}
+	
+	for _,rotname in pairs(jps.ToggleRotationName) do table.insert(menuListGUI,rotname) end
+	
+	local infoGUI = UIDropDownMenu_CreateInfo()
+	for k,v in pairs(menuListGUI) do
+	  infoGUI = UIDropDownMenu_CreateInfo()
+	  infoGUI.text = v
+	  infoGUI.value = v
+	  infoGUI.func = GUIRotation_OnClick
+	  UIDropDownMenu_AddButton(infoGUI, level)
+	end
+end
+
+UIDropDownMenu_Initialize(DropDownRotationGUI, GUIDropDown_Initialize)
+UIDropDownMenu_SetSelectedID(DropDownRotationGUI, 1)
+UIDropDownMenu_SetWidth(DropDownRotationGUI, 100);
+UIDropDownMenu_SetButtonWidth(DropDownRotationGUI, 100)
+UIDropDownMenu_JustifyText(DropDownRotationGUI, "LEFT")
+
+
+---------------------------------
+-- SLIDERS
+---------------------------------
 
 function jps.addSlider(sliderName, parentObj, xPos, yPos, defaultVal, stepSize, minVal, maxVal, lowText,HighText,title, onChangeFunc)
 	local sliderObj = CreateFrame("Slider",sliderName,parentObj,"OptionsSliderTemplate") --frameType, frameName, frameParent, frameTemplate 
@@ -133,6 +198,7 @@ end
 ---------------------------
 -- UI Settings Frame
 ---------------------------
+
 function jps.addUIFrame()
 	jpsUIFrame = CreateFrame("Frame", "jpsUIFrame", jpsConfigFrame)
 	jpsUIFrame.parent  = jpsConfigFrame.name
@@ -174,6 +240,7 @@ end
 ---------------------------
 -- Custom Rotation Frame
 ---------------------------
+
 function jps.addcustomRotationFrame()
 	jpsCustomRotationFrame = CreateFrame("Frame", "jpsCustomRotationFrame", jpsConfigFrame)
 	jpsCustomRotationFrame.parent  = jpsConfigFrame.name
@@ -287,8 +354,50 @@ function jps.addcustomRotationFrame()
 	
 end
 
+---------------------------
+-- HIDE/SHOW DROPDOWN SPELLS
+---------------------------
 
-	
+function jps.DropdownRotationTogle(key, status)
+	if status == 1 then
+		rotationDropdownHolder:Show()
+	else
+		rotationDropdownHolder:Hide()
+	end
+end
+
+function jps.TimeToDieToggle(key, status)
+	if status == 1 and InCombatLockdown() == 1 then
+		JPSEXTInfoFrame:Show()
+	else
+		JPSEXTInfoFrame:Hide()
+	end
+end
+
+function jps.mainIconToggle(key, status) 
+	if status == 1 then
+		jpsIcon:Show()
+	else
+		jpsIcon:Hide()
+	end
+end
+
+function jps.sliderUpdateToggle(key, status) 
+	if status == 1 then
+		slider:Show()
+	else
+		slider:Hide()
+	end
+end
+
+function jps.jphistoryToggle(key, status)
+	if type(jps.historyToggle) == "function" then
+		jps.historyToggle(status)
+	else return nil
+	end
+
+end
+
 ---------------------------
 -- Settings Frame
 ---------------------------
@@ -301,6 +410,8 @@ function jps.addSettingsFrame()
 		["timetodie frame visible"] = jps.TimeToDieToggle,
 		["rotation dropdown visible"] = jps.DropdownRotationTogle,
 		["show jps window"] = jps.mainIconToggle,
+		["show slider update"] = jps.sliderUpdateToggle,
+		["show jpshistory"] = jps.jphistoryToggle
 	}
 	
 	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
@@ -431,6 +542,7 @@ function jps.addSettingsCheckbox(settingName)
 
     settingsButtonPositionY = settingsButtonPositionY - 30;
 end
+
 ---------------------------
 -- DROPDOWN SPELLS
 ---------------------------
@@ -504,34 +616,6 @@ function jps.addRotationDropdownFrame()
 end
 
 ---------------------------
--- HIDE/SHOW DROPDOWN SPELLS
----------------------------
-
-function jps.DropdownRotationTogle(key, status)
-	if status == 1 then
-		rotationDropdownHolder:Show()
-	else
-		rotationDropdownHolder:Hide()
-	end
-end
-
-function jps.TimeToDieToggle(key, status)
-	if status == 1 and InCombatLockdown() == 1 then
-		JPSEXTInfoFrame:Show()
-	else
-		JPSEXTInfoFrame:Hide()
-	end
-end
-
-function jps.mainIconToggle(key, status) 
-	if status == 1 then
-		jpsIcon:Show()
-	else
-		jpsIcon:Hide()
-	end
-end
-
----------------------------
 -- ADD SPELLS DROPDOWN
 ---------------------------
 
@@ -577,13 +661,19 @@ end
 function jps.loadDefaultSettings() 
 	
 	local settingsTable = {}
+	settingsTable["collect garbage ingame(possible fps drop)"] = 0
 	settingsTable["rotation dropdown visible"] = 1
 	settingsTable["timetodie frame visible"] = 1
+	settingsTable["show jps window"] = 1
+	settingsTable["show slider update"] = 0
 	settingsTable["delete fish: golden carp"] = 0
 	settingsTable["delete fish: murglesnout"] = 1
-	settingsTable["delete grey loot worth less than 5 silver"] = 0
-	settingsTable["facetarget rotate direction. checked = left, unchecked = right"] = 1
+	settingsTable["delete grey loot < 5 silver"] = 0
 	settingsTable["dismount in combat"] = 0
+	settingsTable["show Latency in UI"] = 1
+	settingsTable["show Current Cast in UI"] = 1
+	settingsTable["show Lowest Raid Member UI"] = 1
+	settingsTable["show jpshistory"] = 1
 
 	for key,val in pairs(settingsTable) do 
 		if jps.settings[string.lower(key)] == nil then
@@ -676,5 +766,3 @@ function jps_SAVE_PROFILE()
 		jpsDB[jpsRealm][jpsName][varName] = jps[varName]
 	end
 end
-
-

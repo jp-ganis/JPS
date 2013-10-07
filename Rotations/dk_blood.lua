@@ -17,7 +17,6 @@
 dkBloodSpellTable = {}	
 dkBloodSpellTable[1] = {
 	-- Blood presence
-
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 	
 	-- Battle Rezz
@@ -44,10 +43,8 @@ dkBloodSpellTable[1] = {
 	{"Rune Tap",'jps.hp() < 0.8'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
-
 	
 	-- Interrupts
-
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "mouseover"},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -64,7 +61,7 @@ dkBloodSpellTable[1] = {
 	{"Dancing Rune Weapon",'jps.UseCDs'},
 	
 	-- Requires engineering
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},
@@ -142,7 +139,7 @@ dkBloodSpellTable[2] = {
 	{"Raise Dead",'jps.UseCDs and dk.hasGhoul() and jps.hp() < 0.6'},
 	
 	-- Requires engineering
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},

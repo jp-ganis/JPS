@@ -33,8 +33,7 @@ Modifiers:[br]
 ------------------------
 -- SPELL TABLE ---------
 ------------------------
-		
-dkFrost = {}
+
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Frost Presence",'not jps.buff("Frost Presence", "player")'},
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
@@ -72,7 +71,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
 	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
 	
@@ -158,7 +157,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 
 	
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},

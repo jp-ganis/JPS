@@ -22,7 +22,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	local berserk = jps.buff("Berserk")
 	local tigersFury = jps.buff("Tiger's fury")
 	local predatorySwiftness = jps.buff("Predatory Swiftness")
-	local cenarionStacks = jps.buffStacks(108381) 
+	local cenarionStacks = jps.buffStacks("Dream of Cenarius") 
 	-- Dream of Cenarius
 	
 	local ripDuration = jps.myDebuffDuration("Rip")
@@ -90,7 +90,7 @@ jps.registerRotation("DRUID","FERAL", function()
 		{ "Incarnation",  jps.UseCDs and berserk },
 		
 	-- Engineers may have synapse springs on their gloves (slot 10). 
-		{ jps.useSynapseSprings(),  jps.useSynapseSprings() ~= "" and jps.UseCDs and tigersFury },
+		{ jps.useSynapseSprings,  jps.useSynapseSprings ~= "" and jps.UseCDs and tigersFury },
 		
 	-- On-Use Trinkets if Berserk buff in on. 
 		{ jps.useTrinket(0),  jps.UseCDs },
@@ -191,8 +191,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	-- Mangle if not behind
 		{ "Mangle",  not jps.MultiTarget and jps.isNotBehind }  
 	}
-	
-	--if (event_error == SPELL_FAILED_NOT_BEHIND) then jps.Cast("mangle") end 
+
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 

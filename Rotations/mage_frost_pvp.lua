@@ -10,6 +10,8 @@ WoW v5.2 compliant
 jps.registerRotation("MAGE","FROST",function()
 
 -- Player Specific
+	local spell = nil
+	local target = nil
 	local player = jpsName
 	local mana = UnitPower(player,0)/UnitPowerMax(player,0)
 	local stun = jps.StunEvents()

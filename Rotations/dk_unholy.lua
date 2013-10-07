@@ -65,25 +65,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		end
 		return false
 	end
---[[
-spellTable[2] = {
-
-{"Unholy Presence", 'not jps.buff("Unholy Presence")'},
-{ "unholy frenzy" },
-{ jps.getDPSRacial, 'jps.UseCDs' },
-{ jps.useTrinket(0), 'jps.UseCDs' },
-{ jps.useTrinket(1), 'jps.UseCDs' },
-
--- Requires engineerins
-{ jps.useSynapseSprings(), 'jps.UseCDs' },
-
--- Requires herbalism
-{ "Lifeblood", 'jps.UseCDs' },
-
-
-
-}
-]]--	
+	
 	local spellTable =
 	{
 	   -- Kick
@@ -117,7 +99,7 @@ spellTable[2] = {
 		{ jps.useTrinket(1), jps.UseCDs },
 		
 		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs},
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs},
 		
 		-- Requires herbalism
 		{ "Lifeblood", jps.UseCDs },
