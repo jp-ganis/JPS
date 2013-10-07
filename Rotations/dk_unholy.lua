@@ -99,7 +99,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ jps.useTrinket(1), jps.UseCDs },
 		
 		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs},
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs},
 		
 		-- Requires herbalism
 		{ "Lifeblood", jps.UseCDs },

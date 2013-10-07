@@ -62,7 +62,7 @@ end
 
 function priest.FindSubGroupAura(aura,tank)
 	if tank == nil then tank = jpsName end -- Name of "player"
-	local groupToHeal = jps.RaidStatus[tank]["subgroup"]
+	local groupToHeal = jps.FindSubGroup()
 	local tt = nil
 	local tt_count = 0
 

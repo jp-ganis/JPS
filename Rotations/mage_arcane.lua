@@ -41,7 +41,7 @@ jps.registerRotation("MAGE","ARCANE",function()
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
 		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs },
 		-- Requires herbalism
 		{ "Lifeblood",						jps.UseCDs},
 
@@ -92,7 +92,7 @@ jps.registerRotation("MAGE","ARCANE",function()
 		{ "arcane power",				(jps.buffDuration("rune of power") >=jps.buffDuration("arcane power") and mStacks ==2 and stacks >2) or jps.TimeToDie("target") <jps.buffDuration("arcane power")+5 and not jps.Moving },
 		
 		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs },
 		-- Requires herbalism
 		
 		{ "arcane missiles",				mStacks == 2 },

@@ -298,6 +298,7 @@ function jps.SortRaidStatus()
 -- IsInGroup() Boolean - returns true if the player is in a some kind of group, otherwise false
 -- UnitInParty returns 1 or nil
 -- UnitInRaid Layout position for raid members: integer ascending from 0 (which is the first member of the first group)
+-- UnitInRaid Returns a number if the unit is in your raid group, nil otherwise
 -- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex)
 -- raidIndex of raid member between 1 and MAX_RAID_MEMBERS (40). If you specify an index that is out of bounds, the function returns nil
 

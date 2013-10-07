@@ -45,7 +45,7 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 		{ jps.useTrinket(1), jps.UseCDs }, 
 	
 		-- Engineers may have synapse springs on their gloves (slot 10).
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs }, 
+		{ jps.useSynapseSprings, jps.useSynapseSprings ~= "" and jps.UseCDs }, 
 	
 		-- Lifeblood CD. (herbalists)
 		{ "Lifeblood", jps.UseCDs }, 
