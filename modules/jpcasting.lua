@@ -9,7 +9,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -31,16 +31,16 @@ local L = MyLocalizationTable
 
 function jps.CastTimeLeft(unit)
 	if unit == nil then unit = "player" end
-	local _,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
+	local spellName,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
 	if endTime == nil then return 0 end
-	return (endTime - (GetTime() * 1000 ) )/1000
+	return ((endTime - (GetTime() * 1000 ) )/1000), spellName
 end
 
 function jps.ChannelTimeLeft(unit)
 	if unit == nil then unit = "player" end
-	local _,_,_,_,_,endTime,_,_,_ = UnitChannelInfo(unit)
+	local spellName,_,_,_,_,endTime,_,_,_ = UnitChannelInfo(unit)
 	if endTime == nil then return 0 end
-	return (endTime - (GetTime() * 1000 ) )/1000
+	return ((endTime - (GetTime() * 1000 ) )/1000), spellName
 end
 
 function jps.IsCasting(unit)
@@ -72,14 +72,14 @@ function jps.IsChannelingSpell(spell,unit)
 	return false
 end
 
-jps.polySpellIds = { 
+jps.polySpellIds = {
 	[51514] = "Hex" ,
 	[118]	= "Polymorph" ,
 	[61305] = "Polymorph: Black Cat" ,
 	[28272] = "Polymorph: Pig" ,
 	[61721] = "Polymorph: Rabbit" ,
 	[61780] = "Polymorph: Turkey" ,
-	[28271] = "Polymorph: Turtle" , 
+	[28271] = "Polymorph: Turtle" ,
 }
 
 function jps.IsCastingPoly(unit)
@@ -97,7 +97,7 @@ function jps.IsCastingPoly(unit)
 	return false
 end
 
--- returns cooldown off a spell 
+-- returns cooldown off a spell
 function jps.cooldown(spell) -- start, duration, enable = GetSpellCooldown("name") or GetSpellCooldown(id)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -119,14 +119,14 @@ function jps_IsSpellKnown(spell)
 		if type(spell) == "string" then spellname = spell end
 		if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 			for index = offset+1, numSpells+offset do
-				-- Get the Global Spell ID from the Player's spellbook 
+				-- Get the Global Spell ID from the Player's spellbook
 				local spellID = select(2,GetSpellBookItemInfo(index, booktype))
 				local slotType = select(1,GetSpellBookItemInfo(index, booktype))
 				local name = select(1,GetSpellBookItemName(index, booktype))
 				if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
 					mySpell = spellname
-					break -- Breaking out of the for/do loop, because we have a match 
-				end 
+					break -- Breaking out of the for/do loop, because we have a match
+				end
 			end
 	return mySpell
 end
@@ -155,6 +155,6 @@ function jps.moveToTarget()
 	InteractUnit("target")
 end
 
-function jps.Macro(text) 
+function jps.Macro(text)
 	RunMacroText(text)
 end
