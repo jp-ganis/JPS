@@ -2,16 +2,16 @@
 @rotation Demonology 5.3 PVE
 @class warlock
 @spec demonology
-@description 
+@description
 Demo Rotation.<br>
 ALT Key for instant casts.<br>
 ]]--
-function wl.hasDemoProc() 
-	if jps.buff(wl.spells.darkSoulKnowledge)		
+function wl.hasDemoProc()
+	if jps.buff(wl.spells.darkSoulKnowledge)
 	or jps.buff(126577) --Inner Brilliance, int
 	or jps.buff(138703) --Acceleration, haste
 	or jps.buff(139133) --Mastermind, int
-	or jps.buff(125487)	--Lightweave, int		
+	or jps.buff(125487)	--Lightweave, int
 	or jps.bloodlusting()
 	or jps.buff(105702) --potion of jade serpent
 	or jps.buff(128985)	--Blessing of the Celestials, int
@@ -24,14 +24,14 @@ function wl.hasDemoProc()
 	or jps.debuff(138002) --fluidity jinrokh, dmg
 	or jps.buff(112879) -- primal nutriment jikun, dmg
 	or jps.buff(138963) --Perfect Aim, 1005 crit
-	then 
-		return true 
+	then
+		return true
 	end
 	return false
 end
- 
-function wl.hasPowerfulDemoProc() 
-	if jps.buff(wl.spells.darkSoulKnowledge)		
+
+function wl.hasPowerfulDemoProc()
+	if jps.buff(wl.spells.darkSoulKnowledge)
 	or jps.buff(26297) -- berserking, haste
 	or jps.bloodlusting()
 	or jps.buff(105702) --potion of jade serpent
@@ -39,8 +39,8 @@ function wl.hasPowerfulDemoProc()
 	or jps.debuff(138002) --fluidity jinrokh, dmg
 	or jps.buff(112879) -- primal nutriment jikun, dmg
 	or jps.buff(138963) --Perfect Aim, 1005 crit
-	then 
-		return true 
+	then
+		return true
 	end
 	return false
 end
@@ -72,7 +72,7 @@ local demoSpellTable = {
 
 	-- Shadowfury
 	{wl.spells.shadowfury, 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' },
-	
+
 	-- COE Debuff
 	{wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
 	{wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
@@ -81,14 +81,14 @@ local demoSpellTable = {
 	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
+	{ jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
 	{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= ""  and jps.UseCDs' },
 	{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= ""  and  jps.UseCDs' },
 	{"nested", 'jps.Opening == false',{
 		{ wl.spells.grimoireFelguard,'jps.UseCDs'},
 		{ wl.spells.impSwarm , 'jps.UseCDs'},
 	}},
-	
+
 	{wl.spells.commandDemon, 'wl.hasPet() and jps.UseCDs'},
 
 	-- opener
@@ -102,7 +102,7 @@ local demoSpellTable = {
 		{wl.spells.metamorphosis,  'not jps.buff(wl.spells.metamorphosis)'},
 		{wl.spells.corruption, 'jps.myDebuffDuration(wl.spells.doom) < 30 and jps.buff(wl.spells.metamorphosis)'},
 	}},
-	
+
 	-- rules for enter meta
 	{"nested", 'not jps.buff(wl.spells.metamorphosis)', {
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 950'},
@@ -110,7 +110,7 @@ local demoSpellTable = {
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 900 and wl.hasDemoProc()'},
 		{wl.spells.metamorphosis, 'jps.myDebuffDuration(wl.spells.doom) < 15 and not jps.MultiTarget	'},
 	}},
-	
+
 	-- instant casts while moving
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown() and not jps.buff(wl.spells.metamorphosis)', {
 		jps.dotTracker.castTableStatic("corruption"),
@@ -119,14 +119,14 @@ local demoSpellTable = {
 		{wl.spells.felFlame },
 	}},
 
-	
+
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown() and jps.buff(wl.spells.metamorphosis)', {
 		{wl.spells.corruption, 'jps.myDebuffDuration(wl.spells.doom) < 15'},
 		{wl.spells.corruption, 'wl.shouldMouseoverDoom()',"mouseover"},
 		{wl.spells.shadowBolt},
 	}},
-	
-	
+
+
 	-- single target without meta
 	{"nested", 'not jps.buff(wl.spells.metamorphosis) and not jps.MultiTarget',{
 		jps.dotTracker.castTableStatic("corruption"),
@@ -136,7 +136,7 @@ local demoSpellTable = {
 		{wl.spells.soulFire, 'jps.hp("target") < 0.25 and jps.buffStacks(wl.spells.moltenCore) >= 1'},
 		{wl.spells.shadowBolt},
 	}},
-	
+
 	-- single target with meta
 	{"nested", 'jps.buff(wl.spells.metamorphosis) and not jps.MultiTarget',{
 		{wl.spells.corruption, 'jps.myDebuffDuration(wl.spells.doom) < 15'},
@@ -156,7 +156,7 @@ local demoSpellTable = {
 		{wl.spells.hellfire, 'jps.hp() > 0.6'},
 		{wl.spells.harvestLife},
 	}},
-	
+
 	-- aoe with meta
 	{"nested", 'jps.buff(wl.spells.metamorphosis) and jps.MultiTarget',{
 		{wl.spells.corruption, 'not jps.debuff(wl.spells.doom)'},
@@ -194,7 +194,7 @@ end,"Demonology 5.3 PVE")
 @class warlock
 @spec demonology
 @deprecated
-@description 
+@description
 Demo Rotation.
 ]]--
 jps.registerRotation("WARLOCK","DEMONOLOGY",function()
@@ -205,9 +205,9 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	and not UnitIsDeadOrGhost("mouseover")
 	and IsPlayerSpell(172)
 	and jps.myDebuffDuration("Corruption","mouseover") < 3
-	and UnitCanAttack("player", "mouseover") == 1		 
-	and IsSpellInRange(GetSpellInfo(172), "mouseover") == 1 
-	and jps.Defensive			
+	and UnitCanAttack("player", "mouseover") == 1
+	and IsSpellInRange(GetSpellInfo(172), "mouseover") == 1
+	and jps.Defensive
 	then return true end
 		return false
 	end
@@ -236,37 +236,37 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 
 	---------------------------------------------------------------------
 	-------------------------check spell proc function ------------------
-	---------------------------------------------------------------------	
+	---------------------------------------------------------------------
 	function haveProc()
-		if jps.buff("Dark Soul: Knowledge")		
-			or jps.buff("Inner Brilliance")		  
-			 or jps.buff("Acceleration")			 
-			 or jps.buff("Lightweave")				
-			 or jps.buff("Blessing of the Celestials")	
-			 or jps.buff("Windsong")				
-			 or jps.buff("Synapse Springs")			 
+		if jps.buff("Dark Soul: Knowledge")
+			or jps.buff("Inner Brilliance")
+			 or jps.buff("Acceleration")
+			 or jps.buff("Lightweave")
+			 or jps.buff("Blessing of the Celestials")
+			 or jps.buff("Windsong")
+			 or jps.buff("Synapse Springs")
 			 or jps.buff("Jade Spirit")
 			 or jps.buff("Quickened Tongues")
 			 or jps.buff("Wushoolay's Lightning")
 			 or jps.buff("Electrified")
-			 then 
-			 	return true 
+			 then
+			 	return true
 			 end
 		return false
 	end
 
 	---------------------------------------------------------------------
 	---------------------------------------------------------------------
-	---------------------------------------------------------------------	
+	---------------------------------------------------------------------
 
-		local focus = UnitExists("focus")	
+		local focus = UnitExists("focus")
 		local pet = UnitExists("pet")
 		local isAxeToss = axeToss()
 		local haveProc = haveProc()
 
 	---------------------------------------------------------------------
 	---------------------Banish list on focus function ------------------
-	---------------------------------------------------------------------	
+	---------------------------------------------------------------------
 	function banishFocus()
 		local table_banishList = { "Elemental", "Demon", "Aberration" }
 		for i,j in pairs(table_banishList) do
@@ -329,7 +329,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 
 	-------------------------------------------------------------
 	----------------------Guld'an  function--------------------
-	-------------------------------------------------------------	
+	-------------------------------------------------------------
 	 function canMetha_Gul()
 	 if GulCharges < 2  and GDCD <= 11 or GetShapeshiftForm("player") == 1
 			 then return false end
@@ -337,7 +337,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	end
 	--------------------------------------------------------------
 	----------------------canDpsFocus function--------------------
-	-----------------use jps.defensive for activate---------------	
+	-----------------use jps.defensive for activate---------------
 	 function canDpsFocus()
 		if focus
 		and  jps.canDPS("focus")
@@ -349,7 +349,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 
 	--------------------------------------------------------------
 	----------------------special boss function-------------------
-	--------------------------------------------------------------	
+	--------------------------------------------------------------
 	function bossSpecial()
 		local table_boss = { "Horridon", "Ji-Kun", }
 		for i,j in pairs(table_boss) do
@@ -388,7 +388,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	---------------------------------------
 	function canMeta()
 		if ( not jps.buff("metamorphosis")
-		and not jps.Opening ) 
+		and not jps.Opening )
 		and
 		( ( jps.debuff("corruption") and not jps.debuff("Doom") )
 		or ( dpower >= 900 and not haveProc and GulCharges == 0 )
@@ -427,7 +427,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		(( trinketstack >= 9 and doom_duration < 85 )
 		or (doom_duration <= 40 and dpower <= 200 )
 		or (doom_duration <= 60 and haveProc )
-		or doom_duration < 28 )	
+		or doom_duration < 28 )
 		then return true end
 		return false
 	end
@@ -437,7 +437,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	-------------------- mouseover / focus conditions ---------------------
 	local attackFocus = false
 	local attackMouseOver = false
- 
+
 	-- If focus exists and is not the same as target, consider attacking focus too
 	if UnitExists("focus") ~= nil and UnitGUID("target") ~= UnitGUID("focus") and not UnitIsFriend("player", "focus") and not jps.debuff("Banish","focus")then
 		attackFocus = true
@@ -455,7 +455,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		{
 			{ "dark soul: knowledge", jps.Opening  },
 			{ "imp swarm", jps.Opening },
-			{ "hand of gul'dan", GulCharges > 1 and not jps.buff("metamorphosis") and jps.Opening }, 
+			{ "hand of gul'dan", GulCharges > 1 and not jps.buff("metamorphosis") and jps.Opening },
 			{ "hand of gul'dan", GulCharges < 2 and not jps.buff("metamorphosis") and jps.Opening and GDCD <= 11 },
 			{ "Grimoire: Felguard", not jps.buff("metamorphosis") and jps.Opening },
 			{ "corruption", not jps.debuff("corruption") and not jps.buff("metamorphosis") and jps.Opening },
@@ -477,10 +477,10 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 			{ "corruption", not jps.buff("metamorphosis") and not jps.mydebuff("Corruption","mouseover") and attackMouseOver, "mouseover" },	----- corruption mouseover ----
 			{ "corruption", jps.buff("metamorphosis") and jps.mydebuff("Corruption","mouseover") and attackMouseOver , "mouseover" },		  ----- doom nmouseover ----
 			{ "corruption", not jps.buff("metamorphosis") and not jps.mydebuff("Corruption","focus") and attackFocus, "focus" },	----- corruption focus ----
-			{ "corruption", jps.buff("metamorphosis") and jps.mydebuff("Corruption","focus") and attackFocus , "focus" },		  ----- doom focus -------	 
+			{ "corruption", jps.buff("metamorphosis") and jps.mydebuff("Corruption","focus") and attackFocus , "focus" },		  ----- doom focus -------
 		}
 		return table
-	end	
+	end
 
 	------------------------------------------------------------------------------------------------------
 	-----------------------------------------  Aoe Table in meta form ------------------------------------
@@ -489,11 +489,11 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		local table=
 		{
 			{ "hellfire", not jps.buff("Immolation Aura") },
-			{ "hand of gul'dan" }, 
+			{ "hand of gul'dan" },
 			{ 103967  },		 --carion swarm
 		}
 	return table
-	end	
+	end
 
 	------------------------------------------------------------------------------------------------------
 	-----------------------------------------  meta table ------------------------------------------------
@@ -506,10 +506,10 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 			{ {"macro","/cancelaura metamorphosis"},  cancelMeta and not reCastdoom  },
 			{ "soul fire", jps.buffDuration("molten core") >= 2.2 },
 			{ "soul fire", jps.hp("target") <= 0.25 },
-			{ "shadow bolt" },	
+			{ "shadow bolt" },
 		}
 	return table
-	end	
+	end
 
 	------------------------------------------------------------------------------------------------------
 	-----------------------------------------  human table -----------------------------------------------
@@ -527,7 +527,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 			{ "shadow bolt", not jps.buff("metamorphosis") },
 		}
 	return table
-	end	
+	end
 
 	-----------------------------------------------------------------------------------
 	--------------	function SpellStopCasting for unwanted soulfire ------------------
@@ -546,7 +546,7 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		---------------------------- banish focus if banishable -------------------------------------------------
 		{ "Banish", banishFocus  and not jps.debuff("Banish","focus") and endtimeBan+2 < GetTime() and jps.Interrupts, "focus" },
 
-		---------------------------------------- Survival Cd/regen ----------------------------------------------	
+		---------------------------------------- Survival Cd/regen ----------------------------------------------
 		{ "soulshatter", targetThreatStatus ~= 0 and isInRaid },										  --- aggro reduction ----
 		{ jps.Macro("/use Healthstone"),  jps.itemCooldown(5512)==0 and jps.hp() < 0.4 and GetItemCount(5512) > 0	},	--- Healthstone ----
 		{ 108482, jps.cooldown(108482) == 0 and (stunMe or autoDispelMAgic and jps.Interrupts )	},				-- unStunt/dispell jps.Interrupts for on/off ---
@@ -556,30 +556,30 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		{ "mortal coil",	  jps.hp("player") < 0.60 },
 		{ "unending resolve",	jps.hp("player") < 0.35 },
 
-		-----------------------  Curse of Element human/meta form ----------------------------------------------		
+		-----------------------  Curse of Element human/meta form ----------------------------------------------
 		{ 1490, not jps.debuff(1490) and not jps.buff("metamorphosis") },
 		{ 1490, jps.debuff(1490) and jps.buff("metamorphosis") and not jps.buff(116202,"player") },
 
-		---------------------------------------- Cd when up ----------------------------------------------------	  
+		---------------------------------------- Cd when up ----------------------------------------------------
 		{ jps.Macro("/use 10"), jps.glovesCooldown() == 0 },					 --inge --
 		{ jps.DPSRacial },											 --racial --
-		{ "dark soul: knowledge", not jps.Opening	},	
+		{ "dark soul: knowledge", not jps.Opening	},
 		{ "imp swarm" },
 		{ "Grimoire: Felguard", not jps.buff("metamorphosis") and not jps.Opening },
 		----------------- axe toss to interupts or stunt if target is in stuntlist ----
 		{ 89766, jps.cooldown("axe toss") == 0 and ((pet and isAxeToss ) or (jps.shouldKick and pet))  },
 
-		---------------------------------------- opening ------------------------------------------------------	 
+		---------------------------------------- opening ------------------------------------------------------
 		{ "nested", jps.Opening , opening() },
 
 		---------------------------------------- Dot/ban on focus or Mouseover --------------------------------
 		{ "nested", mouseover_dot , dot_mousover() },
 
-		---------------------------------------- Methamorphosis -----------------------------------------------	
+		---------------------------------------- Methamorphosis -----------------------------------------------
 		{ "metamorphosis", canMeta  },
 		{ "nested", jps.buff("metamorphosis") and not jps.Opening , meta_table() },
 
-		---------------------------------------- human form --------------------------------------------------- 
+		---------------------------------------- human form ---------------------------------------------------
 		{ "nested", not jps.buff("metamorphosis") and not jps.Opening , human_table() },
 	}
 
@@ -594,7 +594,7 @@ end,"Demo Raid (untested)")
 @class warlock
 @spec demonology
 @author Kirk24788
-@description 
+@description
 This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
 ]]--
 

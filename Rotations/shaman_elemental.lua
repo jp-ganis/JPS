@@ -4,7 +4,7 @@
 @spec ELEMENTAL
 @talents W!22020.
 @author duplicate
-@description 
+@description
 Updated for MoP
 ]]--
 
@@ -34,11 +34,11 @@ jps.registerStaticTable("SHAMAN","ELEMENTAL",
 		{ "Searing Totem", 'not totemActive(1)' },
 		{ "Earth Elemental Totem", 'jps.UseCDs and jps.bloodlusting()' },
 		{ "Stormlash Totem",' jps.UseCDs and jps.bloodlusting()' },
-		
+
 		{ jps.getDPSRacial(),'jps.UseCDs '},
 		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs '},
 		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs '},
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs '},
+		{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs '},
 		-- Requires herbalism
 		{"Lifeblood",'jps.UseCDs '},
 		-- Prio-List

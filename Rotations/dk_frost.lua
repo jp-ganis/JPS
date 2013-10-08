@@ -5,7 +5,7 @@
 @spec Frost
 @talents d!210011
 @author PCMD
-@description 
+@description
 This is a Raid-Rotation based on Simcraft results. While Bloodlusting it uses a potion of Mogu Power inside raids and a flask if you got one inside your bags.<br>
 It switches automatically to Frost presence. Unit's in focus or target are automatically battle-rezzed
 [br]
@@ -18,10 +18,10 @@ Modifiers:[br]
 
 -- Talents:
 -- Tier 1: Plague Leech or Unholy Blight
--- Tier 2: Anti-Magic Zone ( lichborne is a small dps loss , purgatory risky because of the debuff ) 
+-- Tier 2: Anti-Magic Zone ( lichborne is a small dps loss , purgatory risky because of the debuff )
 -- Tier 3: Death's Advance / for kiting chillbains / asphyxiate for another kick / cc
--- Tier 4: Death Pact 
--- Tier 5: for 2h Runic Empowerment (others will also work , but Runic Empowerment provides us better burst) , blood tap for DW 
+-- Tier 4: Death Pact
+-- Tier 5: for 2h Runic Empowerment (others will also work , but Runic Empowerment provides us better burst) , blood tap for DW
 -- Tier 6: Remorseless Winter or Desecrated Ground if you need some stun/cc remove
 -- Major Glyphs: Icebound Fortitude, Anti-Magic Shell
 
@@ -33,12 +33,12 @@ Modifiers:[br]
 ------------------------
 -- SPELL TABLE ---------
 ------------------------
-		
+
 dkFrost = {}
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Frost Presence",'not jps.buff("Frost Presence", "player")'},
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
-	
+
 	--AOE
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
 	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
@@ -46,12 +46,12 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
-	
+
 	-- Self heal
 	{ "Death Pact",'jps.Defensive and jps.hp() < 0.4 and UnitExists("pet") ~= nil'},
 	{ "Death Siphon",'jps.Defensive and jps.hp() < 0.8'},
 	{ "Death Strike",'jps.Defensive and jps.hp() < 0.7'},
-	
+
 	-- Interrupts
 	{ "mind freeze",'jps.shouldKick()'},
 	{ "mind freeze",'jps.shouldKick("focus")', "focus" },
@@ -59,23 +59,23 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus"},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-	
+
 	--CDs + Buffs
 	{ "Pillar of Frost",'jps.UseCDs'},
 	{ jps.useBagItem("Flask of Winter's Bite"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite")'},
-	{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'}, 
-	
+	{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
+
 	{ jps.getDPSRacial(),'jps.UseCDs'},
-	
+
 	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
 	-- On-use Trinkets.
 	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
 	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
-	
+
 	--simcraft 5.3 T14
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
 	{ "outbreak",'jps.myDebuffDuration("Blood Plague") == 0'},
@@ -97,7 +97,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "plague leech",'dk.canCastPlagueLeech(3)'},
 	{ "outbreak",'jps.myDebuffDuration("Blood Plague") <3'},
 	{ "outbreak",'jps.myDebuffDuration("Frost Fever") <3'},
-	
+
 	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
 	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},
 	{ "frost strike",'not dk.rune("oneFr")'},
@@ -118,7 +118,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 @spec Frost
 @talents d!210011
 @author PCMD
-@description 
+@description
 This is a small PVP Rotation without big changes to the normal but it allows you to choose the presence and it casts Necrotic Strike.
 [br]
 Modifiers:[br]
@@ -127,23 +127,23 @@ Modifiers:[br]
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Horn of Winter",'not jps.buff("Horn of Winter")'},
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget'},
-			
+
 	-- Self heal
 	{ "Death Pact",'jps.UseCDs and jps.hp() < 0.6 and UnitExists("pet") ~= nil'},
-	
+
 	-- Rune Management
-	{ "Plague Leech",'dk.canCastPlagueLeech(3)'}, 
-	
+	{ "Plague Leech",'dk.canCastPlagueLeech(3)'},
+
 	{ "Pillar of Frost",'jps.UseCDs'},
 	{ jps.getDPSRacial(),'jps.UseCDs'},
-	
+
 	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
-	
+
 		-- If our diseases are about to fall off.
  	{ "outbreak",'jps.myDebuffDuration("Blood Plague") <3'},
  	{ "outbreak",'jps.myDebuffDuration("Frost Fever") <3'},
 	{ "Soul Reaper",'jps.hp("target") < 0.35'},
-	
+
 	-- Kick
 	{ "mind freeze",'jps.shouldKick()'},
 	{ "mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -151,24 +151,24 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus"},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-		
+
 		-- Unholy Blight when our diseases are about to fall off. (talent based)
  	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
- 	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},		
+ 	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},
 
-	
+
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-	
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
-	
+
 	-- Diseases
 	{ "Necrotic Strike",'not jps.mydebuff("Necrotic Strike",target)'},
 	{ "Howling Blast",'jps.myDebuffDuration("Frost Fever") <= 1'},
 	{ "Howling Blast",'jps.buff("Freezing Fog") and jps.runicPower() < 88'},
 	{ "Plague Strike",'jps.myDebuffDuration("Blood Plague") <= 1'},
-	
+
 	-- Self heals
 	{ "Death Siphon",'jps.hp() < 0.8 and jps.Defensive'},
 	{ "Death Strike",'jps.hp() < 0.7 and jps.Defensive'},
@@ -178,11 +178,11 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Obliterate",'jps.bloodlusting()'},
 	-- Filler.
 	{ "Horn of Winter",'jps.runicPower() < 20'},
-	
-	{ "Frost Strike",'jps.runicPower() >= 76'}, 
-	{ "Frost Strike",'jps.bloodlusting()'}, 
-	{ "Frost Strike",'not dk.rune("oneFr")'}, 
-	
+
+	{ "Frost Strike",'jps.runicPower() >= 76'},
+	{ "Frost Strike",'jps.bloodlusting()'},
+	{ "Frost Strike",'not dk.rune("oneFr")'},
+
 	{ "Frost Strike",'not jps.buff("Killing Machine") and jps.cooldown("Obliterate") > 1'},
 	{ "Frost Strike",'jps.buff("Killing Machine") and jps.cooldown("Obliterate") > 1'},
 	{ "Obliterate"},
@@ -191,7 +191,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.runicPower() <= 25 and not dk.rune("twoDr") and not dk.rune("twoFr") and not dk.rune("twoUr")'},
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.TimeToDie("target") < 60 and jps.buff("Potion of Mogu Power")'},
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.bloodlusting()'},
-				
+
 }, "PVP 2h", false, true)
 --[[[
 @rotation Diseases & Interrupt Rotation 5.3
@@ -199,7 +199,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 @spec Frost
 @talents d!210011
 @author PCMD
-@description 
+@description
 This Rotation only spread's your diseases & interrupt units. The rest you have to do on your own.
 <br> [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
 ]]--

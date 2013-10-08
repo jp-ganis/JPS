@@ -16,29 +16,29 @@ local spellTable = {
 	-- Rain of Fire
 	{wl.spells.rainOfFire, 'IsShiftKeyDown() and jps.buffDuration(wl.spells.rainOfFire) < 1 and not GetCurrentKeyBoardFocus()'	},
 	{wl.spells.rainOfFire, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
-	
+
 	{wl.spells.shadowfury, 'IsShiftKeyDown() and IsAltKeyDown() and not GetCurrentKeyBoardFocus()' },-- Shadowfury
-	
-	
+
+
 	-- COE Debuff
 	{wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
 	{wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
-	
+
 	{wl.spells.fireAndBrimstone, 'jps.burningEmbers() > 0 and not jps.buff(wl.spells.fireAndBrimstone, "player") and jps.MultiTarget and not jps.isRecast(wl.spells.fireAndBrimstone, "target")' },
 	{ {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.burningEmbers() == 0' },
 	{ {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and not jps.MultiTarget' },
-	
+
 	-- On the move
 	{wl.spells.felFlame, 'jps.Moving and not wl.hasKilJaedensCunning()' },
-	
+
 	-- CD's
 	{ {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and not jps.buff(wl.spells.darkSoulInstability) and jps.UseCDs' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
+	{ jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
 	{ jps.useTrinket(0),	   'jps.UseCDs' },
 	{ jps.useTrinket(1),	   'jps.UseCDs' },
-	
+
 	-- Shadowburn mouseover!
 	{wl.spells.shadowburn, 'jps.hp("mouseover") < 0.20 and jps.burningEmbers() > 0 and jps.myDebuffDuration(wl.spells.shadowburn, "mouseover")<=0.5', "mouseover"  },
 
@@ -56,7 +56,7 @@ local spellTable = {
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.emberShards() >= 35'},
 		{wl.spells.incinerate },
 	}},
-	
+
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown()', {
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
 		{wl.spells.conflagrate },
@@ -77,7 +77,7 @@ local spellTable = {
 @spec destruction
 @talents Vb!112101!ZbS
 @author Kirk24788
-@description 
+@description
 This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP.
 [br]
 Modifiers:[br]
@@ -107,7 +107,7 @@ end,"Destruction 5.3")
 @class warlock
 @spec destruction
 @author Kirk24788
-@description 
+@description
 This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
 ]]--
 jps.registerStaticTable("WARLOCK","DESTRUCTION",wl.interruptSpellTable,"Interrupt Only")

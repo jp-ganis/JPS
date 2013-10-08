@@ -24,9 +24,9 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
     -- Poisons
     { rogue.spells.deadlyPoison, 'not jps.buff(rogue.spells.deadlyPoison)' },
     { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison)' },
-    
+
     -- Healthstone
-    {jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, 
+    {jps.useBagItem(5512), 'jps.hp("player") < 0.65' },
 
     -- Interrupt
     { rogue.spells.kick, 'jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.5', "target"},
@@ -34,7 +34,7 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
     -- CD's
     { rogue.spells.shadowBlaes, 'jps.bloodlusting() and jps.buffDuration(rogue.spells.sliceAndDice) >= jps.buffDuration(rogue.spells.shadowBlades) and jps.UseCDs' },
     { jps.DPSRacial, 'jps.UseCDs' },
-    { jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
+    { jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
     { jps.useTrinket(0),       'jps.UseCDs' },
     { jps.useTrinket(1),       'jps.UseCDs' },
 

@@ -65,7 +65,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		{ "disarm", true , rangedTarget },
 		{ "intimidating shout", CheckInteractDistance("target",3)==1 and not jps.debuff("disarm",rangedTarget) , rangedTarget },
 		-- { attack pet until 100 rage },
-		}	
+		}
 		return table
 	end
 -- Mage
@@ -82,7 +82,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		{ "spell reflection", noMelee and isHarmSpell and not jps.IsCastingPoly(rangedTarget) and not jps.buff("mass spell reflection") , player },
 		}
 		return table
-	end	
+	end
 -- Monk
 -- Paladin
 	local function parse_vsPaladin()
@@ -125,7 +125,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		-- { "pummel", casting lava burst or lightning , rangedTarget },
 		-- { trinket and pummel, jps.debuff("warstomp",player) and targethealth_pct < 0.30 , rangedTarget },
 		{ "mortal strike", targethealth_pct < 0.50 and targetSpec == "Elemental" and not jps.debuff("mortal strike",rangedTarget) , rangedTarget },
-		-- Lava Burst		
+		-- Lava Burst
 		}
 		return table
 	end
@@ -139,7 +139,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		{ "pummel", kick , rangedTarget },
 		}
 		return table
-	end	
+	end
 -- Warrior
 	local function parse_vsWarrior()
 		local table =
@@ -151,13 +151,13 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		}
 		return table
 	end
-	
+
 -- Battle Stance
 	function bStance()
 		if melee and twoHand then return true end
 		return false
 	end
-	
+
 -- Defensive Stance
 	function dStance()
 			if noMelee then return true end
@@ -166,7 +166,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 			if playerhealth_pct < 0.20 then return true end
 			return false
 	end
-	
+
 -- Shout Buffs
 	function buffShout()
 		if rage <= 10 then return true end
@@ -175,8 +175,8 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		and jps.cooldown("heroic strike") ~= 0
 		and jps.cooldown("mortal strike") ~= 0 then return true end
 		return false
-	end 
-	
+	end
+
 -- Heroic Strike
 	function shouldHStrike()
 		if rage >= 70 and jps.debuff("physical vulnerability",rangedTarget) then return true end
@@ -195,7 +195,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		if not jps.debuff("physical vulnerability",rangedTarget) then return true end
 		if jps.debuffDuration("physical vulnerability",rangedTarget) < 1.50 then return true end
 		return false
-	end 
+	end
 
 -- Disarm
 	function shouldDisarm()
@@ -204,7 +204,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		if jps.buff("bear form","target") or jps.buff("cat form","target") then return true end
 		return false
 	end
- 
+
 -- Enemy Powerups
 	function isPowerUp()
 		-- Death Knight
@@ -237,13 +237,13 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 	if (UnitClassification(r) == "worldboss" ) then
 		isWorldBoss = true
 	end
-	
+
 	-- Enemy Tracking
 	local EnemyUnit = {}
 	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end -- EnemyUnit[1]
 		local enemyTargetingMe = jps.IstargetMe()
 		local enemycount,targetcount = jps.RaidEnemyCount()
-		
+
 		local rangedTarget = "target"
 		if jps.canDPS("target") then rangedTarget = "target"
 		elseif jps.canDPS("focustarget") then rangedTarget = "focustarget"
@@ -271,8 +271,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 	------------------------
 	local spellTable =
 	{
-		{ SetView(1), },
-		-- Class Counters	
+		-- Class Counters
 		{ "nested", IsShiftKeyDown()~=nil , parse_multitarget() },
 		{ "nested", enemycount > 2 , parse_multitarget() },
 		{ "nested", targetClass=="Death Knight" , parse_vsDK() },
@@ -290,7 +289,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		-- { "heroic leap", isFalling and jps.cooldown("charge")==0 , player },
 		-- "Defensive Stance" 71
 		-- { "defensive stance", stance ~= 2 and isFalling , player },
-		-- Gap Closers 
+		-- Gap Closers
 		-- { "charge",	},
 		{ "charge", noMelee , rangedTarget },
 		-- { "heroic leap", noMelee and jps.cooldown("charge") > 0 , rangedTarget },
