@@ -31,11 +31,6 @@ dkBloodSpellTable[1] = {
 	-- Cntrol is pressed
 	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
 
-	-- raid spells
-	{"Anti-Magic Shell",'jps.raid.shouldCast("anti-magic shell") and jps.UseCDs'}, --casted by raid mode
-	{"Death's Advance",'jps.raid.shouldCast("Death\'s Advance") and jps.UseCDs'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.raid.shouldCast("icebound fortitude") and jps.glyphInfo(43536)'}, --casted by raid mode
-
 	-- Defensive cooldowns
 
 	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
@@ -45,9 +40,7 @@ dkBloodSpellTable[1] = {
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
 
-
 	-- Interrupts
-
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "mouseover"},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -58,8 +51,6 @@ dkBloodSpellTable[1] = {
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
-	-- Aggro cooldowns
-	-- {"Dark Command",'--targetThreatStatus ~= 3 and not jps.targetTargetTank()'},
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	{"Dancing Rune Weapon",'jps.UseCDs'},
 
@@ -117,9 +108,6 @@ dkBloodSpellTable[2] = {
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "focus" },
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target"},
-	-- raid spells
-	{"Anti-Magic Shell",'jps.raid.shouldCast("anti-magic shell") and jps.UseCDs'},
-	{"Death's Advance",'jps.raid.shouldCast("Death\'s Advance") and jps.UseCDs'},
 
 	-- Defensive cooldowns
 	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
@@ -127,7 +115,6 @@ dkBloodSpellTable[2] = {
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
 	{"Rune Tap",'jps.hp() < 0.8'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.4'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.raid.shouldCast("icebound fortitude") and jps.glyphInfo(43536) and not jps.buff("Anti-Magic Shell")'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.55'},
 
 	-- Interrupts
