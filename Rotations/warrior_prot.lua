@@ -25,23 +25,21 @@ jps.registerRotation("WARRIOR","PROTECTION",function()
 		
 		-- multitarget
 		{ "Thunder Clap" ,		jps.MultiTarget , "target" },
-		{ "Deadly Calm" ,		jps.MultiTarget and jps.UseCDs , "player" },
 		{ "Recklessness" ,		jps.UseCDs , "player" },
-		{ "Cleave" ,				jps.rage() > 70 and jps.MultiTarget , "target" },	
+		{ "Cleave" ,				jps.rage() > 70 and jps.MultiTarget , "target" },
+		{ "Heroic Strike" ,		jps.rage() > 70  and jps.buff("player", "Ultimatum") and jps.MultiTarget , "target" },
 		
 		-- singletarget
 		{ "Devastate" ,			not jps.debuff("Sunder Armor","target") , "target" },
 		{ "Shield Slam" ,		},
 		{ "Revenge" ,				},
-		{ "Heroic Strike" ,		jps.buff("player", "Ultimatum") , "target" },
+		{ "Heroic Strike" ,		jps.buff("player", "Ultimatum") and not jps.MultiTarget , "target" },
 		{ "Devastate" ,			jps.debuffStacks("Sunder Armor") < 3 , "target" },
 		{ "Thunder Clap" ,		not jps.debuff("Weakend Blows", "target") },
 		{ "Heroic Throw" ,		},
 		{ "Battle Shout",			jps.rage() < 100, "player" },
-		{ "Deadly Calm" ,		jps.UseCDs , "target" },
-		{ "Heroic Strike" ,		jps.buff("player", "Deadly Calm") , "target" },
-		{ "Heroic Strike" ,		jps.rage()>90 , "target" },
-		{ "Impending Victory" ,	jps.hp() < 0.90 , "target" },
+		{ "Heroic Strike" ,		jps.rage()>90  and not jps.MultiTarget, "target" },
+		{ "Impending Victory" ,	jps.hp() < 0.85 , "target" },
 		{ "Devastate" ,			}
 	}
 

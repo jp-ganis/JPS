@@ -51,4 +51,17 @@ jps.registerStaticTable("SHAMAN","ELEMENTAL",
 		{ "Thunderstorm", 'jps.mana() < 0.6 and jps.UseCDs' },
 		{ "Lightning Bolt",'onCD' },
 	}
-,"Elemental Shaman PVE")
+,"Elemental Shaman PVE")local deactivateGhostWolfNotMovingSeconds = 0
+function deactivateGhostWolfNotMoving(seconds)
+	if not seconds then seconds = 0 end
+	if jps.Moving or not jps.buff("Ghost Wolf") then
+		deactivateGhostWolfNotMovingSeconds = 0
+	else
+		if deactivateGhostWolfNotMovingSeconds >= seconds then
+			RunMacroText("/cancelaura Ghost Wolf")
+		else
+			deactivateGhostWolfNotMovingSeconds = deactivateGhostWolfNotMovingSeconds + jps.UpdateInterval
+		end
+	end
+end
+
