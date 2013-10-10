@@ -95,6 +95,7 @@ return targetControlled, timeControlled
 end
 
 function jps.shouldKick(unit)
+	if not jps.canDPS(unit) then return false end
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
