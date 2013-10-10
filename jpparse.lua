@@ -468,8 +468,6 @@ function parseSpellTable( hydraTable )
 
 		-- Return spell if conditions are true and spell is castable.
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
-			jps.CastBar.nextSpell = tostring(select(1,GetSpellInfo(spell)))
-			jps.CastBar.nextTarget = target
 			return spell,target 
 		end
 	end
