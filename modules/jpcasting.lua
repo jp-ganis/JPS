@@ -72,6 +72,10 @@ function jps.IsChannelingSpell(spell,unit)
 	return false
 end
 
+function jps.spellCastTime(spell)
+	return select(7, GetSpellInfo(spell)) /1000
+end
+
 jps.polySpellIds = {
 	[51514] = "Hex" ,
 	[118]	= "Polymorph" ,
