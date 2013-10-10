@@ -4,7 +4,7 @@
 @spec holy
 @talents ba!202121
 @author PCMD
-@description 
+@description
 This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP.
 [br]
 Modifiers:[br]
@@ -29,10 +29,10 @@ function hpala.update()
 		hpala.rangedTargetValue = "targettarget"
 	end
 	hpala.myTankValue = jps.findMeAggroTank("target")
-	
+
 	hpala.myLowestImportantUnitValue = hpala.jpsName
 
-	hpala.tanksValue = jps.findTanksInRaid() 
+	hpala.tanksValue = jps.findTanksInRaid()
 	hpala.importantHealTargetsValue = hpala.tanksValue
 	hpala.myTankValue = jps.findMeAggroTank()
 	--------------------------------------------------------------------------------------------
@@ -40,11 +40,11 @@ function hpala.update()
 	--------------------------------------------------------------------------------------------
 	if jps.canHeal("target") then table.insert(hpala.importantHealTargetsValue,"target") end
 	if jps.canHeal("focus") then table.insert(hpala.importantHealTargetsValue,"focus") end
-	
+
 	local lowestHP = jps.hp("player")
 	for unitName, _ in ipairs(hpala.importantHealTargetsValue) do
 		local thisHP = jps.hp(unitName)
-		if jps.canHeal(unitName) and thisHP <= lowestHP then 
+		if jps.canHeal(unitName) and thisHP <= lowestHP then
 				lowestHP = thisHP
 				hpala.myLowestImportantUnitValue = unitName
 		end
@@ -92,7 +92,7 @@ end
 
 local L = MyLocalizationTable
 
-function hpala.shouldInterruptCasting(spellsToCheck)	
+function hpala.shouldInterruptCasting(spellsToCheck)
 	local healTargetHP = jps.hp(jps.LastTarget)
 	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
 	if spellCasting == nil then return false end
@@ -130,19 +130,19 @@ end
 -- SPELL TABLE -----
 ------------------------
 hpala.spellTable = {
-	-- Kicks                    
+	-- Kicks
 	{ "Rebuke",'jps.shouldKick(hpala.rangedTarget())', hpala.rangedTarget },
 	{ "Rebuke",'jps.shouldKick("focus")', "focus" },
 	{ "Fist of Justice",'jps.shouldKick(hpala.rangedTarget()) and jps.cooldown("Rebuke")~=0', hpala.rangedTarget },
 
 -- Dispels
 	hpala.dispel,
-	
--- Cooldowns                     
+
+-- Cooldowns
 	{ "Lay on Hands",'jps.hp(hpala.myLowestImportantUnit()) < 0.20 and jps.UseCDs', hpala.myLowestImportantUnit, "casted lay on hands!" },
 	{ "Divine Plea",'jps.mana() < 0.60 and jps.glyphInfo(45745) == false and jps.UseCDs', hpala.player },
 	{ jps.useBagItem("Master Mana Potion"),'jps.mana() < 0.60 and jps.UseCDs', hpala.player },
-	
+
 	{ "Avenging Wrath",'jps.UseCDs and jps.CountInRaidStatus(0.7) > 2', hpala.player },
 	{ "Avenging Wrath",'jps.UseCDs and jps.hp(hpala.ourHealTarget()) < 0.5 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.player },
 	{ "Divine Favor",'jps.UseCDs and jps.CountInRaidStatus(0.7) > 2', hpala.player },
@@ -151,37 +151,37 @@ hpala.spellTable = {
 	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0) and jps.useTrinket(0) ~= ""', "player"},
 	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1) and jps.useTrinket(1) ~= ""', "player"},
 	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= ""', "player"},
-	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= ""', "player"},	
+	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= ""', "player"},
 	-- Requires engineerins
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-	
+	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
-	
+
 	-- Multi Heals
 
 	{ "Light's Hammer",'IsShiftKeyDown() ~= nil', hpala.ourHealTarget },
 	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.holyPower() > 2', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.buff("Divine Purpose")', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
-	--{ "Holy Radiance",'jps.CountInRaidStatus(0.7) > 4', hpala.ourHealTarget },  	
-	{ "Holy Radiance",'jps.MultiTarget and jps.CountInRaidStatus(0.71) > 2', hpala.ourHealTarget },  	
+	--{ "Holy Radiance",'jps.CountInRaidStatus(0.7) > 4', hpala.ourHealTarget },
+	{ "Holy Radiance",'jps.MultiTarget and jps.CountInRaidStatus(0.71) > 2', hpala.ourHealTarget },
 
 	-- Buffs
 	{ "Seal of Insight",'GetShapeshiftForm() ~= 3', hpala.player },
-	{ "Beacon of Light",'UnitIsUnit(hpala.myTank(),hpala.player())~=1 and not jps.buff("Beacon of Light",hpala.myTank()) and jps.beaconTarget == nil', hpala.myTank }, 
+	{ "Beacon of Light",'UnitIsUnit(hpala.myTank(),hpala.player())~=1 and not jps.buff("Beacon of Light",hpala.myTank()) and jps.beaconTarget == nil', hpala.myTank },
 	{ "Eternal Flame",'jps.holyPower() > 2 and not jps.buff("Eternal Flame", hpala.myTank())', hpala.myTank },
 	{ "Eternal Flame",'jps.buff("Divine Purpose") and not jps.buff("Eternal Flame", hpala.myTank())', hpala.myTank },
 	{ "Sacred Shield",'UnitIsUnit(hpala.myTank(),hpala.player())~=1 and not jps.buff("Sacred Shield",hpala.myTank())', hpala.myTank },
-	
+
 	{ "Divine Protection",'jps.hp(hpala.player()) < 0.50', hpala.player },
 	{ "Divine Shield",'jps.hp(hpala.player()) < 0.30 and jps.cooldown("Divine Protection")~=0', hpala.player },
-	
+
 -- Infusion of Light Proc
-	{ "Divine Light",'jps.buff("Infusion of Light") and jps.hp(hpala.ourHealTarget()) < 0.6', hpala.ourHealTarget }, 
+	{ "Divine Light",'jps.buff("Infusion of Light") and jps.hp(hpala.ourHealTarget()) < 0.6', hpala.ourHealTarget },
 
 -- Divine Purpose Proc
 	{ "Eternal Flame",'jps.buff("Divine Purpose") and not jps.buff("Eternal Flame", hpala.ourHealTarget())  and jps.hp(hpala.ourHealTarget()) < 0.97', hpala.ourHealTarget },
-	{ "Word of Glory",'jps.buff("Divine Purpose") and jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget }, 
+	{ "Word of Glory",'jps.buff("Divine Purpose") and jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget },
 
 -- Daybreak Proc
 	{ "Holy Shock",'jps.buff("Daybreak") and jps.hp(hpala.ourHealTarget()) < 0.9', hpala.ourHealTarget }, -- heals with daybreak buff other targets
@@ -191,7 +191,7 @@ hpala.spellTable = {
 	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.78  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 	{ "Holy Shock",'jps.hp(hpala.ourHealTarget()) < 0.94  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.88  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
-		
+
 	-- other raid / party
 	{ "Flash of Light",'jps.hp(hpala.ourHealTarget()) < 0.30', hpala.ourHealTarget },
 	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.55', hpala.ourHealTarget },
@@ -205,7 +205,7 @@ jps.registerRotation("PALADIN","HOLY",function()
 	-- By Sphoenix, PCMD
 	local spell = nil
 	local target = nil
-	
+
 	if (GetTime() - hpala.timestamp) > hpala.UpdateInterval then
 		hpala.update()
 		hpala.timestamp = GetTime()

@@ -13,13 +13,13 @@ local function isSoulburnSoulSwapTarget(unit)
 	local attackFocus = false
 	local attackMouseOver = false
 	local burnPhase = jps.hp("target") <= 0.20;
-	
+
 		-- If focus exists and is not the same as target, consider attacking focus too
 	if not UnitExists(unit) or UnitIsFriend("player", unit) then
 		return false
 	end
 
-	
+
 	local oneDotMissing, allDotsMissing = getDotStatus(unit)
 	local castSoulburn = false
 	if unit == "target" and burnPhase then
@@ -49,7 +49,7 @@ function wl.soulburnSoulSwapTable()
 	local soulSwapTable = {wl.spells.soulSwap, false}
 	--local cancelSoulburnTable = {{"macro","/cancelaura "..wl.spells.soulburn}, true}
 	local function setTable(tbl,condition,target) tbl[2] = condition; tbl[3] = target; return tbl end
-	
+
 	return function()
 		for i, dottableUnit in ipairs(wl.dottableUnits) do
 			if isSoulburnSoulSwapTarget(dottableUnit) then
@@ -60,7 +60,7 @@ function wl.soulburnSoulSwapTable()
 					-- If we are alredy soulburned, cast soulswap
 					return setTable(soulSwapTable,true,unit)
 				end
-			end 
+			end
 		end
 		return setTable(soulburnTable,false,"target")
 	end
@@ -106,7 +106,7 @@ end
 function wl.socDuration(unit,soulburned)
 	local hasSoC, hasSoulburnSoC = false
 	local durationSoC, durationSoulburnSoC = 0
-	for i=1,40 do 
+	for i=1,40 do
 		local _, _, _, _, _, _, expirationTime, caster, _, _, spellId = UnitDebuff(unit, i)
 		local duration = 0
 		if expirationTime~=nil then
@@ -148,7 +148,7 @@ local spellTable = {
 	{ {"macro","/cast " .. wl.spells.darkSoulMisery}, 'jps.cooldown(wl.spells.darkSoulMisery) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulMisery)' },
 	{ jps.DPSRacial, 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings(), 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
+	{ jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
 	{ jps.useTrinket(0),	   'jps.UseCDs' },
 	{ jps.useTrinket(1),	   'jps.UseCDs' },
 
@@ -214,7 +214,7 @@ local spellTable = {
 @class warlock
 @spec affliction
 @author Kirk24788
-@description 
+@description
 This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP.
 [br]
 Modifiers:[br]
@@ -231,7 +231,7 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
 		SpellStopCasting()
 		jps.NextSpell = nil
 	end
-	
+
 	cancelChannelingIfNecessary()
 
 	return parseStaticSpellTable(spellTable)
@@ -242,7 +242,7 @@ end,"Affliction 5.3")
 @class warlock
 @spec affliction
 @author Kirk24788
-@description 
+@description
 This is Rotation will only take care of Interrupts. [i]Attention:[/i] [code]jps.Interrupts[/code] still has to be active!
 ]]--
 jps.registerStaticTable("WARLOCK","AFFLICTION",wl.interruptSpellTable,"Interrupt Only")

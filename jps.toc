@@ -6,7 +6,6 @@
 
 jplocal.lua
 jps.lua
-Data\jpraid.data.lua
 jplogging.lua
 jputils.lua
 jphealing.lua

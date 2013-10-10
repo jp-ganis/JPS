@@ -1,7 +1,7 @@
 --[[[
 @module Static Spell Tables
 @description
-Static Tables hava a significant advantage over old-style rotations - memory usage and to some extend execution time. Instead of 
+Static Tables hava a significant advantage over old-style rotations - memory usage and to some extend execution time. Instead of
 creating a new Table every Update Interval the table is only created once and used over and over again. This needs some major modifications
 to your rotation - you can find all relevant information on Transforming your Rotations in the PG forums.
 ]]--
@@ -35,14 +35,14 @@ end
 local function fnParseMacro(macro, condition, target)
     if condition then
         -- Workaround for TargetUnit is still PROTECTED despite goblin active
-        local changeTargets = target ~= "target" and jps.UnitExists(target) 
+        local changeTargets = target ~= "target" and jps.UnitExists(target)
         if changeTargets then jps.Macro("/target "..target) end
 
         if type(macro) == "string" then
             local macroSpell = macro
             if string.find(macro,"%s") == nil then -- {"macro","/startattack"}
                 macroSpell = macro
-            else 
+            else
                 macroSpell = select(3,string.find(macro,"%s(.*)")) -- {"macro","/cast Sanguinaire"}
             end
             jps.Macro(macro)
@@ -68,8 +68,8 @@ parser.compiledTables = {}
 
 --[[[
 @function parseStaticSpellTable
-@description 
-Parses a static spell table and returns the spell which should be cast or nil if no spell can be cast. 
+@description
+Parses a static spell table and returns the spell which should be cast or nil if no spell can be cast.
 Spell Tables are Tables containing other Tables:[br]
 [code]
 {[br]
@@ -91,7 +91,7 @@ e.g:[br]
 }[br]
 [/code][br]
 [i]SPELL[/i]:[br]
-Can either be a spell name or a spell id - id's are preferred since they will work on all client languages! This can also be 
+Can either be a spell name or a spell id - id's are preferred since they will work on all client languages! This can also be
 the keyword [code]"nested"[/code] - in this case the third paramter is not the target, but a nested spell table which should
 be executed if the condition is true.[br]
 [br]
@@ -99,25 +99,25 @@ be executed if the condition is true.[br]
 Macro is a table (see example) which replaces the spell and has two elements: they keyword [code]"macro"[/code] and the macro itself.[br]
 [br]
 [i]CONDITION[/i]:[br]
-The condition determines if the spell should be executed - it can either be a boolean value, a function returning a boolean value 
+The condition determines if the spell should be executed - it can either be a boolean value, a function returning a boolean value
 or a string. The string must contain a valid boolean expression which will then be re-evaluated every update interval. If there is no
 condition the spell will be used on cooldown[br]
 [br]
 [i]TARGET[/i]:[br]
-A WoW unit String or player name - can also be a function which returns this string! If there is no target [code]"target"[/code] 
+A WoW unit String or player name - can also be a function which returns this string! If there is no target [code]"target"[/code]
 will be used as a default value.[br]
 [br]
- 
+
 @param hydraTable static spell table
 @returns Tupel [code]spell,target[/code] if a spell should be cast, else [code]nil[/code]
 ]]--
 function parseStaticSpellTable( hydraTable )
     if jps.firstInitializingLoop == true then return nil,"target" end
-    if not parser.compiledTables[tostring(hydraTable)] then 
+    if not parser.compiledTables[tostring(hydraTable)] then
         jps.compileSpellTable(hydraTable)
         parser.compiledTables[tostring(hydraTable)] = true
     end
-    
+
     for _, spellTable in pairs(hydraTable) do
         if type(spellTable) == "function" then spellTable = spellTable() end
         local spell = nil
@@ -140,44 +140,10 @@ function parseStaticSpellTable( hydraTable )
 
         -- Return spell if conditions are true and spell is castable.
         if spell ~= nil and conditions and jps.canCast(spell,target) then
-            return spell,target 
+            return spell,target
         end
     end
     return nil
-end
-
---[[[
-@function parseStaticRaidTable
-@description 
-Parses a spellTable from a jps raid encounter. (jpraid.data.lua) [br]
-<strong>Spell</strong><br>
-spell is the encounter spellname<br>
-<strong>Condition</strong><br>
-conditions are either functions or booleans, similar like in normal spelltables but without macros or nested tables. The conditions could be like<br>
-[code]jps.raid.getTimer("Quills") < 2[/code]<br>
-<strong>SpellType</strong><br>
-spellType is the type of a "counter-ability" jps raid should execute to prevent incoming damage. (runSpeed, physicalDmgReduce etc.) Defined in jpraid.data.lua (jps.raid.supportedAbilities)
-@param hydraTable static spell table from jpraid.data.lua (jps.raid.supportedEncounters)
-@returns Tupel [code]spell,spellType[/code] if a spell should be cast, else [code]nil[/code]
-]]--
-function parseStaticRaidTable( hydraTable )
-    if not parser.compiledTables[tostring(hydraTable)] then 
-        jps.compileRaidSpellTable(hydraTable)
-        parser.compiledTables[tostring(hydraTable)] = true
-    end
-    
-    for _, spellTable in pairs(hydraTable) do
-        local spell = nil
-        local conditions = nil
-        local spellType = nil
-        spell = spellTable[1]
-        conditions = fnConditionEval(spellTable[3])
-        spellType = spellTable[2]
-        if conditions == true then
-            return spell, spellType 
-        end
-    end
-    return nil, nil
 end
 
 
@@ -190,7 +156,7 @@ local function FN(fn,...)
     local params_exec = {}
     return function()
   for i,v in ipairs(params) do
-    if type(v) == "function" then 
+    if type(v) == "function" then
         params_exec[i] = v()
     else
         params_exec[i] = v
@@ -316,7 +282,7 @@ function parser.lookahead(tokens)
     if tokens[1] then
         local t,v = unpack(tokens[1])
         return t,v
-    else 
+    else
         return nil
     end
 end
@@ -499,7 +465,7 @@ function jps.conditionParser(str)
     if str == "onCD" then return alwaysTrue() end
     local tokens = {}
     local i = 0
-    
+
     for t,v in jps.lexer.lua(str) do
         i = i+1
         tokens[i] = {t,v}
@@ -523,10 +489,10 @@ function jps.compileSpellTable(unparsedTable)
     local conditions = nil
     local target = nil
     local message = nil
-    
+
     for i, spellTable in pairs(unparsedTable) do
         if type(spellTable) == "table" then
-            spell = spellTable[1] 
+            spell = spellTable[1]
             conditions = spellTable[2]
             if conditions ~= nil and type(conditions)=="string" then
                 spellTable[2] = jps.conditionParser(conditions)
@@ -545,10 +511,10 @@ function jps.compileRaidSpellTable(unparsedTable)
     local conditions = nil
     local target = nil
     local message = nil
-    
+
     for i, spellTable in pairs(unparsedTable) do
         if type(spellTable) == "table" then
-            spell = spellTable[1] 
+            spell = spellTable[1]
             conditions = spellTable[3]
             if conditions ~= nil and type(conditions)=="string" then
                 spellTable[3] = jps.conditionParser(conditions)
@@ -562,7 +528,7 @@ end
 
 --[[[
 @function jps.cachedValue
-@description 
+@description
 This function generates a function which will store a value which might be too expensive to generate everytime. You must provide
 a function which generates the value which will be called every [code]updateInterval[/code] seconds to refresh the cached value.
 @param fn function which generates the value
