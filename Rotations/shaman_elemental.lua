@@ -52,6 +52,7 @@ jps.registerStaticTable("SHAMAN","ELEMENTAL",
 		{ "Lightning Bolt",'onCD' },
 	}
 ,"Elemental Shaman PVE")local deactivateGhostWolfNotMovingSeconds = 0
+local deactivateGhostWolfNotMovingSeconds = 0
 function deactivateGhostWolfNotMoving(seconds)
 	if not seconds then seconds = 0 end
 	if jps.Moving or not jps.buff("Ghost Wolf") then
