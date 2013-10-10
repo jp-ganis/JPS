@@ -208,7 +208,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.runicPower() > 20 and jps.buff("killing machine")'},
 	{ "blood tap",'jps.buffStacks("blood charge") >10 and jps.runicPower() > 76'},
 	{ "howling blast",'dk.rune(twoUr)'},
-	{ "howling blast",'dk.rune(twoFrost)'},
+	{ "howling blast",'dk.rune(twoFr)'},
 	{ "frost strike",'jps.runicPower() > 76'},
 	{ "obliterate",'dk.rune("oneUr") and not jps.buff("killing machine")'},
 	{ "Howling Blast",'onCD'},

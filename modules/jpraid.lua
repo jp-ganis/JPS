@@ -25,9 +25,9 @@ local L = MyLocalizationTable
 -- Find TANK
 ----------------------
 
-function jps.targetIsRaidBoss(unit)
+function jps.targetIsRaidBoss(target)
 	if target == nil then target = "target" end
-	if UnitLevel(unit) == -1 and UnitPlayerControlled(unit) == false then
+	if UnitLevel(target) == -1 and UnitPlayerControlled(target) == false then
 		return true
 	end
 	return false
