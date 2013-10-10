@@ -95,6 +95,7 @@ jps.settingsQueue = {}
 jps.combatStart = 0
 jps.RaidMode = false
 jps.functionQueues = {}
+jps.timedCasting = {}
 
 -- Config.
 jps.Configged = false

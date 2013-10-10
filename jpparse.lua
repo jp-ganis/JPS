@@ -252,7 +252,7 @@ function jps.Cast(spell) -- "number" "string"
 	if jps.spellNeedSelect(spellname) and SpellIsTargeting() then jps.groundClick() end
 
 	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
-	
+	jps.timedCasting[string.lower(spell)] = math.ceil(GetTime())
 	jps.CastBar.currentSpell = spellname
 	jps.CastBar.currentTarget = jps.Target
 	jps.CastBar.currentMessage = jps.Message
