@@ -21,7 +21,8 @@
 --------------------------
 
 local L = MyLocalizationTable
-local LOG=jps.Logger(jps.LogLevel.ERROR)
+local LOG = jps.Logger(jps.LogLevel.ERROR)
+
 --------------------------
 -- Functions CAST
 --------------------------
@@ -146,15 +147,15 @@ end
 -- check if we can damage a unit
 function jps.canDPS(unit) 
 	if not jps.UnitExists(unit) then return false end
+	--if UnitIsEnemy("player",unit)~=1 then return false end -- WARNING a unit is hostile to you or not Returns either 1 ot nil -- Raider's Training returns nil with UnitIsEnemy
+	if (GetUnitName(unit) == L["Training Dummy"]) or (GetUnitName(unit) == L["Raider's Training Dummy"]) then return true end	
 	if jps.PvP then 
 		local iceblock = tostring(select(1,GetSpellInfo(45438))) -- ice block mage
 		local divineshield = tostring(select(1,GetSpellInfo(642))) -- divine shield paladin
 		if jps.buff(divineshield,unit) then return false end
 		if jps.buff(iceblock,unit) then return false end
 	end
-	if (GetUnitName(unit) == L["Training Dummy"]) or (GetUnitName(unit) == L["Raider's Training Dummy"]) then return true end	
 	if UnitCanAttack("player", unit)~=1 then return false end-- UnitCanAttack(attacker, attacked) return 1 if the attacker can attack the attacked, nil otherwise.
-	if UnitIsEnemy("player",unit)~=1 then return false end -- WARNING a unit is hostile to you or not Returns either 1 ot nil -- Raider's Training returns nil with UnitIsEnemy
 	if jps.PlayerIsBlacklisted(unit) then return false end -- WARNING Blacklist is updated only when UNITH HEALTH occurs 
 	if not jps.IsSpellInRange(jps.HarmSpell,unit) then return false end
 	return true
@@ -183,13 +184,12 @@ function jps.canCast(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	
 	if jps.PlayerIsBlacklisted(unit) then return false end -- ADDITION jps.PlayerIsBlacklisted(unit) in CANCAST
-	if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
+	if not jps.UnitExists(unit) and not isBattleRez(spellname) then return false end -- isBattleRez need spellname
 	if spellname == nil then return false end
 	spellname = string.lower(spellname)
-	
-	if jps.Debug then
-		jps_canCast_debug(spell,unit) 
-	end
+
+	--if jps.Debug then jps_canCast_debug(spell,unit) end
+
 	if(getSpellStatus(spellname ) == 0) then return false end -- NEW
 	
 	local usable, nomana = IsUsableSpell(spellname) -- usable, nomana = IsUsableSpell("spellName" or spellID)
@@ -228,8 +228,9 @@ end
 -- "Lightwell" 724 - Priest
 -- "Holy Word: Sanctuary" 88685 - Priest
 -- "Shadowfury" 30283 - Warlock
+-- "Psyfiend" 108921 - Priest
 
-jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
+jps.spellNeedSelectTable = {108921,30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
 function jps.spellNeedSelect(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = string.lower(spell) end
@@ -248,10 +249,17 @@ function jps.Cast(spell) -- "number" "string"
 	
 	if jps.Target == nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
-	
-	if jps.spellNeedSelect(spellname) and SpellIsTargeting() then jps.groundClick() end
 
-	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
+	if jps.spellNeedSelect(spellname) then
+		if FireHack then
+			fh.groundClick(spellname,jps.target)
+		else
+			jps.groundClick()
+			CastSpellByName(spellname,jps.Target)
+		end
+	else 
+		CastSpellByName(spellname,jps.Target)
+	end
 	
 	jps.CastBar.currentSpell = spellname
 	jps.CastBar.currentTarget = jps.Target
@@ -435,7 +443,7 @@ function parseSpellTable( hydraTable )
 			-- CASTSEQUENCE WORKS ONLY FOR {INSTANT CAST, SPELL}
 			-- better than "#showtooltip\n/cast Frappe du colosse\n/cast Sanguinaire"
 			-- because I can check the spell with jps.canCast
-			-- {"macro",{109964,2060},player}
+			-- {"macro",{109964,2060},"player"}
 			if conditions and type(macroText) == "table" then
 				for _,sequence in ipairs (macroText) do
 					local spellname = tostring(select(1,GetSpellInfo(sequence)))
@@ -480,20 +488,20 @@ function jps.RotationActive(spellTable)
 
 	for i,j in ipairs (spellTable) do
 		if spellTable[i]["ToolTip"] ~= nil then
-			jps.MultiRotation = true
 			countRotations = countRotations+1 
 			jps.ToggleRotationName[i] = spellTable[i]["ToolTip"]
 		end
 	end
 
 	if jps.initializedRotation == false then
-		if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
-			
+		if countRotations > 1 then
+			jps.MultiRotation = true
 			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
-			jps.deleteFunctionFromQueue(hideDropdown,"gui_loaded")
 			rotationDropdownHolder:Show()
-		else
-			jps.addTofunctionQueue(hideDropdown,"gui_loaded") 
+			jps.deleteFunctionFromQueue(hideDropdown,"gui_loaded")
+		else  
+			rotationDropdownHolder:Hide()
+			jps.addTofunctionQueue(hideDropdown,"gui_loaded")
 		end
 		jps.firstInitializingLoop = true
 	end

@@ -51,11 +51,11 @@ end
 -- unit = http://www.wowwiki.com/UnitId
 -- type of spell = "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm"
 function jps.LoseControl(unit,message)
-	if not jps.UnitExists(unit) then return false,0 end
-	if message == nil then message = "CC" end 
-	-- Check debuffs
 	local targetControlled = false
 	local timeControlled = 0
+	if not jps.UnitExists(unit) then return targetControlled, timeControlled end
+	if message == nil then message = "CC" end 
+
 	for i = 1, 40 do
 		local name, _, _, _, _, duration, expTime, _, _, _, spellId = UnitAura(unit, i, "HARMFUL")
 		if not spellId then break end -- no more debuffs, terminate the loop
@@ -69,29 +69,6 @@ function jps.LoseControl(unit,message)
 
 	end
 	return targetControlled, timeControlled
-end
-
-jps.looseControlTypes = {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
-function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", "Immune", "ImmuneSpell", "Disarm"}
-	if not jps.UnitExists(unit) then return false,0 end
-	if table == nil then table = jps.looseControlTypes end
-	-- Check debuffs
-	local targetControlled = false
-	local timeControlled = 0
-	for i = 1, 40 do
-		local name, _, _, _, _, duration, expTime, _, _, _, spellId = UnitAura(unit, i, "HARMFUL")
-		if not spellId then break end -- no more debuffs, terminate the loop
-		local Priority = jps_SpellControl[spellId]
-		if Priority then
-			for k,controltype in ipairs (table) do
-				if Priority == controltype then -- "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm"
-					targetControlled = true
-					if expTime ~= nil then timeControlled = expTime - GetTime() end
-				break end
-			end
-		end
-	end
-return targetControlled, timeControlled
 end
 
 function jps.shouldKick(unit)

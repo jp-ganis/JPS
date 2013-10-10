@@ -155,18 +155,20 @@ function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
     local key = toKey(class, specId)
     if pve==nil then pve = true end
     if pvp==nil then pvp = true end
-    if pve and pveRotations[key] then for k,v in pairs(pveRotations[key]) do
-        if v.tooltip == tooltip then
-            table.remove(pveRotations[key], k)
-            break
-        end
-    end end
-    if pvp and pvpRotations[key] then for k,v in pairs(pvpRotations[key]) do
-        if v.tooltip == tooltip then
-            table.remove(pvpRotations[key], k)
-            break
-        end
-    end end
+    if pve and pveRotations[key] then 
+    	for k,v in pairs(pveRotations[key]) do
+        	if v.tooltip == tooltip then
+            	table.remove(pveRotations[key], k)
+            break end
+    	end
+    end
+    if pvp and pvpRotations[key] then
+    	for k,v in pairs(pvpRotations[key]) do
+        	if v.tooltip == tooltip then
+            	table.remove(pvpRotations[key], k)
+            break end
+    	end
+    end
 end
 
 --[[[
@@ -201,13 +203,15 @@ function jps.activeRotation(rotationTable)
         jps.ToggleRotationName[k] = v.tooltip
     end
     
-    
     if jps.initializedRotation == false then
-        if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
+        if countRotations > 1 and jps.getConfigVal("rotation dropdown visible") == 1 then
+			jps.MultiRotation = true
+			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[activeRotation])
             rotationDropdownHolder:Show()
-            UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[activeRotation])
+            jps.deleteFunctionFromQueue(hideDropdown,"gui_loaded")
         else  
-            rotationDropdownHolder:Hide() 
+            rotationDropdownHolder:Hide()
+            jps.addTofunctionQueue(hideDropdown,"gui_loaded")
         end
         jps.firstInitializingLoop = true
     end
@@ -215,6 +219,7 @@ function jps.activeRotation(rotationTable)
     jps.initializedRotation = true
 
     if not rotationTable[getCurrentKey()][activeRotation] then return nil end
+    jps.Count = activeRotation
     jps.Tooltip = rotationTable[getCurrentKey()][activeRotation].tooltip
     return rotationTable[getCurrentKey()][activeRotation]
 end

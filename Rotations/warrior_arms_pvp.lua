@@ -2,7 +2,7 @@
 -- by: SwollNMember WoW v5.2 compliant
 -- Thanks to Gocargo for original version
 
-jps.registerStaticTable("WARRIOR","ARMS",function()
+jps.registerRotation("WARRIOR","ARMS",function()
 -- Player Specific
 	local player = jpsName
 	local playerRace = UnitRace(player)
@@ -240,7 +240,7 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 
 	-- Enemy Tracking
 	local EnemyUnit = {}
-	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end -- EnemyUnit[1]
+	for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
 		local enemyTargetingMe = jps.IstargetMe()
 		local enemycount,targetcount = jps.RaidEnemyCount()
 
@@ -369,7 +369,6 @@ jps.registerStaticTable("WARRIOR","ARMS",function()
 		{ {"macro","/startattack"}, nil , rangedTarget },
 	}
 
-	spell,target = parseSpellTable(spellTable)
-
+	local spell,target = parseSpellTable(spellTable)
 	return spell,target
 end, "Default", false, true)

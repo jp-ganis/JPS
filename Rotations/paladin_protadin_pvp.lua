@@ -1,6 +1,7 @@
 jps.registerRotation("PALADIN","PROTECTION",function()
 -- Conor663 (begged, borrowed, stolen)
 local spell = nil
+local target = nil
 
 local holyPower = UnitPower("player",9)
    

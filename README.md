@@ -8,11 +8,8 @@ This addon in combination with enabled protected LUA will help you get the most
 out of your WoW experience. See commands below for a full list of available 
 commands.
 
-***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd
-and many more for all their contributions to keeping this project going!***
-
-*** VERSION 1.3 - Huge updates from PCMD/Htordeux. ***
-*** All credit for this version to them.           ***
+*** VERSION 1.3 - Huge updates from PCMD/KIRK24788/HTORDEUX. ***
+*** All credit for this version to them.           			 ***
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

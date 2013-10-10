@@ -78,7 +78,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Holy Prism",	jps.hp() < .6  and jps.UseCDs, "player" },
 
 		-- Heal / Damage
-		{ "Light's Hammer",  IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
+		{ "Light's Hammer", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
 
 		-- Buff
 		{ "Righteous Fury",	not jps.buff("Righteous Fury") },
@@ -254,8 +254,7 @@ Modifiers:[br]
 [*] [code]SHIFT[/code]: Light's Hammer @ mouse position[br]
 ]]--
 jps.registerRotation("PALADIN","PROTECTION",function()
-	local spell = nil
-	local target = nil
+
 	local holyPower = jps.holyPower()
 	local stance = GetShapeshiftForm()
 	--Paladin (only when arg1 is nil)

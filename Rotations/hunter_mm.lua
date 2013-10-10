@@ -8,10 +8,11 @@ SimCraft
 ]]--
 
 jps.registerRotation("HUNTER","MARKSMANSHIP", function()
-	------------------------------------------
+
+	local spell = nil
+	local target = nil
 	local up = UnitPower
 	local r = jps.Macro;
-	local spell = nil
 	local focus = UnitPower("player")
 
 	-- Interupting, Borrowed directly from feral cat
@@ -123,9 +124,8 @@ jps.registerRotation("HUNTER","MARKSMANSHIP", function()
 
 			{ "steady shot" },
 		}
-
-		return parseSpellTable(spellTable)
+		spell,target = parseSpellTable(spellTable)
 	end
 	
-	return spell
+	return spell,target
 end, "Default")

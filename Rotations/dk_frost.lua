@@ -35,7 +35,6 @@ Modifiers:[br]
 -- SPELL TABLE ---------
 ------------------------
 
-
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Frost Presence",'not jps.buff("Frost Presence", "player")'},
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},

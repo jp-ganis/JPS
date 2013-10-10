@@ -46,6 +46,19 @@ function jps.hpInc(unit,message)
 	end
 end
 
+function jps.hpAbs(unit,message)
+	if unit == nil then unit = "player" end
+	local hpInc = UnitGetIncomingHeals(unit)
+	if not hpInc then hpInc = 0 end
+	local hpAbs = UnitGetTotalAbsorbs(unit)
+	if not hpAbs then hpAbs = 0 end
+	if message == "abs" then
+		return UnitHealthMax(unit) - (UnitHealth(unit) + hpInc + hpAbs)
+	else
+		return (UnitHealth(unit) + hpInc + hpAbs)/UnitHealthMax(unit)
+	end
+end
+
 function jps.rage()
 	return UnitPower("player",1)
 end
