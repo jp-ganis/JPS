@@ -27,6 +27,7 @@ local L = MyLocalizationTable
 
 function jps.targetIsRaidBoss(target)
 	if target == nil then target = "target" end
+	if not jps.UnitExists(target) then return false end
 	if UnitLevel(target) == -1 and UnitPlayerControlled(target) == false then
 		return true
 	end
