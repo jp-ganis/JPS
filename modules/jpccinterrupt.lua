@@ -9,7 +9,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -52,7 +52,7 @@ end
 -- type of spell = "CC" , "Snare" , "Root" , "Silence" , "Immune", "ImmuneSpell", "Disarm"
 function jps.LoseControl(unit,message)
 	if not jps.UnitExists(unit) then return false,0 end
-	if message == nil then message = "CC" end 
+	if message == nil then message = "CC" end
 	-- Check debuffs
 	local targetControlled = false
 	local timeControlled = 0
@@ -64,7 +64,7 @@ function jps.LoseControl(unit,message)
 			if Priority == message then
 				targetControlled = true
 				if expTime ~= nil then timeControlled = expTime - GetTime() end
-			break end 
+			break end
 		end
 
 	end
@@ -95,18 +95,19 @@ return targetControlled, timeControlled
 end
 
 function jps.shouldKick(unit)
-	if not jps.canDPS(unit) then return false end
+	if UnitCanAttack("player", unit)~=1 then return false end
+	if UnitIsEnemy("player",unit)~=1 then return false end
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == L["Release Aberrations"] then return false end 
+	if target_spell == L["Release Aberrations"] then return false end
 
 	if target_spell and (unInterruptable == false) then
 		return true
 	elseif channelling and (notInterruptible == false) then
 		return true
-	end 
+	end
 	return false
 end
 
@@ -115,17 +116,49 @@ function jps.shouldKickLag(unit)
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, cast_endTime, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, chanel_endTime, _, notInterruptible = UnitChannelInfo(unit)
-	if target_spell == L["Release Aberrations"] then return false end 
-	
+	if target_spell == L["Release Aberrations"] then return false end
+
 	if cast_endTime == nil then cast_endTime = 0 end
 	if chanel_endTime == nil then chanel_endTime = 0 end
 
 	if target_spell and unInterruptable == false then
-		if jps.CastTimeLeft(unit) < 1 then 
+		if jps.CastTimeLeft(unit) < 1 then
 		return true end
 	elseif channelling and notInterruptible == false then
 		if jps.ChannelTimeLeft(unit) < 1 then
 		return true end
-	end 
+	end
 	return false
+end
+
+local interruptDelay = 0
+local interruptDelaySpellUnit = ""
+local interruptDelayTimestamp = GetTime()
+
+function jps.kickDelay(unit) min
+	if jps.IsCasting(unit) then
+		local castLeft, spellName = jps.CastTimeLeft(unit) or jps.ChannelTimeLeft(unit)
+		if castLeft < 2 then return true end
+
+		if GetTime() - interruptDelayTimestamp > 5 or  interruptDelaySpellUnit ~= spellName..unit then -- recalc delay value
+			maxDelay = castLeft-2
+			if(castLeft <= 2.5) then maxDelay = castLeft - 0.5 end
+			minDelay = 0.5
+			interruptDelay = Math.random(minDelay,maxDelay)
+			interruptDelaySpellUnit = spellName..unit
+			interruptDelayTimestamp = GetTime()
+		end
+
+		if interruptDelay <= castLeft and  interruptDelaySpellUnit == spellName..unit then
+			interruptDelaySpellUnit = ""
+			interruptDelay = 0
+			return true
+		end
+		return false
+	end
+	if interruptDelaySpellUnit ~= "" then
+		interruptDelaySpellUnit = ""
+		interruptDelay = 0
+	end
+	return true
 end
