@@ -424,7 +424,8 @@ function parseSpellTable( hydraTable )
 		-- MACRO -- BE SURE THAT CONDITION TAKES CARE OF CANCAST -- TRUE or FALSE -- NOT NIL
 		elseif type(spell) == "table" and spell[1] == "macro" and conditions then
 			local macroText = spell[2]
-			local macroTarget = spell[3]
+			local macroTarget = spell[3] 
+			if macroTarget == nil then macroTarget = target end -- spellTable[3]
 			-- Workaround for TargetUnit is still PROTECTED despite goblin active
  			local changeTargets = jps.UnitExists(macroTarget)
 			if changeTargets then jps.Macro("/target "..macroTarget) end
@@ -454,7 +455,7 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
-			if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
+			if changeTargets and not jps.Casting then jps.Macro("/targetlasttarget") end
 
 		-- MultiTarget List -- { spell , function_unit , table_unit }
 		elseif type(conditions) == "function" and type(target) == "table" then

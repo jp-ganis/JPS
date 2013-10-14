@@ -161,6 +161,7 @@ end
 ------------------------
 
 local function unitFor_ShadowWordDeath(unit)
+	if unit == nil then return false end
 	if isInPvE then return false end
 	if not jps.canDPS(unit) then return false end
 	if jps.cooldown(32379) ~= 0 then return false end
@@ -205,6 +206,7 @@ return Foca_Table
 end
 
 local function unitFor_SpiritShell(unit) -- Applied to FriendUnit
+	if unit == nil then return false end
 	if countInRaid > 0 then return false end
 	if (FriendTable[unit] == nil) then return false end
 	if jps.hp(unit) < 0.95 then return false end
@@ -243,7 +245,7 @@ local function unitFor_Dispel(unit) -- {"CC", "Snare", "Root", "Silence", "Immun
 	return false
 end
 
-local function unitFor_Shield(unit) 
+local function unitFor_Shield(unit)
 	if timerShield > 0 then return false end
 	if (FriendTable[unit] == nil) then return false end
 	if not jps.debuff(6788,unit) and not jps.buff(17,unit) then return true end
@@ -271,8 +273,8 @@ local function parse_dispel()
 local table=
 {
 	-- "Mass Dispel" 32375 "Dissipation de masse"
-	unitFor_MassDispel_Friend,
-	unitFor_MassDispel_Enemy,
+	priest.unitFor_MassDispel_Friend,
+	priest.unitFor_MassDispel_Enemy,
 	-- "Leap of Faith" 73325 -- "Saut de foi" -- "Leap of Faith" with Glyph dispel Stun -- jps.glyphInfo(119850)
 	{ 73325 , unitFor_Leap , FriendUnit , "Leap_LoseControl_MultiUnit_" }, -- unitFor_Leap includes if isInPvE then return false end
 	-- OFFENSIVE Dispel -- "Dissipation de la magie" 528 -- FARMING OR PVP -- NOT PVE
@@ -401,7 +403,7 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		{ 2061, isInBG and jps.buffId(114908,jps_TANK) and (UnitGetTotalAbsorbs(jps_TANK) < average_flashheal) , jps_TANK , "Carapace_Buff_Soins Rapides_"..jps_TANK },
 		-- "Soins" 2050
 		{ 2050, jps.buffId(114908,jps_TANK) , jps_TANK , "Carapace_Buff_SoinsAbs_"..jps_TANK },
-		}
+	}
 return table
 end
 
@@ -471,7 +473,7 @@ elseif jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING HEAL",0, 0.5, 0.8)
 -- Avoid Overhealing -- Grâce 77613
-elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.buffStacks(Grace,jps_TANK) == 3) and (jps.Target == jps_TANK) then 
+elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.buffStacks(Grace,jps_TANK) == 3) and (jps.LastTarget == jps_TANK) then 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING OVERHEAL",0, 0.5, 0.8)
 end
@@ -513,8 +515,8 @@ local spellTable =
 -- "Prière du désespoir" 19236
 	{ 19236, select(2,GetSpellBookItemInfo(Desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-	unitFor_Fear_Event,
-	unitFor_Fear_Enemy,
+	priest.unitFor_Fear_Event,
+	priest.unitFor_Fear_Enemy,
 	{ 8122, isInBG and jps.canDPS(rangedTarget) and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
 -- "Psyfiend" 108921 Démon psychique
 	{ 108921, (FriendTable[player] ~= nil) and jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , player },
@@ -582,10 +584,10 @@ local spellTable =
 -- "Cascade" 121135 "Escalade"
 	{ 121135, (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and countInRaid > 2 , jps_TANK , "Cascade_"..jps_TANK },
 -- "Don des naaru" 59544
-	{ 59544, (select(2,GetSpellBookItemInfo(NaaruGift))~=nil) and (health_deficiency_TANK > average_flashheal) , "Naaru_"..jps_TANK },
+	{ 59544, (select(2,GetSpellBookItemInfo(NaaruGift))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Naaru_"..jps_TANK },
 -- "Rénovation" 139
-	{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , "Renew_"..jps_TANK },
-	{ 139, not jps.buff(139,jps_TANK) and jps.debuff(6788,jps_TANK) and (jps.cooldown(33076) > 0) , "Renew_"..jps_TANK }, -- debuff Ame affaiblie and Mending on CD
+	{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Renew_"..jps_TANK },
+	{ 139, not jps.buff(139,jps_TANK) and jps.debuff(6788,jps_TANK) and (jps.cooldown(33076) > 0) , jps_TANK , "Renew_"..jps_TANK }, -- debuff Ame affaiblie and Mending on CD
 -- "Soins de lien" 32546 -- Glyph of Binding Heal 
 	{ 32546 , unitFor_Binding , FriendUnit , "Lien_MultiUnit_" },
 -- "Soins rapides" 2061 -- "Soins supérieurs" 2060
@@ -607,8 +609,8 @@ local spellTable_moving =
 -- "Prière du désespoir" 19236
 	{ 19236, select(2,GetSpellBookItemInfo(Desesperate))~=nil and jps.cooldown(19236)==0 and (playerhealth_pct < 0.50) , player },
 -- "Psychic Scream" "Cri psychique" 8122 -- FARMING OR PVP -- NOT PVE -- debuff same ID 8122
-	unitFor_Fear_Event,
-	unitFor_Fear_Enemy,
+	priest.unitFor_Fear_Event,
+	priest.unitFor_Fear_Enemy,
 	{ 8122, isInBG and jps.canDPS(rangedTarget) and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
 -- "Psyfiend" 108921 Démon psychique
 	{ 108921, (FriendTable[player] ~= nil) and jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , player },

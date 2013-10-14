@@ -267,7 +267,7 @@ local spellTable = {
 	{ 15487, unitFor_Silence , EnemyUnit , "|cFFFF0000Silence_MultiUnit_" },
 	
 -- "Mass Dispel" 32375 "Dissipation de masse"
-	unitFor_MassDispel_Enemy,
+	priest.unitFor_MassDispel_Enemy,
 
 -- AGGRO
 -- "Power Word: Shield" 17	
@@ -415,7 +415,6 @@ local spellTable_moving =
 -- "Don des naaru" 59544 -- YOU CAN'T DO IT YOU ARE IN SHAPESHIFT FORM
 
 }
-	--local spellTable_moving = jps.deepTableCopy(spellTable[1])
 	if jps.Moving then
 		spell, target = parseSpellTable(spellTable_moving)
 	else

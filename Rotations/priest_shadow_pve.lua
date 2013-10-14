@@ -366,7 +366,6 @@ local spellTable_moving =
 -- "Don des naaru" 59544 -- YOU CAN'T DO IT YOU ARE IN SHAPESHIFT FORM
 
 }
-	--local spellTable_moving = jps.deepTableCopy(spellTable[1])
 	if jps.Moving then
 		spell, target = parseSpellTable(spellTable_moving)
 	else

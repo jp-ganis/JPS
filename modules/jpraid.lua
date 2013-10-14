@@ -113,7 +113,7 @@ end
 -- RAID ENEMY COUNT
 -----------------------
 -- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
--- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY TARGETING FRIEND
+-- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
 
 -- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
 function jps.RaidEnemyCount()

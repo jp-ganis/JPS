@@ -1,5 +1,82 @@
-
+local L = MyLocalizationTable
 priest = {}
+local function toSpellName(id) name = GetSpellInfo(id); return name end
+priest.Spell = {}
+priest.Spell["average_flashheal"] = math.max(90000 , getaverage_heal(L["Flash Heal"]))
+priest.Spell["SpiritShell"] = tostring(select(1,GetSpellInfo(114908))) -- buff target Spirit Shell 114908
+priest.Spell["PrayerofHealing"] = tostring(select(1,GetSpellInfo(596))) -- "Prière de soins" 596
+priest.Spell["NaaruGift"] = tostring(select(1,GetSpellInfo(59544))) -- NaaruGift 59544
+priest.Spell["Desesperate"] = tostring(select(1,GetSpellInfo(19236))) -- "Prière du désespoir" 19236
+priest.Spell["BindingHeal"] = tostring(select(1,GetSpellInfo(32546))) -- "Soins de lien" 32546
+priest.Spell["Grace"] = tostring(select(1,GetSpellInfo(77613))) -- Grâce 77613 -- jps.buffStacks(Grace,jps_TANK)
+priest.Spell["DivineAegis"] =  tostring(select(1,GetSpellInfo(47753))) -- Egide Divine 47515 - 47753
+
+
+priest.RaidStatus = {}
+
+function priest.updateRaidStatus(lowHealthDef,auraID,tank)
+	if lowHealthDef == nil then lowHealthDef = 0.75 end
+	local countInRange = 0
+	local countInRaid = 0
+	local groupToHeal = jps.FindSubGroup()
+	local groupToAura = 1
+	if tank == nil then groupToAura = groupToHeal
+	else groupToAura = jps.UnitSubGroupInRaid(tank) end
+	local tt_count = 0
+	local tt = nil
+	local lowestUnit = jpsName
+	local lowestHP = 1
+	local auratt = nil
+	local auratt_count = 0
+
+	for unit,unitTable in pairs(jps.RaidStatus) do
+		local hpInc = UnitGetIncomingHeals(unit)
+		if not hpInc then hpInc = 0 end
+		local hpAbs = UnitGetTotalAbsorbs(unit)
+		if not hpAbs then hpAbs = 0 end
+        local thisHP = UnitHealth(unit) + hpInc + hpAbs
+        local thisHPct = thisHP / UnitHealthMax(unit)
+        
+		if (unitTable["inrange"] == true) and unitTable["hpct"] < 1 then
+			countInRange = countInRange + 1
+		end
+		if (unitTable["inrange"] == true) and unitTable["hpct"] < lowHealthDef then
+			countInRaid = countInRaid + 1
+		end
+		if (unitTable["inrange"] == true) and (unitTable["hpct"] < lowHealthDef) and (unitTable["subgroup"] == groupToHeal)  then
+			tt_count = tt_count + 1
+			tt = unit
+		end
+		if (unitTable["inrange"] == true) and thisHPct < lowestHP then
+         	lowestHP = thisHPct
+         	lowestUnit = unit
+        end
+        local mybuff = jps.buffId(auraID,unit) -- spellID
+        if (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToAura) and not mybuff then
+			auratt = unit
+			auratt_count = auratt_count + 1
+		end
+        
+	end
+
+priest.RaidStatus.countInRange = countInRange
+priest.RaidStatus.countInRaid = countInRaid
+if auratt_count > 2 then priest.RaidStatus.ShellTarget = auratt else priest.RaidStatus.ShellTarget = nil end
+if tt_count > 2 then priest.RaidStatus.POHtarget = tt  else priest.RaidStatus.POHtarget = nil end
+priest.RaidStatus.groupToHeal = (IsInGroup() and (IsInRaid() == false) and (countInRaid > 2)) or (IsInRaid() and type(priest.RaidStatus.POHtarget) == "string")
+priest.RaidStatus.LowestFriend = lowestUnit
+
+return priest.RaidStatus
+end
+
+-- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
+-- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
+function priest.updateRaidTarget(friendName)
+	for unit,index in pairs(jps.EnemyTable) do
+		if UnitIsUnit(friendName,index.friend) == 1 then return true end
+	end
+	return false
+end
 
 -- Enemy Tracking
 function priest.rangedTarget()
@@ -44,13 +121,13 @@ function priest.jpsTank()
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH BUFF SPIRIT SHELL IN RAID
-function jps.FindSubGroupAura(aura)
+function jps.FindSubGroupAura(aura) -- auraID to get correct spellID
 	local groupToHeal = jps.FindSubGroup()
 	local tt = nil
 	local tt_count = 0
 
 	for unit,unitTable in pairs(jps.RaidStatus) do
-		local mybuff = jps.buff(aura,unit)
+		local mybuff = jps.buffId(aura,unit)
 		if (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and not mybuff then
 			tt = unit
 			tt_count = tt_count + 1
@@ -62,10 +139,11 @@ end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH BUFF SPIRIT SHELL IN RAID
 function priest.FindSubGroupAura(aura,tank) -- auraID to get correct spellID
-	if tank == nil then tank = jpsName end -- Name of "player"
-	local groupToHeal = jps.FindSubGroup()
 	local tt = nil
 	local tt_count = 0
+	local groupToHeal = 1
+	if tank == nil then groupToHeal = jps.FindSubGroup()
+	else groupToHeal = jps.UnitSubGroupInRaid(tank) end 
 
 	for unit,unitTable in pairs(jps.RaidStatus) do
 		local mybuff = jps.buffId(aura,unit) -- spellID
@@ -78,7 +156,7 @@ function priest.FindSubGroupAura(aura,tank) -- auraID to get correct spellID
 	return nil
 end
 
-function unitFor_MassDispel_Friend() -- Mass Dispel on PLAYER
+function priest.unitFor_MassDispel_Friend() -- Mass Dispel on PLAYER
 	local parse_MassDispell = { 32375, false , "player" , "MassDispel_Friend_" }
 	if not FireHack then return parse_MassDispell end
 	if jps.Moving then return parse_MassDispell end
@@ -103,7 +181,7 @@ function unitFor_MassDispel_Friend() -- Mass Dispel on PLAYER
 	return parse_MassDispell
 end
 
-function unitFor_MassDispel_Enemy() -- Mass Dispel on TARGET
+function priest.unitFor_MassDispel_Enemy() -- Mass Dispel on TARGET
 	local parse_MassDispell = { 32375, false , "target" , "MassDispel_Enemy_" }
 	if not FireHack then return parse_MassDispell end
 	if jps.Moving then return parse_MassDispell end
@@ -128,7 +206,7 @@ function unitFor_MassDispel_Enemy() -- Mass Dispel on TARGET
 	return parse_MassDispell
 end
 
-function unitFor_Fear_Enemy() -- Enemy is casting a CC spell
+function priest.unitFor_Fear_Enemy() -- Enemy is casting a CC spell
 	local Fear_Table = {8122, false, nil, "FEAR_MultiUnit_" }
 	if jps.cooldown(8122) ~= 0 then return Fear_Table end
 	if not FireHack then return Fear_Table end
@@ -151,7 +229,7 @@ function unitFor_Fear_Enemy() -- Enemy is casting a CC spell
 	return Fear_Table
 end
 
-function unitFor_Fear_Event() -- Target is casting a CC spell
+function priest.unitFor_Fear_Event() -- Target is casting a CC spell
 	local parse_CrowdControl = { 8122 , false , nil , "FEAR_Event_CC_" }
 	if jps.cooldown(8122) ~= 0 then return parse_CrowdControl end
 	if not FireHack then return parse_CrowdControl end

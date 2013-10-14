@@ -161,6 +161,7 @@ end
 ------------------------
 
 local function unitFor_ShadowWordDeath(unit)
+	if unit == nil then return false end
 	if isInPvE then return false end
 	if not jps.canDPS(unit) then return false end
 	if jps.cooldown(32379) ~= 0 then return false end
@@ -205,6 +206,7 @@ return Foca_Table
 end
 
 local function unitFor_SpiritShell(unit) -- Applied to FriendUnit
+	if unit == nil then return false end
 	if countInRaid > 0 then return false end
 	if (FriendTable[unit] == nil) then return false end
 	if jps.hp(unit) < 0.95 then return false end
@@ -243,7 +245,7 @@ local function unitFor_Dispel(unit) -- {"CC", "Snare", "Root", "Silence", "Immun
 	return false
 end
 
-local function unitFor_Shield(unit) 
+local function unitFor_Shield(unit)
 	if timerShield > 0 then return false end
 	if (FriendTable[unit] == nil) then return false end
 	if not jps.debuff(6788,unit) and not jps.buff(17,unit) then return true end
@@ -400,7 +402,7 @@ local function parse_shell() -- return table -- spell & buff player Spirit Shell
 		{ 2061, isInBG and jps.buffId(114908,jps_TANK) and (UnitGetTotalAbsorbs(jps_TANK) < average_flashheal) , jps_TANK , "Carapace_Buff_Soins Rapides_"..jps_TANK },
 		-- "Soins" 2050
 		{ 2050, jps.buffId(114908,jps_TANK) , jps_TANK , "Carapace_Buff_SoinsAbs_"..jps_TANK },
-		}
+	}
 return table
 end
 
@@ -470,7 +472,7 @@ elseif jps.IsCastingSpell(2050,"player") and jps.CastTimeLeft(player) > 0.5 and 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING HEAL",0, 0.5, 0.8)
 -- Avoid Overhealing -- Grâce 77613
-elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.buffStacks(Grace,jps_TANK) == 3) and (jps.Target == jps_TANK) then 
+elseif jps.IsCasting("player") and (health_pct_TANK > 0.95) and (not jps.buffId(109964)) and (jps.buffStacks(Grace,jps_TANK) == 3) and (jps.LastTarget == jps_TANK) then 
 	SpellStopCasting()
 	DEFAULT_CHAT_FRAME:AddMessage("STOPCASTING OVERHEAL",0, 0.5, 0.8)
 end
@@ -577,10 +579,10 @@ local spellTable =
 -- "Cascade" 121135 "Escalade"
 	{ 121135, (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and countInRaid > 2 , jps_TANK , "Cascade_"..jps_TANK },
 -- "Don des naaru" 59544
-	{ 59544, (select(2,GetSpellBookItemInfo(NaaruGift))~=nil) and (health_deficiency_TANK > average_flashheal) , "Naaru_"..jps_TANK },
+	{ 59544, (select(2,GetSpellBookItemInfo(NaaruGift))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Naaru_"..jps_TANK },
 -- "Rénovation" 139
-	{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , "Renew_"..jps_TANK },
-	{ 139, not jps.buff(139,jps_TANK) and jps.debuff(6788,jps_TANK) and (jps.cooldown(33076) > 0) , "Renew_"..jps_TANK }, -- debuff Ame affaiblie and Mending on CD
+	{ 139, not jps.buff(139,jps_TANK) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Renew_"..jps_TANK },
+	{ 139, not jps.buff(139,jps_TANK) and jps.debuff(6788,jps_TANK) and (jps.cooldown(33076) > 0) , jps_TANK , "Renew_"..jps_TANK }, -- debuff Ame affaiblie and Mending on CD
 -- "Soins de lien" 32546 -- Glyph of Binding Heal 
 	{ 32546 , unitFor_Binding , FriendUnit , "Lien_MultiUnit_" },
 -- "Soins rapides" 2061 -- "Soins supérieurs" 2060
@@ -678,6 +680,108 @@ local spellTable_moving =
 	return spell,target
 
 end, "Disc Priest PvE", true, false)
+
+-------------------------
+-- STATIC
+-------------------------
+
+jps.registerRotation("PRIEST","DISCIPLINE",function()
+
+priest.updateRaidStatus (0.75, 114908, priest.jpsTank())
+priest.updateRaidTarget(priest.jpsTank())
+
+local parse_shell =
+	{
+	--TANK not Buff Spirit Shell 114908
+		-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
+		{ 2061, 'jps.buff(114255)' , priest.jpsTank , "Carapace_Soins Rapides_Waves_"..priest.jpsTank() },
+		-- POH
+		{ 596, '(jps.LastCast~=priest.Spell.PrayerofHealing) and jps.canHeal(priest.RaidStatus.ShellTarget)' , priest.RaidStatus.ShellTarget , "Carapace_POH_Target_" },
+		-- "Soins supérieurs" 2060
+		{ 2060, '(not jps.buffId(114908,priest.jpsTank())) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Carapace_NoBuff_Soins Sup_"..priest.jpsTank() },		
+	--TANK Buff Spirit Shell 114908
+		-- "Soins" 2050
+		{ 2050, 'jps.buffId(114908,priest.jpsTank()) and (UnitGetTotalAbsorbs(priest.jpsTank()) > 40000)' , priest.jpsTank , "Carapace_Buff_Soins_"..priest.jpsTank() },
+		-- "Soins supérieurs" 2060
+		{ 2060, 'jps.buffId(114908,priest.jpsTank()) and (UnitGetTotalAbsorbs(priest.jpsTank()) < priest.Spell.average_flashheal)' , priest.jpsTank , "Carapace_Buff_Soins Sup_"..priest.jpsTank() },
+		-- "Soins" 2050
+		{ 2050, 'jps.buffId(114908,priest.jpsTank())' , priest.jpsTank , "Carapace_Buff_SoinsAbs_"..priest.jpsTank() },
+	}
+
+local manaspellTable = {
+	--{ 527, jps.MagicDispel , {player,priest.jpsTank()} , "|cFFFF0000Mana_dispelMagic_MultiUnit_" },
+	
+	{ "nested", 'jps.buffId(109964) and (jps.hpAbs(priest.jpsTank()) > 0.75)' , parse_shell },
+	{ 2061, 'jps.buff(114255) and (jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank , "Mana_Soins Rapides_Waves_"..priest.jpsTank() },
+	{ 47540, '(jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank(), "Mana_Penance_"..priest.jpsTank() },
+	{ 17, '(jps.checkTimer("Shield") == 0) and not jps.debuff(6788,priest.jpsTank()) and not jps.buff(17,priest.jpsTank())' , priest.jpsTank , "Mana_Shield_"..priest.jpsTank() },
+	{ 33076, 'not jps.buffTracker(33076) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Mana_Mending_"..priest.jpsTank() },
+	{ 2050, 'priest.updateRaidTarget(priest.jpsTank()) and (jps.buffStacks(77613,priest.jpsTank()) < 3)' , priest.jpsTank , "Mana_Soins_"..priest.jpsTank() },
+	{ 14914, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget , "Mana_Fire_"..priest.rangedTarget() },
+	{ 2050, '(jps.hpAbs(priest.jpsTank()) < 0.95) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank , "Mana_Soins_"..priest.jpsTank() },
+	{ 109964, 'priest.updateRaidTarget(priest.jpsTank()) and (jps.hpAbs(priest.jpsTank()) > 0.95)' , priest.jpsTank , "|cff0070ddCarapace_"..priest.jpsTank() },
+	{ 585, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget , "Mana_Chatiment_"..priest.rangedTarget() },
+}
+
+local spellTable = {
+	-- "Suppression de la douleur" 33206
+	{ 33206, '(jps.hpAbs(priest.jpsTank()) < 0.35)' , priest.jpsTank , "Emergency_Pain_"..priest.jpsTank() },
+	-- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
+	{ 17, (jps.checkTimer("Shield") == 0) and not jps.debuff(6788,priest.jpsTank()) and not jps.buff(17,priest.jpsTank()) , priest.jpsTank , "Shield_"..priest.jpsTank() },
+	-- Macro
+	--{ {"macro","/cast ".."Soins"}, 'jps.checkTimer("Shield") > 6' , priest.jpsTank , "TestMacro_"..priest.jpsTank() },
+	-- "Pénitence" 47540
+	{ 47540, '(jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank(), "Penance_"..priest.jpsTank() },
+	-- "Soins supérieurs" 2060 -- "Sursis" 59889 "Borrowed"
+	{ 2060, '(jps.hpAbs(priest.jpsTank()) > 0.35) and jps.buff(59889)' , priest.jpsTank , "Soins Sup_Borrowed_"..priest.jpsTank() },
+	-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
+	{ 2061, 'jps.buff(114255) and (jps.buffDuration(114255) < 4)' , priest.jpsTank , "SurgeofLight_Duration_"..priest.jpsTank() },
+	{ 2061, 'jps.buff(114255) and (jps.hpAbs(priest.jpsTank()) < 0.55)' , priest.jpsTank },
+	{ 2061, 'jps.buffId(89485) and (jps.hpAbs(priest.jpsTank()) < 0.55)' , priest.jpsTank },
+	{ 2061, 'jps.hpAbs(priest.jpsTank()) < 0.35' , priest.jpsTank , "Priority" },
+	-- "Prière de guérison" 33076
+	{ 33076, 'not jps.buffTracker(33076) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Mending_"..priest.jpsTank() },
+
+	-- "Cascade" 121135 "Escalade"
+	{ 121135, '(jps.hpAbs(priest.jpsTank()) < 0.55) and (UnitIsUnit(priest.jpsTank(),"player")~=1) and priest.RaidStatus.countInRaid > 2' , priest.jpsTank , "Cascade_"..priest.jpsTank() },
+	-- Inner Focus 89485 "Focalisation intérieure" --  96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
+	{ 89485, 'UnitAffectingCombat("player")==1 and (jps.cooldown(89485) == 0)' , "player" , "Foca_" },
+	-- "Infusion de puissance" 10060 
+	{ 10060, '(jps.hpAbs(priest.jpsTank()) < 0.75) and (jps.cooldown(10060) == 0)' , "player" , "Puissance_" },
+	-- ARCHANGE "Archange" 81700 -- "Evangélisme" 81661 buffStacks == 5
+	{ 81700, '(jps.hpAbs(priest.jpsTank()) < 0.75) and (jps.buffStacks(81661) == 5)' , "player" , "ARCHANGE_" },
+	
+	-- "Prière de soins" 596
+	{ 596, 'priest.RaidStatus.POHtarget ~= nil' , priest.RaidStatus.POHtarget },
+	
+	-- "Soins de lien" 32546 -- Glyph of Binding Heal 
+	{ 32546 , '(jps.hpAbs(priest.jpsTank()) < 0.55) and (UnitIsUnit(priest.jpsTank(),"player")~=1) and (jps.LastCast ~= priest.Spell.BindingHeal) and jps.hpAbs("player") > priest.Spell.average_flashheal', priest.jpsTank , "Lien_"..priest.jpsTank() },
+	-- "Don des naaru" 59544
+	{ 59544, '(select(2,GetSpellBookItemInfo(priest.Spell.NaaruGift))~=nil) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' ,  priest.jpsTank , "Naaru_"..priest.jpsTank() },
+	-- "Rénovation" 139
+	{ 139, 'not jps.buff(139, priest.jpsTank()) and jps.debuff(6788,priest.jpsTank()) and (jps.cooldown(33076) > 0)' , priest.jpsTank , "Renew_"..priest.jpsTank() }, -- debuff Ame affaiblie and Mending on CD
+
+	-- "Soins" 2050 -- Grâce 77613 
+	{ 2050, 'jps.buffStacks(priest.Spell.Grace,priest.jpsTank()) < 3' , priest.jpsTank , "SoinsStacks_"..priest.jpsTank() },
+	{ 2050, 'jps.buffStacks(77613,priest.jpsTank()) < 3' , priest.jpsTank , "SoinsStacksGrace_"..priest.jpsTank() },
+	-- "Feu intérieur" 588
+	{ 588, 'not jps.buff(588,"player") and not jps.buff(73413,"player")' , "player" }, -- "Volonté intérieure" 73413
+	-- "Flammes sacrées" 14914 -- "Evangélisme" 81661
+	{ 14914, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget },
+	-- "Châtiment" 585	
+	{ 585, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget },
+	
+}
+
+	local spell = nil
+	local target = nil
+	if (jps.hpAbs(priest.jpsTank()) > 0.75) and not jps.FaceTarget then
+		spell, target = parseStaticSpellTable(manaspellTable)
+	else
+		spell, target = parseStaticSpellTable(spellTable)
+	end  
+	return spell,target
+end, "PvE Static", true, false)
 
 -- "Leap of Faith" -- "Saut de foi" 
 -- "Mass Dispel"  -- Dissipation de masse 32375

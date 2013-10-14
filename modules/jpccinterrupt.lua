@@ -88,6 +88,7 @@ function jps.shouldKick(unit)
 end
 
 function jps.shouldKickLag(unit)
+	if not jps.canDPS(unit) then return false end
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
 	local target_spell, _, _, _, _, cast_endTime, _, _, unInterruptable = UnitCastingInfo(unit)
