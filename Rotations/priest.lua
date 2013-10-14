@@ -63,7 +63,8 @@ priest.RaidStatus.countInRange = countInRange
 priest.RaidStatus.countInRaid = countInRaid
 if auratt_count > 2 then priest.RaidStatus.ShellTarget = auratt else priest.RaidStatus.ShellTarget = nil end
 if tt_count > 2 then priest.RaidStatus.POHtarget = tt  else priest.RaidStatus.POHtarget = nil end
-priest.RaidStatus.groupToHeal = (IsInGroup() and (IsInRaid() == false) and (countInRaid > 2)) or (IsInRaid() and type(priest.RaidStatus.POHtarget) == "string")
+priest.RaidStatus.groupToHealParty = (IsInGroup() and not IsInRaid() and (countInRaid > 2))
+priest.RaidStatus.groupToHealRaid = (IsInRaid() and type(priest.RaidStatus.POHtarget) == "string")
 priest.RaidStatus.LowestFriend = lowestUnit
 
 return priest.RaidStatus

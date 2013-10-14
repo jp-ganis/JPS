@@ -373,7 +373,7 @@ function jps_Combat()
 				write("Next Spell "..jps.NextSpell.. " was casted")
 				jps.NextSpell = nil
 			else
-				jps.NextSpell = nil
+				if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
 				jps.Cast(jps.ThisCast)
 			end
 		else

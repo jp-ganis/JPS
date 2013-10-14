@@ -49,7 +49,7 @@ local health_pct_TANK = jps.hpAbs(jps_TANK)
 local countInRange = jps.CountInRaidStatus(0.90)
 local countInRaid = jps.CountInRaidStatus(0.75)
 local POH_Target = jps.FindSubGroupTarget(0.75) -- Target to heal with POH in RAID AT LEAST 3 RAID UNIT of the SAME GROUP IN RANGE with HEALTH pct < 0.80
-local groupToHeal = (IsInGroup() and (IsInRaid() == false) and (countInRaid > 2)) or (IsInRaid() and type(POH_Target) == "string") -- return true false
+local groupToHeal = (IsInGroup() and not IsInRaid() and (countInRaid > 2)) or (IsInRaid() and type(POH_Target) == "string") -- return true false
 local Shell_Target = priest.FindSubGroupAura(114908,jps_TANK) -- buff target Spirit Shell 114908 need SPELLID
 -- Timer
 local timerShield = jps.checkTimer("Shield")
@@ -436,8 +436,8 @@ local function parse_POH() -- return table -- AT LEAST 3 FRIENDUNIT IN THE SAME 
 		{ 17, (jps.LastCast==PrayerofHealing) and not jps.buff(59889,player)  and not jps.buff(17,player) and not jps.debuff(6788,player) , player , "Shield_POH_"..player }, -- si le jps_TANK est debuff Ame affaiblie et pas jps.buff(59889,player)
 		{ "nested", (jps.LastCast==PrayerofHealing) and (health_pct_TANK < 0.35) , parse_emergency_TANK() },
 		{ 596, IsInRaid() and jps.canHeal(POH_Target), POH_Target , "POH_Raid_" }, -- Raid
-		{ 596, IsInGroup() and (IsInRaid() == false) and jps.canHeal(jps_TANK), jps_TANK , "POH_Party_"..jps_TANK }, -- Party
-		{ 596, IsInGroup() and (IsInRaid() == false), player , "POH_Party_"..player }, -- Party 
+		{ 596, IsInGroup() and not IsInRaid() and jps.canHeal(jps_TANK), jps_TANK , "POH_Party_"..jps_TANK }, -- Party
+		{ 596, IsInGroup() and not IsInRaid() , player , "POH_Party_"..player }, -- Party 
 	}
 return table
 end
@@ -487,10 +487,9 @@ local manaspellTable = {
 	{ 33076, not jps.buffTracker(33076) and (FriendTable[jps_TANK] ~= nil) , jps_TANK, "Mana_Mending_"..jps_TANK },
 	{ 2050, (FriendTable[jps_TANK] ~= nil) and (jps.buffStacks(Grace,jps_TANK) < 3) , jps_TANK, "Mana_Soins_"..jps_TANK },
 	{ 14914, jps.canDPS(rangedTarget) , rangedTarget, "Mana_Fire_"..rangedTarget },
-	{ 2050, (health_pct_TANK < 0.95) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Mana_Soins_"..jps_TANK },
-	{ 109964, (FriendTable[jps_TANK] ~= nil) and (health_pct_TANK > 0.95) , jps_TANK , "|cff0070ddCarapace_"..jps_TANK },
-		-- "Châtiment" 585	
-	{ 585, jps.canDPS(rangedTarget) , rangedTarget, "Mana_Chatiment_"..rangedTarget },
+	{ 2050, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Mana_Soins_"..jps_TANK },
+	{ 109964, (FriendTable[jps_TANK] ~= nil) and (health_pct_TANK > 0.95) , jps_TANK , "|cff0070ddCarapace_"..jps_TANK },	
+	{ 585, (health_deficiency_TANK < average_flashheal) and jps.canDPS(rangedTarget) , rangedTarget, "Mana_Chatiment_"..rangedTarget },
 }
 
 ------------------------
@@ -582,7 +581,7 @@ local spellTable =
 -- "Pénitence" 47540
 	{ 47540, (health_deficiency_TANK > average_flashheal) , jps_TANK , "Penance_"..jps_TANK},
 -- "Cascade" 121135 "Escalade"
-	{ 121135, (health_deficiency_TANK > average_flashheal) and (UnitIsUnit(jps_TANK,player)~=1) and countInRaid > 2 , jps_TANK , "Cascade_"..jps_TANK },
+	{ 121135, (health_pct_TANK < 0.75) and (UnitIsUnit(jps_TANK,player)~=1) and countInRaid > 2 , jps_TANK , "Cascade_"..jps_TANK },
 -- "Don des naaru" 59544
 	{ 59544, (select(2,GetSpellBookItemInfo(NaaruGift))~=nil) and (health_deficiency_TANK > average_flashheal) , jps_TANK , "Naaru_"..jps_TANK },
 -- "Rénovation" 139
