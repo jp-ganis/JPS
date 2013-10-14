@@ -709,8 +709,7 @@ local parse_shell =
 	}
 
 local manaspellTable = {
-	--{ 527, jps.MagicDispel , {player,priest.jpsTank()} , "|cFFFF0000Mana_dispelMagic_MultiUnit_" },
-	
+	{ 527, 'jps.MagicDispel(priest.jpsTank())' , priest.jpsTank , "|cFFFF0000Mana_dispelMagic_"..priest.jpsTank() },
 	{ "nested", 'jps.buffId(109964) and (jps.hpAbs(priest.jpsTank()) > 0.75)' , parse_shell },
 	{ 2061, 'jps.buff(114255) and (jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank , "Mana_Soins Rapides_Waves_"..priest.jpsTank() },
 	{ 47540, '(jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank(), "Mana_Penance_"..priest.jpsTank() },
