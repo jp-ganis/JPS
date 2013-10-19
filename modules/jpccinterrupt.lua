@@ -95,10 +95,9 @@ return targetControlled, timeControlled
 end
 
 function jps.shouldKick(unit)
-	if UnitCanAttack("player", unit)~=1 then return false end
-	if UnitIsEnemy("player",unit)~=1 then return false end
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
+	if UnitCanAttack("player", unit)~=1 then return false end
 	local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == L["Release Aberrations"] then return false end
@@ -135,7 +134,7 @@ local interruptDelay = 0
 local interruptDelaySpellUnit = ""
 local interruptDelayTimestamp = GetTime()
 
-function jps.kickDelay(unit) min
+function jps.kickDelay(unit)
 	if jps.IsCasting(unit) then
 		local castLeft, spellName = jps.CastTimeLeft(unit) or jps.ChannelTimeLeft(unit)
 		if castLeft < 2 then return true end
