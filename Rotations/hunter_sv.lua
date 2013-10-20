@@ -20,29 +20,6 @@ Trap Keys:[br]
 [*][code]SHIFT-CONTROL:[/code] Ice Trap[br]
 ]]--
 
--- Binary key combinations
--- 1 = Shift
--- 2 = Alt
--- 3 = Shift + Alt
--- 4 = Control
--- 5 = Shift + Control
--- 6 = Alt + Control
--- 7 = Shift + Alt + Control
-function hunter.trapKey()
-    -- Reset keys to zero
-    local shiftKEY_binary = 0
-    local altKEY_binary = 0
-    local controlKEY_binary = 0
-
-    -- Register key downs
-    if IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 end
-    if IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 end
-    if IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
-
-    -- Binary calculation
-    return shiftKEY_binary + altKEY_binary + controlKEY_binary
-end
-
 jps.registerStaticTable("HUNTER", "SURVIVAL", {
     -- Revive pet
     { hunter.spells.heartOfThePhoenix, 'UnitIsDead("pet") ~= nil and HasPetUI() ~= nil' }, -- Instant revive pet (only some pets, Ferocity)
@@ -56,7 +33,6 @@ jps.registerStaticTable("HUNTER", "SURVIVAL", {
     { {"macro", "/petattack"}, 'hunter.petShouldAttackMyTarget()' },
 
     -- Aspects
-    { hunter.spells.aspectOfTheHawk, 'not jps.buff(hunter.spells.aspectOfTheHawk) and not jps.buff(hunter.spells.aspectOfTheIronHawk)' },
     { hunter.spells.aspectOfTheIronHawk, 'not jps.buff(hunter.spells.aspectOfTheHawk) and not jps.buff(hunter.spells.aspectOfTheIronHawk)' },
 
     -- Misdirection
@@ -102,4 +78,4 @@ jps.registerStaticTable("HUNTER", "SURVIVAL", {
     { hunter.spells.cobraShot, 'jps.myDebuffDuration(hunter.spells.serpentSting) < 6' },
     { hunter.spells.arcaneShot, 'jps.focus() >= 70 and not jps.buff(hunter.buffs.lockAndLoad) and not jps.MultiTarget' },
     { hunter.spells.cobraShot },
-}, "Default")
+}, "SV Hunter 5.4")

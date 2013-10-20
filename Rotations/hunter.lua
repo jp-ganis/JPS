@@ -27,12 +27,23 @@ hunter.spells["heartOfThePhoenix"] = toSpellName(55709)
 hunter.spells["revivePet"] = toSpellName(982)
 hunter.spells["counterShot"] = toSpellName(147362)
 hunter.spells["misdirection"] = toSpellName(34477)
+hunter.spells["focusFire"] = toSpellName(82692)
+hunter.spells["fervor"] = toSpellName(82726)
+hunter.spells["bestialWrath"] = toSpellName(19574)
+hunter.spells["killCommand"] = toSpellName(34026)
+hunter.spells["lynxRush"] = toSpellName(120697)
+hunter.spells["barrage"] = toSpellName(120360)
+hunter.spells["powershot"] = toSpellName(109259)
+hunter.spells["blinkStrikes"] = toSpellName(130392)
 
 -- Professions
 hunter.spells["lifeblood"] = toSpellName(121279)
 
 hunter.buffs = {}
 hunter.buffs["lockAndLoad"] = toSpellName(56343)
+hunter.buffs["frenzy"] = toSpellName(19623)
+hunter.buffs["theBeastWithin"] = toSpellName(34692)
+hunter.buffs["thrillOfTheHunt"] = toSpellName(109306)
 
 function hunter.petIsPassive()
     local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is PassiveMode on the pet actionbar
@@ -49,3 +60,26 @@ function hunter.petShouldAttackMyTarget()
     end
     return false
 end
+
+-- Binary key combinations
+-- 1 = Shift
+-- 2 = Alt
+-- 3 = Shift + Alt
+-- 4 = Control
+-- 5 = Shift + Control
+-- 6 = Alt + Control
+-- 7 = Shift + Alt + Control
+function hunter.trapKey()
+    -- Reset keys to zero
+    local shiftKEY_binary = 0
+    local altKEY_binary = 0
+    local controlKEY_binary = 0
+
+    -- Register key downs
+    if IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 end
+    if IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 end
+    if IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
+
+    -- Binary calculation
+    return shiftKEY_binary + altKEY_binary + controlKEY_binary
+end    
