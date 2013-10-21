@@ -3,9 +3,7 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 	local holyPower = jps.holyPower()
 	local stance = GetShapeshiftForm() -- stance
 	
-	local spellTable = {}
-	spellTable[1] = {
-		["ToolTip"] = "Retribution Paladin PVE",
+	local spellTable = {
 
 		-- Paladin stance ( Seal)
 		{ "Seal of Truth", stance ~= 1 and stance ~=  2 , player },  --allows to switch between seal of truth or seal of Righteousness
@@ -75,9 +73,8 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 		 -- Damage
 		{ "Exorcism" },
 	}
-	
-	local spellTableActive = jps.RotationActive(spellTable)
-	spell,target = parseSpellTable(spellTableActive)
+
+	local spell,target = parseSpellTable(spellTable)
 	return spell,target
 end, "Default",true,false)
 

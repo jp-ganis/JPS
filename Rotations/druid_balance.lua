@@ -32,11 +32,9 @@ jps.registerRotation("DRUID","BALANCE", function()
 	local spellTable =
 	{
 		-- rebirth Ctrl-key + mouseover
-		{ "rebirth", 			IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
-		
+		{ "rebirth", IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
 		-- Buffs
-		{ "mark of the wild",		 	not jps.buff("mark of the wild") , player },
-		
+		{ "mark of the wild", not jps.buff("mark of the wild") , "player" },
 		-- Rotation
 		{ "starfall" },
 		{ "force of nature", jps.buff("nature's grace") or jps.Moving },
@@ -57,7 +55,6 @@ jps.registerRotation("DRUID","BALANCE", function()
 		{ "sunfire" , jps.Moving and mfDuration == 0 },
 	}
 
-	
 	spell,target = parseSpellTable(spellTable)
 	return spell,target
 end, "Default")

@@ -15,8 +15,9 @@ Features:[br]
 
 
 jps.registerRotation("HUNTER","BEASTMASTERY", function()
-	---------------
-	local spell = spell,target
+
+	local spell = nil
+	local target = nil
 	local sps_duration = jps.debuffDuration("serpent sting")
 	local focus = UnitMana("player")
 	local pet_focus = UnitMana("pet")

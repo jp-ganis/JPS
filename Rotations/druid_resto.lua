@@ -131,7 +131,6 @@ Makes you Top Healer...until you run out of mana. You have to use Innervate and 
 
 
 jps.registerStaticTable("DRUID","RESTORATION",{
-["ToolTip"] = "Legacy Rotation",
     -- rebirth Ctrl-key + mouseover
     { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     

@@ -33,6 +33,10 @@ local L = MyLocalizationTable
 --------------------------
 -- BUFF DEBUFF
 --------------------------
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitAura("unit", index or "name"[, "rank"[, "filter"]])
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitDebuff("unit", index or ["name", "rank"][, "filter"])
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitBuff("unit", index or ["name", "rank"][, "filter"])
+
 function jps.buffId(spellId,unit)
 	local spellname = nil
 	if type(spellId) == "number" then spellname = tostring(select(1,GetSpellInfo(spellId))) end
