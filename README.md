@@ -30,6 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Copyright (C) 2011 James Ganis
 
 ==============================================================================
+= NEW: Support & question                                                    =
+==============================================================================
+
+due to the shutdown off PG we created a new Support forum for JPS & protected LUA
+
+http://kazuhiro.nishi.co/keymoon/
+
+
+==============================================================================
 = USAGE                                                                      =
 ==============================================================================
 
@@ -45,6 +54,8 @@ HPS for your class and spec.
 
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 * BUG: some rotation could cause a fps drop
+* Engineer Gloves does not work with static rotation
+
 
 ==============================================================================
 = COMMANDS                                                                   =
