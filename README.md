@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Copyright (C) 2011 James Ganis
 
 ==============================================================================
-= NEW: Support & question                                                    =
+= NEW: JPS Support forums                                                    =
 ==============================================================================
 
 due to the shutdown off PG we created a new Support forum for JPS & protected LUA
