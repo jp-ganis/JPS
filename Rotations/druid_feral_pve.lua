@@ -22,7 +22,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	local berserk = jps.buff("Berserk")
 	local tigersFury = jps.buff("Tiger's fury")
 	local predatorySwiftness = jps.buff("Predatory Swiftness")
-	local cenarionStacks = jps.buffStacks(108381) -- jps.buffStacks("Dream of Cenarius") 
+	local cenarionStacks = jps.buffStacks(108373) -- jps.buffStacks("Dream of Cenarius") 
 	
 	local ripDuration = jps.myDebuffDuration("Rip")
 	local rakeDuration = jps.myDebuffDuration("Rake")
