@@ -60,7 +60,7 @@ jps.Moving = nil
 jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
-jps.CurrentCast = {}
+jps.CurrentCast = nil
 jps.detectSpecDisabled = false
 
 -- Class
@@ -72,6 +72,8 @@ jps.DefRacial = nil
 jps.Lifeblood = nil
 jps.EngiGloves = nil
 jps.isTank = false
+jps.CrowdControl = false
+jps.CrowdControlTarget = nil
 
 -- Raccourcis
 cast = CastSpellByName
@@ -104,16 +106,17 @@ jpsName = select(1,UnitName("player"))
 jpsRealm = GetCVar("realmName")
 jps.ExtraButtons = true
 jps.ResetDB = false
+
 jps.Count = 1
-jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+jps.Tooltip = ""
 jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
 rotationDropdownHolder = nil
-jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withing 30 seconds
 jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
+jps.customRotationFunc = ""
 
 -- Latency
 jps.CastBar = {}
@@ -141,9 +144,9 @@ end
 
 function jps.detectSpec()
 	if jps.detectSpecDisabled then return false end
-	
+
 	jps.Count = 1
-	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+	jps.Tooltip = ""
 	jps.ToggleRotationName = {"No Rotations"}
 	jps.MultiRotation = false
 	jps.initializedRotation = false
@@ -247,7 +250,7 @@ function SlashCmdList.jps(cmd, editbox)
 		end
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
-		write("Debug mode set to",tostring(jps.Debug))	
+		write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "face" then
 		jps.gui_toggleRot()
 		write("jps.FaceTarget set to",tostring(jps.FaceTarget))
@@ -294,7 +297,6 @@ function SlashCmdList.jps(cmd, editbox)
 	end
 end
 
-
 -- cache for WoW API functions that return always the same results for the given params
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
@@ -309,9 +311,7 @@ hooksecurefunc("UseAction", function(...)
 			local name = select(1,GetSpellInfo(id))
 			if jps.NextSpell ~= name then
 				jps.NextSpell = name
-				if jps.Combat then 
-					--write("Set",name,"for next cast.") 
-				end
+				if jps.Combat then write("Set",name,"for next cast.") end
 			end
 		end
 	end
@@ -373,9 +373,7 @@ function jps_Combat()
 				write("Next Spell "..jps.NextSpell.. " was casted")
 				jps.NextSpell = nil
 			else
-				if jps.cooldown(jps.NextSpell) > 3 then
-					jps.NextSpell = nil
-				end
+				if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
 				jps.Cast(jps.ThisCast)
 			end
 		else
