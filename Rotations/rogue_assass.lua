@@ -34,7 +34,7 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
     -- CD's
     { rogue.spells.shadowBlaes, 'jps.bloodlusting() and jps.buffDuration(rogue.spells.sliceAndDice) >= jps.buffDuration(rogue.spells.shadowBlades) and jps.UseCDs' },
     { jps.DPSRacial, 'jps.UseCDs' },
-    { jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
+    { jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
     { jps.useTrinket(0),       'jps.UseCDs' },
     { jps.useTrinket(1),       'jps.UseCDs' },
 

@@ -54,7 +54,7 @@ dkBloodSpellTable[1] = {
 	{"Dancing Rune Weapon",'jps.UseCDs'},
 
 	-- Requires engineering
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},
@@ -128,7 +128,7 @@ dkBloodSpellTable[2] = {
 	{"Raise Dead",'jps.UseCDs and dk.hasGhoul() and jps.hp() < 0.6'},
 
 	-- Requires engineering
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
+	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},

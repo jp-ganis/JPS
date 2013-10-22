@@ -33,7 +33,7 @@ jps.registerStaticTable("WARRIOR","FURY",
 		{ jps.getDPSRacial(),'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
+		{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		-- Requires herbalism
 		{warrior.spells["Lifeblood"],'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		
@@ -104,7 +104,7 @@ jps.registerStaticTable("WARRIOR","FURY",
 		{ jps.getDPSRacial(),'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
+		{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		{warrior.spells["Lifeblood"],'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
 		
 -- AoE Rotation
