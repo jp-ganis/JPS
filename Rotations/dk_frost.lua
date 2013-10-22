@@ -114,6 +114,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "frost strike",'"onCD"'},
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
 	{ "empower rune weapon",'jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
+	{ "empower rune weapon",'not IsInRaid() and not jps.targetIsRaidBoss()'}, -- burst in instances, pvp 
 }, "PVE 2H Simcraft")
 
 
@@ -311,6 +312,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.runicPower() <= 25 and not dk.rune("twoDr") and not dk.rune("twoFr") and not dk.rune("twoUr")'},
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.TimeToDie("target") < 60 and jps.buff("Potion of Mogu Power")'},
 	{ "Empower Rune Weapon",'jps.UseCDs and jps.bloodlusting()'},
+	{ "empower rune weapon",'not IsInRaid() and not jps.targetIsRaidBoss()'}, -- burst in instances, pvp 
 
 }, "PVP 2h", false, true)
 --[[[
