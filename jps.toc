@@ -69,6 +69,7 @@ Rotations\paladin_protadin_pvp.lua
 Rotations\paladin_ret_pve.lua
 Rotations\paladin_ret_pvp.lua
 
+Rotations\priest.lua
 Rotations\priest_disc_pve.lua
 Rotations\priest_disc_pvp.lua
 Rotations\priest_holy.lua
