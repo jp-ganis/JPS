@@ -213,6 +213,5 @@ jps.registerRotation("PALADIN","HOLY",function()
 	end
 
 	spell,target = parseStaticSpellTable(hpala.spellTable)
-
 	return spell,target
 end, "Default")

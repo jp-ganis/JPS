@@ -35,7 +35,6 @@ Modifiers:[br]
 -- SPELL TABLE ---------
 ------------------------
 
-
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Frost Presence",'not jps.buff("Frost Presence", "player")'},
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
@@ -87,9 +86,10 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "plague strike",'jps.myDebuffDuration("Blood Plague") == 0'},
 	{ "soul reaper",'jps.hp("target") <= 0.35'},
 	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.hp("target") <= 0.35 and jps.cooldown("soul reaper") == 0'},
+
 	{ "Pestilence", 'jps.MultiTarget and jps.castEverySeconds("Pestilence",20)'},
 	{ "howling blast",'jps.buff("Freezing Fog") or jps.MultiTarget'},
-	
+
 	{ "obliterate",'jps.buff("killing machine")'},
 	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.buff("killing machine")'},
 	{ "blood tap",'jps.buffStacks("blood charge") >10 and jps.runicPower() > 76'},

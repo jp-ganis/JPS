@@ -8,6 +8,14 @@ to your rotation - you can find all relevant information on Transforming your Ro
 local parser = {}
 parser.testMode = false
 
+local function fnMessageEval(message)
+    if message == nil then
+        return ""
+    elseif type(message) == "string" then
+        return message
+    end
+end
+
 local function fnTargetEval(target)
     if target == nil then
         return "target"
@@ -45,14 +53,14 @@ local function fnParseMacro(macro, condition, target)
             else
                 macroSpell = select(3,string.find(macro,"%s(.*)")) -- {"macro","/cast Sanguinaire"}
             end
-            jps.Macro(macro)
+            if not jps.Casting then jps.Macro(macro) end -- Avoid interrupt Channeling with Macro
             if jps.Debug then macrowrite(macroSpell,"|cff1eff00",target,"|cffffffff",jps.Message) end
         elseif type(macro) == "table" then
             for _,sequence in ipairs (macro) do
                 local spellname = tostring(GetSpellInfo(sequence))
                 if jps.canCast(spellname,target) then
                     local macroText = "/cast "..spellname
-                    jps.Macro(macroText)
+                    if not jps.Casting then jps.Macro(macroText) end -- Avoid interrupt Channeling with Macro
                     if jps.Debug then macrowrite(spellname,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
                 end
             end
@@ -60,7 +68,7 @@ local function fnParseMacro(macro, condition, target)
             jps.Macro("/cast " .. tostring(GetSpellInfo(macro)))
         end
 
-        if changeTargets then jps.Macro("/targetlasttarget") end
+        if changeTargets and not jps.Casting then jps.Macro("/targetlasttarget") end
     end
 end
 
@@ -123,13 +131,16 @@ function parseStaticSpellTable( hydraTable )
         local spell = nil
         local conditions = nil
         local target = nil
+        local message = fnMessageEval(spellTable[4])
+        if jps.Message ~= message then jps.Message = message end
+        
         if type(spellTable[1]) == "table" and spellTable[1][1] == "macro" then
             fnParseMacro(spellTable[1][2], fnConditionEval(spellTable[2]), fnTargetEval(spellTable[3]))
         -- Nested Table
         elseif spellTable[1] == "nested" then
             if fnConditionEval(spellTable[2]) then
                 spell, target = parseStaticSpellTable( spellTable[3] )
-                conditions = spell ~=nil
+                conditions = spell ~= nil
             end
         -- Default: {spell[[, condition[, target]]}
         else

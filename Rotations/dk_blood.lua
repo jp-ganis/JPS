@@ -17,7 +17,6 @@
 dkBloodSpellTable = {}
 dkBloodSpellTable[1] = {
 	-- Blood presence
-
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 
 	-- Battle Rezz

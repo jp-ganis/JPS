@@ -76,8 +76,6 @@ jps.registerRotation("MAGE","ARCANE",function()
 	
 	-- only short cd's 
 	spellTable = {
-		["ToolTip"] = "Arcane PVE > 4 Targets 5.3",
-
 		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
 		
 		{ "mage armor",				 not jps.buff("mage armor") }, 
