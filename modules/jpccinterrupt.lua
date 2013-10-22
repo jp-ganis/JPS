@@ -94,10 +94,12 @@ function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", 
 return targetControlled, timeControlled
 end
 
+
 function jps.shouldKick(unit)
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
 	if UnitCanAttack("player", unit)~=1 then return false end
+	if UnitIsEnemy("player",unit)~=1 then return false end
 	local target_spell, _, _, _, _, _, _, _, unInterruptable = UnitCastingInfo(unit)
 	local channelling, _, _, _, _, _, _, notInterruptible = UnitChannelInfo(unit)
 	if target_spell == L["Release Aberrations"] then return false end
@@ -139,7 +141,7 @@ function jps.kickDelay(unit)
 		local castLeft, spellName = jps.CastTimeLeft(unit) or jps.ChannelTimeLeft(unit)
 		if castLeft < 2 then return true end
 
-		if GetTime() - interruptDelayTimestamp > 5 or  interruptDelaySpellUnit ~= spellName..unit then -- recalc delay value
+		if (GetTime() - interruptDelayTimestamp) > 5 or  interruptDelaySpellUnit ~= (spellName..unit) then -- recalc delay value
 			maxDelay = castLeft-2
 			if(castLeft <= 2.5) then maxDelay = castLeft - 0.5 end
 			minDelay = 0.5

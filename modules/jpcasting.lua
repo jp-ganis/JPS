@@ -162,3 +162,18 @@ end
 function jps.Macro(text)
 	RunMacroText(text)
 end
+
+
+---------
+-- timed casting
+---------
+
+function jps.castEverySeconds(spell, seconds)
+	if not jps.timedCasting[string.lower(spell)] then
+		return true
+	end
+	if jps.timedCasting[string.lower(spell)] + seconds <= GetTime() then
+		return true
+	end
+	return false
+end
