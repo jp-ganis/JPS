@@ -212,7 +212,7 @@ end
 --[[[
 @function jps.cancelCasting
 @description
-Cancels spell casting on matched conditions. Useful for overhealing, execute phases, long cast's / channels. Be careful to not leak memory when creating always a new table!
+Cancels spell casting on matched conditions. Useful for overhealing, execute phases, long cast's / channels. Careful: currently only "dynamic" tables are supported, this leaks currently some memory!
 @param table with spell & condition: {"pew pew healspell","jps.hp(unit) > 0.9"},{"less pew healspell","jps.hp(unit) > 0.5"}....
 ]]--
 function jps.cancelCasting(hydraTable)
