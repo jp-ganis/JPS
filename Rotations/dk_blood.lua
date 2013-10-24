@@ -254,14 +254,12 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[1])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Blood Main")
 jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[4])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Blood No Cleave / AoE")
 
@@ -269,7 +267,6 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[2])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Blood CDs+interrupts only")
 
@@ -277,6 +274,5 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[3])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Diseases+interrupts only")
