@@ -51,16 +51,20 @@ dkBloodSpellTable[1] = {
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
-	{"Dancing Rune Weapon",'jps.UseCDs'},
+	
+	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{
+		{"Dancing Rune Weapon",'jps.UseCDs'},
+	
+		-- Requires engineering
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	
+		-- Requires herbalism
+		{"Lifeblood",'jps.UseCDs'},
+	
+		-- Racials
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	}},
 
-	-- Requires engineering
-	{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-
-	-- Requires herbalism
-	{"Lifeblood",'jps.UseCDs'},
-
-	-- Racials
-	{ jps.getDPSRacial(),'jps.UseCDs'},
 
 	-- Buff
 	{"Bone Shield",'not jps.buff("Bone Shield")'},
@@ -95,8 +99,84 @@ dkBloodSpellTable[1] = {
 	{"Horn of Winter", "onCD"},
 	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
 	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
-	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
+	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 }
+
+dkBloodSpellTable[4] = {
+	-- Blood presence
+	{"Blood Presence",'not jps.buff("Blood Presence")'},
+
+	-- Battle Rezz
+	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and jps.UseCds', "focus" },
+	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and jps.UseCds', "target"},
+
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+
+	-- Cntrol is pressed
+	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+
+	-- Defensive cooldowns
+
+	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
+	{"Rune Tap",'jps.hp() < 0.8'},
+	{jps.useBagItem(5512), 'jps.hp("player") < 0.70'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
+
+	-- Interrupts
+	{"mind freeze",'jps.shouldKick()'},
+	{"mind freeze",'jps.shouldKick("focus")', "focus"},
+	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
+	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
+	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
+	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
+	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
+	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+
+	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
+	
+	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{	
+		-- Requires engineering
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	
+		-- Requires herbalism
+		{"Lifeblood",'jps.UseCDs'},
+	
+		-- Racials
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	}},
+
+
+	-- Buff
+	{"Bone Shield",'not jps.buff("Bone Shield")'},
+
+	-- Diseases
+	{"Outbreak",'jps.myDebuffDuration("frost fever") < 2'},
+	{"Outbreak",'jps.myDebuffDuration("blood plague") < 2'},
+
+	-- Rotation
+	{"Death Strike",'jps.hp() < 0.7'},
+	{"Death Strike",'jps.buffDuration("Blood Shield") <= 4'},
+	{"Soul Reaper",'jps.hp("target") <= 0.35'},
+	{"Plague Strike",'not jps.mydebuff("Blood Plague")'},
+	{"Icy Touch",'not jps.mydebuff("Frost Fever")'},
+	{"Rune Strike",'jps.runicPower() >= 80 and not dk.rune("twoFr") and not dk.rune("twoUr")'},
+	{"Death Strike", "onCD"},
+
+	-- Death Siphon when we need a bit of healing. (talent based)
+	{"Death Siphon",'jps.hp() < 0.6'}, -- moved here, because we heal often more with Death Strike than Death Siphon
+
+	{"Rune Strike",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
+
+	{"Horn of Winter", "onCD"},
+	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
+	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
+	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
+}
+
+
 dkBloodSpellTable[2] = {
 	-- Blood presence
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
@@ -177,6 +257,13 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Blood Main")
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
+	local spell = nil
+	local target = nil
+	spell,target = parseStaticSpellTable(dkBloodSpellTable[4])
+	spell = dk.bloodshieldMe(spell)
+	return spell,target
+end, "DK Blood No Cleave / AoE")
 
 jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
