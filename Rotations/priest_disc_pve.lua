@@ -680,6 +680,8 @@ local spellTable_moving =
 
 end, "Disc Priest PvE", true, false)
 
+
+--[[ commented out, leaks memoery & drops fps !!! 
 -------------------------
 -- STATIC
 -------------------------
@@ -794,6 +796,7 @@ local spellTable = {
 	end  
 	return spell,target
 end, "PvE Static", true, false)
+]]--
 
 -- "Leap of Faith" -- "Saut de foi" 
 -- "Mass Dispel"  -- Dissipation de masse 32375
