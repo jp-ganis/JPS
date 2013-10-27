@@ -219,7 +219,7 @@ Cancels spell casting on matched conditions. Useful for overhealing, execute pha
 ]]--
 function jps.cancelCasting(hydraTable)
 	if not hydraTable or type(hydraTable) ~= "table" then
-		jps.Write("jps.cancelCasting() wrong params in rotation "..jps.Spec.."  -  "..jps.Class)
+		write("jps.cancelCasting() wrong params in rotation "..jps.Spec.."  -  "..jps.Class)
 		return false
 	end
 	for _, spellTable in pairs(hydraTable) do
