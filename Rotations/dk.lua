@@ -11,16 +11,16 @@
 	"Hex","Mind Control","Cyclone","Polymorph","Pyroblast","Tranquility","Divine Hymn","Hymn of Hope","Ring of Frost","Entangling Roots"
 	}
 	function dk.shoulDarkSimUnit(unit)
-		for index,spellName in pairs(jps.darkSimSpells) do
+		for index,spellName in pairs(dk.darkSimSpells) do
 			if jps.IsCastingSpell(spellName, unit) then return true end
 		end
 		return false
 	end
 	function dk.shouldDarkSimTarget()
-		return jps.shoulDarkSimUnit("target")
+		return dk.shoulDarkSimUnit("target")
 	end
 	function dk.shouldDarkSimFocus()
-		return jps.shoulDarkSimUnit("focus")
+		return dk.shoulDarkSimUnit("focus")
 	end
 	
 	function dk.canCastPlagueLeech(timeLeft)  
