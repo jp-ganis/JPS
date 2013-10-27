@@ -35,7 +35,6 @@ Modifiers:[br]
 -- SPELL TABLE ---------
 ------------------------
 
-
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Frost Presence",'not jps.buff("Frost Presence", "player")'},
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
@@ -60,22 +59,29 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus"},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-
-	--CDs + Buffs
-	{ "Pillar of Frost",'jps.UseCDs'},
-	{ jps.useBagItem("Flask of Winter's Bite"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite")'},
-	{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
-
-	{ jps.getDPSRacial(),'jps.UseCDs'},
-
-	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
-	-- On-use Trinkets.
-	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
-	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
-	-- Requires engineerins
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-	-- Requires herbalism
-	{ "Lifeblood",'jps.UseCDs'},
+	
+	-- Spell Steal
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
+	
+	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
+		--CDs + Buffs
+		{ "Pillar of Frost",'jps.UseCDs'},
+		{ jps.useBagItem("Flask of Winter's Bite"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite")'},
+		{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
+	
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	
+		{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
+		-- On-use Trinkets.
+		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
+		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
+		-- Requires engineerins
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+		-- Requires herbalism
+		{ "Lifeblood",'jps.UseCDs'},
+	
+	}},
 
 	--simcraft 5.3 T14
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
@@ -87,9 +93,10 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "plague strike",'jps.myDebuffDuration("Blood Plague") == 0'},
 	{ "soul reaper",'jps.hp("target") <= 0.35'},
 	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.hp("target") <= 0.35 and jps.cooldown("soul reaper") == 0'},
+
 	{ "Pestilence", 'jps.MultiTarget and jps.castEverySeconds("Pestilence",20)'},
 	{ "howling blast",'jps.buff("Freezing Fog") or jps.MultiTarget'},
-	
+
 	{ "obliterate",'jps.buff("killing machine")'},
 	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.buff("killing machine")'},
 	{ "blood tap",'jps.buffStacks("blood charge") >10 and jps.runicPower() > 76'},
@@ -108,12 +115,13 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "horn of winter"},
 	{ "frost strike",'not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")'},
 	{ "obliterate",'"onCD"'},
-	{ "empower rune weapon",'jps.buff("Potion of Mogu Power") and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
-	{ "empower rune weapon",'jps.bloodlusting() and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.buff("Potion of Mogu Power") and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.bloodlusting() and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
 	{ "blood tap",'jps.buffStacks("blood charge")>10 and jps.runicPower()>=20'},
 	{ "frost strike",'"onCD"'},
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
-	{ "empower rune weapon",'jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and not IsInRaid() and not jps.targetIsRaidBoss()'}, -- burst in instances, pvp 
 }, "PVE 2H Simcraft")
 
 
@@ -178,21 +186,24 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
-	--CDs + Buffs
-	{ "Pillar of Frost",'jps.UseCDs'},
-	{ jps.useBagItem("Flask of Winter's Bite"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite")'},
-	{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
-
-	{ jps.getDPSRacial(),'jps.UseCDs'},
-
-	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
-	-- On-use Trinkets.
-	{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
-	{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
-	-- Requires engineerins
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-	-- Requires herbalism
-	{ "Lifeblood",'jps.UseCDs'},
+	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
+		--CDs + Buffs
+		{ "Pillar of Frost",'jps.UseCDs'},
+		{ jps.useBagItem("Flask of Winter's Bite"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite")'},
+		{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
+	
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	
+		{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
+		-- On-use Trinkets.
+		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
+		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
+		-- Requires engineerins
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+		-- Requires herbalism
+		{ "Lifeblood",'jps.UseCDs'},
+	
+	}},
 
 	--TESTING
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
@@ -223,12 +234,12 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "horn of winter"},
 	{ "frost strike",'not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")'},
 	{ "frost strike",'"onCD"'},
-	{ "empower rune weapon",'jps.buff("Potion of Mogu Power") and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
-	{ "empower rune weapon",'jps.bloodlusting() and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.buff("Potion of Mogu Power") and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.bloodlusting() and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
 	{ "blood tap",'jps.buffStacks("blood charge")>10 and jps.runicPower()>=20'},
 	{ "obliterate",'"onCD"'},
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
-	{ "empower rune weapon",'jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
 }, "PVE DW")
 
 
@@ -254,11 +265,20 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	-- Rune Management
 	{ "Plague Leech",'dk.canCastPlagueLeech(3)'},
 
-	{ "Pillar of Frost",'jps.UseCDs'},
-	{ jps.getDPSRacial(),'jps.UseCDs'},
 
-	{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
-
+	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
+		--CDs + Buffs
+		{ "Pillar of Frost",'jps.UseCDs'},
+	
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	
+		{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
+		-- Requires engineerins
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+		-- Requires herbalism
+		{ "Lifeblood",'jps.UseCDs'},
+	
+	}},
 		-- If our diseases are about to fall off.
  	{ "outbreak",'jps.myDebuffDuration("Blood Plague") <3'},
  	{ "outbreak",'jps.myDebuffDuration("Frost Fever") <3'},
@@ -278,7 +298,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 
 
 	-- Requires engineerins
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
@@ -308,10 +328,9 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Obliterate"},
 	{ "Frost Strike"},
 	{ "Plague Leech",'dk.canCastPlagueLeech(2)'},
-	{ "Empower Rune Weapon",'jps.UseCDs and jps.runicPower() <= 25 and not dk.rune("twoDr") and not dk.rune("twoFr") and not dk.rune("twoUr")'},
-	{ "Empower Rune Weapon",'jps.UseCDs and jps.TimeToDie("target") < 60 and jps.buff("Potion of Mogu Power")'},
-	{ "Empower Rune Weapon",'jps.UseCDs and jps.bloodlusting()'},
-
+	{ "Empower Rune Weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.UseCDs and jps.runicPower() <= 25 and not dk.rune("twoDr") and not dk.rune("twoFr") and not dk.rune("twoUr")'},
+	{ "Empower Rune Weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.UseCDs and jps.TimeToDie("target") < 60 and jps.buff("Potion of Mogu Power")'},
+	{ "Empower Rune Weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.UseCDs and jps.bloodlusting()'},
 }, "PVP 2h", false, true)
 --[[[
 @rotation Diseases & Interrupt Rotation 5.3
