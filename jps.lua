@@ -19,6 +19,7 @@
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 local L = MyLocalizationTable
+local JPS = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
 jps = {}
 jps.Version = "1.3.0"
 jps.Revision = "r548"
@@ -421,4 +422,23 @@ function jps.runFunctionQueue(queueName)
 		end
 	end	
 	return false
+end
+
+local JPSAceOptions = { 
+    name = "JPS",
+    handler = JPS,
+    type = "group",
+    args = {
+        jpsEnabled = {
+            type = "toggle",
+            name = "jpsEnabled",
+            desc = "JPS enabled on default",
+            set = function(info,val) JPS.enabled = val end,
+            get = function(info) return JPS.enabled end
+        },
+    },
+}
+function JPS:OnInitialize()
+    LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
+    self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
 end
