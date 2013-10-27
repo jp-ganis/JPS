@@ -58,6 +58,7 @@ function jps.IsCastingSpell(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
 	local name, _, _, _, startTime, endTime, _, _, interrupt = UnitCastingInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
+	if not name then return false end
 	if spellname == name and jps.CastTimeLeft(unit) > 0 then return true end
 	return false
 end
@@ -68,6 +69,7 @@ function jps.IsChannelingSpell(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
 	local name, _, _, _, startTime, endTime, _, interrupt = UnitChannelInfo(unit) -- WORKS FOR CASTING SPELL NOT CHANNELING SPELL
+	if not name then return false end
 	if spellname == name and jps.ChannelTimeLeft(unit) > 0 then return true end
 	return false
 end
