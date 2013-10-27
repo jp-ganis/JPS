@@ -521,23 +521,25 @@ jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
 	local unitID = select(1,...)
 	local spellname = select(2,...)
 	local spellID = select(5,...)
-	
-	if (unitID == "player") and spellID then 
-		jps.CurrentCast = tostring(select(1,GetSpellInfo(spellID)))
-		if jps.checkTimer("FacingBug") > 0 then
-			TurnLeftStop()
-			TurnRightStop()
-			CameraOrSelectOrMoveStop()
+	if jps.FaceTarget then
+		if (unitID == "player") and spellID then 
+			jps.CurrentCast = tostring(select(1,GetSpellInfo(spellID)))
+			if jps.checkTimer("FacingBug") > 0 then
+				TurnLeftStop()
+				TurnRightStop()
+				CameraOrSelectOrMoveStop()
+			end
 		end
 	end
-
-	-- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
-	if (unitID == "player") and spellname == tostring(select(1,GetSpellInfo(5221))) then 
-		jps.isNotBehind = false
-		jps.isBehind = true
-	elseif (unitID == "player") and spellname == tostring(select(1,GetSpellInfo(8676))) then
-		jps.isNotBehind = false
-		jps.isBehind = true
+	if (jps.Class == "Druid" and jps.Spec == "Feral") or jps.Class == "Rogue" then
+		-- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
+		if (unitID == "player") and spellname == tostring(select(1,GetSpellInfo(5221))) then 
+			jps.isNotBehind = false
+			jps.isBehind = true
+		elseif (unitID == "player") and spellname == tostring(select(1,GetSpellInfo(8676))) then
+			jps.isNotBehind = false
+			jps.isBehind = true
+		end
 	end
 end)
 
