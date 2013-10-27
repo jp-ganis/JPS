@@ -1,23 +1,9 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-	Copyright (C) 2011 Jp Ganis
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
+--[[[
+@module JPS Casting
+@description
+Functions which handle casting & channeling stuff.
 ]]--
 
---------------------------
--- LOCALIZATION
 --------------------------
 local L = MyLocalizationTable
 
@@ -103,7 +89,7 @@ jps.CCSpellIds = {
 	[28272] = 	"Polymorph: Pig" ,
 	[61721] = 	"Polymorph: Rabbit" ,
 	[61780] = 	"Polymorph: Turkey" ,
-	[28271] = 	"Polymorph: Turtle" , 
+	[28271] = 	"Polymorph: Turtle" ,
 	-- Warlock
 	[5782] =	"Fear",
 	[5484] =	"Howl of Terror",
@@ -115,10 +101,10 @@ jps.CCSpellIds = {
 
 -- Enemy Casting Polymorph Target is Player
 function jps.IsCastingPoly(unit)
-	if not jps.canDPS(unit) then return false end 
+	if not jps.canDPS(unit) then return false end
 	local delay = 0
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
- 
+
 	for spellID,spellname in pairs(jps.polySpellIds) do
 		if UnitIsUnit(unit.."target", "player") == 1 and spell == tostring(select(1,GetSpellInfo(spellID))) and jps.CastTimeLeft(unit) > 0 then
 			delay = jps.CastTimeLeft(unit) - jps.Lag
@@ -129,18 +115,18 @@ function jps.IsCastingPoly(unit)
 	return false
 end
 
--- Enemy casting CrowdControl Spell 
+-- Enemy casting CrowdControl Spell
 function jps.IsCastingControl(unit)
 	if not jps.canDPS(unit) then return false end
 	local delay = 0
 	local spell, _, _, _, startTime, endTime = UnitCastingInfo(unit)
-	
+
 	for spellID,spellname in pairs(jps.CCSpellIds) do
 		if spell == tostring(select(1,GetSpellInfo(spellID))) and jps.CastTimeLeft(unit) > 0 then
 			delay = jps.CastTimeLeft(unit)
 		break end
 	end
-	
+
 	if delay > 0 then return true end
 	return false
 end
@@ -218,6 +204,41 @@ function jps.castEverySeconds(spell, seconds)
 	end
 	if jps.timedCasting[string.lower(spell)] + seconds <= GetTime() then
 		return true
+	end
+	return false
+end
+
+
+--[[[
+@function jps.cancelCasting
+@description
+Cancels spell casting on matched conditions. Useful for overhealing, execute phases, long cast's / channels. Careful: currently only "dynamic" tables are supported, this leaks currently some memory!
+@param table with spell & condition: {"pew pew healspell","jps.hp(unit) > 0.9"},{"less pew healspell","jps.hp(unit) > 0.5"}....
+]]--
+function jps.cancelCasting(hydraTable)
+	if not hydraTable or type(hydraTable) ~= "table" then
+		jps.Write("jps.cancelCasting() wrong params in rotation "..jps.Spec.."  -  "..jps.Class)
+		return false
+	end
+	for _, spellTable in pairs(hydraTable) do
+		spell = spellTable[1]
+		conditions = spellTable[2]
+		local isCasting = false
+		if jps.CastTimeLeft("player") > 0 then
+			castTimeLeft, castSpellName = jps.CastTimeLeft("player")
+			isCasting = true
+		elseif jps.ChannelTimeLeft("player") > 0 then
+			castTimeLeft, castSpellName = jps.ChannelTimeLeft("player")
+			isCasting = true
+		end
+		if isCasting == true then
+			if spell == "" or spell == nil or not spell then
+				spell = "all" -- matches every spell casted
+			end
+			if (spell == "all" or spell:lower() == castSpellName:lower()) and conditionsMatched(spell, conditions) then
+				return true
+			end
+		end
 	end
 	return false
 end
