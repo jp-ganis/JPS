@@ -311,7 +311,9 @@ hooksecurefunc("UseAction", function(...)
 			local name = select(1,GetSpellInfo(id))
 			if jps.NextSpell ~= name then
 				jps.NextSpell = name
-				if jps.Combat then write("Set",name,"for next cast.") end
+				if jps.getConfigVal("print next spells in chat") == 1 and jps.Combat then
+					write("Set",name,"for next cast.")
+				end
 			end
 		end
 	end
@@ -370,7 +372,9 @@ function jps_Combat()
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
 				jps.Cast(jps.NextSpell)
-				write("Next Spell "..jps.NextSpell.. " was casted")
+				if jps.getConfigVal("print manually casted spells") == 1 then
+					write("Next Spell "..jps.NextSpell.. " was casted")
+				end
 				jps.NextSpell = nil
 			else
 				if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
