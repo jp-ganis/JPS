@@ -40,8 +40,6 @@ dkBloodSpellTable[1] = {
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
 
-	{"Dark Command", 'jps.debuff("Gouge","Asthina") '},
-	
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
