@@ -40,6 +40,8 @@ dkBloodSpellTable[1] = {
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
 
+	{"Dark Command", 'jps.debuff("Gouge","Asthina") '},
+	
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -49,6 +51,10 @@ dkBloodSpellTable[1] = {
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+	
+	-- Spell Steal
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
 
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	

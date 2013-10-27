@@ -30,30 +30,6 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 	local twoUr = ur1 and ur2
 	local timeToDie = jps.TimeToDie("target")
 
-	-- Dark Simulacrum in raids and dungeons (+ misc. mainly PvP)
-	-- Hagara 			- Dragon Soul: 			Shattered Ice
-	-- Ragnaros			- Firelands:			Hand of Ragnaros
-	-- Ivoroc 			- Blackwing Descent:	Shadowflame, Curse of Mending
-	-- Echo of Jaina 	- End Time: 			Pyroblast
-	-- ??				- Throne of the Tides:	Chain lightning
-	-- Zanzil 			- Zul'Gurub: 			Zanzili Fire
-
-	local spellBeingCastByTarget = nil
-	local castDarkSim = false
-	-- [[ need update for MoP 
-	local DarkSimTarget = "target"
-	if UnitExists("focus") and UnitIsEnemy("focus","player") then
-		spellBeingCastByTarget = select(1,UnitCastingInfo("focus"))
-		DarkSimTarget = "focus"
-	else
-		spellBeingCastByTarget = select(1,UnitCastingInfo("target"))
-		DarkSimTarget = "target"		
-	end
-	
-	-- Spells have to be written exactly how they are spelled, case sensitive
-	if spellBeingCastByTarget == "Shattered Ice" or spellBeingCastByTarget == "Hand of Ragnaros" or spellBeingCastByTarget == "Shadowflame" or spellBeingCastByTarget == "Curse of Mending" or spellBeingCastByTarget == "Pyroblast" or spellBeingCastByTarget == "Chain Lightning" or spellBeingCastByTarget == "Zanzili Fire" or spellBeingCastByTarget == "Polymorph" or spellBeingCastByTarget == "Hex" or spellBeingCastByTarget == "Mind Control" or spellBeingCastByTarget == "Cyclone" then
-		castDarkSim = true
-	end	
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
 		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
@@ -90,7 +66,8 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		
 		-- spell steal
 		
-		{"Dark Simulacrum ", castDarkSim == true , DarkSimTarget},
+		{"Dark Simulacrum ", dk.shouldDarkSimTarget() , "target"},
+		{"Dark Simulacrum ", dk.shouldDarkSimFocus() , "focus"},
 		
 		-- CDs
 		{ "unholy frenzy" },

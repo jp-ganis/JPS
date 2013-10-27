@@ -59,7 +59,11 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus"},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-
+	
+	-- Spell Steal
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
+	
 	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
 		--CDs + Buffs
 		{ "Pillar of Frost",'jps.UseCDs'},

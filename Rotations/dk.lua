@@ -2,7 +2,27 @@
 	dk.spells = {}
 	dk.spells["frost fever"] = 55078
 	dk.spells["blood plague"] = 55095
-
+	
+	
+	dk.darkSimSpells = {
+	-- siege of orgrimmar
+	"Froststorm Bolt","Arcane Shock","Rage of the Empress","Chain Lightning",
+	-- pvp
+	"Hex","Mind Control","Cyclone","Polymorph","Pyroblast","Tranquility","Divine Hymn","Hymn of Hope","Ring of Frost","Entangling Roots"
+	}
+	function dk.shoulDarkSimUnit(unit)
+		for index,spellName in pairs(jps.darkSimSpells) do
+			if jps.IsCastingSpell(spellName, unit) then return true end
+		end
+		return false
+	end
+	function dk.shouldDarkSimTarget()
+		return jps.shoulDarkSimUnit("target")
+	end
+	function dk.shouldDarkSimFocus()
+		return jps.shoulDarkSimUnit("focus")
+	end
+	
 	function dk.canCastPlagueLeech(timeLeft)  
 		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
