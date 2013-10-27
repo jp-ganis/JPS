@@ -259,7 +259,6 @@ local spellTable = {
 -- "Oubli" 586 -- PVP -- Fantasme 108942 -- vous dissipez tous les effets affectant le déplacement sur vous-même et votre vitesse de déplacement ne peut être réduite pendant 5 s
 	{ 586, isInBG and IsSpellKnown(108942) and playerControlled and (jps.useTrinket(1)== nil) , player , "Oubli_Aggro" },
 -- "Dispersion" 47585
-	{ 47585, jps.cooldown(47585) == 0 and (player_Aggro + player_IsInterrupt > 0) and (playerhealth_pct < 0.40) , player , "Dispersion_Aggro" },
 	{ 47585, jps.cooldown(47585) == 0 and (UnitPower (player,0)/UnitPowerMax (player,0) < 0.50) , player , "Dispersion_Mana" },
 -- "Semblance spectrale" 112833 "Spectral Guise"
 	{ 112833, jps.cooldown(112833) == 0 and (player_Aggro + player_IsInterrupt > 0) and (playerhealth_pct < 0.40) and (jps.cooldown(586) ~= 0) and (jps.cooldown(47585) ~= 0) , player ,"SPECTRAL GUISE" },
@@ -321,7 +320,6 @@ local spellTable_moving =
 -- "Oubli" 586 -- PVP -- Fantasme 108942 -- vous dissipez tous les effets affectant le déplacement sur vous-même et votre vitesse de déplacement ne peut être réduite pendant 5 s
 	{ 586, isInBG and IsSpellKnown(108942) and playerControlled and (jps.useTrinket(1)== nil) , player , "Oubli_Aggro" },
 -- "Dispersion" 47585
-	{ 47585, jps.cooldown(47585) == 0 and (player_Aggro + player_IsInterrupt > 0) and (playerhealth_pct < 0.40) , player , "Dispersion_Aggro" },
 	{ 47585, jps.cooldown(47585) == 0 and (UnitPower (player,0)/UnitPowerMax (player,0) < 0.50) , player , "Dispersion_Mana" },
 -- "Semblance spectrale" 112833 "Spectral Guise"
 	{ 112833, jps.cooldown(112833) == 0 and (player_Aggro + player_IsInterrupt > 0) and (playerhealth_pct < 0.40) and (jps.cooldown(586) ~= 0) and (jps.cooldown(47585) ~= 0) , player ,"SPECTRAL GUISE" },
