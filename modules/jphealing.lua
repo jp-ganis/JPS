@@ -196,7 +196,9 @@ function jps.UnitSubGroupInRaid(unit) -- UnitNAME or raidn
 	local subgroup = 1 
 	if not IsInRaid() and IsInGroup() then return subgroup end
 	if IsInRaid() then
-		subgroup = math.ceil(UnitInRaid(unit)/5)
+		if UnitInRaid(unit) ~= nil then
+			subgroup = math.ceil(UnitInRaid(unit)/5)
+		end
 	end
 	return subgroup
 end
