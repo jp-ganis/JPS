@@ -2,8 +2,8 @@
 	dk.spells = {}
 	dk.spells["frost fever"] = 55078
 	dk.spells["blood plague"] = 55095
-	
-	
+
+
 	dk.darkSimSpells = {
 	-- siege of orgrimmar
 	"Froststorm Bolt","Arcane Shock","Rage of the Empress","Chain Lightning",
@@ -11,19 +11,19 @@
 	"Hex","Mind Control","Cyclone","Polymorph","Pyroblast","Tranquility","Divine Hymn","Hymn of Hope","Ring of Frost","Entangling Roots"
 	}
 	function dk.shoulDarkSimUnit(unit)
-		for index,spellName in pairs(jps.darkSimSpells) do
+		for index,spellName in pairs(dk.darkSimSpells) do
 			if jps.IsCastingSpell(spellName, unit) then return true end
 		end
 		return false
 	end
 	function dk.shouldDarkSimTarget()
-		return jps.shoulDarkSimUnit("target")
+		return dk.shoulDarkSimUnit("target")
 	end
 	function dk.shouldDarkSimFocus()
-		return jps.shoulDarkSimUnit("focus")
+		return dk.shoulDarkSimUnit("focus")
 	end
-	
-	function dk.canCastPlagueLeech(timeLeft)  
+
+	function dk.canCastPlagueLeech(timeLeft)
 		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
@@ -33,8 +33,8 @@
 		end
 		return false
 	end
-	
-	function dk.updateRunes() 
+
+	function dk.updateRunes()
 		dk.dr1 = select(3,GetRuneCooldown(1))
 		dk.dr2 = select(3,GetRuneCooldown(2))
 		dk.ur1 = select(3,GetRuneCooldown(3))
@@ -48,7 +48,7 @@
 		dk.oneUr = dk.ur1 or dk.ur2
 		dk.twoUr = dk.ur1 and dk.ur2
 	end
-	
+
 	function dk.hasGhoul()
 		if jps.Spec == "Unholy" then
 			if UnitExists("pet") == nil then return false end
@@ -57,7 +57,7 @@
 		end
 		return true
 	end
-	
+
 	function dk.rune(name)
 		dk.updateRunes()
 		if dk[name] ~= nil then
@@ -66,7 +66,7 @@
 		print(" there is no rune with the name: "..name)
 		return 0
 	end
-	
+
 	function dk.totalAttackPower()
 		local base, pos, neg = UnitAttackPower("player")
 		return base + pos + neg
@@ -94,12 +94,12 @@
 				if jps.Spec == "Frost" and dotID == 55078 then  shouldRefresh = true end
 			end
 		end
-		if shouldRefresh == true then 
+		if shouldRefresh == true then
 			dk.currentDotStats[dotID].isStrong = true
 		end
 		return shouldRefresh
 	end
-	
+
 	function dk.shouldExtendDot(dotName, unit)
 		if not unit then unit = "target" end
 		if not jps.buff(dotName, unit) then return false end -- we can't extend dots which are not available
@@ -138,7 +138,7 @@
 		local dotDmg = select(15, ...)
 		local spellID = select(12, ...)
 		local spellName = select(13, ...)
-		
+
 		if  not eventtype or srcName ~= "Sudos" then return end
 		if spellID ~= dk.spells["frost fever"] and spellID ~= dk.spells["blood plague"] then return end
 		if eventtype == "SPELL_AURA_APPLIED" then
@@ -162,7 +162,7 @@
 	end
 	jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", dk.logDotDmg)
 
-	
+
 	function addUIButton(name, posX, posY, onClick, icon)
 		GUIicon_btn = icon
 		btn = CreateFrame("Button", name, jpsIcon)
@@ -182,10 +182,10 @@
 		btn.border:SetTexture(jps.GUIborder)
 		btn.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
 		btn.shadow:SetParent(ToggleBS)
-		btn.shadow:SetPoint('TOPRIGHT', btn.border, 4.5, 4.5) 
-		btn.shadow:SetPoint('BOTTOMLEFT', btn.border, -4.5, -4.5) 
+		btn.shadow:SetPoint('TOPRIGHT', btn.border, 4.5, 4.5)
+		btn.shadow:SetPoint('BOTTOMLEFT', btn.border, -4.5, -4.5)
 		btn.shadow:SetTexture(jps.GUIshadow)
-		btn.shadow:SetVertexColor(0, 0, 0, 0.85)  
+		btn.shadow:SetVertexColor(0, 0, 0, 0.85)
 		btn:SetScript("OnClick", onClick)
 		btn:Show()
 		return btn
@@ -195,4 +195,4 @@
 			name:Hide()
 		end
 	end
-	
+
