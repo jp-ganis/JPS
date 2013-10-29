@@ -103,7 +103,7 @@ jps.timedCasting = {}
 jps.Configged = false
 jps_variablesLoaded = false
 jpsName = select(1,UnitName("player"))
-jpsRealm = GetCVar("realmName")
+jpsRealm = GetRealmName()
 jps.ExtraButtons = true
 jps.ResetDB = false
 
