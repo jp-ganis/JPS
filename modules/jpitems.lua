@@ -99,10 +99,17 @@ function jps.trinketUse(trinket)
 	return parseTrinketText(trinket, L["Use"])
 end
 
-jps.itemStringTableManaTrinket = {L["Use"], "spirit"}
+jps.validTrinketStringsMana = {
+	{L["Use"], "Spirit"},
+	{L["Use"], "Mana"},
+}
 function jps.isManaRegTrinket(trinket)
-	local result = parseTrinketText(trinket, jps.itemStringTableManaTrinket ) or parseTrinketText(trinket, {L["Use"], "mana"}) 
-	return result
+	for k,valTable in pairs(jps.validTrinketStringsMana) do 
+		if parseTrinketText(trinket, valTable) == true then
+			return true
+		end
+	end
+	return false
 end
 
 function jps.trinketIncreasesHealth(trinket)
