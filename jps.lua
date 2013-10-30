@@ -309,7 +309,7 @@ hooksecurefunc("UseAction", function(...)
 		local stype,id,_ = GetActionInfo(select(1, ...))
 		if stype == "spell" then
 			local name = select(1,GetSpellInfo(id))
-			if jps.NextSpell ~= name then
+			if jps.NextSpell ~= name  and not jps.shouldSpellBeIgnored(name) then
 				jps.NextSpell = name
 				if jps.getConfigVal("print next spells in chat") == 1 and jps.Combat then
 					write("Set",name,"for next cast.")

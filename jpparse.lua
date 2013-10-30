@@ -231,11 +231,16 @@ end
 
 jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
 
-jps.doNotRecast = {
-	{6201, 1}, -- warlock create healthstone
-	{111400, 1},  -- warlock burning rush
-	{109132, 1} -- monk roll
+-- In order to avoid double casting spells that you sometimes will use but that have no cooldown,
+-- we need to maintain an ignore list. For example, when a monk rolls, we shouldn't queue up another roll
+-- and take them over the side of a cliff. Or if a mage initiates combat with Living Bomb, etc.
+jps.UserInitiatedSpellsToIgnore = {
+	109132, -- monk roll
+	137639, -- monk storm earth fire
+	115450, -- monk detox
+	111400, -- warlock burning rush
 }
+
 
 function jps.spellNeedSelect(spell)
 	local spellname = nil
@@ -254,8 +259,6 @@ function jps.Cast(spell) -- "number" "string"
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 
 	if jps.Target == nil then jps.Target = "target" end
-
-	if jps.isRecast(spell) and jps.isBlacklistedForRecast(spell) then -- never recast certain spells in a given timeframe (jps.doNotRecast table)
 		return false
 	end
 
@@ -290,21 +293,19 @@ function jps.isRecast(spell,unit)
 	return jps.LastCast==spellname and UnitGUID(unit)==jps.LastTargetGUID
 end
 
-
-function jps.isBlacklistedForRecast(spell)
+function jps.shouldSpellBeIgnored(spell)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 
-	for i, spellTable in ipairs (jps.doNotRecast) do
-		local lastTimeCasted = jps.timedCasting[string.lower(spell)]
-		local notRecastForSeconds = spellTable[2]
-		local spellNoRecast = spellTable[1]
-		if lastTimeCasted then -- when we never casted this before, no more checks are required
-			if spellname == spellNoRecast and jps.timedCasting[string.lower(spellname)] + notRecastForSeconds <= GetTime() then return true end
+	local result = false
+	for _, v in pairs(jps.UserInitiatedSpellsToIgnore) do
+		if spellname == string.lower(tostring(select(1,GetSpellInfo(v)))) then
+			return true
 		end
 	end
 	return false
 end
+
 ----------------------
 -- DEBUG MODE
 ----------------------`
