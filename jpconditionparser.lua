@@ -42,9 +42,6 @@ end
 
 local function fnParseMacro(macro, condition, target)
     if condition then
-        -- Workaround for TargetUnit is still PROTECTED despite goblin active
-        local changeTargets = target ~= "target" and jps.UnitExists(target)
-        if changeTargets then jps.Macro("/target "..target) end
 
         if type(macro) == "string" then
             local macroSpell = macro
@@ -68,7 +65,6 @@ local function fnParseMacro(macro, condition, target)
             jps.Macro("/cast " .. tostring(GetSpellInfo(macro)))
         end
 
-        if changeTargets and not jps.Casting then jps.Macro("/targetlasttarget") end
     end
 end
 
@@ -133,7 +129,7 @@ function parseStaticSpellTable( hydraTable )
         local target = nil
         local message = fnMessageEval(spellTable[4])
         if jps.Message ~= message then jps.Message = message end
-        
+
         if type(spellTable[1]) == "table" and spellTable[1][1] == "macro" then
             fnParseMacro(spellTable[1][2], fnConditionEval(spellTable[2]), fnTargetEval(spellTable[3]))
         -- Nested Table
