@@ -9,7 +9,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -158,20 +158,20 @@ function jps.detectSpec()
 	jps.Level = Ternary(jps.Level > 1, jps.Level, UnitLevel("player"))
 	if jps.Class then
 		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
-		if not id then 
-			if jps.Level < 10 then 
-				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
+		if not id then
+			if jps.Level < 10 then
+				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down")
 				jps.Enabled = false
 				jps.detectSpecDisabled = true
 			else
-				write("jps couldn't find your talent tree... One second please.") 
+				write("jps couldn't find your talent tree... One second please.")
 			end
 		else
 		-- local id, name, description, icon, background, role = GetSpecializationInfo(specIndex [, isInspect [, isPet]])
 			local _,name,_,_,_,_ = GetSpecializationInfo(id) -- patch 5.0.4 remplace GetTalentTabInfo( id )
 			if name then
 				jps.Spec = name
-				if jps.Spec then 
+				if jps.Spec then
 					write("Online for your",jps.Spec,jps.Class)
 				end
 			end
@@ -180,7 +180,7 @@ function jps.detectSpec()
    if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
 	   jps.isTank = true
-	   jps.gui_toggleDef(true) 
+	   jps.gui_toggleDef(true)
 	end
 	jps.HarmSpell = jps.GetHarmfulSpell()
 	--write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
@@ -243,10 +243,10 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "debug" and rest ~="" then
 		if tonumber(rest) then
 			jps.DebugLevel = rest
-			write("Debug level set to",tostring(rest))		
+			write("Debug level set to",tostring(rest))
 		else
 			jps.DebugLevel = 1
-			write("Debug level set to 1")		
+			write("Debug level set to 1")
 		end
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
@@ -291,7 +291,7 @@ function SlashCmdList.jps(cmd, editbox)
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
-		else 
+		else
 			print "jps Disabled - Waiting on Standby."
 		end
 	end
@@ -323,13 +323,13 @@ end)
 -- COMBAT
 ------------------------
 
-function jps_Combat() 
+function jps_Combat()
 	-- Check for the Rotation
 	if not jps.Class then return end
 	if not jps.activeRotation() then
 		write("JPS does not have a rotation for your",jps.Spec,jps.Class)
 		jps.Enabled = false
-		return 
+		return
 	end
 
 	-- STOP Combat
@@ -337,25 +337,25 @@ function jps_Combat()
 
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
-	
+
 	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
-	elseif (jps.CastTimeLeft() - latency) > 0 then 
+	elseif (jps.CastTimeLeft() - latency) > 0 then
 		jps.Casting = true
 	else
 		jps.Casting = false
 	end
-	
+
 	-- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	-- in case you want to play only with /jps pew the RaidStatus table will be updated
 	if not jps.Enabled then jps.SortRaidStatus() end
-	
-	-- Check spell usability 
+
+	-- Check spell usability
 	if string.len(jps.customRotationFunc) > 10 then
-		jps.ThisCast,jps.Target = jps.customRotation() 
+		jps.ThisCast,jps.Target = jps.customRotation()
 	else
 		jps.ThisCast,jps.Target = jps.activeRotation().getSpell() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
 	end
@@ -363,11 +363,11 @@ function jps_Combat()
 		jps.firstInitializingLoop = false
 		return nil
 	end
-	
+
 	-- Movement
 	jps.Moving = GetUnitSpeed("player") > 0
 	jps.MovingTarget = GetUnitSpeed("target") > 0
-	
+
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
@@ -384,12 +384,12 @@ function jps_Combat()
 			jps.Cast(jps.ThisCast)
 		end
 	end
-	
+
 	-- Return spellcast.
 	return jps.ThisCast,jps.Target
 end
 
-function jps.addTofunctionQueue(fn,queueName) 
+function jps.addTofunctionQueue(fn,queueName)
 	if not jps.functionQueues[queueName] then
 		jps.functionQueues[queueName] = {}
 	end
@@ -421,6 +421,6 @@ function jps.runFunctionQueue(queueName)
 			jps.functionQueues[queueName] = nil
 			return true
 		end
-	end	
+	end
 	return false
 end
