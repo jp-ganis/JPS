@@ -681,122 +681,6 @@ local spellTable_moving =
 end, "Disc Priest PvE", true, false)
 
 
---[[ commented out, leaks memoery & drops fps !!! 
--------------------------
--- STATIC
--------------------------
-
-jps.registerRotation("PRIEST","DISCIPLINE",function()
-
-priest.updateRaidStatus (0.75, 114908, priest.jpsTank())
-priest.updateRaidTarget(priest.jpsTank())
-
-local parse_shell =
-	{
-	--TANK not Buff Spirit Shell 114908
-		-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
-		{ 2061, 'jps.buff(114255)' , priest.jpsTank , "Carapace_Soins Rapides_Waves_"..priest.jpsTank() },
-		-- POH
-		{ 596, '(jps.LastCast~=priest.Spell.PrayerofHealing) and jps.canHeal(priest.RaidStatus.ShellTarget)' , priest.RaidStatus.ShellTarget , "Carapace_POH_Target_" },
-		-- "Soins supérieurs" 2060
-		{ 2060, '(not jps.buffId(114908,priest.jpsTank())) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Carapace_NoBuff_Soins Sup_"..priest.jpsTank() },		
-	--TANK Buff Spirit Shell 114908
-		-- "Soins" 2050
-		{ 2050, 'jps.buffId(114908,priest.jpsTank()) and (UnitGetTotalAbsorbs(priest.jpsTank()) > 40000)' , priest.jpsTank , "Carapace_Buff_Soins_"..priest.jpsTank() },
-		-- "Soins supérieurs" 2060
-		{ 2060, 'jps.buffId(114908,priest.jpsTank()) and (UnitGetTotalAbsorbs(priest.jpsTank()) < priest.Spell.average_flashheal)' , priest.jpsTank , "Carapace_Buff_Soins Sup_"..priest.jpsTank() },
-		-- "Soins" 2050
-		{ 2050, 'jps.buffId(114908,priest.jpsTank())' , priest.jpsTank , "Carapace_Buff_SoinsAbs_"..priest.jpsTank() },
-	}
-
-local manaspellTable = {
-	{ 527, 'jps.MagicDispel(priest.jpsTank())' , priest.jpsTank , "|cFFFF0000Mana_dispelMagic_"..priest.jpsTank() },
-	{ "nested", 'jps.buffId(109964) and (jps.hpAbs(priest.jpsTank()) > 0.75)' , parse_shell },
-	{ 2061, 'jps.buff(114255) and (jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank , "Mana_Soins Rapides_Waves_"..priest.jpsTank() },
-	{ 47540, '(jps.hpAbs(priest.jpsTank()) < 0.95)' , priest.jpsTank(), "Mana_Penance_"..priest.jpsTank() },
-	{ 17, '(jps.checkTimer("Shield") == 0) and not jps.debuff(6788,priest.jpsTank()) and not jps.buff(17,priest.jpsTank())' , priest.jpsTank , "Mana_Shield_"..priest.jpsTank() },
-	{ 33076, 'not jps.buffTracker(33076) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Mana_Mending_"..priest.jpsTank() },
-	{ 2050, 'priest.updateRaidTarget(priest.jpsTank()) and (jps.buffStacks(77613,priest.jpsTank()) < 3)' , priest.jpsTank , "Mana_Soins_"..priest.jpsTank() },
-	{ 14914, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget , "Mana_Fire_"..priest.rangedTarget() },
-	{ 2050, '(jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank , "Mana_Soins_"..priest.jpsTank() },
-	{ 109964, 'priest.updateRaidTarget(priest.jpsTank()) and (jps.hpAbs(priest.jpsTank()) > 0.95)' , priest.jpsTank , "|cff0070ddCarapace_"..priest.jpsTank() },
-	{ 585, '(jps.hpAbs(priest.jpsTank(),"abs") < priest.Spell.average_flashheal) and jps.canDPS(priest.rangedTarget())' , priest.rangedTarget , "Mana_Chatiment_"..priest.rangedTarget() },
-}
-
-local parsePOH = {
-		-- CancelUnitBuff(player,SpiritShell)
-		{ {"macro","/cancelaura "..priest.Spell.SpiritShell,"player"}, "jps.buffId(109964)" , "player" , "POH_Macro_CancelAura_Carapace_" }, 
-		{ 17, '(jps.LastCast==PrayerofHealing) and not jps.buff(59889,"player") and not jps.debuff(6788,priest.jpsTank()) and not jps.buff(17,priest.jpsTank())' , priest.jpsTank , "Shield_POH_"..priest.jpsTank() },	-- "Sursis" 59889 "Borrowed"
-		{ 17, '(jps.LastCast==PrayerofHealing) and not jps.buff(59889,"player")  and not jps.buff(17,"player") and not jps.debuff(6788,"player")' , "player" , "Shield_POH_".."player" }, -- si le jps_TANK est debuff Ame affaiblie et pas jps.buff(59889,player)
-		{ 596, 'priest.RaidStatus.groupToHealRaid and jps.canHeal(priest.RaidStatus.POHtarget)' , priest.RaidStatus.POHtarget , "POH_Raid_" }, -- Raid
-		{ 596, 'IsInGroup() and not IsInRaid()' , priest.jpsTank , "POH_Party_"..priest.jpsTank() }, -- Party
-}
-
-local spellTable = {
-	-- "Suppression de la douleur" 33206
-	{ 33206, '(jps.hpAbs(priest.jpsTank()) < 0.35)' , priest.jpsTank , "Emergency_Pain_"..priest.jpsTank() },
-	-- "Power Word: Shield" 17 -- Ame affaiblie 6788 Extaxe (Rapture) regen mana 150% esprit toutes les 12 sec
-	{ 17, (jps.checkTimer("Shield") == 0) and not jps.debuff(6788,priest.jpsTank()) and not jps.buff(17,priest.jpsTank()) , priest.jpsTank , "Shield_"..priest.jpsTank() },
-	-- Macro
-	--{ {"macro","/cast ".."Soins"}, 'jps.checkTimer("Shield") > 6' , priest.jpsTank , "TestMacro_"..priest.jpsTank() },
-	-- "Pénitence" 47540
-	{ 47540, '(jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank(), "Penance_"..priest.jpsTank() },
-	-- "Soins supérieurs" 2060 -- "Sursis" 59889 "Borrowed"
-	{ 2060, 'jps.hpAbs(priest.jpsTank()) > 0.35 and jps.hpAbs(priest.jpsTank()) < 0.75 and jps.buff(59889)' , priest.jpsTank , "Soins Sup_Borrowed_"..priest.jpsTank() },
-	-- "Soins rapides" 2061 "From Darkness, Comes Light" 109186 gives buff -- "Vague de Lumière" 114255 "Surge of Light"
-	{ 2061, 'jps.buff(114255) and (jps.buffDuration(114255) < 4)' , priest.jpsTank , "SurgeofLight_Duration_"..priest.jpsTank() },
-	{ 2061, 'jps.buff(114255) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank , "SurgeofLight_"..priest.jpsTank() },
-	{ 2061, 'jps.buffId(89485) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank },
-	{ 2061, 'jps.buffId(89485) and not jps.buff(priest.Spell.DivineAegis,priest.jpsTank())' , priest.jpsTank },
-	{ 2061, 'jps.hpAbs(priest.jpsTank()) < 0.35' , priest.jpsTank , "Priority" },
-	-- "Prière de guérison" 33076
-	{ 33076, '(UnitGetTotalAbsorbs(priest.jpsTank()) == 0) and not jps.buff(33076,priest.jpsTank()) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Mending_"..priest.jpsTank() },
-	{ 33076, 'not jps.buffTracker(33076) and priest.updateRaidTarget(priest.jpsTank())' , priest.jpsTank , "Mending_"..priest.jpsTank() },
-	-- "Cascade" 121135 "Escalade"
-	{ 121135, '(jps.hpAbs(priest.jpsTank()) < 0.75) and (UnitIsUnit(priest.jpsTank(),"player")~=1) and priest.RaidStatus.countInRaid > 2' , priest.jpsTank , "Cascade_"..priest.jpsTank() },
-	
-	-- Inner Focus 89485 "Focalisation intérieure" --  96267 Immune to Silence, Interrupt and Dispel effects 5 seconds remaining
-	{ 89485, 'UnitAffectingCombat("player")==1 and (jps.cooldown(89485) == 0)' , "player" , "Foca_" },
-	-- "Infusion de puissance" 10060 
-	{ 10060, '(jps.hpAbs(priest.jpsTank()) < 0.75) and (jps.cooldown(10060) == 0)' , "player" , "Puissance_" },
-	-- ARCHANGE "Archange" 81700 -- "Evangélisme" 81661 buffStacks == 5
-	{ 81700, '(jps.hpAbs(priest.jpsTank()) < 0.75) and (jps.buffStacks(81661) == 5)' , "player" , "ARCHANGE_" },
-	
-	-- "Prière de soins" 596
-	{ "nested", 'priest.RaidStatus.groupToHealParty or priest.RaidStatus.groupToHealRaid' , parsePOH },
-	
-	-- "Flammes sacrées" 14914 -- "Evangélisme" 81661
-	{ 14914, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget },
-	-- "Soins de lien" 32546 -- Glyph of Binding Heal 
-	{ 32546 , '( UnitIsUnit(priest.jpsTank(),"player")~=1 and (jps.LastCast ~= priest.Spell.BindingHeal) and jps.hpAbs(priest.jpsTank()) < 0.55) and jps.hpAbs("player") > priest.Spell.average_flashheal', priest.jpsTank , "Lien_"..priest.jpsTank() },
-	-- "Don des naaru" 59544
-	{ 59544, '(select(2,GetSpellBookItemInfo(priest.Spell.NaaruGift))~=nil) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' ,  priest.jpsTank , "Naaru_"..priest.jpsTank() },
-	-- "Rénovation" 139
-	{ 139, 'not jps.buff(139, priest.jpsTank()) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank , "Renew_"..priest.jpsTank() },
-	{ 139, 'not jps.buff(139, priest.jpsTank()) and jps.debuff(6788,priest.jpsTank()) and (jps.cooldown(33076) > 0)' , priest.jpsTank , "Renew_"..priest.jpsTank() }, -- debuff Ame affaiblie and Mending on CD
-	-- "Soins" 2050 -- Grâce 77613 
-	{ 2050, 'priest.updateRaidTarget(priest.jpsTank()) and (jps.hpAbs(priest.jpsTank()) > 0.75) and jps.buffStacks(priest.Spell.Grace,priest.jpsTank()) < 3' , priest.jpsTank , "SoinsStacks_"..priest.jpsTank() },
-	{ 2050, 'priest.updateRaidTarget(priest.jpsTank()) and (jps.hpAbs(priest.jpsTank()) > 0.75) and jps.buffStacks(77613,priest.jpsTank()) < 3' , priest.jpsTank , "SoinsStacksGrace_"..priest.jpsTank() },
-	{ 2050, '(jps.hpAbs(priest.jpsTank()) > 0.75) and (jps.hpAbs(priest.jpsTank(),"abs") > priest.Spell.average_flashheal)' , priest.jpsTank , "Soins_"..priest.jpsTank() },
-	-- "Soins supérieurs" 2060
-	{ 2060, 'jps.hpAbs(priest.jpsTank()) < 0.75' , priest.jpsTank , "Soins Sup_"..priest.jpsTank() },
-	-- "Feu intérieur" 588
-	{ 588, 'not jps.buff(588,"player") and not jps.buff(73413,"player")' , "player" }, -- "Volonté intérieure" 73413
-	-- "Châtiment" 585	
-	{ 585, 'jps.canDPS(priest.rangedTarget())' , priest.rangedTarget },
-	
-}
-
-	local spell = nil
-	local target = nil
-	if (jps.hpAbs(priest.jpsTank()) > 0.75) and not jps.FaceTarget then
-		spell, target = parseStaticSpellTable(manaspellTable)
-	else
-		spell, target = parseStaticSpellTable(spellTable)
-	end  
-	return spell,target
-end, "PvE Static", true, false)
-]]--
 
 -- "Leap of Faith" -- "Saut de foi" 
 -- "Mass Dispel"  -- Dissipation de masse 32375
@@ -834,3 +718,273 @@ end, "PvE Static", true, false)
 -- "Holy Word: Serenity" -- Mot sacré : Sérénité SpellID 88684
 -- "Power Word: Shield" -- Mot de pouvoir : Bouclier 
 -- "Ame affaiblie" -- Weakened Soul
+
+local priestTest = {}
+
+priestTest.arcaneTorrent = 28730;
+priestTest.bloodFury = 33702;
+priestTest.bloodlust = 2825;	
+priestTest.borrowedTime = 59889;
+priestTest.cascade = 121135;
+priestTest.divineStar = 110744;
+priestTest.flashHeal = 2061;
+priestTest.grace = 77613;
+priestTest.greaterHeal = 2060;
+priestTest.halo = 120517;
+priestTest.archangel = 81700;
+priestTest.evangelism = 81662;
+priestTest.hymnOfHope = 64901;
+priestTest.innerFocus = 89485;
+priestTest.jadeSerpentPotion = 105702;
+priestTest.manaPotion = 76098;
+priestTest.mindbender = 123040;
+priestTest.powerInfusion = 10060;
+priestTest.powerWordShield = 17;
+priestTest.powerWordSolace = 129250;
+priestTest.rapture = 47536;
+priestTest.renew = 139; 
+priestTest.shadowWordDeath = 32379;
+priestTest.smite = 585;
+priestTest.surgeOfLight = 114255;
+priestTest.twistOfFate = 109142; 
+priestTest.magicDispel = 527;
+priestTest.spiritShell = 114908;
+priestTest.prayerOfHealing = 596;
+priestTest.prayerOfMending = 33076;
+priestTest.divineAegis = 47753;
+priestTest.bindingHeal = 32546;
+priestTest.naaruGift = 59544;
+priestTest.desperatePrayer = 19236;
+priestTest.innerWill = 73413;
+priestTest.innerFire = 588;
+priestTest.penance = 47540;
+priestTest.shadowfiend = 34433;
+priestTest.spiritShell = 114908;
+priestTest.voidShift = 108968;
+priestTest.painsup = 33206;
+priestTest.holyFire = 14914;
+priestTest.heal = 2050;
+priestTest.disc = {}
+priestTest.disc.interruptTable = {{"Flash Heal", 0.75, false}, {"Greater Heal", 0.93,false },{ "Heal", 0.98,false }, {"prayer of healing",0.95,true}}
+
+
+function priest.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, lowestImportantHP )
+	local healTargetHP = jps.hp(jps.LastTarget)
+	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
+	if spellCasting == nil then return false end
+	if not jps.canHeal(jps.LastTarget) then return true end
+
+	for key, healSpellTable  in pairs(spellsToCheck) do
+		local breakpoint = healSpellTable[2]
+		local spellName = healSpellTable[1]
+		local aoe = healSpellTable[3]
+		if spellName == spellCasting then
+			if aoe == false then
+				if healTargetHP > breakpoint then
+					print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
+					SpellStopCasting()
+				end
+				if healTargetHP > lowestImportantHP and lowestImportantHP < 0.5 then
+					print("interrupt "..spellName.." @ unit "..jps.LastTarget.. " - important unit is critcal");
+					SpellStopCasting()
+				end
+			else
+				if (avgHP > breakpoint or unitsBelow70 <= 2) and not jps.buff(114908) then --114908 = spritshell
+					SpellStopCasting()
+				end
+			end
+		end
+	end
+end
+
+jps.registerRotation("PRIEST","DISCIPLINE",function()
+	
+	
+	priestTest.disc.unitsBelow70 = 0
+	priestTest.disc.unitsBelow50 = 0
+	priestTest.disc.unitsBelow30 = 0
+	priestTest.disc.sumHP = 0
+	priestTest.disc.avgHP = 1
+	priestTest.disc.units = 0
+	for unit,index in pairs(jps.RaidStatus) do
+		if jps.canHeal(unit) then
+			local thisHP = jps.hp(unit)
+			priestTest.disc.units = priestTest.disc.units+1
+			priestTest.disc.avgHP = priestTest.disc.avgHP+thisHP
+			if thisHP < 0.3 then priestTest.disc.unitsBelow30 = priestTest.disc.unitsBelow30 + 1 end
+			if thisHP < 0.5 then priestTest.disc.unitsBelow50 = priestTest.disc.unitsBelow50 + 1 end
+			if thisHP < 0.7 then priestTest.disc.unitsBelow70 = priestTest.disc.unitsBelow70 + 1 end
+		end
+	end
+	if priestTest.disc.units >= 1 then
+		priestTest.disc.avgHP = priestTest.disc.sumHP / priestTest.disc.units
+	end
+	
+	priestTest.disc.lowestUnit = jps.LowestInRaidStatus()
+	priestTest.disc.lowestUnitHP = jps.hp(priestTest.disc.lowestUnit)
+	priestTest.disc.aggroTank = jps.findMeAggroTank()
+	priestTest.disc.tanks = jps.findTanksInRaid()
+	priestTest.disc.importantUnits = jps.findTanksInRaid() -- units which need "more" heal"
+	priestTest.disc.shouldHeal = false
+	priestTest.disc.lowestImportantUnit = nil
+	priestTest.disc.lowestImportantUnitHP = 1
+	
+	if jps.canHeal("target") then table.insert(priestTest.disc.importantUnits,"target") end
+	if jps.canHeal("focus") then table.insert(priestTest.disc.importantUnits,"focus") end
+	if jps.canHeal("mouseover") then table.insert(priestTest.disc.importantUnits,"mouseover") end
+	
+	for unitName, _ in ipairs(priestTest.disc.importantUnits) do
+		local thisHP = jps.hp(unitName)
+		if jps.canHeal(unitName) and thisHP < priestTest.disc.lowestImportantUnitHP then
+			priestTest.disc.lowestImportantUnitHP = thisHP
+			priestTest.disc.lowestImportantUnit = unitName
+		end
+	end
+	priest.shouldInterruptCasting(priestTest.disc.interruptTable,priestTest.disc.avgHP,  priestTest.disc.unitsBelow70, priestTest.disc.lowestImportantUnitHP)
+	
+	if priestTest.disc.lowestImportantUnitHP < 1 or priestTest.disc.lowestUnitHP <1 then
+		priestTest.disc.shouldHeal = true
+	end 
+	
+	local dispelTable = {priestTest.magicDispel}
+	function priestTest.disc.dispel()
+		local cleanseTarget = nil
+		if jps.DispelMagicTarget() then
+			cleanseTarget = jps.DispelMagicTarget()
+		elseif jps.DispelPoisonTarget() then
+			cleanseTarget = jps.DispelPoisonTarget()
+		end
+		dispelTable[2] = cleanseTarget ~= nil
+		dispelTable[3] = cleanseTarget
+		return dispelTable
+	end
+	
+	priestTest.disc.rangedTarget = nil
+	if jps.canDPS("target") then
+		priestTest.disc.rangedTarget = "target"
+	elseif jps.canDPS("focustarget") then
+		priestTest.disc.rangedTarget = "focustarget"
+	elseif jps.canDPS("targettarget") then
+		priestTest.disc.rangedTarget = "targettarget"
+	elseif jps.canDPS("mouseover") then
+		priestTest.disc.rangedTarget = "mouseover"
+	elseif jps.canDPS("boss1") then
+		priestTest.disc.rangedTarget = "boss1"
+	elseif jps.canDPS("boss2") then
+		priestTest.disc.rangedTarget = "boss2"
+	elseif jps.canDPS("boss3") then
+		priestTest.disc.rangedTarget = "boss3"
+	end
+	
+	local spellTableTest = {
+		-- buffs
+		{priestTest.innerFire, not jps.buff(priestTest.innerWill) and not jps.buff(priestTest.innerFire), 'player'},
+		
+		-- cooldowns
+		{"nested", priestTest.disc.shouldHeal == true, 
+			{
+				{priestTest.innerFocus, jps.UseCDs and priestTest.disc.lowestUnitHP < 0.7},
+				{priestTest.archangel, not jps.buff(priestTest.evangelism) and jps.buffStacks(priestTest.evangelism) == 5 and jps.UseCDs},
+				{ jps.getDPSRacial(),jps.UseCDs},
+				-- Requires engineerins
+				{ jps.useSynapseSprings(),jps.useSynapseSprings() ~= "" and jps.UseCDs},
+				-- Requires herbalism
+				{ "Lifeblood", jps.UseCDs},
+			}
+		},
+	
+		-- mana
+		{priestTest.mindbender, jps.mana() < 0.70 and jps.UseCds, priestTest.disc.rangedTarget},
+		{priestTest.shadowfiend, jps.mana() < 0.60 and jps.UseCds, priestTest.disc.rangedTarget},
+		{jps.useTrinket(0), jps.mana() < 0.8 and jps.UseCds and jps.isManaRegTrinket(0)},
+		{jps.useTrinket(1), jps.mana() < 0.8 and jps.UseCds and jps.isManaRegTrinket(1)},
+		{jps.useBagItem(priestTest.manaPotion), jps.mana() < 0.8 and jps.UseCds},
+	
+		-- dispel
+		priestTest.disc.dispel,
+	
+		-- moving
+		{'nested' , jps.Moving, 
+			{
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and jps.mana() > 0.8, "player"},
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and jps.castEverySeconds(10) and priestTest.disc.lowestUnitHP < 0.90, priestTest.disc.lowestUnit},
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and jps.buff(priestTest.rapture) and priestTest.disc.lowestUnitHP < 0.90, priestTest.disc.lowestUnit},
+				{priestTest.powerWordShield, priestTest.disc.lowestUnitHP < 0.4, priestTest.disc.lowestUnit},
+				{priestTest.renew, not jps.buff(priestTest.disc.lowestUnit) and priestTest.disc.lowestUnitHP < 0.8, priestTest.disc.lowestUnit },
+				{priestTest.penance, jps.glyphInfo() and priestTest.disc.lowestUnitHP < 0.7, priestTest.disc.lowestUnit },
+				{priestTest.cascade, priestTest.disc.lowestUnitHP < 0.6, priestTest.disc.lowestUnit },
+			},
+	
+		},
+	
+		-- spirit shell stacking
+		{'nested' , jps.buff(priestTest.spiritShell),
+			{
+				{priestTest.cascade, "onCD", priestTest.disc.lowestUnit},
+				{priestTest.divineStar, "onCD", priestTest.disc.lowestUnit},
+				{priestTest.prayerOfMending, "onCD" , priestTest.disc.lowestUnit },
+				{priestTest.prayerOfHealing, "onCD", priestTest.disc.lowestUnit},
+			}
+		},
+	 
+		{priestTest.powerWordShield, not jps.debuff("Weakened Soul"), priestTest.disc.lowestImportantUnit },
+		-- important units emergency
+		{'nested' , priestTest.disc.lowestImportantUnitHP < 0.7, 
+	
+			{
+				{priestTest.voidShift, priestTest.disc.lowestImportantUnitHP < 0.3 and (UnitHealth("player")+(UnitHealthMax("player")*0.2)) > UnitHealth(priestTest.disc.lowestImportantUnit) and jps.UseCds, priestTest.disc.lowestImportantUnit },
+				{priestTest.painsup, priestTest.disc.lowestImportantUnitHP < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCds, priestTest.disc.lowestImportantUnit },
+				{priestTest.desperatePrayer, jps.hp() > 0.45 and priestTest.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestTest.disc.lowestImportantUnit},
+				{priestTest.flashHeal, priestTest.disc.lowestImportantUnitHP < 0.4, priestTest.disc.lowestImportantUnit },
+				{priestTest.flashHeal, priestTest.disc.lowestImportantUnitHP < 0.4, priestTest.disc.lowestImportantUnit },
+				{priestTest.bindingHeal, priestTest.disc.lowestImportantUnitHP < 0.7 and jps.hp("player") < 0.7, priestTest.disc.lowestImportantUnit },
+				{priestTest.greaterHeal, priestTest.disc.lowestImportantUnitHP < 0.6, priestTest.disc.lowestImportantUnit },
+				{priestTest.penance, priestTest.disc.lowestImportantUnitHP < 0.75, priestTest.disc.lowestImportantUnit },
+				{priestTest.heal, priestTest.disc.lowestImportantUnitHP < 0.75, priestTest.disc.lowestImportantUnit },
+				{priestTest.prayerOfMending, priestTest.disc.lowestImportantUnitHP < 0.7 , priestTest.disc.lowestImportantUnit },
+				
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and jps.castEverySeconds(10) and priestTest.disc.lowestImportantUnitHP < 0.95, priestTest.disc.lowestImportantUnit},
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and jps.buff(priestTest.rapture) and priestTest.disc.lowestImportantUnitHP < 0.95, priestTest.disc.lowestImportantUnit},
+			},
+	
+		},
+	
+		-- multitarget target
+		{'nested' , jps.MultiTarget or (priestTest.disc.unitsBelow70 >= 3 and priestTest.disc.avgHP < 0.9),
+			{
+				-- from high heal to low filler heals
+				{priestTest.cascade, priestTest.disc.lowestUnitHP < 0.7, priestTest.disc.lowestUnit},
+				{priestTest.divineStar, priestTest.disc.lowestUnitHP < 0.7, priestTest.disc.lowestUnit},
+				{priestTest.prayerOfMending, priestTest.disc.lowestImportantUnitHP < 0.7 , priestTest.disc.lowestUnit },
+				{priestTest.prayerOfHealing, jps.buff(priestTest.spiritShell)  or priestTest.disc.unitsBelow70 > 3 or priestTest.disc.avgHP < 0.75, priestTest.disc.lowestUnit},
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and jps.castEverySeconds(10) and priestTest.disc.lowestUnitHP < 0.8, priestTest.disc.lowestUnit},
+	
+			},
+	
+		},
+
+	 	-- single target & dps
+		{'nested' , not jps.MultiTarget, 
+			{
+				{priestTest.desperatePrayer, jps.hp() > 0.45 and priestTest.disc.lowestUnitHP < 0.5 and jps.UseCDs, priestTest.disc.lowestUnit},
+				{priestTest.flashHeal, priestTest.disc.lowestUnitHP < 0.4, priestTest.disc.lowestUnit },
+				{priestTest.flashHeal, priestTest.disc.lowestUnitHP < 0.4, priestTest.disc.lowestUnit },
+				{priestTest.bindingHeal, priestTest.disc.lowestUnitHP < 0.7 and jps.hp("player") < 0.7, priestTest.disc.lowestUnit },
+				{priestTest.powerWordShield, not jps.debuff("Weakened Soul") and priestTest.disc.lowestUnitHP < 0.75, priestTest.disc.lowestUnit },
+				{priestTest.greaterHeal, priestTest.disc.lowestUnitHP < 0.7, priestTest.disc.lowestUnit },
+				{priestTest.penance, priestTest.disc.lowestUnitHP < 0.9, priestTest.disc.lowestUnit },
+				{priestTest.heal, priestTest.disc.lowestUnitHP < 0.85, priestTest.disc.lowestUnit },
+				{priestTest.prayerOfMending, priestTest.disc.lowestUnitHP < 0.95 , priestTest.disc.lowestUnit },
+				{priestTest.holyFire, priestTest.disc.rangedTarget ~= nil , priestTest.disc.rangedTarget},
+				{priestTest.penance, priestTest.disc.rangedTarget ~= nil , priestTest.disc.rangedTarget},
+				{priestTest.smite, priestTest.disc.rangedTarget ~= nil and jps.buffStacks(priestTest.evangelism) <5 , priestTest.disc.rangedTarget},
+				{priestTest.smite, priestTest.disc.rangedTarget ~= nil and priestTest.disc.lowestUnitHP < 1 , priestTest.disc.rangedTarget},
+			},
+	
+		},
+	}
+	local spell = nil
+	local target = nil
+	spell,target = parseSpellTable(spellTableTest)
+	return spell,target
+end, "Disc Priest PVE Test 5.4", true ,false)
