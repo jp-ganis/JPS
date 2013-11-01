@@ -832,12 +832,16 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	if jps.canHeal("target") then table.insert(priestLight.disc.importantUnits,"target") end
 	if jps.canHeal("focus") then table.insert(priestLight.disc.importantUnits,"focus") end
 	if jps.canHeal("mouseover") then table.insert(priestLight.disc.importantUnits,"mouseover") end
-	
-	for unitName, _ in ipairs(priestLight.disc.importantUnits) do
-		local thisHP = jps.hp(unitName)
-		if jps.canHeal(unitName) and thisHP < priestLight.disc.lowestImportantUnitHP then
-			priestLight.disc.lowestImportantUnitHP = thisHP
-			priestLight.disc.lowestImportantUnit = unitName
+	if not priestLight.disc.importantUnits[0] then 
+		priestLight.disc.lowestImportantUnitHP = thisHP
+		priestLight.disc.lowestImportantUnit = jpsName
+	else
+		for unitName, _ in ipairs(priestLight.disc.importantUnits) do
+			local thisHP = jps.hp(unitName)
+			if jps.canHeal(unitName) and thisHP < priestLight.disc.lowestImportantUnitHP then
+				priestLight.disc.lowestImportantUnitHP = jps.hp("player")
+				priestLight.disc.lowestImportantUnit = unitName
+			end
 		end
 	end
 	priest.shouldInterruptCasting(priestLight.disc.interruptTable,priestLight.disc.avgHP,  priestLight.disc.unitsBelow70, priestLight.disc.lowestImportantUnitHP)
@@ -845,7 +849,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	if priestLight.disc.lowestImportantUnitHP < 1 or priestLight.disc.lowestUnitHP <1 then
 		priestLight.disc.shouldHeal = true
 	end 
-	
+
 	local dispelTable = {priestLight.magicDispel}
 	function priestLight.disc.dispel()
 		local cleanseTarget = nil
@@ -875,7 +879,10 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	elseif jps.canDPS("boss3") then
 		priestLight.disc.rangedTarget = "boss3"
 	end
-	
+	elseif jps.canDPS("boss4") then
+		priestLight.disc.rangedTarget = "boss3"
+	end
+
 	local spellTableTest = {
 		-- buffs
 		{priestLight.innerFire, not jps.buff(priestLight.innerWill) and not jps.buff(priestLight.innerFire), 'player'},
