@@ -878,7 +878,6 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		priestLight.disc.rangedTarget = "boss2"
 	elseif jps.canDPS("boss3") then
 		priestLight.disc.rangedTarget = "boss3"
-	end
 	elseif jps.canDPS("boss4") then
 		priestLight.disc.rangedTarget = "boss3"
 	end

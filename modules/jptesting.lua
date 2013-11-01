@@ -48,4 +48,4 @@ function removeJPSButton(name)
 	if name ~= nil then
 		name:Hide()
 	end
-enda
+end
