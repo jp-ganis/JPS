@@ -57,7 +57,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	local enemycount,targetcount = jps.RaidEnemyCount()
 
 	local isSpellHarmful = IsHarmfulSpell("target")
-	local lastcast = jps.CurrentCast[2]
+	local lastcast = jps.CurrentCast
 	local castSilence = jps.shouldKick("target")
 
 	local playerhealth_pct = jps.hp(player)
@@ -216,7 +216,6 @@ jps.registerRotation("DRUID","FERAL", function()
 ------------------------
 local spellTable =
 {
-	{ SetView(1),			 },
 	{ "cat form",						form ~= 3 and playerhealth_pct > 0.20 and isSwimming == nil , player },
 	{ "cat form",						form ~= 3 and isFalling == 1 , player },
 	{ "aquatic form",			  	form ~= 2 and isSwimming == 1 and playerhealth_pct > 0.20 , player },

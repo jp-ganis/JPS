@@ -264,9 +264,8 @@ jpsFrame:SetScript("OnEvent", function(self, event, ...)
 		end
 		if enableProfiling then endProfileMemory(event) end
 	end
-	-- Execute this code everytime?
+	-- Execute this code everytime
 	if jps.checkTimer("FacingBug") > 0 and jps.checkTimer("Facing") == 0 then
-		SaveView(2)
 		TurnLeftStop()
 		TurnRightStop()
 		CameraOrSelectOrMoveStop()
@@ -294,7 +293,7 @@ end)
 
 -- Garbage Collection
 local function collectGarbage()
-	if jps.getConfigVal("collect garbage ingame(could cause a fps drop)") == 1 then
+	if jps.getConfigVal("collect garbage ingame(possible fps drop)") == 1 then
 		if GetAddOnMemoryUsage("JPS") > 5000 then collectgarbage("collect") end
 	end
 end
@@ -326,9 +325,7 @@ end)
 
 -- INSPECT_READY
 jps.registerEvent("INSPECT_READY", function()
-	if not jps.Spec then 
-		jps.detectSpec() 
-	end
+	if not jps.Spec then jps.detectSpec() end
 	if jps_variablesLoaded and not jps.Configged then 
 		jps_createConfigFrame()
 		jps.runFunctionQueue("gui_loaded")
@@ -359,13 +356,14 @@ local function leaveCombat()
 	jps.Opening = true
 	jps.Combat = false
 	jps.gui_toggleCombat(false)
+	jps.RaidTarget = {}
 	jps.EnemyTable = {}
 	jps.NextSpell = nil
 	jps.clearTimeToLive()
 	jps.SortRaidStatus() -- wipe jps.RaidTarget and jps.RaidStatus
 	if jps.getConfigVal("timetodie frame visible") == 1 then
 		JPSEXTInfoFrame:Hide()
-		end
+	end
 	jps.combatStart = 0
 end
 jps.registerEvent("PLAYER_REGEN_ENABLED", leaveCombat)
@@ -377,8 +375,9 @@ jps.registerEvent("PLAYER_UNGHOST", collectGarbage)
 jps.registerEvent("GROUP_ROSTER_UPDATE", jps.SortRaidStatus)
 jps.registerEvent("RAID_ROSTER_UPDATE", jps.SortRaidStatus)
 
--- Dual Spec Respec
+-- Dual Spec Respec -- only fire when spec change no other event before
 jps.registerEvent("ACTIVE_TALENT_GROUP_CHANGED", jps.detectSpec)
+jps.registerEvent("ACTIVE_TALENT_GROUP_CHANGED", jps.resetRotationTable)
 
 -- Save on Logout
 jps.registerEvent("PLAYER_LEAVING_WORLD", jps_SAVE_PROFILE)
@@ -408,19 +407,23 @@ jps.registerEvent("LOOT_CLOSED", function()
 		deleteFish = true
 		jps.Fishing = false
 	end
-	local deleteCarp = jps.getConfigVal("Delete Fish: Golden Carp")
-	local deleteMurgle = jps.getConfigVal("Delete Fish: Murglesnout")
+	local deleteCarp = jps.getConfigVal("delete fish: golden carp")
+	local deleteMurgle = jps.getConfigVal("delete fish: murglesnout")
 	for bag = 0,4,1 do
 		for slot = 1, GetContainerNumSlots(bag), 1 do
 			local name = GetContainerItemLink(bag,slot)
 			local itemId = GetContainerItemID(bag, slot) 
 			if name then
 				local copper = select(11,GetItemInfo(itemId)) or 0;
-				if string.find(name,"ff9d9d9d") and copper < 500 and jps.getConfigVal("Delete Grey loot worth less than 5 silver") == 1 then -- delete grey stuff worth less then 5 silver
+				if string.find(name,"ff9d9d9d") and copper < 500 and jps.getConfigVal("delete grey loot < 5 silver") == 1 then -- delete grey stuff worth less then 5 silver
 					write("Deleting "..name.." reason: to low price")
 					PickupContainerItem(bag,slot)
 					DeleteCursorItem()
-				elseif deleteFish and ((string.find(name,L["Murglesnout"]) and deleteMurgle ) or (deleteCarp == 1 and string.find(name,L["Golden Carp"]))) then 
+				elseif deleteFish and string.find(name,L["Murglesnout"]) and deleteMurgle == 1 then
+					PickupContainerItem(bag,slot)
+					write("Deleting "..name)
+					DeleteCursorItem()
+				elseif deleteFish and string.find(name,L["Golden Carp"]) and deleteCarp == 1 then
 					PickupContainerItem(bag,slot)
 					write("Deleting "..name)
 					DeleteCursorItem()
@@ -435,30 +438,24 @@ jps.registerEvent("UI_ERROR_MESSAGE", function(event_error)
 	-- "UI_ERROR_MESSAGE" returns ONLY one arg1
 	-- http://www.wowwiki.com/WoW_Constants/Errors
 	-- http://www.wowwiki.com/WoW_Constants/Spells
-	if (jps.checkTimer("FacingBug") > 0) and (jps.checkTimer("Facing") == 0) then
-		SaveView(2)
-		TurnLeftStop()
-		TurnRightStop()
-		CameraOrSelectOrMoveStop()
-	elseif jps.Enabled then -- and jps.Combat
+	if jps.Enabled then
 		if (event_error == SPELL_FAILED_NOT_BEHIND) then -- "You must be behind your target."
 			LOG.debug("SPELL_FAILED_NOT_BEHIND - %s", event_error)
 			jps.isNotBehind = true
 			jps.isBehind = false
 		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
 			LOG.debug("ERR_BADATTACKFACING - %s", event_error)			
-			jps.createTimer("Facing",0.6)
-			jps.createTimer("FacingBug",1.2)
-			SetView(2)
-			if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 
-			then
-				TurnLeftStart()
+
+			local TargetGuid = UnitGUID("target")
+			if FireHack and (TargetGuid ~= nil) then
+				local TargetObject = GetObjectFromGUID(TargetGuid)
+				TargetObject:Face ()
 			else
-				TurnRightStart()
+				jps.createTimer("Facing",0.6)
+				jps.createTimer("FacingBug",1.2)
+				TurnLeftStart()
+				CameraOrSelectOrMoveStart()
 			end
-			
-			CameraOrSelectOrMoveStart()
-			
 		elseif (event_error == SPELL_FAILED_LINE_OF_SIGHT) or (event_error == SPELL_FAILED_VISION_OBSCURED) then
 			LOG.debug("SPELL_FAILED - %s", event_error)
 			jps.BlacklistPlayer(jps.LastTarget)
@@ -475,6 +472,7 @@ jps.registerEvent("UNIT_SPELLCAST_SENT", function(...)
 		if unitID == "player" and spellname then jps.CastBar.sentTime = GetTime() end
 end)
 
+descriptorTable = { L["Strikes"] , L["Roots"] , L["Transforms"] , L["Forces"] , L["Seduces"] }
 -- "UNIT_SPELLCAST_START"
 jps.registerEvent("UNIT_SPELLCAST_START", function(...)
 		local unitID = select(1,...)
@@ -493,6 +491,21 @@ jps.registerEvent("UNIT_SPELLCAST_START", function(...)
 		else
 			jps.CastBar.latency = 0
 		end
+		
+		if jps.checkTimer("CC") == 0 then 
+			jps.CrowdControl = false
+			jps.CrowdControlTarget = nil
+		end
+		local spellID = select(5,...)
+		local castingTime = select(7,GetSpellInfo(spellID)) / 1000 -- castTime - Number - The cast time, in milliseconds
+		local descriptor = GetSpellDescription(spellID) 
+		for _,desc in ipairs(descriptorTable) do
+			if jps.canDPS(unitID) and string.find(descriptor,desc) then
+				jps.createTimer("CC",castingTime)
+				jps.CrowdControl = true
+				jps.CrowdControlTarget = unitID
+			break end
+		end
 end)
 
 -- "UNIT_SPELLCAST_INTERRUPTED" -- "UNIT_SPELLCAST_STOP"
@@ -503,32 +516,31 @@ end
 jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", latencySpell)
 jps.registerEvent("UNIT_SPELLCAST_STOP", latencySpell)
 
--- LOOT_OPENED
-jps.registerEvent("LOOT_OPENED", function()
-	if (IsFishingLoot()) then
-		jps.Fishing = true
-	end
-end)
-
 -- UNIT_SPELLCAST_SUCCEEDED
 jps.registerEvent("UNIT_SPELLCAST_SUCCEEDED", function(...)
-	--if jps.Debug then print("UNIT_SPELLCAST_SUCCEEDED") end
-	if not jps.CurrentCast then jps.CurrentCast = {} end
-	if ... == "player" then
-		jps.CurrentCast[1], jps.CurrentCast[2], _ , _, jps.CurrentCast[5], _ = ...
-	end
-	
-	if jps.FaceTarget and (jps.CurrentCast[1]=="player") and jps.CurrentCast[5] and jps.checkTimer("FacingBug") > 0 then
-		SaveView(2)
-		if jps.getConfigVal("FaceTarget rotate direction. checked = left, unchecked = right") == 1 then
-			TurnLeftStop()
-		else
-			TurnRightStop()
+	local unitID = select(1,...)
+	local spellname = select(2,...)
+	local spellID = select(5,...)
+	if jps.FaceTarget then
+		if (unitID == "player") and spellID then 
+			jps.CurrentCast = tostring(select(1,GetSpellInfo(spellID)))
+			if jps.checkTimer("FacingBug") > 0 then
+				TurnLeftStop()
+				TurnRightStop()
+				CameraOrSelectOrMoveStop()
+			end
 		end
-		CameraOrSelectOrMoveStop()
 	end
-	jps.isNotBehind = false
-	jps.isBehind = true
+	if (jps.Class == "Druid" and jps.Spec == "Feral") or jps.Class == "Rogue" then
+		-- "Druid" -- 5221 -- "Shred" -- "Ambush" 8676
+		if (unitID == "player") and spellname == tostring(select(1,GetSpellInfo(5221))) then 
+			jps.isNotBehind = false
+			jps.isBehind = true
+		elseif (unitID == "player") and spellname == tostring(select(1,GetSpellInfo(8676))) then
+			jps.isNotBehind = false
+			jps.isBehind = true
+		end
+	end
 end)
 
 -- RAIDSTATUS UPDATE
@@ -588,69 +600,58 @@ end)
 -- eventtable[10] == destFlags
 -- eventtable[15] == amount if suffix is _DAMAGE or _HEAL
 
--- TIMER SHIELD FOR DISC PRIEST
-jps.registerCombatLogEventUnfiltered("", function(...)
-	if select(5,...) == GetUnitName("player") and select(12,...) == 17 then
-		jps.createTimer("Shield", 12 )
-	end
-end)
-
--- HEALTABLE -- CONTAINS THE AVERAGE VALUE OF HEALING SPELLS
-local function updateHealTable(...)
-	if select(5,...) == GetUnitName("player") then
-		update_healtable(...)
-	end
-end
-jps.registerCombatLogEventUnfiltered("SPELL_HEAL", updateHealTable)
-jps.registerCombatLogEventUnfiltered("SPELL_PERIODIC_HEAL", updateHealTable)
-
--- AGGRO PLAYER replace event == "UNIT_COMBAT"
-local function aggroTimer(...)
-	if select(9,...) == GetUnitName("player") then
-		jps.createTimer("Player_Aggro", 4 )
-	end
-end
-jps.registerCombatLogEventUnfiltered("SWING_DAMAGE", aggroTimer)
-jps.registerCombatLogEventUnfiltered("SPELL_DAMAGE", aggroTimer)
-
--- REMOVE DIED UNIT OR OUT OF RANGE UNIT OF TABLES
-jps.registerCombatLogEventUnfiltered("UNIT_DIED", function(...)
-	if select(8,...) ~= nil then
-		local mobGuid = select(8,...) -- eventtable[8] == destGUID 
-		jps.removeTableKey(jps.RaidTimeToDie,mobGuid)
-		jps.removeTableKey(jps.RaidTarget,mobGuid)
-		jps.removeTableKey(jps.EnemyTable,mobGuid)
-	end
-end)
-
 -- TABLE ENEMIES IN COMBAT
 jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", function(...)
+	local event = select(2,...)
 	local sourceGUID = select(4,...)
 	local sourceName = select(5,...)
 	local sourceFlags = select(6,...)
+	local destGUID = select(8,...)
 	local destName = select(9,...)
 	local destFlags = select(10,...)
+	local spellID =  select(12,...)
+	
+	if sourceName == GetUnitName("player") and event == "SPELL_HEAL" then
+		update_healtable(...)
+	end
+	
+	if destName == GetUnitName("player") and (event == "SPELL_DAMAGE" or event == "SWING_DAMAGE") then
+		jps.createTimer("Player_Aggro", 4 )
+	end
+	
+	if sourceName == GetUnitName("player") and spellID == 17 then
+		jps.createTimer("Shield", 12 )
+	end
+	
+	if destGUID ~= nil and event == "UNIT_DIED" then
+		jps.removeTableKey(jps.RaidTimeToDie,destGUID)
+		jps.removeTableKey(jps.RaidTarget,destGUID)
+		jps.removeTableKey(jps.EnemyTable,destGUID)
+	end
+	
 	if sourceFlags and (bit.band(sourceFlags,COMBATLOG_OBJECT_REACTION_HOSTILE) > 0) 
 	and (bit.band(sourceFlags,COMBATLOG_OBJECT_AFFILIATION_OUTSIDER) > 0)
 	and destFlags and (bit.band(destFlags,COMBATLOG_OBJECT_AFFILIATION_OUTSIDER) == 0)
 	and jps.canHeal(destName) and (sourceGUID ~= nil) then
 		local enemyFriend = jps.stringSplit(destName,"-") -- eventtable[9] == destName -- "Bob" or "Bob-Garona" to "Bob"
-		if jps.EnemyTable[sourceGUID] == nil then
-			jps.EnemyTable[sourceGUID] = {}
-		end
+		if jps.EnemyTable[sourceGUID] == nil then jps.EnemyTable[sourceGUID] = {} end
 		jps.EnemyTable[sourceGUID]["friend"] = enemyFriend -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
 	end
+
+-- TABLE DAMAGE
+-- eventtable[15] -- amount if suffix is SPELL_DAMAGE or SPELL_HEAL
+-- eventtable[12] -- amount if suffix is SWING_DAMAGE
 	local action = select(2, ...)
 	local periodic = select(15, ...)
 	local swing = select(12, ...)	
-	local GUID = select(8, ...)
+	local destGUID = select(8, ...)
 	
 	local dmgTTD = 0
-	if (action == "SPELL_DAMAGE" or action == "SPELL_PERIODIC_DAMAGE") and periodic ~= nil then
+	if destGUID ~= nil and (action == "SPELL_DAMAGE" or action == "SPELL_PERIODIC_DAMAGE") and periodic ~= nil then
 		if periodic > 0 then 
 			dmgTTD = periodic
 		end
-	elseif (action == "SWING_DAMAGE") and swing ~= nil then
+	elseif destGUID ~= nil and (action == "SWING_DAMAGE") and swing ~= nil then
 		if swing > 0 then 
 			dmgTTD = swing
 		end
@@ -658,14 +659,13 @@ jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", function(...)
 	if InCombatLockdown()==1 then -- InCombatLockdown() returns 1 if in combat or nil otherwise
 		jps.Combat = true
 		jps.gui_toggleCombat(true)
-		
-		local unitGuid = GUID -- thisEvent[8] == destGUID
-		if jps.RaidTimeToDie[unitGuid] == nil then jps.RaidTimeToDie[unitGuid] = {} end
-		local dataset = jps.RaidTimeToDie[unitGuid]
+
+		if jps.RaidTimeToDie[destGUID] == nil then jps.RaidTimeToDie[destGUID] = {} end
+		local dataset = jps.RaidTimeToDie[destGUID]
 		local data = table.getn(dataset)
 		if data >= jps.maxTDDLifetime then table.remove(dataset, jps.maxTDDLifetime) end
 		table.insert(dataset, 1, {GetTime(), dmgTTD})
-		jps.RaidTimeToDie[unitGuid] = dataset --jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
+		jps.RaidTimeToDie[destGUID] = dataset --jps.RaidTimeToDie[unitGuid] = { [1] = {GetTime(), thisEvent[15] },[2] = {GetTime(), thisEvent[15] },[3] = {GetTime(), thisEvent[15] } }
 	end
 end)
 

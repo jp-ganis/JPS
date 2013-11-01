@@ -2,8 +2,7 @@
 	dk.spells = {}
 	dk.spells["frost fever"] = 55078
 	dk.spells["blood plague"] = 55095
-
-
+	
 	dk.darkSimSpells = {
 	-- siege of orgrimmar
 	"Froststorm Bolt","Arcane Shock","Rage of the Empress","Chain Lightning",
@@ -13,6 +12,7 @@
 	function dk.shoulDarkSimUnit(unit)
 		for index,spellName in pairs(dk.darkSimSpells) do
 			if jps.IsCastingSpell(spellName, unit) then return true end
+			if jps.IsChannelingSpell(spellName, unit) then return true end
 		end
 		return false
 	end
@@ -161,38 +161,3 @@
 		end
 	end
 	jps.registerEvent("COMBAT_LOG_EVENT_UNFILTERED", dk.logDotDmg)
-
-
-	function addUIButton(name, posX, posY, onClick, icon)
-		GUIicon_btn = icon
-		btn = CreateFrame("Button", name, jpsIcon)
-		btn:RegisterForClicks("LeftButtonUp")
-		btn:SetPoint("TOPLEFT", jpsIcon, posX, posY)
-		btn:SetHeight(36)
-		btn:SetWidth(36)
-		btn.texture = btn:CreateTexture()
-		btn.texture:SetPoint('TOPRIGHT', btn, -3, -3)
-		btn.texture:SetPoint('BOTTOMLEFT', btn, 3, 3)
-		btn.texture:SetTexture(GUIicon_btn)
-		btn.texture:SetTexCoord(0.07, 0.92, 0.07, 0.93)
-		btn.border = ToggleBS:CreateTexture(nil, "OVERLAY")
-		btn.border:SetParent(ToggleBS)
-		btn.border:SetPoint('TOPRIGHT', btn, 1, 1)
-		btn.border:SetPoint('BOTTOMLEFT', btn, -1, -1)
-		btn.border:SetTexture(jps.GUIborder)
-		btn.shadow = jpsIcon:CreateTexture(nil, "BACKGROUND")
-		btn.shadow:SetParent(ToggleBS)
-		btn.shadow:SetPoint('TOPRIGHT', btn.border, 4.5, 4.5)
-		btn.shadow:SetPoint('BOTTOMLEFT', btn.border, -4.5, -4.5)
-		btn.shadow:SetTexture(jps.GUIshadow)
-		btn.shadow:SetVertexColor(0, 0, 0, 0.85)
-		btn:SetScript("OnClick", onClick)
-		btn:Show()
-		return btn
-	end
-	function removeUIButton(name)
-		if name ~= nil then
-			name:Hide()
-		end
-	end
-

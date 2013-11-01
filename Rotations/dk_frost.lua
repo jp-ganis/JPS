@@ -121,6 +121,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "frost strike",'"onCD"'},
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.hp("target") <= 0.35'}, -- soul reaper push
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and not IsInRaid() and not jps.targetIsRaidBoss()'}, -- burst in instances, pvp 
 }, "PVE 2H Simcraft")
 
@@ -157,7 +158,7 @@ Modifiers:[br]
 -- Cooldowns: trinkets, raise dead, synapse springs, lifeblood, pillar of frost, racials
 
 ------------------------
--- SPELL TABLE ---------
+-- SPELL TABLE -----
 ------------------------
 
 
@@ -167,7 +168,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 
 	--AOE
 	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
-	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+	{ "Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
 
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
@@ -185,6 +186,10 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus"},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+
+	-- Spell Steal
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
 
 	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
 		--CDs + Buffs
@@ -215,6 +220,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "plague strike",'jps.myDebuffDuration("Blood Plague") == 0'},
 	{ "soul reaper",'jps.hp("target") <= 0.35'},
 	{ "blood tap",'jps.buffStacks("Blood Charge") >= 5 and jps.hp("target") <= 0.35 and jps.cooldown("soul reaper") == 0'},
+	{ "Pestilence", 'jps.MultiTarget and jps.castEverySeconds("Pestilence",20)'},
 	{ "howling blast",'jps.buff("Freezing Fog") or jps.MultiTarget'},
 	{ "frost strike",'jps.buff("killing machine")'},
 	{ "frost strike",'jps.runicPower() > 88'},
@@ -239,6 +245,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "blood tap",'jps.buffStacks("blood charge")>10 and jps.runicPower()>=20'},
 	{ "obliterate",'"onCD"'},
 	{ "plague leech",'dk.canCastPlagueLeech(2)'},
+	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.hp("target") <= 0.35'}, -- soul reaper push
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
 }, "PVE DW")
 
@@ -291,6 +298,10 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus"},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+
+	-- Spell Steal
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
 
 		-- Unholy Blight when our diseases are about to fall off. (talent based)
  	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},

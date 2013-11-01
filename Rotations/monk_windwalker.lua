@@ -19,7 +19,7 @@ jps.registerRotation("MONK","WINDWALKER",function()
 	local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Zen Meditation") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
 	local tigerPowerDuration = jps.buffDuration("Tiger Power")
 
-	local possibleSpells = {
+	local spellTable = {
 		-- Defensive Cooldowns.
 		-- { "Zen Meditation", 
 		--	jps.hp() < .4 
@@ -121,5 +121,6 @@ jps.registerRotation("MONK","WINDWALKER",function()
 		
 	}
 
-	return parseSpellTable(possibleSpells)
+	local spell, target = parseSpellTable(spellTable)
+	return spell, target
 end, "Default")

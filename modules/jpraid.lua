@@ -51,7 +51,7 @@ function jps.findMeAggroTank(targetUnit)
 			aggroTank = possibleTankUnit
 		end
 	end
-	if aggroTank == "player" and jps.tableLength(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return just "a" tank
+	if aggroTank == "player" and jps.tableLength(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return "a" tank
 		return jps.findMeAggroTank()
 	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
@@ -62,6 +62,11 @@ function jps.unitGotAggro(unit)
 	if unit == nil then unit = "player" end
 	if UnitThreatSituation(unit) == 3 then return true end
 	return false
+end
+
+function jps.shouldLooseAggro()
+	if GetNumGroupMembers() == 0 then return false end
+	return jps.unitGotAggro("player")
 end
 
 function jps.findMeATank()
@@ -98,10 +103,22 @@ function jps.findTanksInRaid()
 	return myTanks
 end
 
+function jps.targetTargetTank()
+	if jps.buff("bear form","targettarget") then return true end
+	if jps.buff("blood presence","targettarget") then return true end
+	if jps.buff("righteous fury","targettarget") then return true end
+	
+	local _,_,_,_,_,_,_,caster,_,_ = UnitDebuff("target","Sunder Armor")
+	if caster ~= nil then
+		if UnitName("targettarget") == caster then return true end end
+	return false
+end
+
 -----------------------
 -- RAID ENEMY COUNT
 -----------------------
 -- jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
+-- jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY GUID TARGETING FRIEND NAME
 
 -- COUNT ENEMY ONLY WHEN THEY DO DAMAGE TO inRange FRIENDLIES
 function jps.RaidEnemyCount()

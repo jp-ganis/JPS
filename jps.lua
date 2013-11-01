@@ -9,7 +9,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -20,8 +20,8 @@
 -- Universal
 local L = MyLocalizationTable
 jps = {}
-jps.Version = "1.3.0"
-jps.Revision = "r548"
+jps.Version = "1.3.1"
+jps.Revision = "r600"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
@@ -60,7 +60,7 @@ jps.Moving = nil
 jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
-jps.CurrentCast = {}
+jps.CurrentCast = nil
 jps.detectSpecDisabled = false
 
 -- Class
@@ -72,6 +72,8 @@ jps.DefRacial = nil
 jps.Lifeblood = nil
 jps.EngiGloves = nil
 jps.isTank = false
+jps.CrowdControl = false
+jps.CrowdControlTarget = nil
 
 -- Raccourcis
 cast = CastSpellByName
@@ -104,16 +106,17 @@ jpsName = select(1,UnitName("player"))
 jpsRealm = GetRealmName()
 jps.ExtraButtons = true
 jps.ResetDB = false
+
 jps.Count = 1
-jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+jps.Tooltip = ""
 jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
 rotationDropdownHolder = nil
-jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withing 30 seconds
 jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
+jps.customRotationFunc = ""
 
 -- Latency
 jps.CastBar = {}
@@ -141,9 +144,9 @@ end
 
 function jps.detectSpec()
 	if jps.detectSpecDisabled then return false end
-	
+
 	jps.Count = 1
-	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+	jps.Tooltip = ""
 	jps.ToggleRotationName = {"No Rotations"}
 	jps.MultiRotation = false
 	jps.initializedRotation = false
@@ -155,20 +158,20 @@ function jps.detectSpec()
 	jps.Level = Ternary(jps.Level > 1, jps.Level, UnitLevel("player"))
 	if jps.Class then
 		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
-		if not id then 
-			if jps.Level < 10 then 
-				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
+		if not id then
+			if jps.Level < 10 then
+				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down")
 				jps.Enabled = false
 				jps.detectSpecDisabled = true
 			else
-				write("jps couldn't find your talent tree... One second please.") 
+				write("jps couldn't find your talent tree... One second please.")
 			end
 		else
 		-- local id, name, description, icon, background, role = GetSpecializationInfo(specIndex [, isInspect [, isPet]])
 			local _,name,_,_,_,_ = GetSpecializationInfo(id) -- patch 5.0.4 remplace GetTalentTabInfo( id )
 			if name then
 				jps.Spec = name
-				if jps.Spec then 
+				if jps.Spec then
 					write("Online for your",jps.Spec,jps.Class)
 				end
 			end
@@ -177,7 +180,7 @@ function jps.detectSpec()
    if jps.Spec == L["Discipline"] or jps.Spec == L["Holy"] or jps.Spec == L["Restoration"] or jps.Spec == L["Mistweaver"] then jps.isHealer = true end
    if jps.Spec == L["Blood"] or jps.Spec == L["Protection"] or jps.Spec == L["Brewmaster"] or jps.Spec == L["Guardian"] then
 	   jps.isTank = true
-	   jps.gui_toggleDef(true) 
+	   jps.gui_toggleDef(true)
 	end
 	jps.HarmSpell = jps.GetHarmfulSpell()
 	--write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
@@ -240,14 +243,14 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "debug" and rest ~="" then
 		if tonumber(rest) then
 			jps.DebugLevel = rest
-			write("Debug level set to",tostring(rest))		
+			write("Debug level set to",tostring(rest))
 		else
 			jps.DebugLevel = 1
-			write("Debug level set to 1")		
+			write("Debug level set to 1")
 		end
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
-		write("Debug mode set to",tostring(jps.Debug))	
+		write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "face" then
 		jps.gui_toggleRot()
 		write("jps.FaceTarget set to",tostring(jps.FaceTarget))
@@ -288,12 +291,11 @@ function SlashCmdList.jps(cmd, editbox)
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
-		else 
+		else
 			print "jps Disabled - Waiting on Standby."
 		end
 	end
 end
-
 
 -- cache for WoW API functions that return always the same results for the given params
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
@@ -307,10 +309,10 @@ hooksecurefunc("UseAction", function(...)
 		local stype,id,_ = GetActionInfo(select(1, ...))
 		if stype == "spell" then
 			local name = select(1,GetSpellInfo(id))
-			if jps.NextSpell ~= name then
+			if jps.NextSpell ~= name  and not jps.shouldSpellBeIgnored(name) then
 				jps.NextSpell = name
-				if jps.Combat then 
-					--write("Set",name,"for next cast.") 
+				if jps.getConfigVal("print next spells in chat") == 1 and jps.Combat then
+					write("Set",name,"for next cast.")
 				end
 			end
 		end
@@ -321,13 +323,13 @@ end)
 -- COMBAT
 ------------------------
 
-function jps_Combat() 
+function jps_Combat()
 	-- Check for the Rotation
 	if not jps.Class then return end
 	if not jps.activeRotation() then
 		write("JPS does not have a rotation for your",jps.Spec,jps.Class)
 		jps.Enabled = false
-		return 
+		return
 	end
 
 	-- STOP Combat
@@ -335,25 +337,25 @@ function jps_Combat()
 
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
-	
+
 	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
-	elseif (jps.CastTimeLeft() - latency) > 0 then 
+	elseif (jps.CastTimeLeft() - latency) > 0 then
 		jps.Casting = true
 	else
 		jps.Casting = false
 	end
-	
+
 	-- RAID UPDATE
 	jps.UpdateHealerBlacklist()
 	-- in case you want to play only with /jps pew the RaidStatus table will be updated
 	if not jps.Enabled then jps.SortRaidStatus() end
-	
-	-- Check spell usability 
+
+	-- Check spell usability
 	if string.len(jps.customRotationFunc) > 10 then
-		jps.ThisCast,jps.Target = jps.customRotation() 
+		jps.ThisCast,jps.Target = jps.customRotation()
 	else
 		jps.ThisCast,jps.Target = jps.activeRotation().getSpell() -- ALLOW SPELLSTOPCASTING() IN JPS.ROTATION() TABLE
 	end
@@ -361,33 +363,33 @@ function jps_Combat()
 		jps.firstInitializingLoop = false
 		return nil
 	end
-	
+
 	-- Movement
 	jps.Moving = GetUnitSpeed("player") > 0
 	jps.MovingTarget = GetUnitSpeed("target") > 0
-	
+
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
 				jps.Cast(jps.NextSpell)
-				write("Next Spell "..jps.NextSpell.. " was casted")
+				if jps.getConfigVal("print manually casted spells") == 1 then
+					write("Next Spell "..jps.NextSpell.. " was casted")
+				end
 				jps.NextSpell = nil
 			else
-				if jps.cooldown(jps.NextSpell) > 3 then
-					jps.NextSpell = nil
-				end
+				if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
 				jps.Cast(jps.ThisCast)
 			end
 		else
 			jps.Cast(jps.ThisCast)
 		end
 	end
-	
+
 	-- Return spellcast.
 	return jps.ThisCast,jps.Target
 end
 
-function jps.addTofunctionQueue(fn,queueName) 
+function jps.addTofunctionQueue(fn,queueName)
 	if not jps.functionQueues[queueName] then
 		jps.functionQueues[queueName] = {}
 	end
@@ -419,6 +421,6 @@ function jps.runFunctionQueue(queueName)
 			jps.functionQueues[queueName] = nil
 			return true
 		end
-	end	
+	end
 	return false
 end

@@ -81,7 +81,7 @@ local demoSpellTable = {
 	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings, 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
+	{ jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
 	{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= ""  and jps.UseCDs' },
 	{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= ""  and  jps.UseCDs' },
 	{"nested", 'jps.Opening == false',{
@@ -368,16 +368,6 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	----------------------------------
 	---------- talent spy ------------
 	----------------------------------
-
-	function jps.talentInfo (talentInfo)
-		local numTalents = GetNumTalents();
-		for t = 1, numTalents do
-		  local name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq, previewRank, meetsPreviewPrereq= GetTalentInfo(t);
-		  if name == talentInfo and ( rank ) then return true end
-		end
-		return false
-	end
-
 	local dpsMoving = jps.talentInfo("Kil'jaeden's Cunning")
 	-------------------
 	-- trinket stack -

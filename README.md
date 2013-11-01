@@ -5,7 +5,7 @@
 ***A PLUA ADDON FOR WORLD OF WARCRAFT***
 
 This addon in combination with enabled protected LUA will help you get the most
-out of your WoW experience. See commands below for a full list of available 
+out of your WoW experience. See commands below for a full list of available
 commands.
 
 ***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd
@@ -54,8 +54,6 @@ HPS for your class and spec.
 
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 * BUG: some rotation could cause a fps drop
-* Engineer Gloves does not work with static rotation
-
 
 ==============================================================================
 = COMMANDS                                                                   =

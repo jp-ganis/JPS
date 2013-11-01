@@ -39,7 +39,7 @@ function jps.talentInfo(talent)
 	local numTalents = GetNumTalents();
 	for t = 1, numTalents do
 		local name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq, previewRank, meetsPreviewPrereq= GetTalentInfo(t);
-		if name == talentname and ( rank ) then return true end
+		if name == talentname and rank then return true end
 	end
 	return false
 end

@@ -85,7 +85,7 @@ end
 
 -- COUNTS THE NUMBER OF PARTY MEMBERS INRANGE HAVING A SIGNIFICANT HEALTH PCT LOSS
 function jps.CountInRaidStatus(lowHealthDef)
-	if lowHealthDef == nil then lowHealthDef = 0.80 end
+	if lowHealthDef == nil then lowHealthDef = 0.75 end
 	local unitsBelowHealthDef = 0
 		for unit, unitTable in pairs(jps.RaidStatus) do 
 			if (unitTable["inrange"] == true) and unitTable["hpct"] < lowHealthDef then
@@ -105,12 +105,40 @@ function jps.LowestInRaidStatus()
 			lowestUnit = unit
 		end
 	end
-	return lowestUnit, lowestHP
+	return lowestUnit
+end
+
+-- LOWEST HPCT with IncHeal & Absorbs in RaidStatus
+function jps.LowestFriendlyStatus()
+	local lowestUnit = jpsName
+	local lowestHP = 1
+	for unit,unitTable in pairs(jps.RaidStatus) do
+		local hpInc = UnitGetIncomingHeals(unit)
+		if not hpInc then hpInc = 0 end
+		local hpAbs = UnitGetTotalAbsorbs(unit)
+		if not hpAbs then hpAbs = 0 end
+        local thisHP = UnitHealth(unit) + hpInc + hpAbs
+        local thisHPct = thisHP / UnitHealthMax(unit)
+        if (unitTable["inrange"] == true) and thisHPct < lowestHP then
+         	lowestHP = thisHPct
+         	lowestUnit = unit
+        end
+	end
+	return lowestUnit
 end
 
 -- LOWEST HP in RaidStatus
 function jps.LowestFriendly()
-	return jps.LowestInRaidStatus() 
+	local lowestUnit = jpsName
+	local lowestHP = 0
+	for unit,unitTable in pairs(jps.RaidStatus) do
+	local thisHP = UnitHealthMax(unit) - UnitHealth(unit) 
+		if (unitTable["inrange"] == true) and thisHP > lowestHP then
+			lowestHP = thisHP
+			lowestUnit = unit
+		end
+	end
+	return lowestUnit
 end
 
 -- AVG RAID PERCENTAGE in RaidStatus without aberrations
@@ -156,14 +184,34 @@ end
 -- GROUP FUNCTION IN RAID
 ------------------------------------
 
--- FIND THE SUBGROUP OF AN UNIT IN RAIDSTATUS
+-- FIND the Unit Layout of an UNITNAME in RAID -- Bob raid7
+-- UnitInRaid Layout position for raid members: integer ascending from 0 (which is the first member of the first group)
+-- UnitInRaid Returns a number if the unit is in your raid group, nil otherwise
+function jps.UnitInRaid(unit) -- UnitNAME
+	if not IsInRaid() and IsInGroup() then return unit end
+	if IsInRaid() then return "raid"..UnitInRaid(unit) end
+end
+
+function jps.UnitSubGroupInRaid(unit) -- UnitNAME or raidn
+	local subgroup = 1 
+	if not IsInRaid() and IsInGroup() then return subgroup end
+	if IsInRaid() then
+		if UnitInRaid(unit) ~= nil then
+			subgroup = math.ceil(UnitInRaid(unit)/5)
+		end
+	end
+	return subgroup
+end
+
+-- FIND THE SUBGROUP OF AN UNIT
 -- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5 - A member of the opposing team in an Arena match
 -- Pet return nil with UnitInRaid -- UnitInRaid("unit") returns 0 for raid1, 12 for raid13
-function jps.FindSubGroupUnit(unit)
-	if not IsInRaid() then return 0 end
+function jps.FindSubGroupUnit(unit) -- raidn
+	local subgroup = 1 
+	if not IsInRaid() and IsInGroup() then return 1 end
 	local raidname = string.sub(unit,1,4) -- return raid
 	local raidIndex = tonumber(string.sub(unit,5)) -- raid1..40 return returns 1 for raid1, 13 for raid13 
-	local subgroup = 0 
+
 	if type(raidIndex) == "number" and raidname == "raid" then subgroup = math.ceil(raidIndex/5) end
 	-- math.floor(0.5) > 0 math.ceil(0.5) > 1 Renvoie le nombre entier au-dessus et au-dessous d'une valeur donnée.
 return subgroup
@@ -171,7 +219,7 @@ end
 
 -- FIND THE RAID SUBGROUP TO HEAL WITH AT LEAST 3 RAID UNIT of the SAME GROUP IN RANGE
 function jps.FindSubGroup()
-	if not IsInRaid() then return 0 end
+	if not IsInRaid() and IsInGroup() then return 1 end
 	
 	local gr1 = 0
 	local gr2 = 0
@@ -208,16 +256,17 @@ function jps.FindSubGroup()
 			table.insert(groupTableToHeal,i)
 		end
 	end
-return groupToHeal, groupTableToHeal -- RETURN Group with at least 3 unit in range
+return groupToHeal -- RETURN Group with at least 3 unit in range
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH POH IN RAID
 function jps.FindSubGroupTarget(lowHealthDef)
-	if lowHealthDef == nil then lowHealthDef = 0.80 end
-	local groupToHeal, groupTableToHeal = jps.FindSubGroup()
+	if lowHealthDef == nil then lowHealthDef = 0.75 end
+	local groupToHeal = jps.FindSubGroup()
 	local tt = nil
 	local tt_count = 0
 	local lowestHP = lowHealthDef
+	
 	for unit,unitTable in pairs(jps.RaidStatus) do
 		if (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (unitTable["hpct"] < lowHealthDef) then
 			tt = unit
@@ -229,26 +278,9 @@ function jps.FindSubGroupTarget(lowHealthDef)
 	return nil
 end
 
--- FIND THE TARGET IN SUBGROUP TO HEAL WITH BUFF SPIRIT SHELL IN RAID
-function jps.FindSubGroupAura(auratypes) -- FindSubGroupAura("Carapace spirituelle") ou FindSubGroupAura(114908)
-	local groupToHeal = jps.FindSubGroup()
-	local tt = nil
-
-	for unit,unitTable in pairs(jps.RaidStatus) do
-		if (unitTable["inrange"] == true) and (unitTable["subgroup"] == groupToHeal) and (not jps.buff(auratypes,unit)) then
-			tt = unit
-		break end
-	end
-	return tt
-end
-
 -----------------------
 -- UPDATE RAIDSTATUS
 -----------------------
---[[
-jps.RaidTarget[unittarget_guid] = { ["unit"] = unittarget, ["hpct"] = hpct_enemy, ["count"] = countTargets + 1 }
-jps.EnemyTable[enemyGuid] = { ["friend"] = enemyFriend } -- TABLE OF ENEMY TARGETING FRIEND
-]]
 
 function jps.UpdateRaidStatus(unit)	-- partypet1 to partypet4 -- party1 to party4 -- raid1 to raid40 -- raidpet1 to raidpet40 -- arena1 to arena5
 	local unitname = select(1,UnitName(unit))
@@ -266,17 +298,16 @@ end
 ----------------------
 
 function jps.SortRaidStatus()
-		
-	-- GetNumSubgroupMembers() -- Number of players in the player's sub-group, excluding the player. remplace GetNumPartyMembers patch 5.0.4
-	-- GetNumGroupMembers() -- returns Number of players in the group (either party or raid), 0 if not in a group. remplace GetNumRaidMembers patch 5.0.4
-	-- IsInRaid() Boolean - returns true if the player is currently in a raid group, false otherwise
-	-- IsInGroup() Boolean - returns true if the player is in a some kind of group, otherwise false
-	-- UnitInParty returns 1 or nil
-	-- UnitInRaid Layout position for raid members: integer ascending from 0 (which is the first member of the first group)
-	-- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex)
-	-- raidIndex of raid member between 1 and MAX_RAID_MEMBERS (40). If you specify an index that is out of bounds, the function returns nil
+	
+-- GetNumSubgroupMembers() -- Number of players in the player's sub-group, excluding the player. remplace GetNumPartyMembers patch 5.0.4
+-- GetNumGroupMembers() -- returns Number of players in the group (either party or raid), 0 if not in a group. remplace GetNumRaidMembers patch 5.0.4
+-- IsInRaid() Boolean - returns true if the player is currently in a raid group, false otherwise
+-- IsInGroup() Boolean - returns true if the player is in a some kind of group, otherwise false
+-- UnitInParty returns 1 or nil
+-- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex)
+-- raidIndex of raid member between 1 and MAX_RAID_MEMBERS (40). If you specify an index that is out of bounds, the function returns nil
+
 	table.wipe(jps.RaidStatus)
-	table.wipe(jps.RaidTarget)
 			
 	local group_type = nil
 	local unit = nil
