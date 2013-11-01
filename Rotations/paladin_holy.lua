@@ -42,7 +42,7 @@ function hpala.update()
 	if jps.canHeal("focus") then table.insert(hpala.importantHealTargetsValue,"focus") end
 
 	local lowestHP = jps.hp("player")
-	for unitName, _ in ipairs(hpala.importantHealTargetsValue) do
+	for _,unitName in ipairs(hpala.importantHealTargetsValue) do
 		local thisHP = jps.hp(unitName)
 		if jps.canHeal(unitName) and thisHP <= lowestHP then
 				lowestHP = thisHP
