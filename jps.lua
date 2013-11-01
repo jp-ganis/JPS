@@ -20,8 +20,8 @@
 -- Universal
 local L = MyLocalizationTable
 jps = {}
-jps.Version = "1.3.0"
-jps.Revision = "r548"
+jps.Version = "1.3.1"
+jps.Revision = "r600"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
