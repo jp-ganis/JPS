@@ -773,7 +773,6 @@ function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, l
 	local healTargetHP = jps.hp(jps.LastTarget)
 	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
 	if spellCasting == nil then return false end
-	if not jps.canHeal(jps.LastTarget) then return true end
 
 	for key, healSpellTable  in pairs(spellsToCheck) do
 		local breakpoint = healSpellTable[2]
@@ -785,12 +784,9 @@ function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, l
 					print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
 					SpellStopCasting()
 				end
-				if healTargetHP > lowestImportantHP and lowestImportantHP < 0.5 then
-					print("interrupt "..spellName.." @ unit "..jps.LastTarget.. " - important unit is critcal");
-					SpellStopCasting()
-				end
 			else
-				if (avgHP > breakpoint or unitsBelow70 <= 2) and not jps.buff(114908) then --114908 = spritshell
+				if unitsBelow70 <= 2 and not jps.buff(114908) then --114908 = spritshell
+					print("interrupt "..spellName.." , raid has enough hp!");
 					SpellStopCasting()
 				end
 			end
@@ -961,7 +957,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		
 		
 		-- important units emergency
-		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.95, 
+		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.99, 
 	
 			{
 				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
@@ -972,7 +968,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.greaterHeal, priestLight.disc.lowestImportantUnitHP < 0.6, priestLight.disc.lowestImportantUnit },
 				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.8 and jps.hp("player") < 0.7, priestLight.disc.lowestImportantUnit },
 				{priestLight.penance, priestLight.disc.lowestImportantUnitHP < 0.95, priestLight.disc.lowestImportantUnit },
-				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.95 , priestLight.disc.lowestImportantUnit },
+				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.98 , priestLight.disc.lowestImportantUnit },
 			},
 		},
 	
@@ -995,9 +991,9 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < 0.4, priestLight.disc.lowestUnit },
 				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < 0.4, priestLight.disc.lowestUnit },
 				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestUnitHP < 0.7 and jps.hp("player") < 0.7, priestLight.disc.lowestUnit },
+				{priestLight.prayerOfMending, priestLight.disc.lowestUnitHP < 0.98 , priestLight.disc.lowestUnit },
 				{priestLight.greaterHeal, priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit },
 				{priestLight.penance, priestLight.disc.lowestUnitHP < 0.9, priestLight.disc.lowestUnit },
-				{priestLight.prayerOfMending, priestLight.disc.lowestUnitHP < 0.95 , priestLight.disc.lowestUnit },
 				{priestLight.holyFire, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.penance, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.buffStacks(priestLight.evangelism) <5 , priestLight.disc.rangedTarget},
