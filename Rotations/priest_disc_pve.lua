@@ -930,7 +930,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		{'nested' , jps.Moving, 
 			{
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul) and jps.mana() > 0.8, "player"},
-				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.castEverySeconds(12) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
+				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,12) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.buff(priestLight.rapture) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 				{priestLight.renew, not jps.buff(priestLight.disc.lowestUnit) and priestLight.disc.lowestUnitHP < 0.8, priestLight.disc.lowestUnit },
 				{priestLight.penance, jps.glyphInfo() and priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit },
@@ -950,7 +950,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 		
 		-- PW:S
-		{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.lowestUnit) and jps.castEverySeconds(12) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
+		{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,12) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 		{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.lowestUnit) and jps.buff(priestLight.rapture) and priestLight.disc.lowestUnitHP < 0.95, priestLight.disc.lowestUnit},
 		{"nested", priestLight.disc.aggroTank ~= nil,
 			{
@@ -1001,7 +1001,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.holyFire, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.penance, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.buffStacks(priestLight.evangelism) <5 , priestLight.disc.rangedTarget},
-				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(2), priestLight.disc.rangedTarget},
+				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(priestLight.smite,1.5), priestLight.disc.rangedTarget},
 				{priestLight.heal, priestLight.disc.lowestUnitHP < 0.85, priestLight.disc.lowestUnit },
 			},
 	
