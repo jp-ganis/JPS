@@ -908,11 +908,11 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 	
 		-- mana
-		{priestLight.mindbender, jps.mana() < 0.70 and jps.UseCds, priestLight.disc.rangedTarget},
-		{priestLight.shadowfiend, jps.mana() < 0.60 and jps.UseCds, priestLight.disc.rangedTarget},
-		{jps.useTrinket(0), jps.mana() < 0.8 and jps.UseCds and jps.isManaRegTrinket(0)},
-		{jps.useTrinket(1), jps.mana() < 0.8 and jps.UseCds and jps.isManaRegTrinket(1)},
-		{jps.useBagItem(priestLight.manaPotion), jps.mana() < 0.8 and jps.UseCds},
+		{priestLight.mindbender, jps.mana() < 0.70 and jps.UseCDs, priestLight.disc.rangedTarget},
+		{priestLight.shadowfiend, jps.mana() < 0.60 and jps.UseCDs, priestLight.disc.rangedTarget},
+		{jps.useTrinket(0), jps.mana() < 0.8 and jps.UseCDs and jps.isManaRegTrinket(0)},
+		{jps.useTrinket(1), jps.mana() < 0.8 and jps.UseCDs and jps.isManaRegTrinket(1)},
+		{jps.useBagItem(priestLight.manaPotion), jps.mana() < 0.8 and jps.UseCDs},
 	
 		-- dispel
 		priestLight.disc.dispel,
@@ -946,8 +946,8 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.7, 
 	
 			{
-				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCds, priestLight.disc.lowestImportantUnit },
-				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCds, priestLight.disc.lowestImportantUnit },
+				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
+				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, priestLight.disc.lowestImportantUnit },
 				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestImportantUnit},
 				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < 0.4, priestLight.disc.lowestImportantUnit },
 				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < 0.4, priestLight.disc.lowestImportantUnit },
@@ -1000,11 +1000,9 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseSpellTable(spellTableTest)
-	if IsControlKeyDown() then
+	--[[if IsControlKeyDown() then
 		print("|cff0070ddspell:","|cffffffff",spell,"|cff0070ddtarget","|cffffffff",target)
 		print("|cff0070ddlowest important:","|cffffffff",priestLight.disc.lowestImportantUnit,"|cff0070dd lowest normal","|cffffffff",priestLight.disc.lowestUnit)
-		
-
-	end
+	end]]--
 	return spell,target
 end, "Disc Priest PVE light 5.4", true ,false)
