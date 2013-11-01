@@ -833,13 +833,13 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	if jps.canHeal("focus") then table.insert(priestLight.disc.importantUnits,"focus") end
 	if jps.canHeal("mouseover") then table.insert(priestLight.disc.importantUnits,"mouseover") end
 	if not priestLight.disc.importantUnits[0] then 
-		priestLight.disc.lowestImportantUnitHP = thisHP
+		priestLight.disc.lowestImportantUnitHP = jps.hp("player")
 		priestLight.disc.lowestImportantUnit = jpsName
 	else
 		for unitName, _ in ipairs(priestLight.disc.importantUnits) do
 			local thisHP = jps.hp(unitName)
 			if jps.canHeal(unitName) and thisHP < priestLight.disc.lowestImportantUnitHP then
-				priestLight.disc.lowestImportantUnitHP = jps.hp("player")
+				priestLight.disc.lowestImportantUnitHP = thisHP
 				priestLight.disc.lowestImportantUnit = unitName
 			end
 		end
