@@ -808,7 +808,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		if jps.canHeal(unit) then
 			local thisHP = jps.hp(unit)
 			priestLight.disc.units = priestLight.disc.units+1
-			priestLight.disc.avgHP = priestLight.disc.avgHP+thisHP
+			priestLight.disc.avgHP = priestLight.disc.sumHP+thisHP
 
 			if thisHP < 0.3 then priestLight.disc.unitsBelow30 = priestLight.disc.unitsBelow30 + 1 end
 			if thisHP < 0.5 then priestLight.disc.unitsBelow50 = priestLight.disc.unitsBelow50 + 1 end
@@ -913,8 +913,8 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 	
 		-- mana
-		{priestLight.mindbender, jps.mana() < 0.70 and jps.UseCDs, priestLight.disc.rangedTarget},
-		{priestLight.shadowfiend, jps.mana() < 0.60 and jps.UseCDs, priestLight.disc.rangedTarget},
+		{priestLight.mindbender, jps.mana() < 0.70 and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
+		{priestLight.shadowfiend, jps.mana() < 0.60 and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
 		{jps.useTrinket(0), jps.mana() < 0.8 and jps.UseCDs and jps.isManaRegTrinket(0)},
 		{jps.useTrinket(1), jps.mana() < 0.8 and jps.UseCDs and jps.isManaRegTrinket(1)},
 		{jps.useBagItem(priestLight.manaPotion), jps.mana() < 0.8 and jps.UseCDs},
