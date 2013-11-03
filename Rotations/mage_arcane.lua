@@ -53,6 +53,7 @@ jps.registerRotation("MAGE","ARCANE",function()
 		{ "arcane missiles",				 mStacks == 2 and jps.cooldown("arcane power") >0 and stacks ==4 },
 		{ "Nether Tempest" , not jps.debuff("Nether Tempest")},
 		{ "living bomb",				 not jps.debuff("Living Bomb") and jps.TimeToDie("target") > 11 },
+		{ "Living Bomb",    jps.debuffDuration("Living Bomb","mouseover") == 0  and jps.canDPS("mouseover") and jps.TimeToDie("mouseover") > 11, "mouseover" },
 		{ "arcane barrage",				 stacks == 4 and mana < .95 },
 		{ "presence of mind" , jps.UseCds },
 		{ "arcane blast" },

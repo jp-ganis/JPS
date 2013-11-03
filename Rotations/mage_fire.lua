@@ -34,7 +34,8 @@ local spellTable =
 	-- Requires herbalism
 	{ "Lifeblood", jps.UseCDs },
 
-	{ "Living Bomb",    jps.debuffDuration("Living Bomb") == 0 , "target" }, --depending on your talent tree
+	{ "Living Bomb",    jps.debuffDuration("Living Bomb") == 0  and jps.TimeToDie("target") > 11, "target" }, --depending on your talent tree
+	{ "Living Bomb",    jps.debuffDuration("Living Bomb","mouseover") == 0  and jps.canDPS("mouseover") and jps.TimeToDie("mouseover") > 11, "mouseover" },
 	{ "Frost Bomb",       jps.debuffDuration("Frost Bomb") == 0, "target" }, --depending on your talent tree
 	
 	--rotation
