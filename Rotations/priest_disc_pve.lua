@@ -765,20 +765,21 @@ priestLight.painsup = 33206;
 priestLight.holyFire = 14914;
 priestLight.heal = 2050;
 priestLight.weakenedSoul = 6788;
+priestLight.arcaneTorrent = 28730;
 priestLight.disc = {}
 priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priestLight.greaterHeal, 0.93,false },{ priestLight.heal, 0.98,false }, {priestLight.prayerOfHealing,0.90,true}}
-
-
+ 
+ 
 function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, lowestImportantHP )
-	local healTargetHP = jps.hp(jps.LastTarget)
-	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
-	if spellCasting == nil then return false end
-
+ 	local healTargetHP = jps.hp(jps.LastTarget)
+ 	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
+ 	if spellCasting == nil then return false end
+ 
 	for key, healSpellTable  in pairs(spellsToCheck) do
-		local breakpoint = healSpellTable[2]
-		local spellName = healSpellTable[1]
+ 		local breakpoint = healSpellTable[2]
+		local spellName = tostring(select(1,GetSpellInfo(healSpellTable[1]))) 
 		local aoe = healSpellTable[3]
-		if spellName == spellCasting then
+		if spellName:lower() == spellCasting:lower() then
 			if aoe == false then
 				if healTargetHP > breakpoint then
 					print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
@@ -802,7 +803,6 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	priestLight.disc.sumHP = 0
 	priestLight.disc.avgHP = 1
 	priestLight.disc.units = 0
-	
 	
 	for unit,index in pairs(jps.RaidStatus) do
 		if jps.canHeal(unit) then
@@ -836,7 +836,6 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	
 	if jps.canHeal("target") then table.insert(priestLight.disc.importantUnits,"target") end
 	if jps.canHeal("focus") then table.insert(priestLight.disc.importantUnits,"focus") end
-	if jps.canHeal("mouseover") then table.insert(priestLight.disc.importantUnits,"mouseover") end
 	if jps.canHeal("player") then table.insert(priestLight.disc.importantUnits,"player") end
 
 	for _, unitName in ipairs(priestLight.disc.importantUnits) do
@@ -862,7 +861,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		elseif jps.DispelPoisonTarget() then
 			cleanseTarget = jps.DispelPoisonTarget()
 		end
-		dispelTable[2] = cleanseTarget ~= nil
+		dispelTable[2] = cleanseTarget ~= nil and jps.Interrupts
 		dispelTable[3] = cleanseTarget
 		return dispelTable
 	end
@@ -915,6 +914,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		-- mana
 		{priestLight.mindbender, jps.mana() < 0.70 and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
 		{priestLight.shadowfiend, jps.mana() < 0.60 and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
+		{priestLight.arcaneTorrent, jps.mana() < 0.9 and jps.UseCDs },
 		{jps.useTrinket(0), jps.mana() < 0.8 and jps.UseCDs and jps.isManaRegTrinket(0)},
 		{jps.useTrinket(1), jps.mana() < 0.8 and jps.UseCDs and jps.isManaRegTrinket(1)},
 		{jps.useBagItem(priestLight.manaPotion), jps.mana() < 0.8 and jps.UseCDs},
@@ -928,7 +928,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul) and jps.mana() > 0.8, "player"},
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,12) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.buff(priestLight.rapture) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
-				{priestLight.renew, not jps.buff(priestLight.disc.lowestUnit) and priestLight.disc.lowestUnitHP < 0.8, priestLight.disc.lowestUnit },
+				{priestLight.renew, not jps.buff(priestLight.renew,priestLight.disc.lowestUnit) and priestLight.disc.lowestUnitHP < 0.8, priestLight.disc.lowestUnit },
 				{priestLight.penance, jps.glyphInfo() and priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit },
 				{priestLight.cascade, priestLight.disc.lowestUnitHP < 0.6, priestLight.disc.lowestUnit },
 			},
@@ -953,22 +953,21 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.aggroTank), priestLight.disc.aggroTank},
 			}
 		},
-		
-		
-		
+
 		-- important units emergency
 		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.99, 
 	
 			{
 				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
+				{priestLight.painsup, jps.canHeal("target") and jps.hp("target") < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, "target" },
 				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, priestLight.disc.lowestImportantUnit },
 				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestImportantUnit},
 				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < 0.4, priestLight.disc.lowestImportantUnit },
 				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < 0.4, priestLight.disc.lowestImportantUnit },
-				{priestLight.greaterHeal, priestLight.disc.lowestImportantUnitHP < 0.6, priestLight.disc.lowestImportantUnit },
+				{priestLight.greaterHeal, priestLight.disc.lowestImportantUnitHP < 0.65, priestLight.disc.lowestImportantUnit },
 				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.8 and jps.hp("player") < 0.7, priestLight.disc.lowestImportantUnit },
 				{priestLight.penance, priestLight.disc.lowestImportantUnitHP < 0.95, priestLight.disc.lowestImportantUnit },
-				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.98 , priestLight.disc.lowestImportantUnit },
+				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.95 , priestLight.disc.lowestImportantUnit },
 			},
 		},
 	
@@ -991,8 +990,8 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < 0.4, priestLight.disc.lowestUnit },
 				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < 0.4, priestLight.disc.lowestUnit },
 				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestUnitHP < 0.7 and jps.hp("player") < 0.7, priestLight.disc.lowestUnit },
-				{priestLight.prayerOfMending, priestLight.disc.lowestUnitHP < 0.98 , priestLight.disc.lowestUnit },
-				{priestLight.greaterHeal, priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit },
+				{priestLight.prayerOfMending, priestLight.disc.lowestUnitHP < 0.95 , priestLight.disc.lowestUnit },
+				{priestLight.greaterHeal, priestLight.disc.lowestUnitHP < 0.50, priestLight.disc.lowestUnit },
 				{priestLight.penance, priestLight.disc.lowestUnitHP < 0.9, priestLight.disc.lowestUnit },
 				{priestLight.holyFire, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.penance, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
