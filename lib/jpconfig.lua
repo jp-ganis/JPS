@@ -24,9 +24,9 @@ function jps.redColor(str)
 end
 
 
-local rotationButtonPositionY = -90; -- NEW
-local rotationButtonPositionX = 20; -- NEW
-local jpsRotationFrame = nil; -- NEW
+local rotationButtonPositionY = -90; 
+local rotationButtonPositionX = 20; 
+local jpsRotationFrame = nil; 
 local rotationCount = 0
 
 local rotationCountSetting = 0
@@ -598,13 +598,16 @@ function jps_VARIABLES_LOADED()
 		jpsDB = {}
 		collectgarbage("collect")
 	end
-	if ( not jpsDB ) then
+	if not jpsDBthen
 		jpsDB = {}
 	end
-	if ( not jpsDB[jpsRealm] ) then
+	if not jpsDB.Revision then
+		jpsDB.Revision = jps.Revision
+	end
+	if not jpsDB[jpsRealm] then
 		jpsDB[jpsRealm] = {}
 	end
-	if ( not jpsDB[jpsRealm][jpsName] ) then
+	if not jpsDB[jpsRealm][jpsName] then
 		write("Initializing new character names")
 		jpsDB[jpsRealm][jpsName] = {}
 		jpsDB[jpsRealm][jpsName].Enabled = true
@@ -617,22 +620,22 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
 		jpsDB[jpsRealm][jpsName].RaidMode = false
-		jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		jpsDB[jpsRealm][jpsName].spellConfig = {} 
 		if jps.Spec then
-			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} 
 		end
-		jpsDB[jpsRealm][jpsName].settings = {} -- NEW
+		jpsDB[jpsRealm][jpsName].settings = {} 
 	else
-		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then -- NEW
-			jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		if not jpsDB[jpsRealm][jpsName].spellConfig then 
+			jpsDB[jpsRealm][jpsName].spellConfig = {} 
 		end
-		if ( not jpsDB[jpsRealm][jpsName].settings) then -- NEW
-			jpsDB[jpsRealm][jpsName].settings = {} -- NEW
+		if not jpsDB[jpsRealm][jpsName].settings then 
+			jpsDB[jpsRealm][jpsName].settings = {} 
 		end		
 		
 		if jps.Spec then
-			if ( not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) then -- NEW
-				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+			if not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] then 
+				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} 
 			end	
 		end
 		if not jpsDB[jpsRealm][jpsName].RaidMode then		
@@ -644,7 +647,7 @@ function jps_VARIABLES_LOADED()
 	jps_SAVE_PROFILE()
 	jps.loadDefaultSettings()
 	jps.runFunctionQueue("settingsLoaded")
-	mconfig_VARIABLES_LOADED()
+	mconfig_VARIABLES_LOADED
 	jps_variablesLoaded = true
 end
 
@@ -677,5 +680,3 @@ function jps_SAVE_PROFILE()
 		jpsDB[jpsRealm][jpsName][varName] = jps[varName]
 	end
 end
-
-
