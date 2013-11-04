@@ -393,45 +393,6 @@ end
 jps.registerEvent("ADDON_ACTION_FORBIDDEN", hideStaticPopup)
 jps.registerEvent("ADDON_ACTION_BLOCKED", hideStaticPopup)
 
--- LOOT_OPENED
-jps.registerEvent("LOOT_OPENED", function()
-	if (IsFishingLoot()) then
-		jps.Fishing = true
-	end
-end)
-
--- LOOT_CLOSED
-jps.registerEvent("LOOT_CLOSED", function()
-	local deleteFish = false
-	if jps.Fishing then
-		deleteFish = true
-		jps.Fishing = false
-	end
-	local deleteCarp = jps.getConfigVal("delete fish: golden carp")
-	local deleteMurgle = jps.getConfigVal("delete fish: murglesnout")
-	for bag = 0,4,1 do
-		for slot = 1, GetContainerNumSlots(bag), 1 do
-			local name = GetContainerItemLink(bag,slot)
-			local itemId = GetContainerItemID(bag, slot) 
-			if name then
-				local copper = select(11,GetItemInfo(itemId)) or 0;
-				if string.find(name,"ff9d9d9d") and copper < 500 and jps.getConfigVal("delete grey loot < 5 silver") == 1 then -- delete grey stuff worth less then 5 silver
-					write("Deleting "..name.." reason: to low price")
-					PickupContainerItem(bag,slot)
-					DeleteCursorItem()
-				elseif deleteFish and string.find(name,L["Murglesnout"]) and deleteMurgle == 1 then
-					PickupContainerItem(bag,slot)
-					write("Deleting "..name)
-					DeleteCursorItem()
-				elseif deleteFish and string.find(name,L["Golden Carp"]) and deleteCarp == 1 then
-					PickupContainerItem(bag,slot)
-					write("Deleting "..name)
-					DeleteCursorItem()
-				end					
-			end 
-		 end 
-	end
-end)
 
 -- UI_ERROR_MESSAGE
 jps.registerEvent("UI_ERROR_MESSAGE", function(event_error)
