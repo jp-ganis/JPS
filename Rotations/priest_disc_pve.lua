@@ -747,7 +747,7 @@ priestLight.shadowWordDeath = 32379;
 priestLight.smite = 585;
 priestLight.surgeOfLight = 114255;
 priestLight.twistOfFate = 109142; 
-priestLight.magicDispel = 527;
+priestLight.purify = 527;
 priestLight.spiritShell = 114908;
 priestLight.spiritShellBuild = 109964;
 priestLight.prayerOfHealing = 596;
@@ -853,13 +853,13 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		priestLight.disc.shouldHeal = true
 	end 
 
-	local dispelTable = {priestLight.magicDispel}
+	local dispelTable = {priestLight.purify}
 	function priestLight.disc.dispel()
 		local cleanseTarget = nil
 		if jps.DispelMagicTarget() then
 			cleanseTarget = jps.DispelMagicTarget()
-		elseif jps.DispelPoisonTarget() then
-			cleanseTarget = jps.DispelPoisonTarget()
+		elseif jps.DispelDiseaseTarget() then
+			cleanseTarget = jps.DispelDiseaseTarget()
 		end
 		dispelTable[2] = cleanseTarget ~= nil and jps.Interrupts
 		dispelTable[3] = cleanseTarget
