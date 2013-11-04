@@ -270,9 +270,22 @@ function jps.Cast(spell) -- "number" "string"
 end
 
 jps.UserInitiatedSpellsToIgnore = {
-	109132, -- monk roll
-	137639, -- monk storm earth fire
-	115450, -- monk detox
+	-- General Skills
+	6603, -- Auto Attack (prevents from toggling on/off)
+	-- Monk Skills
+	109132, -- Roll (Unless you want to roll off cliffs, leave this here)
+	137639, -- Storm, Earth, and Fire (prevents you from destroying your copy as soon as you make it)
+	115450, -- Detox (when casting Detox without any dispellable debuffs, the cooldown resets)
+	119582, -- Purifying Brew (having more than 1 chi, this can prevent using it twice in a row)
+	115008, -- Chi Torpedo (same as roll)
+	101545, -- Flying Serpent Kick (prevents you from landing as soon as you start "flying")
+	115921, -- Legacy of The Emperor
+	116781, -- Legacy of the White Tiger
+	115072, -- Expel Harm (below 35%, brewmasters ignores cooldown on this spell)
+	115181, -- Breath of Fire (if you are chi capped, this can make you burn all your chi)
+	115546, -- Provoke (prevents you from wasting your taunt)
+	116740, -- Tigereye Brew (prevents you from wasting your stacks and resetting your buff)
+	115294, -- Mana Tea (This isn't an instant cast, but since it only has a 0.5 channeled time, it can triggers twice in the rotation)
 	111400, -- warlock burning rush
 }
 
@@ -289,7 +302,8 @@ end
 function jps.shouldSpellBeIgnored(spell)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
-
+	if not spellname then return false end
+	spellname = spellname:lower()
 	local result = false
 	for _, v in pairs(jps.UserInitiatedSpellsToIgnore) do
 		if spellname == string.lower(tostring(select(1,GetSpellInfo(v)))) then
