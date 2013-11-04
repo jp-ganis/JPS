@@ -235,15 +235,3 @@ function jps.getRotationValue(key)
     if not rotationTable[getCurrentKey()][activeRotation] or rotationTable[getCurrentKey()][activeRotation].config then  return nil end
     return rotationTable[getCurrentKey()][activeRotation].config[key]
 end
-
-jps.rotations = {}
-function jps.rotations.addConfigDefaults(class,spec, rotationName, configTable)
-	
-end
-
-function jps.rotations.enabled(group,spell)
-
-end
-function jps.rotations.value(group,spell)
-
-end
