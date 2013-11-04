@@ -168,10 +168,10 @@ tostring(select(1,GetSpellInfo(126393))) -- Hunter: Eternal Guardian
 
 }
 local function isBattleRez(spell)
-    for _,v in ipairs(battleRezSpells) do
-        if v == spell then return true end
-    end
-    return false
+		for _,v in ipairs(battleRezSpells) do
+				if v == spell then return true end
+		end
+		return false
 end
 
 -- check if a spell is castable @ unit 
@@ -319,17 +319,17 @@ end
 
 function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
 	LOG.info("Can Cast Debug for %s @ $s ", spell, unit)
-	if spell == nil then LOG.info("spell is nil  %s @ $s", spell, unit)return false end
-	if not jps.UnitExists(unit) then LOG.info("invalid unit  %s @ $s", spell, unit) return false end
+	if spell == nil then LOG.info("spell is nil	%s @ $s", spell, unit)return false end
+	if not jps.UnitExists(unit) then LOG.info("invalid unit	%s @ $s", spell, unit) return false end
 
 	local usable, nomana = IsUsableSpell(spell) -- IsUsableSpell("spellName" or spellID)
-	if not usable then LOG.info("spell is not sable  %s @ $s", spell, unit) return false end
-	if nomana then LOG.info("failed mana test  %s @ $s", spell, unit) return false end
-	if jps.cooldown(spell)~=0 then LOG.info("cooldown not finished  %s @ $s", spell, unit) return false end
-	if jps_SpellHasRange(spell)~=1 then LOG.info("spellhasRange check failed  %s @ $s", spell, unit) return false end
+	if not usable then LOG.info("spell is not sable	%s @ $s", spell, unit) return false end
+	if nomana then LOG.info("failed mana test	%s @ $s", spell, unit) return false end
+	if jps.cooldown(spell)~=0 then LOG.info("cooldown not finished	%s @ $s", spell, unit) return false end
+	if jps_SpellHasRange(spell)~=1 then LOG.info("spellhasRange check failed	%s @ $s", spell, unit) return false end
 
-	if jps_IsSpellInRange(spell,unit)~=1 then LOG.info("not in range  %s @ $s", spell, unit) return false end
-	LOG.info("Passed all tests  %s @ $s", spell, unit)
+	if jps_IsSpellInRange(spell,unit)~=1 then LOG.info("not in range	%s @ $s", spell, unit) return false end
+	LOG.info("Passed all tests	%s @ $s", spell, unit)
 	return true
 end
 

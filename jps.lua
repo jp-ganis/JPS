@@ -324,7 +324,6 @@ function jps_Combat()
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
 	
-	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
