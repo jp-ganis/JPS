@@ -450,10 +450,6 @@ function parseSpellTable( hydraTable )
 				if jps.Debug then macrowrite(macroSpell,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 			end
 		
-			-- CASTSEQUENCE WORKS ONLY FOR {INSTANT CAST, SPELL}
-			-- better than "#showtooltip\n/cast Frappe du colosse\n/cast Sanguinaire"
-			-- because I can check the spell with jps.canCast
-			-- {"macro",{109964,2060},player}
 			if conditions and type(macroText) == "table" then
 				for _,sequence in ipairs (macroText) do
 					local spellname = tostring(select(1,GetSpellInfo(sequence)))
@@ -490,37 +486,4 @@ end
 -------------------------
 function hideDropdown()
 	rotationDropdownHolder:Hide()
-end
-
-function jps.RotationActive(spellTable)
-	local countRotations = 0
-
-	for i,j in ipairs (spellTable) do
-		if spellTable[i]["ToolTip"] ~= nil then
-			jps.MultiRotation = true
-			countRotations = countRotations+1 
-			jps.ToggleRotationName[i] = spellTable[i]["ToolTip"]
-		end
-	end
-
-	if jps.initializedRotation == false then
-		if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
-			
-			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
-			jps.deleteFunctionFromQueue(hideDropdown,"gui_loaded")
-			rotationDropdownHolder:Show()
-		else
-			jps.addTofunctionQueue(hideDropdown,"gui_loaded") 
-		end
-		jps.firstInitializingLoop = true
-	end
-
-	jps.initializedRotation = true
-
-	if jps.MultiRotation then
-		jps.Tooltip = spellTable[jps.Count]["ToolTip"]
-		return spellTable[jps.Count]
-	else
-		return spellTable
-	end
 end
