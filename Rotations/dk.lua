@@ -141,7 +141,7 @@
 
 		if  not eventtype or srcName ~= "Sudos" then return end
 		if spellID ~= dk.spells["frost fever"] and spellID ~= dk.spells["blood plague"] then return end
-		if eventtype == "SPELL_AURA_APPLIED" then
+		if eventtype == "SPELL_AURA_APPLIED" or eventtype == "SPELL_AURA_REFRESH" then
 			if not dk.currentDotStats[spellID] then dk.currentDotStats[spellID] = {} end
 			dk.currentDotStats[spellID].ap = dk.totalAttackPower()
 			dk.currentDotStats[spellID].mastery = GetMastery()
