@@ -54,10 +54,8 @@ jps.Casting = false
 jps.LastCast = nil
 jps.ThisCast = nil
 jps.NextCast = nil
-jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
-jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
 jps.CurrentCast = nil
@@ -69,8 +67,6 @@ jps.isBehind = true
 jps.isHealer = false
 jps.DPSRacial = nil
 jps.DefRacial = nil
-jps.Lifeblood = nil
-jps.EngiGloves = nil
 jps.isTank = false
 jps.CrowdControl = false
 jps.CrowdControlTarget = nil
@@ -79,10 +75,8 @@ jps.CrowdControlTarget = nil
 cast = CastSpellByName
 
 -- Misc
-jps.raid = {}
 jps.Opening = true
-jps.RakeBuffed = false
-jps.RipBuffed = false
+
 jps.BlacklistTimer = 2
 jps.RaidStatus = {}
 jps.RaidTarget = {}
@@ -95,7 +89,6 @@ jps.firstInitializingLoop = true
 jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
-jps.RaidMode = false
 jps.functionQueues = {}
 jps.timedCasting = {}
 
@@ -157,7 +150,7 @@ function jps.detectSpec()
 	jps.Class = UnitClass("player")
 	jps.Level = Ternary(jps.Level > 1, jps.Level, UnitLevel("player"))
 	if jps.Class then
-		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
+		local id = GetSpecialization()
 		if not id then 
 			if jps.Level < 10 then 
 				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
@@ -261,13 +254,6 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.Macro("/reload")
 	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
-	elseif msg == "raid"  or msg == "raidmode" then
-		jps.RaidMode = not jps.RaidMode
-		if jps.RaidMode then
-			write("Raid Mode is now enabled")
-		else
-			write("Raid Mode is now disabled")
-		end
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
@@ -366,7 +352,6 @@ function jps_Combat()
 	
 	-- Movement
 	jps.Moving = GetUnitSpeed("player") > 0
-	jps.MovingTarget = GetUnitSpeed("target") > 0
 	
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
