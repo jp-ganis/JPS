@@ -145,14 +145,12 @@ end
 function jps.avgRaidHP(noFilter)
 	local raidHP = 1
 	local unitCount = 0
-	local minUnit = 1
 	local avgHP = 1
 	if GetNumGroupMembers() == 0 then return 1 end
 	for unit, unitTable in pairs(jps.RaidStatus) do
 		if unitTable["inrange"] then
 			unitHP = unitTable["hpct"]
 			if unitHP then
-				if unitHP < minUnit and unitHP > 0 then minUnit = unitHP end
 				raidHP = raidHP + unitHP
 				unitCount = unitCount + 1
 			end
