@@ -719,8 +719,10 @@ end, "Disc Priest PvE", true, false)
 -- "Power Word: Shield" -- Mot de pouvoir : Bouclier 
 -- "Ame affaiblie" -- Weakened Soul
 
-local priestLight = {}
 
+
+local priestLight = {}
+priestLight.version = 0.9
 priestLight.arcaneTorrent = 28730;
 priestLight.bloodFury = 33702;
 priestLight.bloodlust = 2825;	
@@ -984,7 +986,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 
 	 	-- single target & dps
-		{'nested' , not jps.MultiTarget, 
+		{'nested' , not jps.MultiTarget or priestLight.disc.pohTarget == nil, 
 			{
 				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestUnit},
 				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < 0.4, priestLight.disc.lowestUnit },
@@ -996,7 +998,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.holyFire, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.penance, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.buffStacks(priestLight.evangelism) <5 , priestLight.disc.rangedTarget},
-				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(priestLight.smite,1.5), priestLight.disc.rangedTarget},
+				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(priestLight.smite,1), priestLight.disc.rangedTarget},
 				{priestLight.heal, priestLight.disc.lowestUnitHP < 0.85, priestLight.disc.lowestUnit },
 			},
 	
