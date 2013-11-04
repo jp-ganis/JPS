@@ -30,6 +30,8 @@ jplexer.lua
 jpconditionparser.lua
 
 Lib\jpgui.lua
+Lib\mconfig.lua
+
 Lib\jpconfig.lua
 Lib\bindings.xml
 

@@ -768,19 +768,19 @@ priestLight.weakenedSoul = 6788;
 priestLight.arcaneTorrent = 28730;
 priestLight.disc = {}
 priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priestLight.greaterHeal, 0.93,false },{ priestLight.heal, 0.98,false }, {priestLight.prayerOfHealing,0.90,true}}
- 
-priestConfig = mConfig:createConfig("Priest Disc Config","PriestRotationsDisc","Default",{"/priest","/disc","/rotation"})
-priestConfig:addSlider("rotationPowerNormalSingle", "Power of your normal single Target Healing in % ", 0, 100, 100, 1)
-priestConfig:addSlider("rotationPowerNormalAOE", "Power of your normal AOE Target Healing in % ", 0, 100, 100, 1)
-priestConfig:addSlider("rotationPowerEmergency", "Power of your normal Important units Healing in % ", 0, 100, 100, 1)
-priestConfig:addSlider("mindbenderManaPercent", "% of mana for activating Mindbender", 0, 100, 70, 1)
-priestConfig:addSlider("shadowfiendManaPercent", "% of mana for activating shadowfiend", 0, 100, 60, 1)
-priestConfig:addSlider("arcaneTorrent", "% of mana for activating arcane Torrent", 0, 100, 90, 1)
-priestConfig:addSlider("manaPotionManaPercent", "% of mana for using mana potion", 0, 100, 40, 1)
-priestConfig:addSlider("trinketManaPercent", "% of mana for using mana/spirit trinket", 0, 100, 80, 1)
-priestConfig:addSlider("timeBetweenShields", "seconds you want to wait before you shield another unit", 1, 30, 12, 1)
-priestConfig:addSlider("timeBetweenSmite", "seconds you want to wait between smites (if you have 5 stacks evangelism)", 1, 10, 1.5, 0.5)
-
+jps.registerEvent("VARIABLES_LOADED", function()
+	priestConfig = mConfig:createConfig("Priest Disc Config","PriestRotationsDisc","Default",{"/priest","/disc"})
+	priestConfig:addSlider("rotationPowerNormalSingle", "Power of your normal single Target Healing in % ", 0, 100, 100, 1)
+	priestConfig:addSlider("rotationPowerNormalAOE", "Power of your normal AOE Target Healing in % ", 0, 100, 100, 1)
+	priestConfig:addSlider("rotationPowerEmergency", "Power of your normal Important units Healing in % ", 0, 100, 100, 1)
+	priestConfig:addSlider("mindbenderManaPercent", "% of mana for activating Mindbender", 0, 100, 70, 1)
+	priestConfig:addSlider("shadowfiendManaPercent", "% of mana for activating shadowfiend", 0, 100, 60, 1)
+	priestConfig:addSlider("arcaneTorrent", "% of mana for activating arcane Torrent", 0, 100, 90, 1)
+	priestConfig:addSlider("manaPotionManaPercent", "% of mana for using mana potion", 0, 100, 40, 1)
+	priestConfig:addSlider("trinketManaPercent", "% of mana for using mana/spirit trinket", 0, 100, 80, 1)
+	priestConfig:addSlider("timeBetweenShields", "seconds you want to wait before you shield another unit", 1, 30, 12, 1)
+	priestConfig:addSlider("timeBetweenSmite", "seconds you want to wait between smites (if you have 5 stacks evangelism)", 1, 10, 1.5, 0.5)
+end)
 
 -- allows us to adjust the whole heal output with one slider! for finding better healing % values etc.
 function priestLight.getPercentNormal(value) 

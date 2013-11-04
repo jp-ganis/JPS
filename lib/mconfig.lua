@@ -7,7 +7,7 @@ TO-DO:
 - idea: for larger rotations add subviews/tabs 
 ]]--
 
-jpsDB.mconfigData = {}
+
 
 mConfigAllConfigs = {}
 
@@ -34,7 +34,10 @@ local function testMConfig()
     testConfig:addDropDown("dropdownNamedTest", "Drop Down Named Keys", "DropDown Tooltip 2", {ALPHA="alpha", BETA="beta", GAMMA="gamma"}, "ALPHA")
 end
 
-local function mconfig_VARIABLES_LOADED()
+function mconfig_VARIABLES_LOADED()
+	if not jpsDB.mconfigData then
+		jpsDB.mconfigData = {}
+	end
     for _,c in pairs(mConfigAllConfigs) do
         if jpsDB.mconfigData[c.addOn] then
             c.values=jpsDB.mconfigData[c.addOn][c.key]
@@ -367,12 +370,16 @@ function mConfig:defaultValues()
 end
 
 function mConfig:getPercent(key)
+	print("test "..self)
 	return self.values[key]/100
 end
 
 
 function mConfig:createConfig(titleText,addOn,key,slashCommands)
     if not key then key = "Default" end
+    if not jpsDB.mconfigData then
+		jpsDB.mconfigData = {}
+	end
     if not jpsDB.mconfigData[addOn] then jpsDB.mconfigData[addOn] = {} end
     if not jpsDB.mconfigData[addOn][key] then jpsDB.mconfigData[addOn][key] = {} end
     local data = {
