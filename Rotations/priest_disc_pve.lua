@@ -805,8 +805,8 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	priestLight.disc.units = 0
 	
 	for unit,index in pairs(jps.RaidStatus) do
-		if jps.canHeal(unit) then
-			local thisHP = jps.hp(unit)
+		if index["inrange"] == true then
+			local thisHP = index["hpct"]
 			priestLight.disc.units = priestLight.disc.units+1
 			priestLight.disc.avgHP = priestLight.disc.sumHP+thisHP
 
@@ -894,7 +894,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		priestLight.disc.aggroTank = jps.findMeAggroTank("boss3")
 	end
 
-	local spellTableTest = {
+	local spellTableDiscLight = {
 		-- buffs
 		{priestLight.innerFire, not jps.buff(priestLight.innerWill) and not jps.buff(priestLight.innerFire), 'player'},
 		
@@ -1005,7 +1005,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	
 	local spell = nil
 	local target = nil
-	spell,target = parseSpellTable(spellTableTest)
+	spell,target = parseSpellTable(spellTableDiscLight)
 	--[[if IsControlKeyDown() then
 		print("|cff0070ddspell:","|cffffffff",spell,"|cff0070ddtarget","|cffffffff",target)
 		print("|cff0070ddlowest important:","|cffffffff",priestLight.disc.lowestImportantUnit,"|cff0070dd lowest normal","|cffffffff",priestLight.disc.lowestUnit)
