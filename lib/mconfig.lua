@@ -1,4 +1,13 @@
-mConfigData = {}
+--[[
+TO-DO:
+- check behavior on respec
+- add maybe default slashcommand
+- add getPercent function
+- add helper functions for key modifiers
+- idea: for larger rotations add subviews/tabs 
+]]--
+
+jpsDB.mconfigData = {}
 
 mConfigAllConfigs = {}
 
@@ -25,18 +34,16 @@ local function testMConfig()
     testConfig:addDropDown("dropdownNamedTest", "Drop Down Named Keys", "DropDown Tooltip 2", {ALPHA="alpha", BETA="beta", GAMMA="gamma"}, "ALPHA")
 end
 
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("VARIABLES_LOADED")
-frame:SetScript("OnEvent", function()
+local function mconfig_VARIABLES_LOADED()
     for _,c in pairs(mConfigAllConfigs) do
-        if mConfigData[c.addOn] then
-            c.values=mConfigData[c.addOn][c.key]
+        if jpsDB.mconfigData[c.addOn] then
+            c.values=jpsDB.mconfigData[c.addOn][c.key]
             c:update()
 --       else
 --            print(c.addOn)
         end
     end
-end)
+end
 
 local _nextElementId = 1
 local function nextElementId()
@@ -44,8 +51,6 @@ local function nextElementId()
     _nextElementId = _nextElementId + 1
     return name
 end
-
-
 
 local function addTooltip(frame, title, text)
     if text and title then
@@ -366,13 +371,13 @@ end
 
 function mConfig:createConfig(titleText,addOn,key,slashCommands)
     if not key then key = "Default" end
-    if not mConfigData[addOn] then mConfigData[addOn] = {} end
-    if not mConfigData[addOn][key] then mConfigData[addOn][key] = {} end
+    if not jpsDB.mconfigData[addOn] then jpsDB.mconfigData[addOn] = {} end
+    if not jpsDB.mconfigData[addOn][key] then jpsDB.mconfigData[addOn][key] = {} end
     local data = {
         frames={options={}},
         addOn=addOn,
         key=key,
-        values=mConfigData[addOn][key],
+        values=jpsDB.mconfigData[addOn][key],
         defaults={},
         setters={},
     }

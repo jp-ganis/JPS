@@ -644,6 +644,7 @@ function jps_VARIABLES_LOADED()
 	jps_SAVE_PROFILE()
 	jps.loadDefaultSettings()
 	jps.runFunctionQueue("settingsLoaded")
+	mconfig_VARIABLES_LOADED()
 	jps_variablesLoaded = true
 end
 
