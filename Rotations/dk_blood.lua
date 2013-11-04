@@ -44,13 +44,13 @@ dkBloodSpellTable[1] = {
 	{{"maco","/target player\n/cast Gorefiend's Grasp\n/targetlasttarget"}'jps.canCast("Gorefiend\'s Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dkbConfig:get("ctrlKeyAction") == "GOREFIENDSGRASP" '},
 
 	-- Defensive cooldowns
-	{"Death Pact",'jps.hp() < dkbConfig:getPercentage("deathPactPercentage") and dk.hasGhoul()'},
-	{"Lichborne",'jps.UseCDs and jps.hp() < dkbConfig:getPercentage("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Pact",'jps.hp() < dkbConfig:getPercent("deathPactPercentage") and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < dkbConfig:getPercent("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
 	{"Rune Tap",'jps.hp() < 0.8'},
-	{jps.useBagItem(5512), 'jps.hp("player") < dkbConfig:getPercentage("healthstonePercentage")'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dkbConfig:getPercentage("iceboundFortitudePercentage")'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dkbConfig:getPercentage("vampiricBloodPercentage")'},
+	{jps.useBagItem(5512), 'jps.hp("player") < dkbConfig:getPercent("healthstonePercentage")'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dkbConfig:getPercent("iceboundFortitudePercentage")'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dkbConfig:getPercent("vampiricBloodPercentage")'},
 
 	
 	-- Interrupts
@@ -134,13 +134,13 @@ dkBloodSpellTable[4] = {
 	{{"maco","/target player\n/cast Gorefiend's Grasp\n/targetlasttarget"}'jps.canCast("Gorefiend\'s Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dkbConfig:get("ctrlKeyAction") == "GOREFIENDSGRASP" '},
 
 	-- Defensive cooldowns
-	{"Death Pact",'jps.hp() < dkbConfig:getPercentage("deathPactPercentage") and dk.hasGhoul()'},
-	{"Lichborne",'jps.UseCDs and jps.hp() < dkbConfig:getPercentage("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Pact",'jps.hp() < dkbConfig:getPercent("deathPactPercentage") and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < dkbConfig:getPercent("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
 	{"Rune Tap",'jps.hp() < 0.8'},
-	{jps.useBagItem(5512), 'jps.hp("player") < dkbConfig:getPercentage("healthstonePercentage")'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dkbConfig:getPercentage("iceboundFortitudePercentage")'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dkbConfig:getPercentage("vampiricBloodPercentage")'},
+	{jps.useBagItem(5512), 'jps.hp("player") < dkbConfig:getPercent("healthstonePercentage")'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dkbConfig:getPercent("iceboundFortitudePercentage")'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dkbConfig:getPercent("vampiricBloodPercentage")'},
 
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
@@ -210,13 +210,13 @@ dkBloodSpellTable[2] = {
 	{{"maco","/target player\n/cast Gorefiend's Grasp\n/targetlasttarget"}'jps.canCast("Gorefiend\'s Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dkbConfig:get("ctrlKeyAction") == "GOREFIENDSGRASP" '},
 
 	-- Defensive cooldowns
-	{"Death Pact",'jps.hp() < dkbConfig:getPercentage("deathPactPercentage") and dk.hasGhoul()'},
-	{"Lichborne",'jps.UseCDs and jps.hp() < dkbConfig:getPercentage("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Pact",'jps.hp() < dkbConfig:getPercent("deathPactPercentage") and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < dkbConfig:getPercent("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
 	{"Rune Tap",'jps.hp() < 0.8'},
-	{jps.useBagItem(5512), 'jps.hp("player") < dkbConfig:getPercentage("healthstonePercentage")'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dkbConfig:getPercentage("iceboundFortitudePercentage")'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dkbConfig:getPercentage("vampiricBloodPercentage")'},
+	{jps.useBagItem(5512), 'jps.hp("player") < dkbConfig:getPercent("healthstonePercentage")'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dkbConfig:getPercent("iceboundFortitudePercentage")'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dkbConfig:getPercent("vampiricBloodPercentage")'},
 
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},

@@ -366,7 +366,9 @@ function mConfig:defaultValues()
     return self:update()
 end
 
-
+function mConfig:getPercent(key)
+	return self.values[key]/100
+end
 
 
 function mConfig:createConfig(titleText,addOn,key,slashCommands)
