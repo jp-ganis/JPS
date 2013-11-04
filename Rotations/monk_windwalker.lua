@@ -3,9 +3,6 @@
 @class monk
 @spec WINDWALKER
 @description
-Using the same rotation as SimulationCraft. Tested with a 480 ilvl against a raid target dummy with only self buffs (and 
-ghetto enchants). imulationCraft with these settings gives a DPS of 72k. This script gives a DPS of 62k. So we're 10k off target.
-This script in LFR easily does between 70-85k single target.
 ]]--
 
 jps.registerRotation("MONK","WINDWALKER",function()
@@ -19,108 +16,144 @@ jps.registerRotation("MONK","WINDWALKER",function()
 	local defensiveCDActive = jps.buff("Touch of Karma") or jps.buff("Zen Meditation") or jps.buff("Fortifying Brew") or jps.buff("Dampen Harm") or jps.buff("Diffuse Magic")
 	local tigerPowerDuration = jps.buffDuration("Tiger Power")
 
+------------------------
+-- Bagged items usage --
+------------------------
+-- 5512 for "Healthstone", 75525 for "Alchemist's Flask"
+function canUseItemInBags(itemID)										
+	local itemID = itemID
+	if GetItemCount(itemID, false, false) > 0 and select(2,GetItemCooldown(itemID)) == 0 then return true end
+	return false
+end
+
+----------------
+--- HOT-KEYS ---
+----------------
+-- Reset keys to zero
+local shiftKEY_binary = 0
+local altKEY_binary = 0
+local controlKEY_binary = 0
+
+-- Register key downs
+if IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 end
+if IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 end
+if IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
+
+-- Binary calculation
+hotKEY_combo = shiftKEY_binary + altKEY_binary + controlKEY_binary
+
+-- Binary key combinations
+-- 1 = Shift
+-- 2 = Alt
+-- 3 = Shift + Alt
+-- 4 = Control
+-- 5 = Shift + Control
+-- 6 = Alt + Control
+-- 7 = Shift + Alt + Control
+
+if hotKEY_combo == 2 then HealingSphere_KEY = true else HealingSphere_KEY = false end -- Put Healing Spheres on the ground
+
 	local spellTable = {
-		-- Defensive Cooldowns.
-		-- { "Zen Meditation", 
-		--	jps.hp() < .4 
-		--	and not defensiveCDActive },
-			
-		{ "Fortifying Brew", jps.hp() < .6 and not defensiveCDActive },
-		
-		 -- Defensive Cooldown. (talent specific) 
-		{ "Diffuse Magic", jps.hp() < .6 and not defensiveCDActive },
-		
-		 -- Defensive Cooldown. (talent specific) 
-		{ "Dampen Harm", jps.hp() < .6 and not defensiveCDActive },
-		
-		 -- Defensive Cooldown. 
-		{ "Touch of Karma", jps.UseCDs and jps.hp() < .65 and not defensiveCDActive },
-		
-		 -- Insta-kill single target when available 
-		{ "Touch of Death", jps.UseCDs and jps.buff("Death Note") and not jps.MultiTarget },
-		
-		 -- Interrupts 
-		{ "Spear Hand Strike", jps.Interrupts and jps.shouldKick() },
-		 
-		{ "Paralysis", jps.Interrupts and jps.shouldKick() },
-		
-		 -- Chi Brew if we have no chi. (talent based) 
-		{ "Chi Brew", chi == 0 },
-		
-		{ jps.DPSRacial, jps.UseCDs },
-		
-		-- On-use Trinkets.
-		{ jps.useTrinket(0), jps.UseCDs },
-		{ jps.useTrinket(1), jps.UseCDs },
-		
-		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
-		
-		 -- Lifeblood CD. (herbalists) 
-		{ "Lifeblood", jps.UseCDs },
-		
-		 -- Rising Sun Kick on cooldown. 
-		{ "Rising Sun Kick", not jps.debuff("Rising Sun Kick") or jps.debuffDuration("Rising Sun Kick") <= 3 },
-		
-		 -- Tiger Palm single-target if the buff is close to falling off. 
-		{ "Tiger Palm", not jps.MultiTarget and tigerPowerDuration <= 3 },
-		
-		 -- Tigereye Brew when we have 10 stacks. 
-		{ "Tigereye Brew", jps.UseCDs and jps.buffStacks("Tigereye Brew") >= 10 },
-		
-		 -- Tigereye Brew to heal you if you have the Healing Elixirs talent. This is a more PvP -- oriented strategy, but can also help you in PvE enviroment). 
-		{ "Tigereye Brew", jps.UseCDs and jps.buff("Healing Elixirs") and jps.hp() < .85 },
-		
-		 -- Energizing Brew whenever if it'll take approximately more than 5 seconds of regen to max energy. 
+
+		-- GROUND SPELLS
+		{ "Healing Sphere",	HealingSphere_KEY },
+
+		-- BREWS
+		-- Chi Brew if we have no chi and less than 5 Elusive Brew stacks (talent based).
+		{ "Chi Brew", chi == 0 and jps.buffStacks("Tigereye Brew") < 5 },
+		-- Tigereye Brew when we have 10 stacks.
+		{ "Tigereye Brew", jps.UseCDs and jps.buffStacks("Tigereye Brew") >= 15 },
+		-- Energizing Brew whenever if it'll take approximately more than 5 seconds of regen to max energy.
 		{ "Energizing Brew", energyTimeToMax > 5 },
-		
-		 -- Invoke Xuen CD. (talent based) 
+
+		-- ITEMS, BUFFS AND SURVAVIBILITY
+		-- Legacy of the Emperor
+		{ "Legacy of the Emperor", not jps.buff("Legacy of the Emperor") and energy >= 40 },
+		-- Legacy of the White Tiger
+		{ "Legacy of the White Tiger", not jps.buff("Legacy of the White Tiger") and energy >= 40 },
+		-- Alchemist's Flask
+		{ jps.useBagItem("Alchemist's Flask"), not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") },
+		-- Healthstone
+    	{ {"macro","/use Healthstone"}, jps.hp("player") < 0.50 and canUseItemInBags(5512) },
+    	-- Master Healing Potion
+    	{ {"macro","/use Master Healing Potion"}, jps.hp("player") < 0.30 and canUseItemInBags(76097) },
+   		-- On-Use Trinket 2.
+		{ jps.useTrinket(1), jps.UseCDs },
+
+		-- PROFESSIONS AND RACIALS
+		-- Engineers may have synapse springs on their gloves (slot 10).
+		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and chi > 3 and energy >= 50 },
+		-- Herbalists have Lifeblood.
+		{ "Lifeblood", jps.UseCDs },
+		-- DPS Racial on cooldown.
+		{ jps.DPSRacial, jps.UseCDs },
+
+		-- COOLDOWNS
+		-- Fortifying Brew if you get low. Is set to 35% health because when at or below it, Desperate Measures triggers.
+		{ "Fortifying Brew", jps.Defensive and jps.hp() < .5 and not defensiveCDActive },
+		-- Diffuse Magic if you get low. (talent based)
+		{ "Diffuse Magic", jps.Defensive and jps.hp() < .5 and not defensiveCDActive },
+		-- Dampen Harm if you get low. (talent based)
+		{ "Dampen Harm", jps.Defensive and jps.hp() < .6 and not defensiveCDActive },
+		{ "Touch of Karma", jps.Defensive and jps.hp() < .65 and not defensiveCDActive },
+		-- Invoke Xuen on cooldown for single-target. (talent based)
 		{ "Invoke Xuen, the White Tiger", jps.UseCDs },
-		
-		 -- Rushing Jade Wind. (talent based) 
-		{ "Rushing Jade Wind", jps.MultiTarget and chi >= 2},
-		
-		 -- Rising Sun Kick on cooldown. 
+
+		-- MAIN ROTATION
+		-- Rising Sun Kick to keep debuff up. 
+		{ "Rising Sun Kick", not jps.debuff("Rising Sun Kick") or jps.debuffDuration("Rising Sun Kick") <= 3 },
+		-- Rising Sun Kick on cooldown.
 		{ "Rising Sun Kick" },
-		
-		 -- Fist of fury is a very situational chi dump, and is mainly filler to regenerate energy while it channels. -- Only use it with low energy and if RSK will be on CD and Tiger Power will be up for it's duration. 
-		{ "Fists of Fury", not jps.buff("Energizing Brew") and energyTimeToMax >= 3.5 and tigerPowerDuration >= 3.5 and not jps.Moving and IsSpellInRange("jab","target") },
-		
-		 -- Blackout Kick single-target on clearcast. 
-		{ "Blackout Kick", not jps.MultiTarget and jps.buff("Combo Breaker: Blackout Kick") },
-		
-		 -- Blackout Kick as single-target chi dump. 
+		-- Blackout Kick on clearcast. 
+		{ "Blackout Kick", jps.buff("Combo Breaker: Blackout Kick") },
+		-- Blackout Kick as single-target chi dump. 
 		{ "Blackout Kick", not jps.MultiTarget and chi >= 4 and energyTimeToMax <= 2 },
-		
-		 -- Tiger Palm single-target if the buff is close to falling off. 
-		{ "Tiger Palm", not jps.MultiTarget and jps.buff("Combo Breaker: Tiger Palm") and energyTimeToMax >= 2 },
-		
-		 -- Chi Wave if we're not at full health. (talent based) 
-		{ "Chi Wave", jps.hp() < .8 },
-		
-		 -- Chi Burst if we're not at full health. (talent based) 
-		{ "Chi Burst", jps.hp() < .8 },
-		
-		 -- Zen Sphere if we're not at full health. (talent based) 
-		{ "Zen Sphere", jps.hp() < .8 and not jps.buff("Zen Sphere") },
-		
-		 -- Expel Harm to build chi and heal if we're not at full health. 
-		{ "Expel Harm", chi < 3 and energy >= 40 and jps.hp() < .85 },
-		
-		 -- Jab to build chi if we're at 3 or less. 
+		{ "Chi Wave", },
+		-- Expel Harm for building some chi and healing if not at full health.
+		{ "Expel Harm", jps.hp() < .85 and energy >= 40 and chi < 3 },
+		-- Jab is our basic chi builder.
 		{ "Jab", not jps.MultiTarget and chi <= 3 },
-		
-		 -- Blackout Kick when we're chi capped. 
+		-- Tiger Palm on clearcast. 
+		{ "Tiger Palm", jps.buff("Combo Breaker: Tiger Palm") },
+		-- Tiger Palm single-target if the buff is close to falling off.
+		{ "Tiger Palm", not jps.MultiTarget and tigerPowerDuration <= 3 },
+		-- Fist of fury is a very situational chi dump.
+		{ "Fists of Fury", not jps.buff("Energizing Brew") and energyTimeToMax >= 3.5 and tigerPowerDuration >= 3.5 and not jps.Moving and IsSpellInRange("jab","target") },
+		-- Blackout Kick as filler and if we're chi capped. 
 		{ "Blackout Kick", not jps.MultiTarget },
-		
-		 -- Leg sweep on cooldown during multi-target to reduce tank damage. TODO: Check if our target is stunned already. 
-		{ "Leg Sweep", jps.MultiTarget },
-		
-		 -- Spinning Crane Kick when we're multi-target (4+ targets ideal). 
-		{ "Spinning Crane Kick", jps.MultiTarget },
-		
+
+		-- AOE ROTATION
+		-- Spinning Crane Kick for multi-target threat. Triggers with Left Control Key pressed.
+		{ "Spinning Crane Kick", jps.MultiTarget and not jps.buff("Spinning Crane Kick"),"player"},
+		-- Rushing Jade Wind for multi-target threat. Triggers with Left Control Key pressed.
+		{ "Rushing Jade Wind", jps.MultiTarget and not jps.buff("Rushing Jade Wind"),"player"},
+
+		-- FINISHERS
+		-- Insta-kill single target when available.
+		{ "Touch of Death", not jps.MultiTarget and jps.UseCDs and jps.buff("Death Note") },
+
+		-- SELF-HEALING
+		-- Expel Harm when below 35% heatlh.
+		{ "Expel Harm", jps.hp() < .35 },
+		-- Chi Wave for heal (talent based).
+		{ "Chi Wave", jps.hp() < .80 },
+		-- Zen Sphere for heal (talent based).
+		{ "Zen Sphere", jps.hp() < .80 },
+		-- Chi Wave for heal (talent based).
+		{ "Chi Burst", jps.hp() < .80 },
+
+		-- INTERRUPTS
+		{ "Spear Hand Strike", jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 },
+		{ "Paralysis", jps.Interrupts and jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" },
+		{ "Arcane Torrent", jps.Interrupts and jps.shouldKick("target") and CheckInteractDistance("target",3)==1 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
+
+		-- INTERRUPT FOCUS
+		{ "Spear Hand Strike", jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < 1.2 },
+		{ "Paralysis", jps.Interrupts and jps.shouldKick("focus") and jps.CastTimeLeft("focus") < 1.2 and IsSpellInRange("Spear Hand Strike","focus")==0 and jps.LastCast ~= "Spear Hand Strike" },
+		{ "Arcane Torrent", jps.Interrupts and jps.shouldKick("focus") and CheckInteractDistance("focus",3)==1 and jps.CastTimeLeft("target") < 1.2 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },	
 	}
 
-	local spell, target = parseSpellTable(spellTable)
-	return spell, target
+	local spell,target = parseSpellTable(spellTable)
+	
+	return spell,target
 end, "Default")
