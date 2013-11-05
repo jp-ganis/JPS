@@ -21,7 +21,7 @@
 local L = MyLocalizationTable
 jps = {}
 jps.Version = "1.3.2"
-jps.Revision = "r611"
+jps.Revision = "r612"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
