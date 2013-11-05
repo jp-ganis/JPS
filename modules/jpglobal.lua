@@ -190,24 +190,23 @@ keyDownMapper["ctrl"] = IsControlKeyDown
 keyDownMapper["left-ctrl"] = IsLeftControlKeyDown
 keyDownMapper["right-ctrl"] = IsRightControlKeyDown
 
-function keyPressed(arrayOrString)	
+function keyPressed(...)	
 	local paramType = type(arrayOrString)
-	if paramType == "table" then 
-		matchesNeed = #arrayOrString
-		matchesFound = 0
-		for _, needle in pairs(arrayOrString) do
-			local apiFunction = keyDownMapper[needle:lower()]
-			if apiFunction() ~= nil and GetCurrentKeyBoardFocus() == nil then
+	matchesNeed = select("#", ...)
+	matchesFound = 0
+	i = 1
+	print(select(i , ...))
+	while select(i , ...) ~= nil  do
+		needle = select(i, ...)
+		i = i+1
+		local apiFunction = keyDownMapper[needle:lower()]
+		if type(apiFunction) == "function" then
+			if apiFunction() ~= nil  then
 				matchesFound  =matchesFound+1
 				if matchesFound == matchesNeed then
 					return true
 				end
 			end
-		end
-	elseif paramType  == "string" then
-		local apiFunction = keyDownMapper[arrayOrString:lower()]
-		if apiFunction() ~= nil and GetCurrentKeyBoardFocus() == nil then
-			return true
 		end
 	end
 	return false
