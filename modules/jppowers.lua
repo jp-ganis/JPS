@@ -83,6 +83,10 @@ function jps.eclipsePower()
 	return UnitPower("player",8)
 end
 
+function jps.chi()
+	return UnitPower("player", 12)
+end
+
 function jps.holyPower()
 	return UnitPower("player",9)
 end
