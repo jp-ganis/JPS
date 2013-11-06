@@ -130,7 +130,6 @@ end
 -- when not in a party/raid, the new version of UnitInRange returns FALSE for "player" and "pet". The old function returned true.
 -- jps.IsSpellKnown(spell) can be use below lvl 90
 function jps.canHeal(unit)
-	jps_canHeal_debug(unit)
 	if not jps.UnitExists(unit) then return false end
 	if GetUnitName("player") == GetUnitName(unit) then return true end
 	if UnitCanAssist("player",unit)~=1 and not jps.isSpecialHealUnit(unit) then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
