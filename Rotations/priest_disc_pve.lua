@@ -750,7 +750,7 @@ priestLight.smite = 585;
 priestLight.surgeOfLight = 114255;
 priestLight.twistOfFate = 109142; 
 priestLight.purify = 527;
-priestLight.spiritShell = 114908;
+priestLight.spiritShellAbsorbBuff = 114908;
 priestLight.spiritShellBuild = 109964;
 priestLight.prayerOfHealing = 596;
 priestLight.prayerOfMending = 33076;
@@ -769,14 +769,15 @@ priestLight.heal = 2050;
 priestLight.weakenedSoul = 6788;
 priestLight.arcaneTorrent = 28730;
 priestLight.disc = {}
-priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priestLight.greaterHeal, 0.93,false },{ priestLight.heal, 0.98,false }, {priestLight.prayerOfHealing,0.90,true}}
+priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priestLight.greaterHeal, 0.95,false },{ priestLight.heal, 0.98,false }, {priestLight.prayerOfHealing,0.97,true}}
  
  
 function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, lowestImportantHP )
  	local healTargetHP = jps.hp(jps.LastTarget)
  	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
  	if spellCasting == nil then return false end
- 
+ 	local timeLeft = endTime/1000 - GetTime()
+ 	
 	for key, healSpellTable  in pairs(spellsToCheck) do
  		local breakpoint = healSpellTable[2]
 		local spellName = tostring(select(1,GetSpellInfo(healSpellTable[1]))) 
@@ -784,12 +785,18 @@ function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, l
 		if spellName:lower() == spellCasting:lower() then
 			if aoe == false then
 				if healTargetHP > breakpoint then
-					print("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
+					write("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
 					SpellStopCasting()
 				end
+				if (avgHP < 0.7 or unitsBelow70 > 3 ) and healTargetHP > 0.65 then
+					write("stop casting ".spellName." - need aoe heal")
+				end
+				if healTargetHP >= 0.65 and lowestImportantHP < 0.45 and timeLeft > 1.5 then
+					write("stop casting ".spellName." - important unit goes critical")
+				end
 			else
-				if unitsBelow70 <= 2 and not jps.buff(114908) then --114908 = spritshell
-					print("interrupt "..spellName.." , raid has enough hp!");
+				if avgHP >= breakpoint or  and not jps.buff(109964) then --109964 = spiritshell build buff
+					write("interrupt "..spellName.." , raid has enough hp!");
 					SpellStopCasting()
 				end
 			end
@@ -961,7 +968,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	
 			{
 				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
-				{priestLight.painsup, jps.canHeal("target") and jps.hp("target") < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, "target" },
+				{priestLight.painsup, jps.canHeal("target") and jps.hp("target") < 0.4 and keyPressed("shift") and jps.UseCDs, "target" },
 				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, priestLight.disc.lowestImportantUnit },
 				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestImportantUnit},
 				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < 0.4, priestLight.disc.lowestImportantUnit },
