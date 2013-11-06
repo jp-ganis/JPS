@@ -812,7 +812,8 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	priestLight.disc.sumHP = 0
 	priestLight.disc.avgHP = 1
 	priestLight.disc.units = 0
-	
+	priestLight.disc.mps = 6000 + (1.1287 * select(1,UnitStat("player",5)) * 0.5) -- mana reg per second 
+
 	for unit,index in pairs(jps.RaidStatus) do
 		if index["inrange"] == true then
 			local thisHP = index["hpct"]
