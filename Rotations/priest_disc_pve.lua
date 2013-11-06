@@ -862,6 +862,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	if jps.canHeal("target") then table.insert(priestLight.disc.importantUnits,"target") end
 	if jps.canHeal("focus") then table.insert(priestLight.disc.importantUnits,"focus") end
 	if jps.canHeal("player") then table.insert(priestLight.disc.importantUnits,"player") end
+	if jps.canHeal("mouseover") then table.insert(priestLight.disc.importantUnits,"mouseover") end
 
 	for _, unitName in ipairs(priestLight.disc.importantUnits) do
 		local thisHP = jps.hp(unitName)

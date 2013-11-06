@@ -130,15 +130,28 @@ end
 -- when not in a party/raid, the new version of UnitInRange returns FALSE for "player" and "pet". The old function returned true.
 -- jps.IsSpellKnown(spell) can be use below lvl 90
 function jps.canHeal(unit)
+	jps_canHeal_debug(unit)
 	if not jps.UnitExists(unit) then return false end
 	if GetUnitName("player") == GetUnitName(unit) then return true end
-	if UnitCanAssist("player",unit)~=1 then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
+	if UnitCanAssist("player",unit)~=1 and not jps.isSpecialHealUnit(unit) then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
 	if UnitIsFriend("player",unit)~=1 then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
 	-- PNJ returns 1 with UnitIsFriend -- PNJ returns 1 or nil (Vendors) with UnitCanAssist
 	if UnitInVehicle(unit)==1 then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
 	if jps.PlayerIsBlacklisted(unit) then return false end
 	if not select(1,UnitInRange(unit)) then return false end -- return FALSE when not in a party/raid reason why to be true for player GetUnitName("player") == GetUnitName(unit)
 	return true
+end
+
+jps.specialHealUnits = {
+	"Contaminated Puddle"
+}
+function jps.isSpecialHealUnit(unit)
+	if not unit then return false end
+	local name = select(1,UnitName(unit)):lower()
+	for k,v in pairs(jps.specialHealUnits) do
+		if name == v:lower() then return true end
+	end
+	return false
 end
 
 -- INVALID IF THE NAMED PLAYER IS NOT A PART OF YOUR PARTY OR RAID -- NEED .."TARGET"
@@ -318,6 +331,7 @@ end
 ----------------------`
 
 function jps_canHeal_debug(unit)
+	
 	if not jps.UnitExists(unit) then write("not Unit") return false end
 	if GetUnitName("player") == GetUnitName(unit) then write("Player") return true end
 	if UnitExists(unit)~=1 then write("not Exists") return false end
