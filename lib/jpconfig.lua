@@ -643,7 +643,7 @@ function jps_VARIABLES_LOADED()
 	jps_SAVE_PROFILE()
 	jps.loadDefaultSettings()
 	jps.runFunctionQueue("settingsLoaded")
-	mconfig_VARIABLES_LOADED()
+
 	jps_variablesLoaded = true
 end
 
@@ -675,4 +675,6 @@ function jps_SAVE_PROFILE()
 	for varName, _ in pairs( jpsDB[jpsRealm][jpsName] ) do
 		jpsDB[jpsRealm][jpsName][varName] = jps[varName]
 	end
+	
+	mconfig_SAVE_VARIABLES()
 end

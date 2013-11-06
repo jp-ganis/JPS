@@ -1,22 +1,22 @@
 -- CONFIG START
+--[[
 jps.registerEvent("VARIABLES_LOADED", function()
-	dkbConfig = mConfig:createConfig("Deathknight Blood Config","DeathknightRotationsBlood","Default",{"/dk","/deathknight"})
-	dkbConfig:addSlider("deathPactPercentage", "DeathPact %","Percentage at which to use Death Pact, if available", 0, 100, 50, 1)
-	dkbConfig:addSlider("lichbornePercentage", "Lichborne %","Percentage at which to use Lichborne, if available", 0, 100, 60, 1)
-	dkbConfig:addSlider("healthstonePercentage", "Healthstone %","Percentage at which to use Healthstone, if available", 0, 100, 70, 1)
-	dkbConfig:addSlider("iceboundFortitudePercentage", "Icebound Fortitude %","Percentage at which to use Icebound Fortitude, if available", 0, 100, 30, 1)
-	dkbConfig:addSlider("vampiricBloodPercentage", "Vampiric Blood %","Percentage at which to use Vampiric Blood, if available", 0, 100, 40, 1)
-	dkbConfig:addDropDown("ctrlKeyAction", "Ctrl-Key Action", "Action to do when Ctrl-Key is pressed", {ARMYOFTHEDEAD="Army of the Dead", GOREFIENDSGRASP="Gorefiend's Grasp on Player", RAISEALLY="Battle Rezz Target", RAISEALLYMOUSEOVER="Battle Rezz Mouseover"}, "ARMYOFTHEDEAD")
+	mConfig:addSlider("deathPactPercentage", "DeathPact %","Percentage at which to use Death Pact, if available",nil, 0, 100, 50, 1)
+	mConfig:addSlider("lichbornePercentage", "Lichborne %","Percentage at which to use Lichborne, if available",nil, 0, 100, 60, 1)
+	mConfig:addSlider("healthstonePercentage", "Healthstone %","Percentage at which to use Healthstone, if available",nil, 0, 100, 70, 1)
+	mConfig:addSlider("iceboundFortitudePercentage", "Icebound Fortitude %","Percentage at which to use Icebound Fortitude, if available",nil, 0, 100, 30, 1)
+	mConfig:addSlider("vampiricBloodPercentage", "Vampiric Blood %","Percentage at which to use Vampiric Blood, if available",nil, 0, 100, 40, 1)
+	mConfig:addDropDown("ctrlKeyAction", "Ctrl-Key Action", "Action to do when Ctrl-Key is pressed", {ARMYOFTHEDEAD="Army of the Dead", GOREFIENDSGRASP="Gorefiend's Grasp on Player", RAISEALLY="Battle Rezz Target", RAISEALLYMOUSEOVER="Battle Rezz Mouseover"}, "ARMYOFTHEDEAD")
 	
 	
 function dk.get(key)
-	return dkbConfig.get(key)
+	return mConfig.get(key)
 end
 function dk.getPercent(key)
-	return dkbConfig.getPercent(key)
+	return mConfig.getPercent(key)
 end	
 end)
-
+]]--
 
 -- CONFIG END
 

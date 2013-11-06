@@ -111,6 +111,13 @@ jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
 jps.customRotationFunc = ""
 
+
+
+--test
+
+jps.rotationConfig = {}
+jps.rotationConfigValues = {}
+
 -- Latency
 jps.CastBar = {}
 jps.CastBar.latency = 0
@@ -178,10 +185,11 @@ function jps.detectSpec()
 	jps.HarmSpell = jps.GetHarmfulSpell()
 	--write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
 	jps.setClassCooldowns()
-	jps_VARIABLES_LOADED()
+
 	if jps.initializedRotation == false then
 		jps_Combat()
 	end
+	
 end
 
 ------------------------

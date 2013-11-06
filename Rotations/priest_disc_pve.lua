@@ -768,29 +768,31 @@ priestLight.weakenedSoul = 6788;
 priestLight.arcaneTorrent = 28730;
 priestLight.disc = {}
 priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priestLight.greaterHeal, 0.93,false },{ priestLight.heal, 0.98,false }, {priestLight.prayerOfHealing,0.90,true}}
-jps.registerEvent("VARIABLES_LOADED", function()
-	priestConfig = mConfig:createConfig("Priest Disc Config","PriestRotationsDisc","Default",{"/priest","/disc"})
-	priestConfig:addSlider("rotationPowerNormalSingle", "Power of your normal single Target Healing in % ", 0, 100, 100, 1)
-	priestConfig:addSlider("rotationPowerNormalAOE", "Power of your normal AOE Target Healing in % ", 0, 100, 100, 1)
-	priestConfig:addSlider("rotationPowerEmergency", "Power of your normal Important units Healing in % ", 0, 100, 100, 1)
-	priestConfig:addSlider("mindbenderManaPercent", "% of mana for activating Mindbender", 0, 100, 70, 1)
-	priestConfig:addSlider("shadowfiendManaPercent", "% of mana for activating shadowfiend", 0, 100, 60, 1)
-	priestConfig:addSlider("arcaneTorrent", "% of mana for activating arcane Torrent", 0, 100, 90, 1)
-	priestConfig:addSlider("manaPotionManaPercent", "% of mana for using mana potion", 0, 100, 40, 1)
-	priestConfig:addSlider("trinketManaPercent", "% of mana for using mana/spirit trinket", 0, 100, 80, 1)
-	priestConfig:addSlider("timeBetweenShields", "seconds you want to wait before you shield another unit", 1, 30, 12, 1)
-	priestConfig:addSlider("timeBetweenSmite", "seconds you want to wait between smites (if you have 5 stacks evangelism)", 1, 10, 1.5, 0.5)
+jps.registerEvent("PLAYER_ENTERING_WORLD", function()
+	mConfig:createConfig("Rotation Config",jps.Class..jps.Spec, "Default" ,{"/rotation"})
+	mconfig_VARIABLES_LOADED()
+	mConfig:addSlider("rotationPowerNormalSingle", "Power of your normal single Target Healing in % ", nil, 1, 100, 100, 1)
+	mConfig:addSlider("rotationPowerNormalAOE", "Power of your normal AOE Target Healing in % ", nil, 1, 100,100, 1)
+	mConfig:addSlider("rotationPowerEmergency", "Power of your normal Important units Healing in % ", nil, 1, 100,100, 1)
+	mConfig:addSlider("mindbenderManaPercent", "% of mana for activating Mindbender", nil, 1, 100,70, 1)
+	mConfig:addSlider("shadowfiendManaPercent", "% of mana for activating shadowfiend", nil, 1, 100,60, 1)
+	mConfig:addSlider("arcaneTorrent", "% of mana for activating arcane Torrent",nil, 1, 100,90, 1)
+	mConfig:addSlider("manaPotionManaPercent", "% of mana for using mana potion", nil, 1, 100,40, 1)
+	mConfig:addSlider("trinketManaPercent", "% of mana for using mana/spirit trinket", nil, 1, 100,80, 1)
+	mConfig:addSlider("timeBetweenShields", "seconds you want to wait before you shield another unit", nil, 1, 30,12, 1)
+	mConfig:addSlider("timeBetweenSmite", "seconds you want to wait between smites (if you have 5 stacks evangelism)", nil, 0, 3, 1.5, 0.5)
+
 end)
 
 -- allows us to adjust the whole heal output with one slider! for finding better healing % values etc.
-function priestLight.getPercentNormal(value) 
-	return value * (100 * (priestConfig:getPercent("rotationPowerNormalSingle")) )
+function priestLight.getPercentNormal(value)
+	return value * mConfig:getPercent("rotationPowerNormalSingle")
 end
 function priestLight.getPercentAOE(value) 
-	return value * (100 * (priestConfig:getPercent("rotationPowerNormalAOE")) )
+	return value * mConfig:getPercent("rotationPowerNormalAOE")
 end
 function priestLight.getPercentImportant(value) 
-	return value * (100 * (priestConfig:getPercent("rotationPowerEmergency")) )
+	return value * mConfig:getPercent("rotationPowerEmergency")
 end
 
 function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, lowestImportantHP )
@@ -935,12 +937,12 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 	
 		-- mana
-		{priestLight.mindbender, jps.mana() <= priestConfig:getPercent("mindbenderManaPercent") and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
-		{priestLight.shadowfiend, jps.mana() <= priestConfig:getPercent("shadowfiendManaPercent") and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
-		{priestLight.arcaneTorrent, jps.mana() <= priestConfig:getPercent("arcaneTorrent") and jps.UseCDs },
-		{jps.useTrinket(0), jps.mana() <= priestConfig:getPercent("trinketManaPercent") and jps.UseCDs and jps.isManaRegTrinket(0)},
-		{jps.useTrinket(1), jps.mana() <= priestConfig:getPercent("trinketManaPercent") and jps.UseCDs and jps.isManaRegTrinket(1)},
-		{jps.useBagItem(priestLight.manaPotion), jps.mana() <= priestConfig:getPercent("manaPotionManaPercent") and jps.UseCDs},
+		{priestLight.mindbender, jps.mana() <= mConfig:getPercent("mindbenderManaPercent") and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
+		{priestLight.shadowfiend, jps.mana() <= mConfig:getPercent("shadowfiendManaPercent") and jps.UseCDs and priestLight.disc.rangedTarget ~= nil, priestLight.disc.rangedTarget},
+		{priestLight.arcaneTorrent, jps.mana() <= mConfig:getPercent("arcaneTorrent") and jps.UseCDs },
+		{jps.useTrinket(0), jps.mana() <= mConfig:getPercent("trinketManaPercent") and jps.UseCDs and jps.isManaRegTrinket(0)},
+		{jps.useTrinket(1), jps.mana() <= mConfig:getPercent("trinketManaPercent") and jps.UseCDs and jps.isManaRegTrinket(1)},
+		{jps.useBagItem(priestLight.manaPotion), jps.mana() <= mConfig:getPercent("manaPotionManaPercent") and jps.UseCDs},
 	
 		-- dispel
 		priestLight.disc.dispel,
@@ -949,7 +951,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		{'nested' , jps.Moving, 
 			{
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul) and jps.mana() > 0.8, "player"},
-				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,priestConfig:get("timeBetweenShields")) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
+				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,mConfig:get("timeBetweenShields")) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 				{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul,priestLight.disc.lowestUnit) and jps.buff(priestLight.rapture) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 				{priestLight.renew, not jps.buff(priestLight.renew,priestLight.disc.lowestUnit) and priestLight.disc.lowestUnitHP < 0.8, priestLight.disc.lowestUnit },
 				{priestLight.penance, jps.glyphInfo() and priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit },
@@ -969,7 +971,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 		
 		-- PW:S
-		{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,priestConfig:get("timeBetweenShields")) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
+		{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.lowestUnit) and jps.castEverySeconds(priestLight.powerWordShield,mConfig:get("timeBetweenShields")) and priestLight.disc.lowestUnitHP < 0.97, priestLight.disc.lowestUnit},
 		{priestLight.powerWordShield, not jps.debuff(priestLight.weakenedSoul, priestLight.disc.lowestUnit) and jps.buff(priestLight.rapture) and priestLight.disc.lowestUnitHP < 0.95, priestLight.disc.lowestUnit},
 		{"nested", priestLight.disc.aggroTank ~= nil,
 			{
@@ -981,13 +983,13 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		{'nested' , priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.99), 
 	
 			{
-				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.3) and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
+				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= "player" and priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.3) and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
 				{priestLight.painsup, jps.canHeal("target") and jps.hp("target") < priestLight.getPercentImportant(0.4) and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, "target" },
 				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.4) and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, priestLight.disc.lowestImportantUnit },
 				{priestLight.desperatePrayer, jps.hp() > priestLight.getPercentImportant(0.45) and priestLight.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestImportantUnit},
 				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.4), priestLight.disc.lowestImportantUnit },
 				{priestLight.greaterHeal, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.65), priestLight.disc.lowestImportantUnit },
-				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.8) and jps.hp("player") < priestLight.getPercentImportant(0.7), priestLight.disc.lowestImportantUnit },
+				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= "player" and priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.8) and jps.hp("player") < priestLight.getPercentImportant(0.7), priestLight.disc.lowestImportantUnit },
 				{priestLight.penance, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.95), priestLight.disc.lowestImportantUnit },
 				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.95) , priestLight.disc.lowestImportantUnit },
 			},
@@ -1017,7 +1019,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.holyFire, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.penance, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.buffStacks(priestLight.evangelism) <5 , priestLight.disc.rangedTarget},
-				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(priestLight.smite,priestConfig:get("timeBetweenSmite")), priestLight.disc.rangedTarget},
+				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(priestLight.smite,mConfig:get("timeBetweenSmite")), priestLight.disc.rangedTarget},
 				{priestLight.heal, priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.85), priestLight.disc.lowestUnit },
 			},
 	
