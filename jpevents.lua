@@ -303,7 +303,7 @@ jps.registerOnUpdate(updateTimeToDie)
 -- Combat
 jps.registerOnUpdate(function()
 	if jps.Combat and jps.Enabled then
-		jps_Combat() 
+		jps.Combat() 
 	end
 end)
 

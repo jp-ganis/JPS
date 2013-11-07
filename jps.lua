@@ -19,8 +19,9 @@
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 local L = MyLocalizationTable
-local JPS = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
-jps = {}
+
+local jps = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
+jps.db = {}
 jps.Version = "1.3.2"
 jps.Revision = "r611b"
 jps.NextSpell = nil
@@ -188,7 +189,7 @@ function jps.detectSpec()
 	jps.setClassCooldowns()
 
 	if jps.initializedRotation == false then
-		jps_Combat()
+		jps.Combat()
 	end
 	
 end
@@ -279,7 +280,7 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps db - cleares your local jps DB")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
-	  	jps_Combat()
+	  	jps.Combat()
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
@@ -315,7 +316,7 @@ end)
 -- COMBAT
 ------------------------
 
-function jps_Combat() 
+function jps.Combat() 
 	-- Check for the Rotation
 	if not jps.Class then return end
 	if not jps.activeRotation() then
@@ -416,24 +417,10 @@ function jps.runFunctionQueue(queueName)
 	return false
 end
 
-local JPSAceOptions = { 
-	name = "JPS",
-	handler = JPS,
-	type = "group",
-	args = {
-		jpsEnabled = {
-			type = "toggle",
-			name = "jpsEnabled",
-			desc = "JPS enabled on default",
-			set = function(info,val) JPS.enabled = val end,
-			get = function(info) return JPS.enabled end
-		},
-	},
-}
-function JPS:OnInitialize()
+
+function jps:OnInitialize()
+	self.db = LibStub("AceDB-3.0"):New("jpsDB")
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
 	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
-	
-end
 
 end
