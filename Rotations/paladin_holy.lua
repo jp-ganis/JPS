@@ -42,7 +42,7 @@ function hpala.update()
 	if jps.canHeal("focus") then table.insert(hpala.importantHealTargetsValue,"focus") end
 
 	local lowestHP = jps.hp("player")
-	for unitName, _ in ipairs(hpala.importantHealTargetsValue) do
+	for _,unitName in ipairs(hpala.importantHealTargetsValue) do
 		local thisHP = jps.hp(unitName)
 		if jps.canHeal(unitName) and thisHP <= lowestHP then
 				lowestHP = thisHP
@@ -153,7 +153,7 @@ hpala.spellTable = {
 	{ jps.useTrinket(0),'jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8 and jps.useTrinket(0) ~= ""', "player"},
 	{ jps.useTrinket(1),'jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8 and jps.useTrinket(1) ~= ""', "player"},
 	-- Requires engineerins
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
@@ -213,6 +213,5 @@ jps.registerRotation("PALADIN","HOLY",function()
 	end
 
 	spell,target = parseStaticSpellTable(hpala.spellTable)
-
 	return spell,target
 end, "Default")

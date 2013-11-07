@@ -1,19 +1,19 @@
 --[[
 	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
+		Copyright (C) 2011 Jp Ganis
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the 
+		GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+		You should have received a copy of the GNU General Public License
+		along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 ---------------------------
 -- HELPER FUNCTIONS
@@ -24,9 +24,9 @@ function jps.redColor(str)
 end
 
 
-local rotationButtonPositionY = -90; -- NEW
-local rotationButtonPositionX = 20; -- NEW
-local jpsRotationFrame = nil; -- NEW
+local rotationButtonPositionY = -90; 
+local rotationButtonPositionX = 20; 
+local jpsRotationFrame = nil; 
 local rotationCount = 0
 
 local rotationCountSetting = 0
@@ -84,12 +84,12 @@ function jps_createConfigFrame()
 			else jps[v] = not jps[v] end
 			jps_SAVE_PROFILE()
 			jps_LOAD_PROFILE()
-		end  
+		end	
 
 		local function JPS_IconOptions_CheckButton_OnShow()
 			jps_SAVE_PROFILE()
 			JPS_IconOptions_CheckButton:SetChecked(jpsDB[jpsRealm][jpsName][v]);
-		end  
+		end	
 
 		JPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
 		JPS_IconOptions_CheckButton:SetScript("OnClick", JPS_IconOptions_CheckButton_OnClick);
@@ -135,7 +135,7 @@ end
 ---------------------------
 function jps.addUIFrame()
 	jpsUIFrame = CreateFrame("Frame", "jpsUIFrame", jpsConfigFrame)
-	jpsUIFrame.parent  = jpsConfigFrame.name
+	jpsUIFrame.parent	= jpsConfigFrame.name
 	jpsUIFrame.name = "JPS UI Panel"
 	local title = jpsUIFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 20, -10) 
@@ -176,7 +176,7 @@ end
 ---------------------------
 function jps.addcustomRotationFrame()
 	jpsCustomRotationFrame = CreateFrame("Frame", "jpsCustomRotationFrame", jpsConfigFrame)
-	jpsCustomRotationFrame.parent  = jpsConfigFrame.name
+	jpsCustomRotationFrame.parent	= jpsConfigFrame.name
 	jpsCustomRotationFrame.name = "JPS Custom Rotation Panel"
 	local title = jpsCustomRotationFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 20, -10) 
@@ -222,7 +222,7 @@ function jps.addcustomRotationFrame()
 	local jpsOpenHelpFrameButton = CreateFrame('Button', 'jpsOpenHelpFrameButton', jpsCustomRotationFrame , 'UIPanelButtonTemplate')
 	jpsOpenHelpFrameButton:SetText("show help")
 	jpsOpenHelpFrameButton:SetPoint("BOTTOM",jpsCustomRotationFrame,"BOTTOM", 0, 20)
-	jpsOpenHelpFrameButton:SetScript("OnClick", function()  helpFrame:Show();Scroll:Hide() end)
+	jpsOpenHelpFrameButton:SetScript("OnClick", function()	helpFrame:Show();Scroll:Hide() end)
 	jpsOpenHelpFrameButton:SetSize(145,25)
 	
 	
@@ -266,7 +266,7 @@ function jps.addcustomRotationFrame()
 	customRotationHelp:SetJustifyH("LEFT")
 	customRotationHelp:SetJustifyV("TOP")
 	
-	local helpText = jps.redColor("Required")..'\n- a spellTable e.g. "local spellTable = {}"\n- the function call local spell,target = parseSpellTable(spellTable)\n- your rotation should return a spell and a target, e.g. "return spell, target"\n\n'..jps.redColor("Example Rotation")..'\nlocal spell = nil\;\nlocal target = nil\;\nlocal spellTable = {\n     { "Frost Presence",        not jps.buff("Frost Presence") },\n     { "frost strike",        "onCD"},\n     { "obliterate",        "onCD"},\n };\n\nspell,target = parseSpellTable(spellTable)\;\nreturn spell,target\n\n'..jps.redColor("Functions / Know How")..'\nvalid targets are: "player","target","focus","mouseover","pet","raidN" (N = 1-40), "partyN" (N=1-4) and many more\n\n- jps.buff("buffName", "target") -- returns true or false whether a buff is applied, buffName is required\n- jps.debuff("debuffName", "target") -- returns true or false whether a debuff is applied, buffName is required\n- jps.buffDuration("buffName","target") -- returns the duration of a buff in seconds\n- jps.debuffDuration("debuffName","target") -- returns the duration of a debuff in seconds\n- jps.UseCDs -- Usage of CDs enabled or disabled\n- jps.MultiTarget -- Multitarget enabled or disabled\n- jps.hp("target") -- return decimal hp of a target ( 1 = 100% health, 0.5 = 50% health )'
+	local helpText = jps.redColor("Required")..'\n- a spellTable e.g. "local spellTable = {}"\n- the function call local spell,target = parseSpellTable(spellTable)\n- your rotation should return a spell and a target, e.g. "return spell, target"\n\n'..jps.redColor("Example Rotation")..'\nlocal spell = nil\;\nlocal target = nil\;\nlocal spellTable = {\n		 { "Frost Presence",				not jps.buff("Frost Presence") },\n		 { "frost strike",				"onCD"},\n		 { "obliterate",				"onCD"},\n };\n\nspell,target = parseSpellTable(spellTable)\;\nreturn spell,target\n\n'..jps.redColor("Functions / Know How")..'\nvalid targets are: "player","target","focus","mouseover","pet","raidN" (N = 1-40), "partyN" (N=1-4) and many more\n\n- jps.buff("buffName", "target") -- returns true or false whether a buff is applied, buffName is required\n- jps.debuff("debuffName", "target") -- returns true or false whether a debuff is applied, buffName is required\n- jps.buffDuration("buffName","target") -- returns the duration of a buff in seconds\n- jps.debuffDuration("debuffName","target") -- returns the duration of a debuff in seconds\n- jps.UseCDs -- Usage of CDs enabled or disabled\n- jps.MultiTarget -- Multitarget enabled or disabled\n- jps.hp("target") -- return decimal hp of a target ( 1 = 100% health, 0.5 = 50% health )'
 	
 	customRotationHelp:SetText(helpText)	
 
@@ -304,7 +304,7 @@ function jps.addSettingsFrame()
 	}
 	
 	jpsSettingsFrame = CreateFrame("Frame", "jpsSettingsFrame", jpsConfigFrame)
-	jpsSettingsFrame.parent  = jpsConfigFrame.name
+	jpsSettingsFrame.parent	= jpsConfigFrame.name
 	jpsSettingsFrame.name = "JPS Settings Panel"
 	local title = jpsSettingsFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 20, -10) 
@@ -335,19 +335,19 @@ function jps.addSettingsFrame()
 		getglobal(settingsJPS_IconOptions_CheckButton:GetName().."Text"):SetText(settingsKey);
 
 		local function settingsJPS_IconOptions_CheckButton_OnClick()
-            local settingsStatus = nil
-            if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
-                settingsStatus = 0 
-            else 
-                settingsStatus = 1 
-            end
-            jps.notifySettingChanged(settingsKey, settingsStatus)
-            jps.setConfigVal(settingsKey, settingsStatus)
-		end  
+			local settingsStatus = nil
+			if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+					settingsStatus = 0 
+			else 
+					settingsStatus = 1 
+			end
+			jps.notifySettingChanged(settingsKey, settingsStatus)
+			jps.setConfigVal(settingsKey, settingsStatus)
+		end	
 		
 		local function settingsJPS_IconOptions_CheckButton_OnShow()
 			settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingsKey));
-		end  
+		end	
 
 		settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
 		settingsJPS_IconOptions_CheckButton:SetScript("OnClick", settingsJPS_IconOptions_CheckButton_OnClick);
@@ -406,30 +406,30 @@ function jps.addSettingsCheckbox(settingName)
 		settingsButtonPositionY = - 90
 	end
 
-    local settingsJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_Settings_"..settingName, jpsSettingsFrame, "OptionsCheckButtonTemplate");
-    settingsJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",settingsButtonPositionX,settingsButtonPositionY);
-    getglobal(settingsJPS_IconOptions_CheckButton:GetName().."Text"):SetText(settingName);
-    
-    local function settingsJPS_IconOptions_CheckButton_OnClick()
-        local settingStatus = nil
-        if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
-            settingStatus = 0 
-        else 
-            settingStatus = 1 
-        end
-        jps.notifySettingChanged(settingName, settingsStatus)
-        jps.setConfigVal(settingName, settingsStatus)
-    end  
-    
-    local function settingsJPS_IconOptions_CheckButton_OnShow()
-        settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingName));
-    end  
-    
-    settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
-    settingsJPS_IconOptions_CheckButton:SetScript("OnClick", settingsJPS_IconOptions_CheckButton_OnClick);
-    settingsJPS_IconOptions_CheckButton:SetScript("OnShow", settingsJPS_IconOptions_CheckButton_OnShow);
+	local settingsJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_Settings_"..settingName, jpsSettingsFrame, "OptionsCheckButtonTemplate");
+	settingsJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",settingsButtonPositionX,settingsButtonPositionY);
+	getglobal(settingsJPS_IconOptions_CheckButton:GetName().."Text"):SetText(settingName);
+	
+	local function settingsJPS_IconOptions_CheckButton_OnClick()
+			local settingStatus = nil
+			if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+					settingStatus = 0 
+			else 
+					settingStatus = 1 
+			end
+			jps.notifySettingChanged(settingName, settingsStatus)
+			jps.setConfigVal(settingName, settingsStatus)
+	end	
+	
+	local function settingsJPS_IconOptions_CheckButton_OnShow()
+			settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingName));
+	end	
+	
+	settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+	settingsJPS_IconOptions_CheckButton:SetScript("OnClick", settingsJPS_IconOptions_CheckButton_OnClick);
+	settingsJPS_IconOptions_CheckButton:SetScript("OnShow", settingsJPS_IconOptions_CheckButton_OnShow);
 
-    settingsButtonPositionY = settingsButtonPositionY - 30;
+	settingsButtonPositionY = settingsButtonPositionY - 30;
 end
 ---------------------------
 -- DROPDOWN SPELLS
@@ -438,7 +438,7 @@ end
 function jps.addRotationDropdownFrame()
 
 	jpsRotationFrame = CreateFrame("Frame", "jpsRotationFrame", jpsConfigFrame)
-	jpsRotationFrame.parent  = jpsConfigFrame.name
+	jpsRotationFrame.parent	= jpsConfigFrame.name
 	jpsRotationFrame.name = "JPS Rotation Panel"
 	local title = jpsRotationFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 20, -10) 
@@ -478,18 +478,18 @@ function jps.addRotationDropdownFrame()
 			getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellKey);
 	
 			local function rotationJPS_IconOptions_CheckButton_OnClick()
-	            local spellStatus = nil
-	            if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
-	                spellStatus = 0 
-	            else 
-	                spellStatus = 1 
-	            end
-	            setSpellStatus(spellKey, spellStatus)
-			end  
+							local spellStatus = nil
+							if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+									spellStatus = 0 
+							else 
+									spellStatus = 1 
+							end
+							setSpellStatus(spellKey, spellStatus)
+			end	
 			
 			local function rotationJPS_IconOptions_CheckButton_OnShow()
 				rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellKey));
-			end  
+			end	
 	
 			rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
 			rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
@@ -546,28 +546,28 @@ function jps.addSpellCheckboxToFrame(spellName)
 		rotationButtonPositionY = - 90
 	end
 
-    local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellName, jpsRotationFrame, "OptionsCheckButtonTemplate");
-    rotationJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
-    getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellName);
-    
-    local function rotationJPS_IconOptions_CheckButton_OnClick()
-        local spellStatus = nil
-        if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
-            spellStatus = 0 
-        else 
-            spellStatus = 1 
-        end
-        setSpellStatus(spellName, spellStatus)
-    end  
-    
-    local function rotationJPS_IconOptions_CheckButton_OnShow()
-        rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellName));
-    end  
-    
-    rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
-    rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
-    rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
-    rotationButtonPositionY = rotationButtonPositionY - 30;
+	local rotationJPS_IconOptions_CheckButton = CreateFrame("CheckButton", "JPS_Button_"..spellName, jpsRotationFrame, "OptionsCheckButtonTemplate");
+	rotationJPS_IconOptions_CheckButton:SetPoint("TOPLEFT",rotationButtonPositionX,rotationButtonPositionY);
+	getglobal(rotationJPS_IconOptions_CheckButton:GetName().."Text"):SetText(spellName);
+	
+	local function rotationJPS_IconOptions_CheckButton_OnClick()
+		local spellStatus = nil
+		if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+				spellStatus = 0 
+		else 
+				spellStatus = 1 
+		end
+		setSpellStatus(spellName, spellStatus)
+	end	
+	
+	local function rotationJPS_IconOptions_CheckButton_OnShow()
+			rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellName));
+	end	
+	
+	rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
+	rotationJPS_IconOptions_CheckButton:SetScript("OnClick", rotationJPS_IconOptions_CheckButton_OnClick);
+	rotationJPS_IconOptions_CheckButton:SetScript("OnShow", rotationJPS_IconOptions_CheckButton_OnShow);
+	rotationButtonPositionY = rotationButtonPositionY - 30;
 end
 
 ---------------------------
@@ -598,13 +598,16 @@ function jps_VARIABLES_LOADED()
 		jpsDB = {}
 		collectgarbage("collect")
 	end
-	if ( not jpsDB ) then
+	if not jpsDB then
 		jpsDB = {}
 	end
-	if ( not jpsDB[jpsRealm] ) then
+	if not jpsDB.Revision then
+		jpsDB.Revision = jps.Revision
+	end
+	if not jpsDB[jpsRealm] then
 		jpsDB[jpsRealm] = {}
 	end
-	if ( not jpsDB[jpsRealm][jpsName] ) then
+	if not jpsDB[jpsRealm][jpsName] then
 		write("Initializing new character names")
 		jpsDB[jpsRealm][jpsName] = {}
 		jpsDB[jpsRealm][jpsName].Enabled = true
@@ -616,27 +619,23 @@ function jps_VARIABLES_LOADED()
 		jpsDB[jpsRealm][jpsName].Defensive = false
 		jpsDB[jpsRealm][jpsName].PvP = false
 		jpsDB[jpsRealm][jpsName].ExtraButtons = false
-		jpsDB[jpsRealm][jpsName].RaidMode = false
-		jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		jpsDB[jpsRealm][jpsName].spellConfig = {} 
 		if jps.Spec then
-			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+			jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} 
 		end
-		jpsDB[jpsRealm][jpsName].settings = {} -- NEW
+		jpsDB[jpsRealm][jpsName].settings = {} 
 	else
-		if ( not jpsDB[jpsRealm][jpsName].spellConfig) then -- NEW
-			jpsDB[jpsRealm][jpsName].spellConfig = {} -- NEW
+		if not jpsDB[jpsRealm][jpsName].spellConfig then 
+			jpsDB[jpsRealm][jpsName].spellConfig = {} 
 		end
-		if ( not jpsDB[jpsRealm][jpsName].settings) then -- NEW
-			jpsDB[jpsRealm][jpsName].settings = {} -- NEW
+		if not jpsDB[jpsRealm][jpsName].settings then 
+			jpsDB[jpsRealm][jpsName].settings = {} 
 		end		
 		
 		if jps.Spec then
-			if ( not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec]) then -- NEW
-				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} -- NEW
+			if not jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] then 
+				jpsDB[jpsRealm][jpsName].spellConfig[jps.Spec] = {} 
 			end	
-		end
-		if not jpsDB[jpsRealm][jpsName].RaidMode then		
-			jpsDB[jpsRealm][jpsName].RaidMode = false
 		end
 	end
 
@@ -644,6 +643,7 @@ function jps_VARIABLES_LOADED()
 	jps_SAVE_PROFILE()
 	jps.loadDefaultSettings()
 	jps.runFunctionQueue("settingsLoaded")
+
 	jps_variablesLoaded = true
 end
 
@@ -675,6 +675,6 @@ function jps_SAVE_PROFILE()
 	for varName, _ in pairs( jpsDB[jpsRealm][jpsName] ) do
 		jpsDB[jpsRealm][jpsName][varName] = jps[varName]
 	end
+	
+	mconfig_SAVE_VARIABLES()
 end
-
-

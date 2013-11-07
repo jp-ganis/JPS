@@ -1,4 +1,4 @@
-## Interface: 50300
+## Interface: 50400
 ## Title: |cffff8000JPS Addon
 ## Notes: Protect your LUA.
 ## SavedVariables: jpsDB
@@ -34,6 +34,8 @@ jplexer.lua
 jpconditionparser.lua
 
 Lib\jpgui.lua
+Lib\mconfig.lua
+
 Lib\jpconfig.lua
 Lib\bindings.xml
 
@@ -51,6 +53,7 @@ Rotations\druid_feral_pvp.lua
 Rotations\druid_guardian.lua
 Rotations\druid_resto.lua
 
+Rotations\hunter.lua
 Rotations\hunter_bm_pvp.lua
 Rotations\hunter_bm_pve.lua
 Rotations\hunter_mm.lua
@@ -72,6 +75,7 @@ Rotations\paladin_protadin_pvp.lua
 Rotations\paladin_ret_pve.lua
 Rotations\paladin_ret_pvp.lua
 
+Rotations\priest.lua
 Rotations\priest_disc_pve.lua
 Rotations\priest_disc_pvp.lua
 Rotations\priest_holy.lua
@@ -100,5 +104,3 @@ Rotations\warrior_arms_pve.lua
 Rotations\warrior_arms_pvp.lua
 Rotations\warrior_fury.lua
 Rotations\warrior_prot.lua
-
-

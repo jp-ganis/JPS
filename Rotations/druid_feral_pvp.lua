@@ -57,13 +57,16 @@ jps.registerRotation("DRUID","FERAL", function()
 	local enemycount,targetcount = jps.RaidEnemyCount()
 
 	local isSpellHarmful = IsHarmfulSpell("target")
-	local lastcast = jps.CurrentCast[2]
+	local lastcast = jps.CurrentCast
 	local castSilence = jps.shouldKick("target")
 
 	local playerhealth_pct = jps.hp(player)
 	local targethealth_pct = jps.hp("target")
 	local focushealth_pct = jps.hp("focus")
 	local mousehealth_pct = jps.hp("mouseover")
+	local movingTarget = GetUnitSpeed("target") > 0
+	jps.RakeBuffed = false
+	jps.RipBuffed = false
 
 	local EnemyUnit = {}
 		for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
@@ -180,7 +183,7 @@ jps.registerRotation("DRUID","FERAL", function()
 		if targetClass == "death knight" or targetClass == "hunter" or targetClass == "paladin" or targetClass == "warrior" then return true end
 		if targetSpec == "enhancement" then return true end
 		if jps.buff("bear form",rangedTarget) then return true end
-		if jps.MovingTarget and not jps.LoseControl(rangedTarget,"Snare") then return true end
+		if movingTarget and not jps.LoseControl(rangedTarget,"Snare") then return true end
 		if not jps.LoseControl(rangedTarget,"Root") and IsSpellInRange("rip",rangedTarget) == 0 then return true end
 	return false
 	end
@@ -216,7 +219,6 @@ jps.registerRotation("DRUID","FERAL", function()
 ------------------------
 local spellTable =
 {
-	{ SetView(1),			 },
 	{ "cat form",						form ~= 3 and playerhealth_pct > 0.20 and isSwimming == nil , player },
 	{ "cat form",						form ~= 3 and isFalling == 1 , player },
 	{ "aquatic form",			  	form ~= 2 and isSwimming == 1 and playerhealth_pct > 0.20 , player },

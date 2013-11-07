@@ -1,3 +1,25 @@
+-- CONFIG START
+--[[
+jps.registerEvent("VARIABLES_LOADED", function()
+	mConfig:addSlider("deathPactPercentage", "DeathPact %","Percentage at which to use Death Pact, if available",nil, 0, 100, 50, 1)
+	mConfig:addSlider("lichbornePercentage", "Lichborne %","Percentage at which to use Lichborne, if available",nil, 0, 100, 60, 1)
+	mConfig:addSlider("healthstonePercentage", "Healthstone %","Percentage at which to use Healthstone, if available",nil, 0, 100, 70, 1)
+	mConfig:addSlider("iceboundFortitudePercentage", "Icebound Fortitude %","Percentage at which to use Icebound Fortitude, if available",nil, 0, 100, 30, 1)
+	mConfig:addSlider("vampiricBloodPercentage", "Vampiric Blood %","Percentage at which to use Vampiric Blood, if available",nil, 0, 100, 40, 1)
+	mConfig:addDropDown("ctrlKeyAction", "Ctrl-Key Action", "Action to do when Ctrl-Key is pressed", {ARMYOFTHEDEAD="Army of the Dead", GOREFIENDSGRASP="Gorefiend's Grasp on Player", RAISEALLY="Battle Rezz Target", RAISEALLYMOUSEOVER="Battle Rezz Mouseover"}, "ARMYOFTHEDEAD")
+	
+	
+function dk.get(key)
+	return mConfig.get(key)
+end
+function dk.getPercent(key)
+	return mConfig.getPercent(key)
+end	
+end)
+]]--
+
+-- CONFIG END
+
 -- Talents:
 -- Tier 1: Roiling Blood (for trash / add fights) or Plague Leech for Single Target
 -- Tier 2: Anti-Magic Zone
@@ -17,7 +39,6 @@
 dkBloodSpellTable = {}
 dkBloodSpellTable[1] = {
 	-- Blood presence
-
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
 
 	-- Battle Rezz
@@ -28,40 +49,49 @@ dkBloodSpellTable[1] = {
 	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
 	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
 
-	-- Cntrol is pressed
-	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+	-- Control is pressed
+	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dk.get("ctrlKeyAction") == "ARMYOFTHEDEAD" '},
+	{{"maco","/target player\n/cast Gorefiend's Grasp\n/targetlasttarget"}, 'jps.canCast("Gorefiend\'s Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dk.get("ctrlKeyAction") == "GOREFIENDSGRASP" '},
 
 	-- Defensive cooldowns
-
-	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
-	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Pact",'jps.hp() < dk.getPercent("deathPactPercentage") and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < dk.getPercent("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
 	{"Rune Tap",'jps.hp() < 0.8'},
-	{jps.useBagItem(5512), 'jps.hp("player") < 0.70'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
+	{jps.useBagItem(5512), 'jps.hp("player") < dk.getPercent("healthstonePercentage")'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dk.getPercent("iceboundFortitudePercentage")'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dk.getPercent("vampiricBloodPercentage")'},
 
+	
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
 	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
-	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
+	{"Strangulate",'jps.shouldKick("mouseover") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
 	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+	{"Asphyxiate",'jps.shouldKick("mouseover") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
+	{"Asphyxiate",'jps.shouldKick("focus") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+	
+	-- Spell Steal
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
 
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
-	{"Dancing Rune Weapon",'jps.UseCDs'},
+	
+	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{
+		{"Dancing Rune Weapon",'jps.UseCDs'},
+	
+		-- Requires engineering
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	
+		-- Requires herbalism
+		{"Lifeblood",'jps.UseCDs'},
+	
+		-- Racials
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	}},
 
-	-- Requires engineering
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-
-	-- Requires herbalism
-	{"Lifeblood",'jps.UseCDs'},
-
-	-- Racials
-	{ jps.getDPSRacial(),'jps.UseCDs'},
 
 	-- Buff
 	{"Bone Shield",'not jps.buff("Bone Shield")'},
@@ -96,8 +126,84 @@ dkBloodSpellTable[1] = {
 	{"Horn of Winter", "onCD"},
 	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
 	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
-	{"Empower Rune Weapon",'jps.UseCDs and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
+	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 }
+
+dkBloodSpellTable[4] = {
+	-- Blood presence
+	{"Blood Presence",'not jps.buff("Blood Presence")'},
+
+	-- Battle Rezz
+	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and jps.UseCds', "focus" },
+	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and jps.UseCds', "target"},
+
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+
+	-- Control is pressed
+	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dk.get("ctrlKeyAction") == "ARMYOFTHEDEAD" '},
+	{{"maco","/target player\n/cast Gorefiend's Grasp\n/targetlasttarget"}, 'jps.canCast("Gorefiend\'s Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dk.get("ctrlKeyAction") == "GOREFIENDSGRASP" '},
+
+	-- Defensive cooldowns
+	{"Death Pact",'jps.hp() < dk.getPercent("deathPactPercentage") and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < dk.getPercent("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
+	{"Rune Tap",'jps.hp() < 0.8'},
+	{jps.useBagItem(5512), 'jps.hp("player") < dk.getPercent("healthstonePercentage")'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dk.getPercent("iceboundFortitudePercentage")'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dk.getPercent("vampiricBloodPercentage")'},
+
+	-- Interrupts
+	{"mind freeze",'jps.shouldKick()'},
+	{"mind freeze",'jps.shouldKick("focus")', "focus"},
+	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
+	{"Strangulate",'jps.shouldKick("mouseover") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
+	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
+	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
+	{"Asphyxiate",'jps.shouldKick("mouseover") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
+	{"Asphyxiate",'jps.shouldKick("focus") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+
+	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
+	
+	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{	
+		-- Requires engineering
+		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
+	
+		-- Requires herbalism
+		{"Lifeblood",'jps.UseCDs'},
+	
+		-- Racials
+		{ jps.getDPSRacial(),'jps.UseCDs'},
+	}},
+
+
+	-- Buff
+	{"Bone Shield",'not jps.buff("Bone Shield")'},
+
+	-- Diseases
+	{"Outbreak",'jps.myDebuffDuration("frost fever") < 2'},
+	{"Outbreak",'jps.myDebuffDuration("blood plague") < 2'},
+
+	-- Rotation
+	{"Death Strike",'jps.hp() < 0.7'},
+	{"Death Strike",'jps.buffDuration("Blood Shield") <= 4'},
+	{"Soul Reaper",'jps.hp("target") <= 0.35'},
+	{"Plague Strike",'not jps.mydebuff("Blood Plague")'},
+	{"Icy Touch",'not jps.mydebuff("Frost Fever")'},
+	{"Rune Strike",'jps.runicPower() >= 80 and not dk.rune("twoFr") and not dk.rune("twoUr")'},
+	{"Death Strike", "onCD"},
+
+	-- Death Siphon when we need a bit of healing. (talent based)
+	{"Death Siphon",'jps.hp() < 0.6'}, -- moved here, because we heal often more with Death Strike than Death Siphon
+
+	{"Rune Strike",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
+
+	{"Horn of Winter", "onCD"},
+	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
+	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
+	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
+}
+
+
 dkBloodSpellTable[2] = {
 	-- Blood presence
 	{"Blood Presence",'not jps.buff("Blood Presence")'},
@@ -109,27 +215,34 @@ dkBloodSpellTable[2] = {
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "focus" },
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target"},
 
+	-- Control is pressed
+	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dk.get("ctrlKeyAction") == "ARMYOFTHEDEAD" '},
+	{{"maco","/target player\n/cast Gorefiend's Grasp\n/targetlasttarget"}, 'jps.canCast("Gorefiend\'s Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and dk.get("ctrlKeyAction") == "GOREFIENDSGRASP" '},
+
 	-- Defensive cooldowns
-	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
-	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
+	{"Death Pact",'jps.hp() < dk.getPercent("deathPactPercentage") and dk.hasGhoul()'},
+	{"Lichborne",'jps.UseCDs and jps.hp() < dk.getPercent("lichbornePercentage") and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
 	{"Rune Tap",'jps.hp() < 0.8'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.4'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.55'},
+	{jps.useBagItem(5512), 'jps.hp("player") < dk.getPercent("healthstonePercentage")'},
+	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <=dk.getPercent("iceboundFortitudePercentage")'},
+	{"Vampiric Blood",'jps.UseCDs and jps.hp() < dk.getPercent("vampiricBloodPercentage")'},
 
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
 	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
+	{"Strangulate",'jps.shouldKick("mouseover") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
 	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+	{"Asphyxiate",'jps.shouldKick("mouseover") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
+	{"Asphyxiate",'jps.shouldKick("focus") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
 	-- Aggro cooldowns
 	{"Raise Dead",'jps.UseCDs and dk.hasGhoul() and jps.hp() < 0.6'},
 
 	-- Requires engineering
-	{ jps.useSynapseSprings,'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
+	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
 
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs'},
@@ -153,9 +266,11 @@ dkBloodSpellTable[3] = {
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
 	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
+	{"Strangulate",'jps.shouldKick("mouseover") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "mouseover" },
 	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
+	{"Asphyxiate",'jps.shouldKick("mouseover") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
+	{"Asphyxiate",'jps.shouldKick("focus") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
 
 	-- Buffs
@@ -175,15 +290,19 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[1])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Blood Main")
+jps.registerRotation("DEATHKNIGHT","BLOOD",function()
+	local spell = nil
+	local target = nil
+	spell,target = parseStaticSpellTable(dkBloodSpellTable[4])
+	return spell,target
+end, "DK Blood No Cleave / AoE")
 
 jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[2])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Blood CDs+interrupts only")
 
@@ -191,6 +310,5 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[3])
-	spell = dk.bloodshieldMe(spell)
 	return spell,target
 end, "DK Diseases+interrupts only")

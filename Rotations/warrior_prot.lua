@@ -13,9 +13,9 @@ jps.registerRotation("WARRIOR","PROTECTION",function()
 		{ "Last Stand" ,			jps.hp() < 0.40 and jps.UseCDs, "player" },
 		{ "Impending Victory" ,jps.hp() < 0.70 and jps.UseCDs, "player" },
 		{ "Lifeblood" ,			jps.hp() < 0.70 and jps.UseCDs, "player" },
-		--{ "Shield Block" ,			jps.hp() < 0.80 , "player" },
+		{ "Shield Block" ,			jps.hp() < 0.80 , "player" },
 		{ "Shield Barrier" ,		jps.hp() < 0.80 , "player" },
-		--{ "Enraged Regeneration" ,	jps.buff("Berserker Rage","player") and jps.hp() < 0.80 , "player" },
+		{ "Enraged Regeneration" ,	(jps.buff("Berserker Rage","player") or jps.buff("enraged","player")) and jps.hp() < 0.80 , "player" },
 
 		-- interrupts
 		{ "Pummel" ,				jps.shouldKick("target") , "target" },
@@ -35,7 +35,7 @@ jps.registerRotation("WARRIOR","PROTECTION",function()
 		{ "Revenge" ,				},
 		{ "Heroic Strike" ,		jps.buff("player", "Ultimatum") and not jps.MultiTarget , "target" },
 		{ "Devastate" ,			jps.debuffStacks("Sunder Armor") < 3 , "target" },
-		{ "Thunder Clap" ,		not jps.debuff("Weakend Blows", "target") },
+		{ "Thunder Clap" ,		IsSpellInRange("Thunder Clap","target") == 1 and not jps.debuff("Weakend Blows", "target") },
 		{ "Heroic Throw" ,		},
 		{ "Battle Shout",			jps.rage() < 100, "player" },
 		{ "Heroic Strike" ,		jps.rage()>90  and not jps.MultiTarget, "target" },

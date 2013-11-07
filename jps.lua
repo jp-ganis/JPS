@@ -21,8 +21,8 @@
 local L = MyLocalizationTable
 local JPS = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
 jps = {}
-jps.Version = "1.3.0"
-jps.Revision = "r548"
+jps.Version = "1.3.2"
+jps.Revision = "r611b"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
@@ -34,7 +34,7 @@ jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = true
 
-jps.Fishing = false
+
 jps.MultiTarget = false
 jps.Interrupts = false
 jps.UseCDs = false
@@ -55,13 +55,11 @@ jps.Casting = false
 jps.LastCast = nil
 jps.ThisCast = nil
 jps.NextCast = nil
-jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
-jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
-jps.CurrentCast = {}
+jps.CurrentCast = nil
 jps.detectSpecDisabled = false
 
 -- Class
@@ -70,18 +68,16 @@ jps.isBehind = true
 jps.isHealer = false
 jps.DPSRacial = nil
 jps.DefRacial = nil
-jps.Lifeblood = nil
-jps.EngiGloves = nil
 jps.isTank = false
+jps.CrowdControl = false
+jps.CrowdControlTarget = nil
 
 -- Raccourcis
 cast = CastSpellByName
 
 -- Misc
-jps.raid = {}
 jps.Opening = true
-jps.RakeBuffed = false
-jps.RipBuffed = false
+
 jps.BlacklistTimer = 2
 jps.RaidStatus = {}
 jps.RaidTarget = {}
@@ -94,7 +90,6 @@ jps.firstInitializingLoop = true
 jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
-jps.RaidMode = false
 jps.functionQueues = {}
 jps.timedCasting = {}
 
@@ -102,19 +97,27 @@ jps.timedCasting = {}
 jps.Configged = false
 jps_variablesLoaded = false
 jpsName = select(1,UnitName("player"))
-jpsRealm = GetCVar("realmName")
+jpsRealm = GetRealmName()
 jps.ExtraButtons = true
 jps.ResetDB = false
+
 jps.Count = 1
-jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+jps.Tooltip = ""
 jps.ToggleRotationName = {"No Rotations"}
 jps.MultiRotation = false
 rotationDropdownHolder = nil
-jps.customRotationFunc = ""
 jps.timeToDieAlgorithm= "LeastSquared"  --  WeightedLeastSquares , LeastSquared , InitialMidpoints
 jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withing 30 seconds
 jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
+jps.customRotationFunc = ""
+jps.isCastingNextSpell = false
+
+
+--test
+
+jps.rotationConfig = {}
+jps.rotationConfigValues = {}
 
 -- Latency
 jps.CastBar = {}
@@ -142,9 +145,9 @@ end
 
 function jps.detectSpec()
 	if jps.detectSpecDisabled then return false end
-	
+
 	jps.Count = 1
-	jps.Tooltip = "Click Macro /jps pew\nFor the Rotation Tooltip"
+	jps.Tooltip = ""
 	jps.ToggleRotationName = {"No Rotations"}
 	jps.MultiRotation = false
 	jps.initializedRotation = false
@@ -155,7 +158,7 @@ function jps.detectSpec()
 	jps.Class = UnitClass("player")
 	jps.Level = Ternary(jps.Level > 1, jps.Level, UnitLevel("player"))
 	if jps.Class then
-		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
+		local id = GetSpecialization()
 		if not id then 
 			if jps.Level < 10 then 
 				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
@@ -183,10 +186,11 @@ function jps.detectSpec()
 	jps.HarmSpell = jps.GetHarmfulSpell()
 	--write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
 	jps.setClassCooldowns()
-	jps_VARIABLES_LOADED()
+
 	if jps.initializedRotation == false then
 		jps_Combat()
 	end
+	
 end
 
 ------------------------
@@ -235,9 +239,6 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
-	elseif msg == "fishing" or msg == "fish" then
-		jps.Fishing = not jps.Fishing
-		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
 	elseif msg == "debug" and rest ~="" then
 		if tonumber(rest) then
 			jps.DebugLevel = rest
@@ -248,7 +249,7 @@ function SlashCmdList.jps(cmd, editbox)
 		end
 	elseif msg == "debug" then
 		jps.Debug = not jps.Debug
-		write("Debug mode set to",tostring(jps.Debug))	
+		write("Debug mode set to",tostring(jps.Debug))
 	elseif msg == "face" then
 		jps.gui_toggleRot()
 		write("jps.FaceTarget set to",tostring(jps.FaceTarget))
@@ -259,13 +260,6 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.Macro("/reload")
 	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
-	elseif msg == "raid"  or msg == "raidmode" then
-		jps.RaidMode = not jps.RaidMode
-		if jps.RaidMode then
-			write("Raid Mode is now enabled")
-		else
-			write("Raid Mode is now disabled")
-		end
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
@@ -295,7 +289,6 @@ function SlashCmdList.jps(cmd, editbox)
 	end
 end
 
-
 -- cache for WoW API functions that return always the same results for the given params
 local spellcache = setmetatable({}, {__index=function(t,v) local a = {GetSpellInfo(v)} if GetSpellInfo(v) then t[v] = a end return a end})
 local function GetSpellInfo(a)
@@ -308,10 +301,10 @@ hooksecurefunc("UseAction", function(...)
 		local stype,id,_ = GetActionInfo(select(1, ...))
 		if stype == "spell" then
 			local name = select(1,GetSpellInfo(id))
-			if jps.NextSpell ~= name then
+			if jps.NextSpell ~= name  and not jps.shouldSpellBeIgnored(name) then
 				jps.NextSpell = name
-				if jps.Combat then 
-					--write("Set",name,"for next cast.") 
+				if jps.getConfigVal("print next spells in chat") == 1 and jps.Combat then
+					write("Set",name,"for next cast.")
 				end
 			end
 		end
@@ -337,7 +330,6 @@ function jps_Combat()
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
 	
-	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
@@ -365,18 +357,18 @@ function jps_Combat()
 	
 	-- Movement
 	jps.Moving = GetUnitSpeed("player") > 0
-	jps.MovingTarget = GetUnitSpeed("target") > 0
 	
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
+				jps.isCastingNextSpell = true
 				jps.Cast(jps.NextSpell)
-				write("Next Spell "..jps.NextSpell.. " was casted")
+				if jps.getConfigVal("print manually casted spells") == 1 then
+					write("Next Spell "..jps.NextSpell.. " was casted")
+				end
 				jps.NextSpell = nil
 			else
-				if jps.cooldown(jps.NextSpell) > 3 then
-					jps.NextSpell = nil
-				end
+				if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
 				jps.Cast(jps.ThisCast)
 			end
 		else
@@ -441,4 +433,6 @@ local JPSAceOptions = {
 function JPS:OnInitialize()
     LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
     self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
+end
+
 end

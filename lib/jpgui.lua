@@ -93,7 +93,7 @@ jpsIcon:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 ---------------------------------
 
 
-rotationDropdownHolder = CreateFrame("frame","rotationDropdownHolder")
+rotationDropdownHolder = CreateFrame("frame","rotationDropdownHolder", UIParent)
 rotationDropdownHolder:SetWidth(150)
 rotationDropdownHolder:SetHeight(60)
 rotationDropdownHolder:SetPoint("CENTER",UIParent)

@@ -14,11 +14,6 @@ jps.registerRotation("MAGE","FROST",function()
 	local mana = UnitPower(player,0)/UnitPowerMax(player,0)
 	local stun = jps.StunEvents()
 	local isFalling = IsFalling()==1
--- Unit Info
-	local targetName = GetUnitName("target")
-	local targetClass = UnitClass("target")
-	local kick = jps.shouldKick(rangedTarget) or jps.IsCastingPoly(rangedTarget)
-
 ------------------------
 -- LOCAL FUNCTIONS -----
 ------------------------
@@ -128,8 +123,11 @@ jps.registerRotation("MAGE","FROST",function()
 		elseif jps.canDPS("targettarget") then rangedTarget = "targettarget"
 		elseif jps.canDPS(EnemyUnit[1]) then rangedTarget = EnemyUnit[1]
 	end
+-- Unit Info
+	local targetName = GetUnitName("target")
+	local targetClass = UnitClass("target")
+	local kick = jps.shouldKick(rangedTarget) or jps.IsCastingPoly(rangedTarget)
 
-		
 	------------------------
 	-- SPELL TABLE ---------
 	------------------------
@@ -182,6 +180,6 @@ jps.registerRotation("MAGE","FROST",function()
 		{ "fire blast", jps.Moving}, 
 		{ "ice lance", jps.Moving}, 
 	}
-	spell,target = parseSpellTable(spellTable)
+	local spell,target = parseSpellTable(spellTable)
 	return spell,target
 end, "Default PvP", false, true)

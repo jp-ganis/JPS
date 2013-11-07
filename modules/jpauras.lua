@@ -33,6 +33,10 @@ local L = MyLocalizationTable
 --------------------------
 -- BUFF DEBUFF
 --------------------------
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitAura("unit", index or "name"[, "rank"[, "filter"]])
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitDebuff("unit", index or ["name", "rank"][, "filter"])
+-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId = UnitBuff("unit", index or ["name", "rank"][, "filter"])
+
 function jps.buffId(spellId,unit)
 	local spellname = nil
 	if type(spellId) == "number" then spellname = tostring(select(1,GetSpellInfo(spellId))) end
@@ -132,11 +136,10 @@ function jps.myBuffDuration(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
-	if jps.Lag == nil then jps.Lag = 0 end
 	local _,_,_,_,_,_,duration,caster,_,_,_ = UnitBuff(unit,spellname)
 	if caster ~= "player" then return 0 end
 	if duration == nil then return 0 end
-	duration = duration-GetTime() -- jps.Lag
+	duration = duration-GetTime() 
 	if duration < 0 then return 0 end
 	return duration
 end
@@ -160,11 +163,10 @@ function jps.myDebuffDuration(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "target" end
-	if jps.Lag == nil then jps.Lag = 0 end
 	local _,_,_,_,_,_,duration,caster,_,_ = UnitDebuff(unit,spellname)
 	if caster~="player" then return 0 end
 	if duration==nil then return 0 end
-	duration = duration-GetTime() -- jps.Lag
+	duration = duration-GetTime() 
 	if duration < 0 then return 0 end
 	return duration
 end
@@ -188,10 +190,9 @@ function jps.buffDuration(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "player" end
-	if jps.Lag == nil then jps.Lag = 0 end
 	local _,_,_,_,_,_,duration,caster,_,_,_ = UnitBuff(unit,spellname)
 	if duration == nil then return 0 end
-	duration = duration-GetTime() -- jps.Lag
+	duration = duration-GetTime() 
 	if duration < 0 then return 0 end
 	return duration
 end
@@ -216,10 +217,9 @@ function jps.debuffDuration(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	if unit == nil then unit = "target" end
-	if jps.Lag == nil then jps.Lag = 0 end
 	local _,_,_,_,_,_,duration,caster,_,_ = UnitDebuff(unit,spellname)
 	if duration==nil then return 0 end
-	duration = duration-GetTime() -- jps.Lag
+	duration = duration-GetTime() 
 	if duration < 0 then return 0 end
 	return duration
 end

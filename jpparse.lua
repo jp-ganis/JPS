@@ -132,13 +132,25 @@ end
 function jps.canHeal(unit)
 	if not jps.UnitExists(unit) then return false end
 	if GetUnitName("player") == GetUnitName(unit) then return true end
-	if UnitCanAssist("player",unit)~=1 then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
-	if UnitIsFriend("player",unit)~=1 then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
+	if UnitCanAssist("player",unit)~=1 and not jps.isSpecialHealUnit(unit) then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
+	if UnitIsFriend("player",unit)~=1 and not jps.isSpecialHealUnit(unit) then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
 	-- PNJ returns 1 with UnitIsFriend -- PNJ returns 1 or nil (Vendors) with UnitCanAssist
 	if UnitInVehicle(unit)==1 then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
 	if jps.PlayerIsBlacklisted(unit) then return false end
 	if not select(1,UnitInRange(unit)) then return false end -- return FALSE when not in a party/raid reason why to be true for player GetUnitName("player") == GetUnitName(unit)
 	return true
+end
+
+jps.specialHealUnits = {
+	"Contaminated Puddle" --Immerseus
+}
+function jps.isSpecialHealUnit(unit)
+	if not unit then return false end
+	local name = select(1,UnitName(unit)):lower()
+	for k,v in pairs(jps.specialHealUnits) do
+		if name == v:lower() then return true end
+	end
+	return false
 end
 
 -- INVALID IF THE NAMED PLAYER IS NOT A PART OF YOUR PARTY OR RAID -- NEED .."TARGET"
@@ -168,10 +180,10 @@ tostring(select(1,GetSpellInfo(126393))) -- Hunter: Eternal Guardian
 
 }
 local function isBattleRez(spell)
-    for _,v in ipairs(battleRezSpells) do
-        if v == spell then return true end
-    end
-    return false
+		for _,v in ipairs(battleRezSpells) do
+				if v == spell then return true end
+		end
+		return false
 end
 
 -- check if a spell is castable @ unit 
@@ -269,6 +281,26 @@ function jps.Cast(spell) -- "number" "string"
 	jps.ThisCast = nil
 end
 
+jps.UserInitiatedSpellsToIgnore = {
+	-- General Skills
+	6603, -- Auto Attack (prevents from toggling on/off)
+	-- Monk Skills
+	109132, -- Roll (Unless you want to roll off cliffs, leave this here)
+	137639, -- Storm, Earth, and Fire (prevents you from destroying your copy as soon as you make it)
+	115450, -- Detox (when casting Detox without any dispellable debuffs, the cooldown resets)
+	119582, -- Purifying Brew (having more than 1 chi, this can prevent using it twice in a row)
+	115008, -- Chi Torpedo (same as roll)
+	101545, -- Flying Serpent Kick (prevents you from landing as soon as you start "flying")
+	115921, -- Legacy of The Emperor
+	116781, -- Legacy of the White Tiger
+	115072, -- Expel Harm (below 35%, brewmasters ignores cooldown on this spell)
+	115181, -- Breath of Fire (if you are chi capped, this can make you burn all your chi)
+	115546, -- Provoke (prevents you from wasting your taunt)
+	116740, -- Tigereye Brew (prevents you from wasting your stacks and resetting your buff)
+	115294, -- Mana Tea (This isn't an instant cast, but since it only has a 0.5 channeled time, it can triggers twice in the rotation)
+	111400, -- warlock burning rush
+}
+
 function jps.isRecast(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -278,11 +310,27 @@ function jps.isRecast(spell,unit)
 	
 	return jps.LastCast==spellname and UnitGUID(unit)==jps.LastTargetGUID
 end
+
+function jps.shouldSpellBeIgnored(spell)
+	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+	if not spellname then return false end
+	spellname = spellname:lower()
+	local result = false
+	for _, v in pairs(jps.UserInitiatedSpellsToIgnore) do
+		if spellname == string.lower(tostring(select(1,GetSpellInfo(v)))) then
+			return true
+		end
+	end
+	return false
+end
+
 ----------------------
 -- DEBUG MODE
 ----------------------`
 
 function jps_canHeal_debug(unit)
+	
 	if not jps.UnitExists(unit) then write("not Unit") return false end
 	if GetUnitName("player") == GetUnitName(unit) then write("Player") return true end
 	if UnitExists(unit)~=1 then write("not Exists") return false end
@@ -298,17 +346,17 @@ end
 
 function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
 	LOG.info("Can Cast Debug for %s @ $s ", spell, unit)
-	if spell == nil then LOG.info("spell is nil  %s @ $s", spell, unit)return false end
-	if not jps.UnitExists(unit) then LOG.info("invalid unit  %s @ $s", spell, unit) return false end
+	if spell == nil then LOG.info("spell is nil	%s @ $s", spell, unit)return false end
+	if not jps.UnitExists(unit) then LOG.info("invalid unit	%s @ $s", spell, unit) return false end
 
 	local usable, nomana = IsUsableSpell(spell) -- IsUsableSpell("spellName" or spellID)
-	if not usable then LOG.info("spell is not sable  %s @ $s", spell, unit) return false end
-	if nomana then LOG.info("failed mana test  %s @ $s", spell, unit) return false end
-	if jps.cooldown(spell)~=0 then LOG.info("cooldown not finished  %s @ $s", spell, unit) return false end
-	if jps_SpellHasRange(spell)~=1 then LOG.info("spellhasRange check failed  %s @ $s", spell, unit) return false end
+	if not usable then LOG.info("spell is not sable	%s @ $s", spell, unit) return false end
+	if nomana then LOG.info("failed mana test	%s @ $s", spell, unit) return false end
+	if jps.cooldown(spell)~=0 then LOG.info("cooldown not finished	%s @ $s", spell, unit) return false end
+	if jps_SpellHasRange(spell)~=1 then LOG.info("spellhasRange check failed	%s @ $s", spell, unit) return false end
 
-	if jps_IsSpellInRange(spell,unit)~=1 then LOG.info("not in range  %s @ $s", spell, unit) return false end
-	LOG.info("Passed all tests  %s @ $s", spell, unit)
+	if jps_IsSpellInRange(spell,unit)~=1 then LOG.info("not in range	%s @ $s", spell, unit) return false end
+	LOG.info("Passed all tests	%s @ $s", spell, unit)
 	return true
 end
 
@@ -417,9 +465,6 @@ function parseSpellTable( hydraTable )
 		elseif type(spell) == "table" and spell[1] == "macro" and conditions then
 			local macroText = spell[2]
 			local macroTarget = spell[3]
-			-- Workaround for TargetUnit is still PROTECTED despite goblin active
- 			local changeTargets = jps.UnitExists(macroTarget)
-			if changeTargets then jps.Macro("/target "..macroTarget) end
  			
 			if conditions and type(macroText) == "string" then
 				local macroSpell = macroText
@@ -432,10 +477,6 @@ function parseSpellTable( hydraTable )
 				if jps.Debug then macrowrite(macroSpell,"|cff1eff00",macroTarget,"|cffffffff",jps.Message) end
 			end
 		
-			-- CASTSEQUENCE WORKS ONLY FOR {INSTANT CAST, SPELL}
-			-- better than "#showtooltip\n/cast Frappe du colosse\n/cast Sanguinaire"
-			-- because I can check the spell with jps.canCast
-			-- {"macro",{109964,2060},player}
 			if conditions and type(macroText) == "table" then
 				for _,sequence in ipairs (macroText) do
 					local spellname = tostring(select(1,GetSpellInfo(sequence)))
@@ -446,7 +487,6 @@ function parseSpellTable( hydraTable )
 					end
 				end
 			end
-			if changeTargets and jps.isHealer then jps.Macro("/targetlasttarget") end
 
 		-- MultiTarget List -- { spell , function_unit , table_unit }
 		elseif type(conditions) == "function" and type(target) == "table" then
@@ -473,37 +513,4 @@ end
 -------------------------
 function hideDropdown()
 	rotationDropdownHolder:Hide()
-end
-
-function jps.RotationActive(spellTable)
-	local countRotations = 0
-
-	for i,j in ipairs (spellTable) do
-		if spellTable[i]["ToolTip"] ~= nil then
-			jps.MultiRotation = true
-			countRotations = countRotations+1 
-			jps.ToggleRotationName[i] = spellTable[i]["ToolTip"]
-		end
-	end
-
-	if jps.initializedRotation == false then
-		if countRotations > 1 and jps.getConfigVal("Rotation Dropdown Visible") == 1 then 
-			
-			UIDropDownMenu_SetText(DropDownRotationGUI, jps.ToggleRotationName[1])
-			jps.deleteFunctionFromQueue(hideDropdown,"gui_loaded")
-			rotationDropdownHolder:Show()
-		else
-			jps.addTofunctionQueue(hideDropdown,"gui_loaded") 
-		end
-		jps.firstInitializingLoop = true
-	end
-
-	jps.initializedRotation = true
-
-	if jps.MultiRotation then
-		jps.Tooltip = spellTable[jps.Count]["ToolTip"]
-		return spellTable[jps.Count]
-	else
-		return spellTable
-	end
 end
