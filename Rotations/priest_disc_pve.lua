@@ -771,9 +771,6 @@ priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priest
 jps.registerEvent("PLAYER_ENTERING_WORLD", function()
 	mConfig:createConfig("Rotation Config",jps.Class..jps.Spec, "Default" ,{"/rotation"})
 	mconfig_VARIABLES_LOADED()
-	mConfig:addSlider("rotationPowerNormalSingle", "Power of your normal single Target Healing in % ", nil, 1, 100, 100, 1)
-	mConfig:addSlider("rotationPowerNormalAOE", "Power of your normal AOE Target Healing in % ", nil, 1, 100,100, 1)
-	mConfig:addSlider("rotationPowerEmergency", "Power of your normal Important units Healing in % ", nil, 1, 100,100, 1)
 	mConfig:addSlider("mindbenderManaPercent", "% of mana for activating Mindbender", nil, 1, 100,70, 1)
 	mConfig:addSlider("shadowfiendManaPercent", "% of mana for activating shadowfiend", nil, 1, 100,60, 1)
 	mConfig:addSlider("arcaneTorrent", "% of mana for activating arcane Torrent",nil, 1, 100,90, 1)
@@ -784,22 +781,12 @@ jps.registerEvent("PLAYER_ENTERING_WORLD", function()
 
 end)
 
--- allows us to adjust the whole heal output with one slider! for finding better healing % values etc.
-function priestLight.getPercentNormal(value)
-	return value * mConfig:getPercent("rotationPowerNormalSingle")
-end
-function priestLight.getPercentAOE(value) 
-	return value * mConfig:getPercent("rotationPowerNormalAOE")
-end
-function priestLight.getPercentImportant(value) 
-	return value * mConfig:getPercent("rotationPowerEmergency")
-end
-
 function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, lowestImportantHP )
  	local healTargetHP = jps.hp(jps.LastTarget)
  	local spellCasting, _, _, _, _, endTime, _ = UnitCastingInfo("player")
  	if spellCasting == nil then return false end
- 
+ 	if jps.isCastingNextSpell == true then return false end
+
 	for key, healSpellTable  in pairs(spellsToCheck) do
  		local breakpoint = healSpellTable[2]
 		local spellName = tostring(select(1,GetSpellInfo(healSpellTable[1]))) 
@@ -981,28 +968,28 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 
 		-- important units emergency
-		{'nested' , priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.99), 
+		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.99, 
 	
 			{
-				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= "player" and priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.3) and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
-				{priestLight.painsup, jps.canHeal("target") and jps.hp("target") < priestLight.getPercentImportant(0.4) and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, "target" },
-				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.4) and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, priestLight.disc.lowestImportantUnit },
-				{priestLight.desperatePrayer, jps.hp() > priestLight.getPercentImportant(0.45) and priestLight.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestImportantUnit},
-				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.4), priestLight.disc.lowestImportantUnit },
-				{priestLight.greaterHeal, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.65), priestLight.disc.lowestImportantUnit },
-				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= "player" and priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.8) and jps.hp("player") < priestLight.getPercentImportant(0.7), priestLight.disc.lowestImportantUnit },
-				{priestLight.penance, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.95), priestLight.disc.lowestImportantUnit },
-				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentImportant(0.95) , priestLight.disc.lowestImportantUnit },
+				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= "player" and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
+				{priestLight.painsup, jps.canHeal("target") and jps.hp("target") < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, "target" },
+				{priestLight.painsup, priestLight.disc.lowestImportantUnitHP < 0.4 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.UseCDs, priestLight.disc.lowestImportantUnit },
+				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestImportantUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestImportantUnit},
+				{priestLight.flashHeal, priestLight.disc.lowestImportantUnitHP < 0.4, priestLight.disc.lowestImportantUnit },
+				{priestLight.greaterHeal, priestLight.disc.lowestImportantUnitHP < 0.65, priestLight.disc.lowestImportantUnit },
+				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= "player" and priestLight.disc.lowestImportantUnitHP < 0.8 and jps.hp("player") < 0.7, priestLight.disc.lowestImportantUnit },
+				{priestLight.penance, priestLight.disc.lowestImportantUnitHP < 0.95, priestLight.disc.lowestImportantUnit },
+				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.95 , priestLight.disc.lowestImportantUnit },
 			},
 		},
 	
 		-- multitarget target
-		{'nested' , jps.MultiTarget or (priestLight.disc.unitsBelow70 >= 3 and priestLight.disc.avgHP < priestLight.getPercentAOE(0.9)),
+		{'nested' , jps.MultiTarget or (priestLight.disc.unitsBelow70 >= 3 and priestLight.disc.avgHP < 0.9),
 			{
 				-- from high heal to low filler heals
-				{priestLight.cascade, priestLight.disc.lowestUnitHP < priestLight.getPercentAOE(0.7), priestLight.disc.lowestUnit},
-				{priestLight.divineStar, priestLight.disc.lowestUnitHP < priestLight.getPercentAOE(0.7), priestLight.disc.lowestUnit},
-				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < priestLight.getPercentAOE(0.7) , priestLight.disc.lowestUnit },
+				{priestLight.cascade, priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit},
+				{priestLight.divineStar, priestLight.disc.lowestUnitHP < 0.7, priestLight.disc.lowestUnit},
+				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.7 , priestLight.disc.lowestUnit },
 				{priestLight.prayerOfHealing, priestLight.disc.pohTarget ~= nil, priestLight.disc.pohTarget},
 			},
 	
@@ -1011,17 +998,17 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 	 	-- single target & dps
 		{'nested' , not jps.MultiTarget, 
 			{
-				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.5) and jps.UseCDs, priestLight.disc.lowestUnit},
-				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.4), priestLight.disc.lowestUnit },
-				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.7) and jps.hp("player") < priestLight.getPercentNormal(0.7), priestLight.disc.lowestUnit },
-				{priestLight.prayerOfMending, priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.95) , priestLight.disc.lowestUnit },
-				{priestLight.greaterHeal, priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.50), priestLight.disc.lowestUnit },
-				{priestLight.penance, priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.9), priestLight.disc.lowestUnit },
+				{priestLight.desperatePrayer, jps.hp() > 0.45 and priestLight.disc.lowestUnitHP < 0.5 and jps.UseCDs, priestLight.disc.lowestUnit},
+				{priestLight.flashHeal, priestLight.disc.lowestUnitHP < 0.4, priestLight.disc.lowestUnit },
+				{priestLight.bindingHeal, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestUnitHP < 0.7 and jps.hp("player") < 0.7, priestLight.disc.lowestUnit },
+				{priestLight.prayerOfMending, priestLight.disc.lowestUnitHP < 0.95 , priestLight.disc.lowestUnit },
+				{priestLight.greaterHeal, priestLight.disc.lowestUnitHP < 0.50, priestLight.disc.lowestUnit },
+				{priestLight.penance, priestLight.disc.lowestUnitHP < 0.9, priestLight.disc.lowestUnit },
 				{priestLight.holyFire, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.penance, priestLight.disc.rangedTarget ~= nil , priestLight.disc.rangedTarget},
 				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.buffStacks(priestLight.evangelism) <5 , priestLight.disc.rangedTarget},
 				{priestLight.smite, priestLight.disc.rangedTarget ~= nil and jps.castEverySeconds(priestLight.smite,mConfig:get("timeBetweenSmite")), priestLight.disc.rangedTarget},
-				{priestLight.heal, priestLight.disc.lowestUnitHP < priestLight.getPercentNormal(0.85), priestLight.disc.lowestUnit },
+				{priestLight.heal, priestLight.disc.lowestUnitHP < 0.85, priestLight.disc.lowestUnit },
 			},
 	
 		},
