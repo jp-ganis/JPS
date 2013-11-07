@@ -9,6 +9,7 @@
 embeds.xml 
 
 jplocal.lua
+options.inc.lua
 jps.lua
 jplogging.lua
 jputils.lua

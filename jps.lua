@@ -417,22 +417,23 @@ function jps.runFunctionQueue(queueName)
 end
 
 local JPSAceOptions = { 
-    name = "JPS",
-    handler = JPS,
-    type = "group",
-    args = {
-        jpsEnabled = {
-            type = "toggle",
-            name = "jpsEnabled",
-            desc = "JPS enabled on default",
-            set = function(info,val) JPS.enabled = val end,
-            get = function(info) return JPS.enabled end
-        },
-    },
+	name = "JPS",
+	handler = JPS,
+	type = "group",
+	args = {
+		jpsEnabled = {
+			type = "toggle",
+			name = "jpsEnabled",
+			desc = "JPS enabled on default",
+			set = function(info,val) JPS.enabled = val end,
+			get = function(info) return JPS.enabled end
+		},
+	},
 }
 function JPS:OnInitialize()
-    LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
-    self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
+	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
+	
 end
 
 end
