@@ -464,9 +464,7 @@ function mConfig:createConfig(titleText,addOn,key,slashCommands)
     end
     jps.rotationConfig = data
     	
-	if not jpsDB.mconfigData then
-		jpsDB.mconfigData = {}
-	end
+
     for _,c in pairs(mConfigAllConfigs) do
         if jpsDB.mconfigData[c.addOn] then
             jps.rotationConfig.values[c.key] = jpsDB.mconfigData[c.addOn][c.key]
