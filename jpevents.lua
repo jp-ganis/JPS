@@ -473,6 +473,7 @@ end)
 local function latencySpell ()
 		jps.CastBar.startTime = nil
 		jps.CastBar.latency = 0
+		jps.isCastingNextSpell = false
 end
 jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", latencySpell)
 jps.registerEvent("UNIT_SPELLCAST_STOP", latencySpell)

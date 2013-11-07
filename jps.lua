@@ -110,7 +110,7 @@ jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withi
 jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
 jps.customRotationFunc = ""
-
+jps.isCastingNextSpell = false
 
 
 --test
@@ -360,6 +360,7 @@ function jps_Combat()
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
+				jps.isCastingNextSpell = true
 				jps.Cast(jps.NextSpell)
 				if jps.getConfigVal("print manually casted spells") == 1 then
 					write("Next Spell "..jps.NextSpell.. " was casted")
