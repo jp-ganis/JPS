@@ -965,7 +965,7 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 		},
 
 		-- important units emergency
-		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.99, 
+		{'nested' , priestLight.disc.lowestImportantUnitHP < 0.99 and (priestLight.disc.unitsBelow70 < 3 or priestLight.disc.avgHP > 0.94) ,
 	
 			{
 				{priestLight.voidShift, priestLight.disc.lowestImportantUnit ~= jpsName and priestLight.disc.lowestImportantUnitHP < 0.3 and UnitHealth("player") > 300000 and jps.UseCDs, priestLight.disc.lowestImportantUnit },
@@ -990,7 +990,6 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.prayerOfMending, priestLight.disc.lowestImportantUnitHP < 0.7 , priestLight.disc.lowestUnit },
 				{priestLight.prayerOfHealing, priestLight.disc.pohTarget ~= nil, priestLight.disc.pohTarget},
 			},
-	
 		},
 
 	 	-- single target & dps
