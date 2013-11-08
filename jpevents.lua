@@ -470,10 +470,12 @@ jps.registerEvent("UNIT_SPELLCAST_START", function(...)
 end)
 
 -- "UNIT_SPELLCAST_INTERRUPTED" -- "UNIT_SPELLCAST_STOP"
-local function latencySpell ()
+local function latencySpell (unitID, ...)
 		jps.CastBar.startTime = nil
 		jps.CastBar.latency = 0
-		jps.isCastingNextSpell = false
+		if unitID == "player" then
+			jps.isCastingNextSpell = false
+		end
 end
 jps.registerEvent("UNIT_SPELLCAST_INTERRUPTED", latencySpell)
 jps.registerEvent("UNIT_SPELLCAST_STOP", latencySpell)
