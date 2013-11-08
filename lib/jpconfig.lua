@@ -579,9 +579,6 @@ function jps.loadDefaultSettings()
 	local settingsTable = {}
 	settingsTable["rotation dropdown visible"] = 1
 	settingsTable["timetodie frame visible"] = 1
-	settingsTable["delete fish: golden carp"] = 0
-	settingsTable["delete fish: murglesnout"] = 1
-	settingsTable["delete grey loot worth less than 5 silver"] = 0
 	settingsTable["facetarget rotate direction. checked = left, unchecked = right"] = 1
 	settingsTable["dismount in combat"] = 0
 
