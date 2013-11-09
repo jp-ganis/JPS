@@ -64,8 +64,8 @@ jps.registerStaticTable("MAGE","FROST",{
 	
 	-- Rotation ALL
 	{ "nether tempest", 'jps.myDebuffDuration("nether tempest", "target") < 1' }, 
-	{ "living bomb", 'not jps.myDebuffDuration("living bomb","target") < 2 and not jps.Moving'},
-	{ "living bomb", 'not jps.myDebuffDuration("living bomb","mouseover") < 2 and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+	{ "living bomb", 'jps.myDebuffDuration("living bomb","target") < 2 and not jps.Moving'},
+	{ "living bomb", 'jps.myDebuffDuration("living bomb","mouseover") < 2 and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
 	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
 	
 	{ "nested", "jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving",{
