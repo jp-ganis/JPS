@@ -32,54 +32,7 @@ end
 function ma_fr.kick(unit)
 	return jps.shouldKick(unit) or jps.IsCastingPoly(unit)
 end
-
-
-jps.registerStaticTable("MAGE","FROST",{
-	-- SIMCRAFT 5.3
-	-- pre fight
-	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
-	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
-	{ "frost armor", 'not jps.buff("frost armor")' }, 
-	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
-	{ "Freeze",	'IsAltKeyDown() ~= nil' },
-	{ "rune of power", 'not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
-	{ "mirror image", 'jps.UseCds'}, 
-
-	-- Remove Snares, Roots, Loss of Control, etc.
-	{ "every man for himself", 'jps.LoseControl(player,"CC")' },
-	-- Kicks, Crowd Control, etc.
-	{ "counterspell", 'ma_fr.kick(ma_fr.rangedTarget())' , ma_fr.rangedTarget },
-	
-	{ {"macro","/use Mana Gem"}, 'jps.mana() < 0.70 and GetItemCount("Mana Gem", 0, 1) > 0' }, 
-	{ {"macro","/cast icy veins\n/cast evocation"}, 'jps.hp() <= 0.4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0'  },
-	{ "Healthstone",		'jps.hp() < 0.7 and GetItemCount("Healthstone", 0, 1) > 0' },
-	
-	-- Rotation
-	{ "rune of power", 'jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' }, 
-	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
-	{ "mirror image",'jps.UseCds'}, 
-	{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
-	{ "icy veins", 'jps.debuffStacks("frostbolt") >= 3 and jps.buff("brain freeze")'}, 
-	{ "icy veins", 'jps.debuffStacks("frostbolt") >= 3 and jps.buff("fingers of frost")'}, 
-	{ "icy veins", 'jps.TimeToDie("target") <22 and not jps.Moving'}, 
-	{ "berserking", 'jps.buff("icy veins") or jps.TimeToDie("target") < 18 and jps.UseCds'}, 
-	{ "jade serpent potion", 'jps.buff("icy veins") or jps.TimeToDie("target") <45'}, 
-	{ "presence of mind", 'jps.buff("icy veins") or jps.cooldown("icy veins") >15 or jps.TimeToDie("target") <15'}, 
-	{ "alter time", 'not jps.buff("alter time") and jps.buff("icy veins") and jps.UseCds'}, 
-	{ "frostfire bolt", 'jps.buff("alter time") and jps.buff("brain freeze")' }, 
-	{ "ice lance", 'jps.buff("alter time") and jps.buff("fingers of frost")' }, 
-	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
-	{ "living bomb", 'not jps.debuff("living bomb","target") and not jps.Moving and jps.TimeToDie("target") > 11'},
-	{ "living bomb", 'not jps.debuff("living bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover") and jps.TimeToDie("mouseover") > 11',"mouseover"},
-	{ "frostbolt", 'jps.debuffStacks("frostbolt") < 3 and not jps.Moving' }, 
-	{ "frostfire bolt", 'jps.buff("brain freeze") and jps.cooldown("icy veins") > 2' }, 
-	{ "ice lance", 'jps.buff("fingers of frost")' }, 
-	{ "frostbolt" , 'not jps.Moving' }, 
-	{ "fire blast", 'jps.Moving'}, 
-	{ "ice lance", 'jps.Moving'}, 
-},"Frost Mage PvE",true,false)
-
-
+ma_fr.invokersEnergy = select(1,GetSpellInfo(116257))
 --[[[
 @rotation Noxxic PvE
 @class mage
@@ -105,12 +58,21 @@ jps.registerStaticTable("MAGE","FROST",{
 	-- Kicks, Crowd Control, etc.
 	{ "counterspell", 'ma_fr.kick(ma_fr.rangedTarget())' , ma_fr.rangedTarget },
 	
-	{ {"macro","/use Mana Gem"}, 'jps.mana() < 0.70 and GetItemCount("Mana Gem", 0, 1) > 0' }, 
-	{ {"macro","/cast icy veins\n/cast evocation"}, 'jps.hp() <= 0.4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0'  },
+	{ {"macro","/use Mana Gem"}, 'jps.mana() < 0.70 and GetItemCount("Manaa Gem", 0, 1) > 0' }, 
+	{ {"macro","/cast icy veins\n/cast evocation"}, 'jps.hp() <= 0.4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0 and not jps.Moving'  },
     { jps.useBagItem(5512), 'jps.hp("player") < 0.7' }, -- Healthstone
 	
 	-- Rotation ALL
 	{ "nether tempest", 'jps.myDebuffDuration("nether tempest", "target") < 1' }, 
+	{ "living bomb", 'not jps.myDebuff("living bomb","target") and not jps.Moving'},
+	{ "living bomb", 'not jps.myDebuff("living bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
+	
+	{ "nested", "jps.buffDuration(ma_fr.invokersEnergy) < 4 and not jps.Moving",{
+		{ "Evocation", 'jps.myDebuffDuration("frost bomb","target") > 5'},
+		{ "Evocation", 'jps.myDebuffDuration("living bomb","target") > 5'},
+		{ "Evocation", 'jps.myDebuffDuration("nether tempest","target") > 5'},
+	}},
 	
 	-- Rotation AoE
 	{ "freeze", 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget' }, 
@@ -123,8 +85,8 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image",'jps.UseCds'}, 
 	{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
-	{ "icy veins", 'jps.debuffStacks("frostbolt") >= 3 and jps.buff("brain freeze")'}, 
-	{ "icy veins", 'jps.debuffStacks("frostbolt") >= 3 and jps.buff("fingers of frost")'}, 
+	{ "icy veins", 'jps.buff("brain freeze")'}, 
+	{ "icy veins", 'jps.buff("fingers of frost")'}, 
 	{ "icy veins", 'jps.TimeToDie("target") <22 and not jps.Moving'}, 
 	{ "berserking", 'jps.buff("icy veins") or jps.TimeToDie("target") < 18 and jps.UseCds'}, 
 	{ "jade serpent potion", 'jps.buff("icy veins") or jps.TimeToDie("target") <45'}, 
@@ -132,10 +94,7 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "alter time", 'not jps.buff("alter time") and jps.buff("icy veins") and jps.UseCds'}, 
 	{ "frostfire bolt", 'jps.buff("alter time") and jps.buff("brain freeze")' }, 
 	{ "ice lance", 'jps.buff("alter time") and jps.buff("fingers of frost")' }, 
-	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
-	{ "living bomb", 'not jps.debuff("living bomb","target") and not jps.Moving'},
-	{ "living bomb", 'not jps.debuff("living bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
-	{ "frostbolt", 'jps.debuffStacks("frostbolt") < 3 and not jps.Moving' }, 
+	
 	{ "frostfire bolt", 'jps.buff("brain freeze") and jps.cooldown("icy veins") > 2' }, 
 	{ "ice lance", 'jps.buff("fingers of frost")' }, 
 	{ "frostbolt" , 'not jps.Moving' }, 
