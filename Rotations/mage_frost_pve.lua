@@ -51,7 +51,7 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
 	{ "Freeze",	'IsAltKeyDown() ~= nil' },
 	{ "rune of power", 'not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
-	{ "mirror image", 'jps.UseCds'}, 
+	{ "mirror image", 'jps.UseCDs'}, 
 
 	-- Remove Snares, Roots, Loss of Control, etc.
 	{ "every man for himself", 'jps.LoseControl(player,"CC")' },
@@ -83,15 +83,15 @@ jps.registerStaticTable("MAGE","FROST",{
 	-- Rotation Single
 	{ "rune of power", 'jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' }, 
 	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
-	{ "mirror image",'jps.UseCds'}, 
+	{ "mirror image",'jps.UseCDs'}, 
 	{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
 	{ "icy veins", 'jps.buff("brain freeze")'}, 
 	{ "icy veins", 'jps.buff("fingers of frost")'}, 
 	{ "icy veins", 'jps.TimeToDie("target") <22 and not jps.Moving'}, 
-	{ "berserking", 'jps.buff("icy veins") or jps.TimeToDie("target") < 18 and jps.UseCds'}, 
+	{ "berserking", 'jps.buff("icy veins") or jps.TimeToDie("target") < 18 and jps.UseCDs'}, 
 	{ "jade serpent potion", 'jps.buff("icy veins") or jps.TimeToDie("target") <45'}, 
 	{ "presence of mind", 'jps.buff("icy veins") or jps.cooldown("icy veins") >15 or jps.TimeToDie("target") <15'}, 
-	{ "alter time", 'not jps.buff("alter time") and jps.buff("icy veins") and jps.UseCds'}, 
+	{ "alter time", 'not jps.buff("alter time") and jps.buff("icy veins") and jps.UseCDs'}, 
 	{ "frostfire bolt", 'jps.buff("alter time") and jps.buff("brain freeze")' }, 
 	{ "ice lance", 'jps.buff("alter time") and jps.buff("fingers of frost")' }, 
 	
