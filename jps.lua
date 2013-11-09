@@ -189,7 +189,7 @@ function jps.detectSpec()
 	jps.setClassCooldowns()
 
 	if jps.initializedRotation == false then
-		jps.Combat()
+		jps_Combat() 
 	end
 	
 end
@@ -280,7 +280,7 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps db - cleares your local jps DB")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
-	  	jps.Combat()
+	  	jps_Combat() 
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
@@ -316,7 +316,7 @@ end)
 -- COMBAT
 ------------------------
 
-function jps.Combat() 
+function jps_Combat()  
 	-- Check for the Rotation
 	if not jps.Class then return end
 	if not jps.activeRotation() then
