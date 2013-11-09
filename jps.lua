@@ -21,7 +21,7 @@
 local L = MyLocalizationTable
 jps = {}
 jps.Version = "1.3.2"
-jps.Revision = "r611"
+jps.Revision = "r613"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
@@ -33,7 +33,6 @@ jps.PLuaFlag = false
 jps.MoveToTarget = false
 jps.FaceTarget = true
 
-jps.Fishing = false
 jps.MultiTarget = false
 jps.Interrupts = false
 jps.UseCDs = false
@@ -237,9 +236,6 @@ function SlashCmdList.jps(cmd, editbox)
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag set to",tostring(jps.Opening))
-	elseif msg == "fishing" or msg == "fish" then
-		jps.Fishing = not jps.Fishing
-		write("Murglesnout & Grey Deletion now", tostring(jps.Fishing))
 	elseif msg == "debug" and rest ~="" then
 		if tonumber(rest) then
 			jps.DebugLevel = rest

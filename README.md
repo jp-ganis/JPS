@@ -54,6 +54,11 @@ HPS for your class and spec.
 
 * test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
 * BUG: some rotation could cause a fps drop
+* jps.findTanksInRaid(),jps.cancelCasting() leak memory
+* remove jps.targetTargetTank()
+* test jps.kickDelay()
+* save last jps.updateInterval used
+* Add a silent mode for jps (no chat messages)
 
 ==============================================================================
 = COMMANDS                                                                   =
