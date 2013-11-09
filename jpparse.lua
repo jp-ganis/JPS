@@ -133,7 +133,7 @@ function jps.canHeal(unit)
 	if not jps.UnitExists(unit) then return false end
 	if GetUnitName("player") == GetUnitName(unit) then return true end
 	if UnitCanAssist("player",unit)~=1 and not jps.isSpecialHealUnit(unit) then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
-	if UnitIsFriend("player",unit)~=1 then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
+	if UnitIsFriend("player",unit)~=1 and not jps.isSpecialHealUnit(unit) then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
 	-- PNJ returns 1 with UnitIsFriend -- PNJ returns 1 or nil (Vendors) with UnitCanAssist
 	if UnitInVehicle(unit)==1 then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
 	if jps.PlayerIsBlacklisted(unit) then return false end
@@ -142,7 +142,7 @@ function jps.canHeal(unit)
 end
 
 jps.specialHealUnits = {
-	"Contaminated Puddle"
+	"Contaminated Puddle" --Immerseus
 }
 function jps.isSpecialHealUnit(unit)
 	if not unit then return false end

@@ -3,8 +3,13 @@
 ## Notes: Protect your LUA.
 ## SavedVariables: jpsDB
 ## Dependencies:
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
+
+embeds.xml 
 
 jplocal.lua
+options.inc.lua
 jps.lua
 jplogging.lua
 jputils.lua

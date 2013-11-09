@@ -19,19 +19,6 @@ local OPTIONS_WIDTH = 400
 MCONFIG_VERSION = mConfigVersion
 mConfig = {}
 
-function mconfig_VARIABLES_LOADED()
-	
-	if not jpsDB.mconfigData then
-		jpsDB.mconfigData = {}
-	end
-    for _,c in pairs(mConfigAllConfigs) do
-        if jpsDB.mconfigData[c.addOn] then
-            jps.rotationConfig.values[c.key] = jpsDB.mconfigData[c.addOn][c.key]
-            mConfig:update()
-        end
-    end
-end
-
 local _nextElementId = 1
 local function nextElementId()
     local name = "MCONFIG_ELEMENT_" .. _nextElementId
@@ -337,9 +324,11 @@ end
 function mConfig:Show()
     jps.rotationConfig.frames.configFrame:Show()
 end
+
 function mConfig:Hide()
     jps.rotationConfig.frames.configFrame:Hide()
 end
+
 function mConfig:Toggle()
     if jps.rotationConfig.frames.configFrame:IsShown() then
         jps.rotationConfig.frames.configFrame:Hide()
@@ -347,13 +336,16 @@ function mConfig:Toggle()
         jps.rotationConfig.frames.configFrame:Show()
     end
 end
+
 function mConfig:get(key)
     return jps.rotationConfig.values[key]
 end
+
 function mConfig:set(key, value)
     jps.rotationConfig.values[key] = value
     return mConfig:update()
 end
+
 function mConfig:defaultValues()
     for k,v in pairs(jps.rotationConfig.defaults) do
         jps.rotationConfig.values[k] = v
@@ -364,7 +356,6 @@ end
 function mConfig:getPercent(key)
 	return jps.rotationConfig.values[key]/100
 end
-
 
 function mConfig:createConfig(titleText,addOn,key,slashCommands)
     if not key then key = "Default" end
@@ -428,7 +419,6 @@ function mConfig:createConfig(titleText,addOn,key,slashCommands)
     
     --data.frames.scrollFrame:SetScript("OnUpdate", function() data:update() end)
 
-
     local button = CreateFrame("Button", nil, data.frames.configFrame)
     button:SetPoint("BOTTOM", data.frames.configFrame, "BOTTOM", 0, 10)
     button:SetWidth(100)
@@ -474,5 +464,14 @@ function mConfig:createConfig(titleText,addOn,key,slashCommands)
         end
     end
     jps.rotationConfig = data
+    	
+
+    for _,c in pairs(mConfigAllConfigs) do
+        if jpsDB.mconfigData[c.addOn] then
+            jps.rotationConfig.values[c.key] = jpsDB.mconfigData[c.addOn][c.key]
+            mConfig:update()
+        end
+    end
+
 end
 

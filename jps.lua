@@ -19,7 +19,9 @@
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 local L = MyLocalizationTable
-jps = {}
+
+local jps = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
+jps.db = {}
 jps.Version = "1.3.2"
 jps.Revision = "r611b"
 jps.NextSpell = nil
@@ -110,7 +112,7 @@ jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withi
 jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
 jps.customRotationFunc = ""
-
+jps.isCastingNextSpell = false
 
 
 --test
@@ -187,7 +189,7 @@ function jps.detectSpec()
 	jps.setClassCooldowns()
 
 	if jps.initializedRotation == false then
-		jps_Combat()
+		jps.Combat()
 	end
 	
 end
@@ -278,7 +280,7 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps db - cleares your local jps DB")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
-	  	jps_Combat()
+	  	jps.Combat()
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
@@ -314,7 +316,7 @@ end)
 -- COMBAT
 ------------------------
 
-function jps_Combat() 
+function jps.Combat() 
 	-- Check for the Rotation
 	if not jps.Class then return end
 	if not jps.activeRotation() then
@@ -360,6 +362,7 @@ function jps_Combat()
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
+				jps.isCastingNextSpell = true
 				jps.Cast(jps.NextSpell)
 				if jps.getConfigVal("print manually casted spells") == 1 then
 					write("Next Spell "..jps.NextSpell.. " was casted")
@@ -412,4 +415,12 @@ function jps.runFunctionQueue(queueName)
 		end
 	end	
 	return false
+end
+
+
+function jps:OnInitialize()
+	self.db = LibStub("AceDB-3.0"):New("jpsDB")
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
+	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
+
 end
