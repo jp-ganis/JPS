@@ -464,10 +464,10 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	local function dot_mousover() -- return table
 		local table=
 		{
-			{ "corruption", not jps.buff("metamorphosis") and not jps.mydebuff("Corruption","mouseover") and attackMouseOver, "mouseover" },	----- corruption mouseover ----
-			{ "corruption", jps.buff("metamorphosis") and jps.mydebuff("Corruption","mouseover") and attackMouseOver , "mouseover" },		  ----- doom nmouseover ----
-			{ "corruption", not jps.buff("metamorphosis") and not jps.mydebuff("Corruption","focus") and attackFocus, "focus" },	----- corruption focus ----
-			{ "corruption", jps.buff("metamorphosis") and jps.mydebuff("Corruption","focus") and attackFocus , "focus" },		  ----- doom focus -------
+			{ "corruption", not jps.buff("metamorphosis") and not jps.myDebuff("Corruption","mouseover") and attackMouseOver, "mouseover" },	----- corruption mouseover ----
+			{ "corruption", jps.buff("metamorphosis") and jps.myDebuff("Corruption","mouseover") and attackMouseOver , "mouseover" },		  ----- doom nmouseover ----
+			{ "corruption", not jps.buff("metamorphosis") and not jps.myDebuff("Corruption","focus") and attackFocus, "focus" },	----- corruption focus ----
+			{ "corruption", jps.buff("metamorphosis") and jps.myDebuff("Corruption","focus") and attackFocus , "focus" },		  ----- doom focus -------
 		}
 		return table
 	end

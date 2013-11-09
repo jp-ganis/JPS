@@ -24,7 +24,7 @@
 	end
 
 	function dk.canCastPlagueLeech(timeLeft)
-		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
+		if not jps.myDebuff("Frost Fever") or not jps.myDebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end

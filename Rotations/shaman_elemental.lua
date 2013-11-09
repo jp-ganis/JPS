@@ -61,8 +61,8 @@ spellTable = {
 	{"Lifeblood",'jps.UseCDs '},
 	-- Prio-List
 	{ "Unleash Elements",' jps.myDebuffDuration("Flame Shock") < 2'},
-	{ "Flame Shock",' jps.buff("Unleash Flame") or not jps.mydebuff("Flame Shock")' },
-	{ "Lava Burst", 'jps.mydebuff("Flame Shock") and not jps.MultiTarget' },
+	{ "Flame Shock",' jps.buff("Unleash Flame") or not jps.myDebuff("Flame Shock")' },
+	{ "Lava Burst", 'jps.myDebuff("Flame Shock") and not jps.MultiTarget' },
 	{ "Earth Shock", 'jps.buffStacks("lightning shield") > 5 and jps.myDebuffDuration("Flame Shock") > 5 '},
 	{ "Spiritwalker's Grace", 'jps.Moving' },
 	{ "Chain Lightning", 'jps.MultiTarget' },

@@ -89,15 +89,15 @@ dkBloodSpellTable[1] = {
 	{"Death Strike",'jps.hp() < 0.7'},
 	{"Death Strike",'jps.buffDuration("Blood Shield") <= 4'},
 	{"Soul Reaper",'jps.hp("target") <= 0.35'},
-	{"Plague Strike",'not jps.mydebuff("Blood Plague")'},
-	{"Icy Touch",'not jps.mydebuff("Frost Fever")'},
+	{"Plague Strike",'not jps.myDebuff("Blood Plague")'},
+	{"Icy Touch",'not jps.myDebuff("Frost Fever")'},
 	{"Rune Strike",'jps.runicPower() >= 80 and not dk.rune("twoFr") and not dk.rune("twoUr")'},
 	{"Death Strike", "onCD"},
 
 	-- Death Siphon when we need a bit of healing. (talent based)
 	{"Death Siphon",'jps.hp() < 0.6'}, -- moved here, because we heal often more with Death Strike than Death Siphon
 
-	{"Heart Strike",'jps.mydebuff("Blood Plague") and jps.mydebuff("Frost Fever") and GetRuneType(1) ~= 4 and GetRuneType(2) ~= 4'},
+	{"Heart Strike",'jps.myDebuff("Blood Plague") and jps.myDebuff("Frost Fever") and GetRuneType(1) ~= 4 and GetRuneType(2) ~= 4'},
 
 	{"Rune Strike",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
 
@@ -165,8 +165,8 @@ dkBloodSpellTable[4] = {
 	{"Death Strike",'jps.hp() < 0.7'},
 	{"Death Strike",'jps.buffDuration("Blood Shield") <= 4'},
 	{"Soul Reaper",'jps.hp("target") <= 0.35'},
-	{"Plague Strike",'not jps.mydebuff("Blood Plague")'},
-	{"Icy Touch",'not jps.mydebuff("Frost Fever")'},
+	{"Plague Strike",'not jps.myDebuff("Blood Plague")'},
+	{"Icy Touch",'not jps.myDebuff("Frost Fever")'},
 	{"Rune Strike",'jps.runicPower() >= 80 and not dk.rune("twoFr") and not dk.rune("twoUr")'},
 	{"Death Strike", "onCD"},
 
@@ -251,8 +251,8 @@ dkBloodSpellTable[3] = {
 	{"Unholy Blight",'jps.myDebuffDuration("blood plague") < 2'},
 
 	-- Diseases
-	{"Plague Strike",'not jps.mydebuff("Blood Plague")'},
-	{"Icy Touch",'not jps.mydebuff("Frost Fever")'},
+	{"Plague Strike",'not jps.myDebuff("Blood Plague")'},
+	{"Icy Touch",'not jps.myDebuff("Frost Fever")'},
 }
 
 jps.registerRotation("DEATHKNIGHT","BLOOD",function()
