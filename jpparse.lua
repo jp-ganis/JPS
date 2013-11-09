@@ -287,6 +287,9 @@ jps.UserInitiatedSpellsToIgnore = {
 	116740, -- Tigereye Brew (prevents you from wasting your stacks and resetting your buff)
 	115294, -- Mana Tea (This isn't an instant cast, but since it only has a 0.5 channeled time, it can triggers twice in the rotation)
 	111400, -- warlock burning rush
+	108978, --alter time
+	12051, --evocation
+	
 }
 
 function jps.isRecast(spell,unit)
