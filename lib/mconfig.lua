@@ -95,7 +95,8 @@ end
 
 function mConfig:addCheckBox(key, text, tooltip, defaultValue)
     if not defaultValue then defaultValue = false end
-    if not jps.rotationConfig.values[key] then jps.rotationConfig.values[key] = defaultValue end
+
+    if jps.rotationConfig.values[key] == nil then jps.rotationConfig.values[key] = defaultValue end
 
     local optionFrame = CreateFrame("Frame", nil, jps.rotationConfig.frames.scrollFrame)
     optionFrame:SetSize(OPTIONS_WIDTH, OPTIONS_HEIGHT)
@@ -105,9 +106,9 @@ function mConfig:addCheckBox(key, text, tooltip, defaultValue)
     checkbutton:SetHitRectInsets(4,4,4,4);
     checkbutton:SetPoint("RIGHT",optionFrame,-30,-5)
     --checkbutton.tooltip = tooltip
-    checkbutton:SetChecked(defaultValue)
+    checkbutton:SetChecked(jps.rotationConfig.values[key])
     checkbutton:SetScript("OnClick", function()
-        jps.rotationConfig.values[key] = checkbutton:GetChecked(defaultValue) == 1
+        jps.rotationConfig.values[key] = checkbutton:GetChecked() == 1
     end)
    -- checkbutton:SetWidth(30)
     optionFrame:Show()
@@ -122,12 +123,12 @@ function mConfig:addCheckBox(key, text, tooltip, defaultValue)
     jps.rotationConfig.defaults[key] = defaultValue
     table.insert(jps.rotationConfig.frames.options, optionFrame)
     jps.rotationConfig.setters[key] = function(v) checkbutton:SetChecked(v) end
-    jps.rotationConfig.update(self)
+    mConfig:update()
 end
 
 function mConfig:addTextBox(key, text, tooltip, defaultValue)
     if not defaultValue then defaultValue = "" end
-    if not jps.rotationConfig.values[key] then jps.rotationConfig.values[key] = defaultValue end
+    if jps.rotationConfig.values[key] == nil then jps.rotationConfig.values[key] = defaultValue end
 
     local optionFrame = CreateFrame("Frame", nil, jps.rotationConfig.frames.scrollFrame)
     optionFrame:SetSize(OPTIONS_WIDTH, OPTIONS_HEIGHT)
@@ -165,7 +166,7 @@ end
 
 function mConfig:addNumericBox(key, text, tooltip, defaultValue)
     if not defaultValue then defaultValue = 0 end
-    if not jps.rotationConfig.values[key] then jps.rotationConfig.values[key] = defaultValue end
+    if jps.rotationConfig.values[key] == nil then jps.rotationConfig.values[key] = defaultValue end
 
     local optionFrame = CreateFrame("Frame", nil, jps.rotationConfig.frames.scrollFrame)
     optionFrame:SetSize(OPTIONS_WIDTH, OPTIONS_HEIGHT)

@@ -781,6 +781,7 @@ jps.registerEvent("PLAYER_ENTERING_WORLD", function()
 	mConfig:addSlider("trinketManaPercent", "% of mana for using mana/spirit trinket", nil, 1, 100,80, 1)
 	mConfig:addSlider("timeBetweenShields", "seconds you want to wait before you shield another unit", nil, 1, 30,12, 1)
 	mConfig:addSlider("timeBetweenSmite", "seconds you want to wait between smites (if you have 5 stacks evangelism)", nil, 0, 3, 1.5, 0.5)
+	mConfig:addCheckBox("interruptOverheal", "Stop casts when overheal", "", 1)
 
 end)
 
@@ -872,8 +873,9 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 
 		end
 	end
-	
-	priestLight.shouldInterruptCasting(priestLight.disc.interruptTable,priestLight.disc.avgHP,  priestLight.disc.unitsBelow70, priestLight.disc.lowestImportantUnitHP)
+	if mConfig:get("interruptOverheal") == 1 then
+		priestLight.shouldInterruptCasting(priestLight.disc.interruptTable,priestLight.disc.avgHP,  priestLight.disc.unitsBelow70, priestLight.disc.lowestImportantUnitHP)
+	end
 	
 	if priestLight.disc.lowestImportantUnitHP < 1 or priestLight.disc.lowestUnitHP <1 then
 		priestLight.disc.shouldHeal = true
