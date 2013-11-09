@@ -323,7 +323,7 @@ end)
 -- COMBAT
 ------------------------
 
-function jps_Combat() 
+function jps_Combat()  
 	-- Check for the Rotation
 	if not jps.Class then return end
 	if not jps.activeRotation() then
