@@ -770,7 +770,6 @@ priestLight.disc = {}
 priestLight.disc.interruptTable = {{priestLight.flashHeal, 0.75, false}, {priestLight.greaterHeal, 0.93,false },{ priestLight.heal, 0.98,false }, {priestLight.prayerOfHealing,0.90,true}}
 jps.registerEvent("PLAYER_ENTERING_WORLD", function()
 	mConfig:createConfig("Rotation Config",jps.Class..jps.Spec, "Default" ,{"/rotation"})
-	mconfig_VARIABLES_LOADED()
 	mConfig:addSlider("mindbenderManaPercent", "% of mana for activating Mindbender", nil, 1, 100,70, 1)
 	mConfig:addSlider("shadowfiendManaPercent", "% of mana for activating shadowfiend", nil, 1, 100,60, 1)
 	mConfig:addSlider("arcaneTorrent", "% of mana for activating arcane Torrent",nil, 1, 100,90, 1)

@@ -20,10 +20,10 @@
 -- Universal
 local L = MyLocalizationTable
 
-local jps = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
+jps = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
 jps.db = {}
 jps.Version = "1.3.2"
-jps.Revision = "r611b"
+jps.Revision = "r613b"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
@@ -416,8 +416,7 @@ function jps.runFunctionQueue(queueName)
 	end	
 	return false
 end
-
-
+	
 function jps:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("jpsDB")
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
