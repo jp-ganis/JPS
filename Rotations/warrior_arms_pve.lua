@@ -25,7 +25,7 @@ jps.registerStaticTable("WARRIOR","ARMS",
 
 	{ "Heroic Throw", 'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target" },
 	-- Multi target
-	{ "Thunder Clap", 'jps.MultiTarget and jps.mydebuff("Deep Wounds")'},
+	{ "Thunder Clap", 'jps.MultiTarget and jps.myDebuff("Deep Wounds")'},
 	{ "Sweeping Strikes", ' jps.MultiTarget and jps.rage() >= 30'},
 	{ "Whirlwind", 'jps.MultiTarget and IsShiftKeyDown() ~= nil and jps.rage() >= 30'},
 	{ "Dragon Roar", 'jps.MultiTarget and IsShiftKeyDown() ~= nil'},

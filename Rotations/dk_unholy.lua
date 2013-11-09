@@ -32,7 +32,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 
 	-- function for checking diseases on target for plague leech, because we need fresh dot time left
 	function canCastPlagueLeech(timeLeft)  
-		if not jps.mydebuff("Frost Fever") or not jps.mydebuff("Blood Plague") then return false end
+		if not jps.myDebuff("Frost Fever") or not jps.myDebuff("Blood Plague") then return false end
 		if jps.myDebuffDuration("Frost Fever") <= timeLeft then
 			return true
 		end
@@ -86,8 +86,8 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		
 		-- DOT CDs
 
-		{ "outbreak",				not jps.mydebuff("frost fever") or not jps.mydebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
-		{ "unholy blight",			not jps.mydebuff("frost fever") or not jps.mydebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
+		{ "outbreak",				not jps.myDebuff("frost fever") or not jps.myDebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
+		{ "unholy blight",			not jps.myDebuff("frost fever") or not jps.myDebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
 		
 		-- Execute
 		{ "soul reaper",			jps.hp("target") <= 0.35 },

@@ -137,7 +137,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	local function shouldRake()
 		if not jps.RakeBuffed then return true end
 		if rakeDuration < 3 and (berserking or tigerFuryCD+0.8 >= rakeDuration) then return true end
-		if not jps.mydebuff("rake") then return true end
+		if not jps.myDebuff("rake") then return true end
 	return false
 	end
 

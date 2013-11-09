@@ -315,7 +315,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Lifeblood",'jps.UseCDs'},
 
 	-- Diseases
-	{ "Necrotic Strike",'not jps.mydebuff("Necrotic Strike",target)'},
+	{ "Necrotic Strike",'not jps.myDebuff("Necrotic Strike",target)'},
 	{ "Howling Blast",'jps.myDebuffDuration("Frost Fever") <= 1'},
 	{ "Howling Blast",'jps.buff("Freezing Fog") and jps.runicPower() < 88'},
 	{ "Plague Strike",'jps.myDebuffDuration("Blood Plague") <= 1'},

@@ -108,7 +108,7 @@ jps.debuff("Sunder Armor","player")
 
 @returns boolean: true if debuff applied + applied by the player, false if not
 ]]--
-function jps.mydebuff(spell,unit)
+function jps.myDebuff(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end

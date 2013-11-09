@@ -119,7 +119,7 @@ local function unitFor_Opening()
 	if (jps.buffStacks(81292) == 2) and jps.cooldown(8092) == 0 then
 		opening_table[1] = 8092
 		opening_table[2] = true
-	elseif not jps.mydebuff(589,rangedTarget) and not jps.mydebuff(34914,rangedTarget) and jps.buffStacks(81292) < 2 then
+	elseif not jps.myDebuff(589,rangedTarget) and not jps.myDebuff(34914,rangedTarget) and jps.buffStacks(81292) < 2 then
 		opening_table[1] = 73510
 		opening_table[2] = true
 	end
@@ -155,7 +155,7 @@ end
 
 local function unitFor_ShadowWordPain(unit)
 	if jps.cooldown(589) ~= 0 then return false end
-	if jps.mydebuff(589,unit) then return false end
+	if jps.myDebuff(589,unit) then return false end
 	if (UnitHealth(unit)/UnitHealthMax(unit) > 0.20) then return false end -- pas gaspiller inutilement "Shadow Word: Pain"
 	return true
 end
@@ -241,9 +241,9 @@ local spellTable = {
 	{ 32379, unitFor_ShadowWordDeath, EnemyUnit , "|cFFFF0000castDeath_MultiUnit_" },
 	{ 32379, jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
 -- "Vampiric Touch" 34914 Keep VT up with duration
-	{ 34914, jps.mydebuff(34914,rangedTarget) and vtDuration < 2.5 and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
+	{ 34914, jps.myDebuff(34914,rangedTarget) and vtDuration < 2.5 and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
 -- "Shadow Word: Pain" 589 Keep SW:P up with duration
-	{ 589, jps.mydebuff(589,rangedTarget) and painDuration < 2.5 and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
+	{ 589, jps.myDebuff(589,rangedTarget) and painDuration < 2.5 and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
 -- "Mind Flay" 15407
 	{ 15407, jps.cooldown(15407) == 0 and jps.debuff(2944,rangedTarget) , rangedTarget , "MINDFLAYORBS" },
 
@@ -269,9 +269,9 @@ local spellTable = {
 -- "Mind Blast" 8092 Stack shadow orbs -- buff 81292 "Glyph of Mind Spike"
 	{ 8092, jps.cooldown(8092) == 0 , rangedTarget },
 -- "Shadow Word: Pain" 589
-	{ 589, not jps.mydebuff(589,rangedTarget) and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
+	{ 589, not jps.myDebuff(589,rangedTarget) and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
 -- "Vampiric Touch" 34914 
-	{ 34914, not jps.mydebuff(34914,rangedTarget) and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
+	{ 34914, not jps.myDebuff(34914,rangedTarget) and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
 -- "Cascade" Heal 121135 -- Shadow 127632
 	{ 127632, (jps.cooldown(121135) == 0) and (enemycount > 1) , rangedTarget , "Cascade_" },
 -- "Divine Star" Heal 110744 -- Shadow 122121
@@ -330,7 +330,7 @@ local spellTable_moving =
 -- "Mind Blast" 8092 Stack shadow orbs -- buff 81292 "Glyph of Mind Spike"
 	{ 8092, jps.cooldown(8092) == 0 and (jps.buffStacks(81292) == 2) , rangedTarget , "Blast" },
 -- "Shadow Word: Pain" 589 Keep SW:P up with duration
-	{ 589, jps.mydebuff(589,rangedTarget) and painDuration < 2.5 and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
+	{ 589, jps.myDebuff(589,rangedTarget) and painDuration < 2.5 and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
 -- "Devouring Plague" 2944 plague when we have 3 orbs 	
 	{ 2944, Orbs == 3 , rangedTarget },
 -- "Shadow Word: Death " "Mot de l'ombre : Mort" 32379
@@ -338,7 +338,7 @@ local spellTable_moving =
 	{ 32379, unitFor_ShadowWordDeath, EnemyUnit , "|cFFFF0000castDeath_MultiUnit_" },
 	{ 32379, jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
 -- "Shadow Word: Pain" 589 Keep up
-	{ 589, (not jps.mydebuff(589,rangedTarget)) and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
+	{ 589, (not jps.myDebuff(589,rangedTarget)) and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
 -- "Cascade" Heal 121135 -- Shadow 127632
 	{ 127632, (jps.cooldown(121135) == 0) and (enemycount > 1) , rangedTarget , "Cascade_" },
 -- "Divine Star" Heal 110744 -- Shadow 122121
@@ -463,9 +463,9 @@ jps.registerRotation("PRIEST","SHADOW",function()
 -- "Shadow Word: Death " "Mot de l'ombre : Mort" 32379
 	{ 32379, jps.canDPS(rangedTarget) and (UnitHealth(rangedTarget)/UnitHealthMax(rangedTarget) < 0.20) , rangedTarget, "|cFFFF0000castDeath_"..rangedTarget },
 -- "Vampiric Touch" 34914 Keep VT up with duration
-	{ 34914, jps.mydebuff(34914,rangedTarget) and vtDuration < 2.5 and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
+	{ 34914, jps.myDebuff(34914,rangedTarget) and vtDuration < 2.5 and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
 -- "Shadow Word: Pain" 589 Keep SW:P up with duration
-	{ 589, jps.mydebuff(589,rangedTarget) and painDuration < 2.5 and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
+	{ 589, jps.myDebuff(589,rangedTarget) and painDuration < 2.5 and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
 -- "Mind Flay" 15407
 	{ 15407, jps.cooldown(15407) == 0 and jps.debuff(2944,rangedTarget) , rangedTarget , "MINDFLAYORBS" },
 	
@@ -474,9 +474,9 @@ jps.registerRotation("PRIEST","SHADOW",function()
 -- "Mind Blast" 8092 Stack shadow orbs -- buff 81292 "Glyph of Mind Spike"
 	{ 8092, jps.cooldown(8092) == 0 , rangedTarget },
 -- "Shadow Word: Pain" 589
-	{ 589, not jps.mydebuff(589,rangedTarget) and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
+	{ 589, not jps.myDebuff(589,rangedTarget) and (lastCast ~= swPain or jps.LastCast ~= swPain) , rangedTarget },
 -- "Vampiric Touch" 34914 
-	{ 34914, not jps.mydebuff(34914,rangedTarget) and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
+	{ 34914, not jps.myDebuff(34914,rangedTarget) and (lastCast ~= vampTouch or jps.LastCast ~= vampTouch) , rangedTarget },
 -- "Cascade" Heal 121135 -- Shadow 127632
 	{ 127632, (jps.cooldown(121135) == 0) , rangedTarget , "Cascade_" },
 -- "Divine Star" Heal 110744 -- Shadow 122121

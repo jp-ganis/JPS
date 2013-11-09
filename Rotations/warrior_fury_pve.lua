@@ -50,11 +50,11 @@ jps.registerStaticTable("WARRIOR","FURY",
 		
 		-- Colossus Smash Rotation
 		
-		{warrior.spells["Bloodthirst"],'jps.mydebuff( 86346,"target")', warrior.rangedTarget },
-		{warrior.spells["Execute"],'jps.rage() >= 30 and jps.hp("target") < 0.2 and jps.mydebuff( 86346,"target")', warrior.rangedTarget}, 
-		{warrior.spells["Raging Blow"],'jps.buff("131116") and jps.rage() >= 10 and jps.mydebuff( 86346,"target")', warrior.rangedTarget },
-		{warrior.spells["Wild Strike"],'jps.buff("Bloodsurge") and jps.mydebuff( 86346,"target")', warrior.rangedTarget },
-		{warrior.spells["Heroic Strike"],'jps.hp("target") > 0.2 and jps.rage() >= 30 and jps.mydebuff( 86346,"target")', warrior.rangedTarget },
+		{warrior.spells["Bloodthirst"],'jps.myDebuff( 86346,"target")', warrior.rangedTarget },
+		{warrior.spells["Execute"],'jps.rage() >= 30 and jps.hp("target") < 0.2 and jps.myDebuff( 86346,"target")', warrior.rangedTarget}, 
+		{warrior.spells["Raging Blow"],'jps.buff("131116") and jps.rage() >= 10 and jps.myDebuff( 86346,"target")', warrior.rangedTarget },
+		{warrior.spells["Wild Strike"],'jps.buff("Bloodsurge") and jps.myDebuff( 86346,"target")', warrior.rangedTarget },
+		{warrior.spells["Heroic Strike"],'jps.hp("target") > 0.2 and jps.rage() >= 30 and jps.myDebuff( 86346,"target")', warrior.rangedTarget },
 		
 		-- Normal Rotation
 		
@@ -116,7 +116,7 @@ jps.registerStaticTable("WARRIOR","FURY",
 		
 		{"nested", 'not jps.MultiTarget', {
 			-- Colossus Smash Rotation
-			{"nested", 'jps.mydebuff( 86346,"target")', {
+			{"nested", 'jps.myDebuff( 86346,"target")', {
 				{warrior.spells["Bloodthirst"],'onCD', warrior.rangedTarget },
 				{warrior.spells["Execute"],'jps.hp("target") < 0.2', warrior.rangedTarget}, 
 				{warrior.spells["Heroic Leap"],'onCD', warrior.rangedTarget}, 

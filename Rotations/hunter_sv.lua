@@ -141,7 +141,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		{ "Lifeblood",			jps.UseCDs },
 		-- Use pot
 		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.bloodlusting()) },
-		{ "A Murder of Crows", 			jps.UseCDs and not jps.mydebuff("A Murder of Crows")}, -- Tier 5 talent
+		{ "A Murder of Crows", 			jps.UseCDs and not jps.myDebuff("A Murder of Crows")}, -- Tier 5 talent
 		{ "Dire Beast", 			"onCD" }, -- Tier 4 talents
 		-- { "Rabid", 				jps.UseCDs }, -- Pet ability
 		{ "Rapid Fire", 			jps.UseCDs and not jps.buff("Rapid Fire") and not jps.bloodlusting() },
@@ -163,7 +163,7 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		{ "kill shot", 				"onCD" }, -- Target below 20%
 		{ "serpent sting", 			jps.myDebuffDuration("serpent sting") < .3 },
 		{ "explosive shot", 			"onCD" },
-		{ "black arrow", 			not jps.mydebuff("black arrow") and not jps.MultiTarget },
+		{ "black arrow", 			not jps.myDebuff("black arrow") and not jps.MultiTarget },
 		{ "cobra shot", 			jps.myDebuffDuration("serpent sting") < 6 },
 		{ "arcane shot", 			focus >= 70 and not jps.buff("lock and load") and not jps.MultiTarget },
 		{ "steady shot", 			"onCD" and not IsSpellKnown(77767) }, -- Cobra Shot (77767), in MoP learned at level 81, so we use Steady Shot until then
@@ -233,7 +233,7 @@ jps.registerStaticTable("HUNTER", "SURVIVAL", {
     { hunter.spells.lifeblood, 'jps.UseCDs' },
 
     -- CDs
-    { hunter.spells.aMurderOfCrows, 'jps.UseCDs and not jps.mydebuff(hunter.spells.aMurderOfCrows)' },
+    { hunter.spells.aMurderOfCrows, 'jps.UseCDs and not jps.myDebuff(hunter.spells.aMurderOfCrows)' },
     { hunter.spells.direBeast },
     { hunter.spells.rabid, 'jps.UseCDs' },
     { hunter.spells.rapidFire, 'jps.UseCDs and not jps.buff(hunter.spells.rapidFire) and not jps.bloodlusting()' },
@@ -254,7 +254,7 @@ jps.registerStaticTable("HUNTER", "SURVIVAL", {
     { hunter.spells.killShot },
     { hunter.spells.serpentSting, 'jps.myDebuffDuration(hunter.spells.serpentSting, "target") < 0.30' },
     { hunter.spells.explosiveShot },
-    { hunter.spells.blackArrow, 'not jps.mydebuff(hunter.spells.blackArrow) and not jps.MultiTarget' },
+    { hunter.spells.blackArrow, 'not jps.myDebuff(hunter.spells.blackArrow) and not jps.MultiTarget' },
     { hunter.spells.cobraShot, 'jps.myDebuffDuration(hunter.spells.serpentSting) < 6' },
     { hunter.spells.arcaneShot, 'jps.focus() >= 70 and not jps.buff(hunter.buffs.lockAndLoad) and not jps.MultiTarget' },
     { hunter.spells.cobraShot },
