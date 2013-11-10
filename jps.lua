@@ -19,9 +19,11 @@
 -- Huge thanks to everyone who's helped out on this, <3
 -- Universal
 local L = MyLocalizationTable
-jps = {}
+
+jps = LibStub("AceAddon-3.0"):NewAddon("JPS", "AceConsole-3.0", "AceEvent-3.0")
+jps.db = {}
 jps.Version = "1.3.2"
-jps.Revision = "r613"
+jps.Revision = "r613b"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
@@ -53,10 +55,8 @@ jps.Casting = false
 jps.LastCast = nil
 jps.ThisCast = nil
 jps.NextCast = nil
-jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
-jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
 jps.CurrentCast = nil
@@ -68,8 +68,6 @@ jps.isBehind = true
 jps.isHealer = false
 jps.DPSRacial = nil
 jps.DefRacial = nil
-jps.Lifeblood = nil
-jps.EngiGloves = nil
 jps.isTank = false
 jps.CrowdControl = false
 jps.CrowdControlTarget = nil
@@ -78,10 +76,8 @@ jps.CrowdControlTarget = nil
 cast = CastSpellByName
 
 -- Misc
-jps.raid = {}
 jps.Opening = true
-jps.RakeBuffed = false
-jps.RipBuffed = false
+
 jps.BlacklistTimer = 2
 jps.RaidStatus = {}
 jps.RaidTarget = {}
@@ -94,7 +90,6 @@ jps.firstInitializingLoop = true
 jps.settings = {}
 jps.settingsQueue = {}
 jps.combatStart = 0
-jps.RaidMode = false
 jps.functionQueues = {}
 jps.timedCasting = {}
 
@@ -116,6 +111,13 @@ jps.maxTDDLifetime = 30 -- resetting time to die if there was no hp change withi
 jps.TimeToDieData = {}
 jps.RaidTimeToDie = {}
 jps.customRotationFunc = ""
+jps.isCastingNextSpell = false
+
+
+--test
+
+jps.rotationConfig = {}
+jps.rotationConfigValues = {}
 
 -- Latency
 jps.CastBar = {}
@@ -156,7 +158,7 @@ function jps.detectSpec()
 	jps.Class = UnitClass("player")
 	jps.Level = Ternary(jps.Level > 1, jps.Level, UnitLevel("player"))
 	if jps.Class then
-		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
+		local id = GetSpecialization()
 		if not id then 
 			if jps.Level < 10 then 
 				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
@@ -184,10 +186,11 @@ function jps.detectSpec()
 	jps.HarmSpell = jps.GetHarmfulSpell()
 	--write("jps.HarmSpell_","|cff1eff00",jps.HarmSpell)
 	jps.setClassCooldowns()
-	jps_VARIABLES_LOADED()
+
 	if jps.initializedRotation == false then
-		jps_Combat()
+		jps_Combat() 
 	end
+	
 end
 
 ------------------------
@@ -257,13 +260,6 @@ function SlashCmdList.jps(cmd, editbox)
 		jps.Macro("/reload")
 	elseif msg == "ver"  or msg == "version" or msg == "revision" or msg == "v" then
 		write("You have JPS version: "..jps.Version..", revision: "..jps.Revision)
-	elseif msg == "raid"  or msg == "raidmode" then
-		jps.RaidMode = not jps.RaidMode
-		if jps.RaidMode then
-			write("Raid Mode is now enabled")
-		else
-			write("Raid Mode is now disabled")
-		end
 	elseif msg == "opening" then
 		jps.Opening = not jps.Opening
 		write("Opening flag is now set to",tostring(jps.Opening))
@@ -283,7 +279,7 @@ function SlashCmdList.jps(cmd, editbox)
 		write("/jps db - cleares your local jps DB")
 		write("/jps help - Show this help text.")
 	elseif msg == "pew" then
-	  	jps_Combat()
+	  	jps_Combat() 
 	else
 		if jps.Enabled then
 			print("jps Enabled - Ready and Waiting.")
@@ -334,7 +330,6 @@ function jps_Combat()
 	-- LagWorld
 	jps.Lag = select(4,GetNetStats())/1000 -- amount of lag in milliseconds local down, up, lagHome, lagWorld = GetNetStats()
 	
-	-- Casting UnitCastingInfo("player")~= nil or UnitChannelInfo("player")~= nil
 	local latency = math.max(jps.CastBar.latency,jps.Lag)
 	if jps.ChannelTimeLeft() > 0 then
 		jps.Casting = true
@@ -362,11 +357,11 @@ function jps_Combat()
 	
 	-- Movement
 	jps.Moving = GetUnitSpeed("player") > 0
-	jps.MovingTarget = GetUnitSpeed("target") > 0
 	
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
 			if jps.canCast(jps.NextSpell, jps.Target) then
+				jps.isCastingNextSpell = true
 				jps.Cast(jps.NextSpell)
 				if jps.getConfigVal("print manually casted spells") == 1 then
 					write("Next Spell "..jps.NextSpell.. " was casted")
@@ -419,4 +414,11 @@ function jps.runFunctionQueue(queueName)
 		end
 	end	
 	return false
+end
+	
+function jps:OnInitialize()
+	self.db = LibStub("AceDB-3.0"):New("jpsDB")
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("JPS", JPSAceOptions)
+	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("JPS", "JPS")
+
 end

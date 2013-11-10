@@ -64,6 +64,9 @@ jps.registerRotation("DRUID","FERAL", function()
 	local targethealth_pct = jps.hp("target")
 	local focushealth_pct = jps.hp("focus")
 	local mousehealth_pct = jps.hp("mouseover")
+	local movingTarget = GetUnitSpeed("target") > 0
+	jps.RakeBuffed = false
+	jps.RipBuffed = false
 
 	local EnemyUnit = {}
 		for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
@@ -180,7 +183,7 @@ jps.registerRotation("DRUID","FERAL", function()
 		if targetClass == "death knight" or targetClass == "hunter" or targetClass == "paladin" or targetClass == "warrior" then return true end
 		if targetSpec == "enhancement" then return true end
 		if jps.buff("bear form",rangedTarget) then return true end
-		if jps.MovingTarget and not jps.LoseControl(rangedTarget,"Snare") then return true end
+		if movingTarget and not jps.LoseControl(rangedTarget,"Snare") then return true end
 		if not jps.LoseControl(rangedTarget,"Root") and IsSpellInRange("rip",rangedTarget) == 0 then return true end
 	return false
 	end

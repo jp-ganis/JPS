@@ -28,7 +28,7 @@ dkBloodSpellTable[1] = {
 	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
 
 	-- Cntrol is pressed
-	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+	--{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
 
 	-- Defensive cooldowns
 
@@ -259,6 +259,12 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[1])
+	if jps.canCast("Gorefiend's Grasp") and IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then
+		jps.Macro("/target "..jpsName)
+		jps.Cast("Gorefiend's Grasp")
+		jps.Macro("/targetlasttarget")
+	end
+		
 	return spell,target
 end, "DK Blood Main")
 jps.registerRotation("DEATHKNIGHT","BLOOD",function()

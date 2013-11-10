@@ -102,8 +102,6 @@ do
 		["Out of range"] = "Hors de portée",
 		["Your vision of the target is obscured"] = "Votre vision de la cible est obscurci(e)",
 		["Release Aberrations"] = "Libération des aberrations",
-		["Murglesnout"] = "Murgouilla",
-		["Golden Carp"] = "Carpe dorée",
 		["Drink"] = "Boisson",
 		["Polymorph"] = "Métamorphose",
 	-- Localization for Class & Spec
