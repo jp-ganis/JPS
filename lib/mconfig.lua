@@ -25,7 +25,18 @@ local function nextElementId()
     _nextElementId = _nextElementId + 1
     return name
 end
-
+function mconfig_VARIABLES_LOADED()
+	if not jpsDB.mconfigData then
+		jpsDB.mconfigData = {}
+	end
+	for _,c in pairs(mConfigAllConfigs) do
+		if jpsDB.mconfigData[c.addOn] then
+			jps.rotationConfig.values[c.key] = jpsDB.mconfigData[c.addOn][c.key]
+			mConfig:update()
+		end
+	end
+end
+ 
 local function addTooltip(frame, title, text)
     if text and title then
         frame:SetScript("OnEnter",  function (self)
@@ -464,14 +475,7 @@ function mConfig:createConfig(titleText,addOn,key,slashCommands)
         end
     end
     jps.rotationConfig = data
-    	
 
-    for _,c in pairs(mConfigAllConfigs) do
-        if jpsDB.mconfigData[c.addOn] then
-            jps.rotationConfig.values[c.key] = jpsDB.mconfigData[c.addOn][c.key]
-            mConfig:update()
-        end
-    end
 
 end
 
