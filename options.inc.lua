@@ -1,4 +1,8 @@
 
+function jps.getConfigValue(key)
+	return jps.db[key]
+end
+
 --http://www.wowace.com/addons/ace3/pages/ace-config-3-0-options-tables/
 JPSAceOptions = { 
 	name = "JPS Settings",
@@ -17,6 +21,7 @@ JPSAceOptions = {
 						jps.db.JPSEnabled = value
 						jps.enabled = value
 					end,
+					get = function(info) return jps.db[info[#info]] end
 					},
 					useInterrupts = {
 						name ="Interrupt units",
@@ -123,4 +128,3 @@ JPSAceOptions = {
 
 	},
 }
-
