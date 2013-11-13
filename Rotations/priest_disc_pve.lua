@@ -789,10 +789,10 @@ function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, l
 					SpellStopCasting()
 				end
 				if (avgHP < 0.7 or unitsBelow70 > 3 ) and healTargetHP > 0.65 then
-					write("stop casting ".spellName." - need aoe heal")
+					write("stop casting "..spellName.." - need aoe heal")
 				end
 				if healTargetHP >= 0.65 and lowestImportantHP < 0.45 and timeLeft > 1.5 then
-					write("stop casting ".spellName." - important unit goes critical")
+					write("stop casting "..spellName.." - important unit goes critical")
 				end
 			else
 				if avgHP >= breakpoint or  and not jps.buff(109964) then --109964 = spiritshell build buff
