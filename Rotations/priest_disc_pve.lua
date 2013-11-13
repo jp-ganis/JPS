@@ -795,7 +795,7 @@ function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, l
 					write("stop casting "..spellName.." - important unit goes critical")
 				end
 			else
-				if avgHP >= breakpoint or  and not jps.buff(109964) then --109964 = spiritshell build buff
+				if avgHP >= breakpoint and not jps.buff(109964) then --109964 = spiritshell build buff
 					write("interrupt "..spellName.." , raid has enough hp!");
 					SpellStopCasting()
 				end
