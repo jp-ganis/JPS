@@ -21,7 +21,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
       -- GROUND SPELLS
       { "Healing Sphere",   keyPressed("alt") },
       { "Summon Black Ox Statue",   keyPressed("shift","alt") },
-      { "Dizzying Haze", keyPressed("alt","ctrl") },
+      { "Dizzying Haze", keyPressed("ctrl") },
 
       -- SHORT COOLDOWNS
       -- Guard when Power Guard buff is available and while taking some damage.
