@@ -55,7 +55,7 @@ jps.registerRotation("SHAMAN","ENHANCEMENT",function()
 		-- AoE 
 		{ "Magma Totem", jps.MultiTarget and fireTotem ~= "Magma Totem" and fireTotem ~= "Fire Elemental Totem" },
 		-- Searing 
-		{ "Searing Totem", not fireTotemActive },
+		{ "Searing Totem", not fireTotemActive or jps.buff("Searing Flames") <= 3 },
 		-- Trinket CDs. 
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
