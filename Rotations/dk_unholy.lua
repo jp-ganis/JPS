@@ -66,8 +66,8 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		
 		-- spell steal
 		
-		{"Dark Simulacrum ", dk.shouldDarkSimTarget() , "target"},
-		{"Dark Simulacrum ", dk.shouldDarkSimFocus() , "focus"},
+		{"Dark Simulacrum ", dk.shouldDarkSimTarget() ~="", "target"},
+		{"Dark Simulacrum ", dk.shouldDarkSimFocus() ~="", "focus"},
 		
 		-- CDs
 		{ "unholy frenzy" },

@@ -61,8 +61,8 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 	
 	-- Spell Steal
-	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
-	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget() ~=""' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus() ~=""' , "focus"},
 	
 	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
 		--CDs + Buffs
@@ -188,8 +188,8 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
 	-- Spell Steal
-	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
-	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget() ~=""' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus() ~=""' , "focus"},
 
 	{"nested", 'IsSpellInRange("Obliterate","target") == 1',{
 		--CDs + Buffs
@@ -300,8 +300,8 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 
 	-- Spell Steal
-	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
-	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget() ~=""' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus() ~=""' , "focus"},
 
 		-- Unholy Blight when our diseases are about to fall off. (talent based)
  	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
