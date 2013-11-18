@@ -195,7 +195,6 @@ function keyPressed(...)
 	matchesNeed = select("#", ...)
 	matchesFound = 0
 	i = 1
-	print(select(i , ...))
 	while select(i , ...) ~= nil  do
 		needle = select(i, ...)
 		i = i+1

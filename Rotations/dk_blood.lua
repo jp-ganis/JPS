@@ -31,7 +31,6 @@ dkBloodSpellTable[1] = {
 	--{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
 
 	-- Defensive cooldowns
-
 	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
 	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
@@ -40,7 +39,6 @@ dkBloodSpellTable[1] = {
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
 
-	
 	-- Interrupts
 	{"mind freeze",'jps.shouldKick()'},
 	{"mind freeze",'jps.shouldKick("focus")', "focus"},
@@ -52,8 +50,8 @@ dkBloodSpellTable[1] = {
 	{"Asphyxiate",'jps.shouldKick("focus") and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 	
 	-- Spell Steal
-	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget()' , "target"},
-	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus()' , "focus"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget() ~= ""' , "target"},
+	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus() ~= ""' , "focus"},
 
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	
@@ -62,7 +60,6 @@ dkBloodSpellTable[1] = {
 	
 		-- Requires engineering
 		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
-	
 		-- Requires herbalism
 		{"Lifeblood",'jps.UseCDs'},
 	
@@ -153,7 +150,6 @@ dkBloodSpellTable[4] = {
 		{ jps.getDPSRacial(),'jps.UseCDs'},
 	}},
 
-
 	-- Buff
 	{"Bone Shield",'not jps.buff("Bone Shield")'},
 
@@ -181,80 +177,6 @@ dkBloodSpellTable[4] = {
 	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
 }
 
-
-dkBloodSpellTable[2] = {
-	-- Blood presence
-	{"Blood Presence",'not jps.buff("Blood Presence")'},
-
-	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
-	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.buff("Crimson Scourge")'},
-
-	-- Battle Rezz
-	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "focus" },
-	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("mouseover") and jps.UseCds and IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target"},
-
-	-- Defensive cooldowns
-	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
-	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
-	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
-	{"Rune Tap",'jps.hp() < 0.8'},
-	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.4'},
-	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.55'},
-
-	-- Interrupts
-	{"mind freeze",'jps.shouldKick()'},
-	{"mind freeze",'jps.shouldKick("focus")', "focus"},
-	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
-	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-
-	-- Aggro cooldowns
-	{"Raise Dead",'jps.UseCDs and dk.hasGhoul() and jps.hp() < 0.6'},
-
-	-- Requires engineering
-	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= nil and jps.UseCDs'},
-
-	-- Requires herbalism
-	{"Lifeblood",'jps.UseCDs'},
-	-- Racials
-	{ jps.getDPSRacial(),'jps.UseCDs'},
-	-- Buff
-	{"Bone Shield",'not jps.buff("Bone Shield")'},
-	-- Diseases
-	{"Unholy Blight",'jps.myDebuffDuration("frost fever") < 2'},
-	{"Unholy Blight",'jps.myDebuffDuration("blood plague") < 2'},
-	{"Outbreak",'jps.myDebuffDuration("frost fever") < 2'},
-	{"Outbreak",'jps.myDebuffDuration("blood plague") < 2'},
-
-	{"Horn of Winter",'jps.runicPower() < 40 and jps.hp()> 0.90'},
-	{"Blood Boil",'jps.buff("Crimson Scourge") and jps.IsSpellInRange("Blood Boil","target")'},
-
-}
-
-dkBloodSpellTable[3] = {
-	-- Kicks
-	{"mind freeze",'jps.shouldKick()'},
-	{"mind freeze",'jps.shouldKick("focus")', "focus"},
-	{"Strangulate",'jps.shouldKick() and jps.UseCDs and IsSpellInRange("mind freeze","target")==0 and jps.LastCast ~= "mind freeze"'},
-	{"Strangulate",'jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze"', "focus" },
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
-	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-
-
-	-- Buffs
-	{"blood presence",'not jps.buff("blood presence")'},
-	{"horn of winter",'onCD'},
-	{"Outbreak",'jps.myDebuffDuration("frost fever") < 2'},
-	{"Outbreak",'jps.myDebuffDuration("blood plague") < 2'},
-	{"Unholy Blight",'jps.myDebuffDuration("frost fever") < 2'},
-	{"Unholy Blight",'jps.myDebuffDuration("blood plague") < 2'},
-
-	-- Diseases
-	{"Plague Strike",'not jps.myDebuff("Blood Plague")'},
-	{"Icy Touch",'not jps.myDebuff("Frost Fever")'},
-}
-
 jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	local spell = nil
 	local target = nil
@@ -273,17 +195,3 @@ jps.registerRotation("DEATHKNIGHT","BLOOD",function()
 	spell,target = parseStaticSpellTable(dkBloodSpellTable[4])
 	return spell,target
 end, "DK Blood No Cleave / AoE")
-
-jps.registerRotation("DEATHKNIGHT","BLOOD",function()
-	local spell = nil
-	local target = nil
-	spell,target = parseStaticSpellTable(dkBloodSpellTable[2])
-	return spell,target
-end, "DK Blood CDs+interrupts only")
-
-jps.registerRotation("DEATHKNIGHT","BLOOD",function()
-	local spell = nil
-	local target = nil
-	spell,target = parseStaticSpellTable(dkBloodSpellTable[3])
-	return spell,target
-end, "DK Diseases+interrupts only")

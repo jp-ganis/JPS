@@ -11,10 +11,10 @@
 	}
 	function dk.shoulDarkSimUnit(unit)
 		for index,spellName in pairs(dk.darkSimSpells) do
-			if jps.IsCastingSpell(spellName, unit) then return true end
-			if jps.IsChannelingSpell(spellName, unit) then return true end
+			if jps.IsCastingSpell(spellName, unit) then return "yes" end
+			if jps.IsChannelingSpell(spellName, unit) then return "yes" end
 		end
-		return false
+		return ""
 	end
 	function dk.shouldDarkSimTarget()
 		return dk.shoulDarkSimUnit("target")

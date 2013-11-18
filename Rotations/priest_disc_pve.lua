@@ -802,7 +802,7 @@ function priestLight.shouldInterruptCasting(spellsToCheck, avgHP,unitsBelow70, l
 					write("interrupt "..spellName.." , unit "..jps.LastTarget.. " has enough hp!");
 					SpellStopCasting()
 				end
-				if (avgHP < 0.7 or unitsBelow70 > 3 ) and healTargetHP > 0.65 then
+				if (avgHP < 0.65 or unitsBelow70 > 3 ) and healTargetHP > 0.65 then
 					write("stop casting "..spellName.." - need aoe heal")
 				end
 				if healTargetHP >= 0.65 and lowestImportantHP < 0.45 and timeLeft > 1.5 then
