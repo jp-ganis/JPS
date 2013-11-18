@@ -35,10 +35,12 @@ function deactivateGhostWolfNotMoving(seconds)
 	end
 end
 
-
+-- what is missning: purge, more keybinds
 spellTable = {
 	{ "Wind Shear", 'jps.shouldKick("target")',"target"},
 	{ "Wind Shear", 'jps.shouldKick("focus")',"focus"},
+	{ "Hex", 'keyPressed("shift","alt") and jps.canDPS("mouseover")' , 'mouseover' },
+	
 	{ "Lightning Shield",'not jps.buff("Lightning Shield")' },
 	{ "Flametongue Weapon", 'not weaponMainhandEnchant()', "player"  },
 	{ "Astral Shift", 'jps.hp() < 0.35 '},
@@ -66,7 +68,9 @@ spellTable = {
 	{ "Earth Shock", 'jps.buffStacks("lightning shield") > 5 and jps.myDebuffDuration("Flame Shock") > 5 '},
 	{ "Spiritwalker's Grace", 'jps.Moving' },
 	{ "Chain Lightning", 'jps.MultiTarget' },
-	{ "Thunderstorm", 'jps.mana() < 0.6 and jps.UseCDs' },
+	{ "Lava Beam", 'jps.MultiTarget' }, --ascendance , maybe this works
+
+	{ "Thunderstorm", 'jps.mana() < 0.6 and jps.UseCDs' }, --need we check for the glyph?
 	{ "Lightning Bolt",'onCD' },
 }
 
