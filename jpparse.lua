@@ -436,7 +436,7 @@ function parseSpellTable( hydraTable )
 	local target = nil
 	local message = ""
 
-	for _, spellTable in pairs(hydraTable) do
+	for position, spellTable in pairs(hydraTable) do
 		if type(spellTable) == "function" then spellTable = spellTable() end
 		spell = spellTable[1] 
 		conditions = spellTable[2]
@@ -449,8 +449,13 @@ function parseSpellTable( hydraTable )
 		-- NESTED TABLE
 		if spell == "nested" and conditions then
 			local newTable = spellTable[3]
-			spell,target = parseSpellTable( newTable )
-
+			spell,target,position = parseSpellTable( newTable)
+		elseif spell == "opening" and conditions and jps.Opening == true then
+			local newTable = spellTable[3]
+			spell,target,position = parseSpellTable( newTable)
+			if position == newTable[#newTable] and type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
+				jps.Opening = false
+			end
 		-- MACRO -- BE SURE THAT CONDITION TAKES CARE OF CANCAST -- TRUE or FALSE -- NOT NIL
 		elseif type(spell) == "table" and spell[1] == "macro" and conditions then
 			local macroText = spell[2]
@@ -496,7 +501,7 @@ function parseSpellTable( hydraTable )
 		if type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
 			jps.CastBar.nextSpell = tostring(select(1,GetSpellInfo(spell)))
 			jps.CastBar.nextTarget = target
-			return spell,target 
+			return spell,target, position
 		end
 	end
 	return nil
