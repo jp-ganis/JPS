@@ -123,7 +123,40 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.combatTime() < 35'}, -- so it will be ready at the end of most Raid fights
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.targetIsRaidBoss() and jps.hp("target") <= 0.35'}, -- soul reaper push
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and not IsInRaid() and not jps.targetIsRaidBoss()'}, -- burst in instances, pvp 
-}, "PVE 2H Simcraft")
+}, "PVE 2H Simcraft", {
+ 	cooldowns = {
+ 		name ="Defensive",
+ 		type ="group",
+ 		args = {
+ 			deathStrikeThreshold = {
+ 				name ="HP treshold for Death Strike"
+ 				type = "slider",
+ 				min = 0,
+ 				max = 1,
+ 				default = 0.3
+ 			},
+ 			iceboundFortitudeTreshold = {
+ 				name ="HP treshold for Icebound Fortitude"
+ 				type = "slider",
+ 				min = 0,
+ 				max = 1,
+ 				default = 05
+ 			},
+ 		},
+ 	},
+ 	keybinds = {
+ 		name="Keybinds",
+ 		type="group",
+ 		args = {
+ 			shiftAction = {
+	 			name ="Select Spell to cast when shift is pressed"
+ 				type ="select",
+ 				values = {"DEATH_AND_DECAY"="Death and Decay", "DARK_SIMULACRUM"="Dark Simulcrum"},
+ 				default = "DEATH_AND_DECAY"
+ 			}
+ 		}
+ 	}
+ })
 
 
 --[[[
