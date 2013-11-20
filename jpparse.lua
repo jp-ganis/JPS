@@ -466,7 +466,7 @@ function parseSpellTable( hydraTable )
 		elseif spell == "opening" and conditions and jps.Opening == true then
 			local newTable = spellTable[3]
 			spell,target,position = parseSpellTable( newTable)
-			if position == newTable[#newTable] and type(spell) ~= "table" and conditionsMatched(spell,conditions) and jps.canCast(spell,target) then
+			if position == newTable[#newTable] then
 				jps.Opening = false
 			end
 		-- MACRO -- BE SURE THAT CONDITION TAKES CARE OF CANCAST -- TRUE or FALSE -- NOT NIL
