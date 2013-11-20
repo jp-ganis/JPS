@@ -111,7 +111,7 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
 	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},
 	{ "frost strike",'not dk.rune("oneFr")'},
-	{ "frost strike",'jps.buffStacks("blood charge")<=10'},
+	{ "frost strike",'jps.buffStacks("blood charge")<=10 and jps.IsSpellKnown("Blood Tap")'},
 	{ "horn of winter"},
 	{ "frost strike",'not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")'},
 	{ "obliterate",'"onCD"'},
