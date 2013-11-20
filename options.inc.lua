@@ -15,13 +15,13 @@ JPSAceOptions = {
 			order = 1,
 			args = {
 					JPSEnabled = {
-					name ="JPS Enabled",
-					type ="toggle",
-					set = function(info, value) 
-						jps.db.JPSEnabled = value
-						jps.enabled = value
-					end,
-					get = function(info) return jps.db[info[#info]] end
+						name ="JPS Enabled",
+						type ="toggle",
+						set = function(info, value) 
+							jps.db.JPSEnabled = value
+							jps.enabled = value
+						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 					useInterrupts = {
 						name ="Interrupt units",
@@ -30,6 +30,7 @@ JPSAceOptions = {
 							jps.db.interrupts = value 
 							jps.Interrupts = value
 						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 					useCooldowns = {
 						name ="Use offensive Cooldowns",
@@ -38,6 +39,7 @@ JPSAceOptions = {
 							jps.db.useCooldowns = value 
 							jps.UseCDs = value
 						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 					defensiveEnabled = {
 						name ="Use Defensive Cooldowns",
@@ -46,6 +48,7 @@ JPSAceOptions = {
 							jps.db.defensive = value 
 							jps.Defensive = value
 						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 					multitargetEnabled = {
 						name ="Multitarget enabled",
@@ -54,6 +57,7 @@ JPSAceOptions = {
 							jps.db.multitargetEnabled = value 
 							jps.MultiTarget = value
 						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 					PVPEnabled = {
 						name ="PVP Mode enabled",
@@ -62,6 +66,7 @@ JPSAceOptions = {
 							jps.db.PVPEnabled = value 
 							jps.PVP = value
 						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 					faceTargetEnabled = {
 						name ="Target Facing enabled",
@@ -70,6 +75,7 @@ JPSAceOptions = {
 							jps.db.faceTargetEnabled = value 
 							jps.FaceTarget = value
 						end,
+						get = function(info) return jps.db[info[#info]] end
 					},
 			},
 		},
@@ -87,44 +93,42 @@ JPSAceOptions = {
 					name ="Dismount in combat",
 					type ="toggle",
 					set = function(info, value) jps.db.dismountInCombat = value end,
+					get = function(info) return jps.db[info[#info]] end
 				},
 				collectGarbageInfight = {
 					name ="Collect addon garbage in combat",
 					desc = "could cause a fps drop!",
 					type ="toggle",
 					set = function(info, value) jps.db.collectGarbageInfight = value end,
+					get = function(info) return jps.db[info[#info]] end
 				},
-				collectGarbageInfight = {
-					name ="Collect addon garbage in combat",
-					desc = "could cause a fps drop!",
-					type ="toggle",
-					set = function(info, value) jps.db.collectGarbageInfight = value end,
-				},
-				
 			}
 		},
 		useSpells ={
 			name ="Use Spells",
 			type ="group",
 			args = {
-			
 			}
 		},
 		jpsUI = {
 			name ="JPS UI",
 			type ="group",
 			args = {
-			
+				mainUIVisible = {},
+				infoFrameVisible = {},
+				rotationDropdownVisible = {},
+				mainUIScale = {},
+				infoFrameScale = {},
+				rotationDropdownScale ={},
+				printNextSpellToChat = {},
+				printJPSMessagesToChat = {},
 			}
 		},
 		customRotations ={
 			name ="Custom Rotations",
 			type ="group",
 			args = {
-			
 			}
 		},
-		
-
 	},
 }
