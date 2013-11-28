@@ -131,6 +131,10 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{"water shield", not jps.buff("water shield") },
 		{ "Earthliving Weapon", not mh, me},
 
+		{ "earth shield",			tank ~= me and not jps.buff("earth shield",tank), tank },
+
+
+
 		--Cooldowns
 		{"Ancestral Swiftness", jps.UseCDs and jps.hpInc(tank) <= 0.50, me },
 		{"ascendance", jps.UseCDs and not moving and (jps.CountInRaidStatus(0.4) >= 8 or (jps.CountInRaidStatus(0.4) >= 4 and GetNumGroupMembers < 10)), me },
