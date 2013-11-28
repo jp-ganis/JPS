@@ -31,7 +31,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
       -- Chi Brew if we have no chi and less than 5 Elusive Brew stacks (talent based).
       { "Chi Brew", chi == 0 and jps.buffStacks("Elusive Brew") < 5 },
       -- Purifying Brew to clear stagger when it's moderate or heavy.
-      { "Purifying Brew", jps.debuff("Moderate Stagger") or jps.debuff("Heavy Stagger") and chi >= 1},
+      { "Purifying Brew", jps.debuff("Moderate Stagger","player") or jps.debuff("Heavy Stagger","player") and chi >= 1},
       -- Elusive Brew with 10 or more stacks.
       { "Elusive Brew", jps.buffStacks("Elusive Brew") >= 10 },
 
@@ -162,7 +162,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		{ "Touch of Death", jps.UseCDs and jps.buff("Death Note") and chi > 2 and not jps.MultiTarget },
 		
 		-- Purifying Brew to clear stagger when it's moderate or heavy. 	
-		{ "Purifying Brew", 	jps.debuff("Moderate Stagger") 	or jps.debuff("Heavy Stagger") 	or jps.buff("Healing Elixirs") 	and jps.hp() < .85 and chi >= 1},
+		{ "Purifying Brew", 	jps.debuff("Moderate Stagger","player") 	or jps.debuff("Heavy Stagger","player") 	or jps.buff("Healing Elixirs") 	and jps.hp() < .85 and chi >= 1},
 		
 		-- Elusive Brew with 10 or more stacks. 	
 		{ "Elusive Brew", 	jps.buffStacks("Elusive Brew") >= 10 },
