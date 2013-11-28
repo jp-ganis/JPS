@@ -29,15 +29,15 @@ dotTracker.dotDamage = {}
 --[[[ Internal: Tracked Targets ]]--
 function dotTracker.toTarget(guid, spellid) dotTracker.targets[guid..spellid] = { dps = dotTracker.dotDamage[spellid].dps, age = GetTime(), strength = 100, pandemicSafe = false} end
 dotTracker.targets = {}
-
+-- 
 -- Spell Table
 local function toSpell(id,r,altId) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r, alternativeId = altId} end
 dotTracker.spells = {}
 	-- Warlock Spells
-	dotTracker.spells["immolate"] = toSpell(348, true, 108686) -- Immolate + Fire and Brimstone
+	dotTracker.spells["immolate"] = toSpell(348, false, 108686) -- Immolate + Fire and Brimstone
 	dotTracker.spells["felFlame"] = toSpell(77799)
-	dotTracker.spells["corruption"] = toSpell(172, true, 87389) -- Corruption from Seed of Corruption
-	dotTracker.spells["agony"] = toSpell(980, true)
+	dotTracker.spells["corruption"] = toSpell(172, false, 146739) -- Corruption from Seed of Corruption
+	dotTracker.spells["agony"] = toSpell(980, false)
 	dotTracker.spells["unstableAffliction"] = toSpell(30108)
 	dotTracker.spells["doom"] = toSpell(603)
 
@@ -148,7 +148,7 @@ function dotTracker.handleEvent(self, event, ...)
 		elseif eventType=="SPELL_AURA_REMOVED" then
 			for k,spell in pairs(dotTracker.classSpecificSpells) do
 				if spellId == spell.id or spellId == spell.alternativeId then
-					LOG.warn("%s faded from Target: %s", spell.name, destGUID)
+					LOG.warn("%s (%s) faded from Target: %s", spell.name, spellId, destGUID)
 					dotTracker.targets[destGUID..spell.id] = nil
 				end
 			end
@@ -196,7 +196,7 @@ end
 --[[[ Internal Function - DON'T USE! ]]--
 function dotTracker.updateTrackedSpellsOnTargets(trackedSpell)
 	local guid = UnitGUID(trackedSpell.target)
-	local _,_,_,_,_,duration,expires = UnitDebuff(trackedSpell.target,trackedSpell.name,trackedSpell.rank,"player")
+	local _,_,_,_,_,duration,expires = UnitDebuff(trackedSpell.target,trackedSpell.name,nil,"player")
 	if duration and guid then
 		local target = dotTracker.targets[guid..trackedSpell.id]
 		if target then
@@ -434,7 +434,7 @@ function dotTracker.shouldSpellBeCast(spellId, unit)
 			end
 			
 		else
-			LOG.info("Casting: %s@%s - was not on target!", name, unit)
+			LOG.info("Casting: %s@%s - was not on target! (GUID: %s, SpellID: %s)", name, unit, guid, spellId)
 			castSpell = true
 		end
 	elseif guid then
