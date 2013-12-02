@@ -25,7 +25,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
 
       -- SHORT COOLDOWNS
       -- Guard when Power Guard buff is available and while taking some damage.
-      { "Guard", jps.buff("Power Guard") and jps.hp() < 0.90 and chi >= 2 },
+      { "Guard", jps.buff("Power Guard") and jps.hp() < 0.98 and chi >= 2 },
 
       -- BREWS
       -- Chi Brew if we have no chi and less than 5 Elusive Brew stacks (talent based).
