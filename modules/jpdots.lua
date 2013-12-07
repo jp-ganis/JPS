@@ -136,9 +136,11 @@ function dotTracker.handleEvent(self, event, ...)
 					dotTracker.toTarget(destGUID, spell.id)
 				end
 			end
-		-- Warlock
 		elseif eventType == "SPELL_DAMAGE" and spellId == dotTracker.spells.felFlame.id then
 			-- Warlock specific - FelFlame enhances DoT Duration..
+			if not dotTracker.targets[destGUID..spellId] then
+				dotTracker.toTarget(destGUID, spellId)
+			end
 			for k,spell in pairs(dotTracker.classSpecificSpells) do
 				if spell.refreshedByFelFlame and dotTracker.targets[destGUID..spell.id] then
 					LOG.warn("%s refreshed with Fel Flame on Target: %s", spell.name, destGUID)
