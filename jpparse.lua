@@ -106,6 +106,7 @@ end
 
 function jps.IsSpellInRange(spell,unit)
 	if spell == nil then return false end
+	if jps.spellNeedSelect(spell) then return true end
 	--if jps_IsSpellInRange(spell,unit)~=1 then return false end
 	if jps_IsSpellInRange(spell,unit)==0 then return false end
 	return true
@@ -176,6 +177,7 @@ end
 
 -- check if a spell is castable @ unit 
 function jps.canCast(spell,unit)
+
 	if spell == "" then return false end
 	if unit == nil then unit = "target" end
 	local spellname = nil
@@ -183,7 +185,9 @@ function jps.canCast(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	
 	if jps.PlayerIsBlacklisted(unit) then return false end -- ADDITION jps.PlayerIsBlacklisted(unit) in CANCAST
-	if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
+	if not jps.spellNeedSelect(spellname) then
+		if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
+	end
 	if spellname == nil then return false end
 	spellname = string.lower(spellname)
 	
@@ -249,9 +253,17 @@ function jps.Cast(spell) -- "number" "string"
 	if jps.Target == nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
 	
-	if jps.spellNeedSelect(spellname) and SpellIsTargeting() then jps.groundClick() end
+	if jps.spellNeedSelect(spellname) and SpellIsTargeting() then
+		jps.groundClick()
+	end
+	
+	if jps.spellNeedSelect(spellname) then
+		CastSpellByName(spellname)
+	else 
+		CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
+	end
 
-	CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
+	
 	jps.timedCasting[string.lower(spell)] = math.ceil(GetTime())
 	jps.CastBar.currentSpell = spellname
 	jps.CastBar.currentTarget = jps.Target
@@ -337,15 +349,16 @@ end
 function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
 	LOG.info("Can Cast Debug for %s @ $s ", spell, unit)
 	if spell == nil then LOG.info("spell is nil  %s @ $s", spell, unit)return false end
-	if not jps.UnitExists(unit) then LOG.info("invalid unit  %s @ $s", spell, unit) return false end
-
+	if not jps.spellNeedSelect(spell) then
+		if not jps.UnitExists(unit) then LOG.info("invalid unit  %s @ $s", spell, unit) return false end
+	end
 	local usable, nomana = IsUsableSpell(spell) -- IsUsableSpell("spellName" or spellID)
 	if not usable then LOG.info("spell is not sable  %s @ $s", spell, unit) return false end
 	if nomana then LOG.info("failed mana test  %s @ $s", spell, unit) return false end
 	if jps.cooldown(spell)~=0 then LOG.info("cooldown not finished  %s @ $s", spell, unit) return false end
 	if jps_SpellHasRange(spell)~=1 then LOG.info("spellhasRange check failed  %s @ $s", spell, unit) return false end
-
-	if jps_IsSpellInRange(spell,unit)~=1 then LOG.info("not in range  %s @ $s", spell, unit) return false end
+	
+	if jps.SpellHasRange(spell) and not jps.IsSpellInRange(spell,unit) then OG.info("not in range  %s @ $s", spell, unit) return false end
 	LOG.info("Passed all tests  %s @ $s", spell, unit)
 	return true
 end
