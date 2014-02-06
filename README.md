@@ -2,10 +2,9 @@
 = JPS =
 ==============================================================================
 
-***A PLUA ADDON FOR WORLD OF WARCRAFT***
+***AADDON FOR WORLD OF WARCRAFT***
 
-This addon in combination with enabled protected LUA will help you get the most
-out of your WoW experience. See commands below for a full list of available
+This addon help you get the most out of your WoW experience. See commands below for a full list of available
 commands.
 
 ***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd
@@ -28,25 +27,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Copyright (C) 2011 James Ganis
-
-==============================================================================
-= NEW: JPS Support forums                                                    =
-==============================================================================
-
-due to the shutdown off PG we created a new Support forum for JPS & protected LUA
-
-http://kazuhiro.nishi.co/keymoon/
-
-
-==============================================================================
-= USAGE                                                                      =
-==============================================================================
-
-With protected LUA enabled (through and external hack, not included with this
-package) this addon will play on your behalf, detecting your class and spec
-simply attacking a target will cause the mod to take over. Using all the best
-spells and abilities with split second timing to ensure maximum DPS, TPS or
-HPS for your class and spec.
 
 ==============================================================================
 = TO-DO / KNOWN BUGS                                                         =
