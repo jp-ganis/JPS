@@ -15,7 +15,6 @@ local spellTable = {
 	wl.getInterruptSpell("target"),
 	wl.getInterruptSpell("focus"),
 	wl.getInterruptSpell("mouseover"),
-	{jps.useBagItem(86569), 'not jps.buff("Flask of the Warm Sun") and not jps.buff("Crystal of Insanity")'},
 	
 	-- Def CD's
 	{wl.spells.mortalCoil, 'jps.Defensive and jps.hp() <= 0.80' },
@@ -31,19 +30,12 @@ local spellTable = {
 	{wl.spells.rainOfFire, 'IsShiftKeyDown() and jps.buffDuration(wl.spells.rainOfFire) < 1 and not GetCurrentKeyBoardFocus()'	},
 	{wl.spells.rainOfFire, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
 
-	{wl.spells.shadowfury, 'IsShiftKeyDown() and IsAltKeyDown() and not GetCurrentKeyBoardFocus()' },-- Shadowfury
+	{wl.spells.cataclysm, 'IsShiftKeyDown() and IsAltKeyDown() and not GetCurrentKeyBoardFocus()'},
 
-
-	-- COE Debuff
-	{wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
-	{wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
 
 	{wl.spells.fireAndBrimstone, 'jps.burningEmbers() > 0 and not jps.buff(wl.spells.fireAndBrimstone, "player") and jps.MultiTarget and not jps.isRecast(wl.spells.fireAndBrimstone, "target")' },
 	{ {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.burningEmbers() == 0' },
 	{ {"macro","/cancelaura "..wl.spells.fireAndBrimstone}, 'jps.buff(wl.spells.fireAndBrimstone, "player") and not jps.MultiTarget' },
-
-	-- On the move
-	{wl.spells.felFlame, 'jps.Moving and not wl.hasKilJaedensCunning()' },
 
 	-- CD's
 	{ {"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0 and not jps.buff(wl.spells.darkSoulInstability) and jps.UseCDs' },
@@ -60,7 +52,7 @@ local spellTable = {
 		{wl.spells.havoc, 'not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
 		{wl.spells.havoc, 'not jps.Moving and wl.attackFocus()', "focus" },
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0  and unitNotGarroshMCed("target")'  },
-		{wl.spells.chaosBolt, 'not jps.Moving and jps.burningEmbers() > 0 and	jps.buffStacks(wl.spells.havoc)>=3'},
+		{wl.spells.chaosBolt, 'jps.burningEmbers() > 0 and	jps.buffStacks(wl.spells.havoc)>=3'},
 		{"nested", 'not jps.Moving', {
 			jps.dotTracker.castTableStatic("immolate"),
 		}},
@@ -75,12 +67,13 @@ local spellTable = {
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown()', {
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
 		{wl.spells.conflagrate },
-		{wl.spells.felFlame },
 	}},
+	
 	{"nested", 'jps.MultiTarget', {
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.20 and jps.burningEmbers() > 0'  },
 		{wl.spells.immolate , 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(wl.spells.immolate) <= 2.0 and jps.LastCast ~= wl.spells.immolate'},
 		{wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player")' },
+		{wl.spells.chaosBolt, 'jps.emberShards() > 30 and wl.gotCharredRemains()'},
 		{wl.spells.incinerate },
 	}},
 }
@@ -118,7 +111,7 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
 	end
 	
 	return parseStaticSpellTable(spellTable)
-end,"Destruction 5.3")
+end,"Destruction 6.0b")
 
 
 --[[[
