@@ -23,7 +23,7 @@ dotTracker.classSpecificUpdateDotDamage = nil
 dotTracker.frame = CreateFrame("Frame", "dotTracker", UIParent)
 dotTracker.trackedSpells = {}
 --[[[ Internal: Current DoT Damage ]]--
-function dotTracker.toDotDamage(id,dps,dur,tE) dotTracker.dotDamage[id] = {dps = dps, duration = dur, tickEvery = tE} end
+function dotTracker.toDotDamage(id,dps,dur,tE, ss) dotTracker.dotDamage[id] = {dps = dps, duration = dur, tickEvery = tE, snapshot = ss} end
 dotTracker.dotDamage = {}
 
 --[[[ Internal: Tracked Targets ]]--
@@ -62,19 +62,22 @@ dotTracker.supportedClasses["WARLOCK"] = {
 		local duration = ticks * tickEvery
 		local damage = ((280 + spellDamage * 0.26) * ticks)*damageBonus*damageBuff
 		local dps = damage / duration
-		dotTracker.toDotDamage(dotTracker.spells.agony.id, dps, duration, tickEvery)
+		local snapshot = false;
+		dotTracker.toDotDamage(dotTracker.spells.agony.id, dps, duration, tickEverym snapshot)
 		
 		local ticks = math.floor(18/tickEvery)
 		local duration = ticks * tickEvery
 		local damage = (1440 + spellDamage * 0.15 * ticks)*damageBonus*damageBuff
 		local dps = damage / duration
-		dotTracker.toDotDamage(dotTracker.spells.corruption.id, dps, duration, tickEvery)
+		local snapshot = false;
+		dotTracker.toDotDamage(dotTracker.spells.corruption.id, dps, duration, tickEvery, snapshot)
 		
 		local ticks = math.floor(14/tickEvery)
 		local duration = ticks * tickEvery
 		local damage = (1792 + spellDamage * 0.24 * ticks)*damageBonus*damageBuff
 		local dps = damage / duration
-		dotTracker.toDotDamage(dotTracker.spells.unstableAffliction.id, dps, duration, tickEvery)
+		local snapshot = false;
+		dotTracker.toDotDamage(dotTracker.spells.unstableAffliction.id, dps, duration, tickEvery, snapshot)
 	end, 
 	dotTracker.spells.agony,dotTracker.spells.corruption,dotTracker.spells.unstableAffliction),
 	
@@ -85,7 +88,8 @@ dotTracker.supportedClasses["WARLOCK"] = {
 		local duration = ticks * tickEvery
 		local damage = (1440 + spellDamage * 0.15 * ticks)*damageBonus*damageBuff
 		local dps = damage / duration
-		dotTracker.toDotDamage(dotTracker.spells.corruption.id, dps, duration, tickEvery)
+		local snapshot = false;
+		dotTracker.toDotDamage(dotTracker.spells.corruption.id, dps, duration, tickEvery,snapshot )
 		
 		local damageBonus = (1+crit/100)*(1+(mastery*3)/100)
 		local tickEvery = 15/(1+(haste/100))
@@ -93,7 +97,8 @@ dotTracker.supportedClasses["WARLOCK"] = {
 		local duration = ticks * tickEvery
 		local damage = (4004/ticks+spellDamage*1.25*ticks)*damageBonus*damageBuff
 		local dps = damage / duration
-		dotTracker.toDotDamage(dotTracker.spells.doom.id, dps, duration, tickEvery)
+		local snapshot = false;
+		dotTracker.toDotDamage(dotTracker.spells.doom.id, dps, duration, tickEvery, snapshot)
 	end, 
 	dotTracker.spells.corruption,dotTracker.spells.doom),
 	toClass(function(mastery, haste, crit, spellDamage, damageBuff)
@@ -104,7 +109,8 @@ dotTracker.supportedClasses["WARLOCK"] = {
 		local duration = ticks * tickEvery
 		local damage = ((456+spellDamage*0.427)+(ticks*(456+spellDamage*0.427))*damageBonus*damageBuff)
 		local dps = damage / duration
-		dotTracker.toDotDamage(dotTracker.spells.immolate.id, dps, duration, tickEvery)
+		local snapshot = false
+		dotTracker.toDotDamage(dotTracker.spells.immolate.id, dps, duration, tickEvery, snapshot)
 	end, 
 	dotTracker.spells.immolate),
 }
@@ -398,10 +404,11 @@ function dotTracker.shouldSpellBeCast(spellId, unit)
 		local timeLeft = expires - GetTime()
 		local myCastLeft = jps.CastTimeLeft("player")
 		local target = dotTracker.targets[guid..spellId]
+		local snapshot = dotTracker.dotDamage[spellId].snapshot
 		
 		if target then			  
 			if target.pandemicSafe then
-				if target.strength > 100 then
+				if target.strength > 100 and snapshot == true then
 					LOG.info("Re-Casting: %s@%s (Pandemic Safe @ %s%% with %s sec left", name, unit, target.strength, timeLeft)
 					castSpell = true
 				else
@@ -412,7 +419,7 @@ function dotTracker.shouldSpellBeCast(spellId, unit)
 				end
 			else
 			--if enough dps increase - fuck pandemic!
-				if target.strength > 100 then
+				if target.strength > 100 and snapshot == true then
 					damageDelta = (dotTracker.dotDamage[spellId].dps * dotTracker.dotDamage[spellId].duration) - (target.dps * timeLeft)
 					-- assume 150k dps - if you waste 1.5 seconds for gcd (or immolate cast) you should get an increase of at least 225k to compensate
 					if damageDelta >= 225000  then
