@@ -185,9 +185,9 @@ function jps.canCast(spell,unit)
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	
 	if jps.PlayerIsBlacklisted(unit) then return false end -- ADDITION jps.PlayerIsBlacklisted(unit) in CANCAST
-	if not jps.spellNeedSelect(spellname) then
+	--[[if not jps.spellNeedSelect(spellname) then
 		if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
-	end
+	end]]--
 	if spellname == nil then return false end
 	spellname = string.lower(spellname)
 	
@@ -233,8 +233,9 @@ end
 -- "Holy Word: Sanctuary" 88685 - Priest
 -- "Shadowfury" 30283 - Warlock
 -- "Summon Black Ox Statue" - 115315 - Monk 
+-- "cataclysm" - 152108 Warlock
 
-jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740, 115315}
+jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740, 115315, 152108}
 function jps.spellNeedSelect(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = string.lower(spell) end
