@@ -120,9 +120,9 @@ end
 
 function jps.UnitExists(unit)
 	if unit == nil then return false end
-	if UnitExists(unit)~=1 then return false end
-	if UnitIsVisible(unit)~=1 then return false end
-	if UnitIsDeadOrGhost(unit)==1 then return false end
+	if UnitExists(unit)==false then return false end
+	if UnitIsVisible(unit)==false then return false end
+	if UnitIsDeadOrGhost(unit)==true then return false end
 	return true
 end
 
@@ -133,10 +133,10 @@ end
 function jps.canHeal(unit)
 	if not jps.UnitExists(unit) then return false end
 	if GetUnitName("player") == GetUnitName(unit) then return true end
-	if UnitCanAssist("player",unit)~=1 then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
-	if UnitIsFriend("player",unit)~=1 then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
+	if UnitCanAssist("player",unit)==false then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
+	if UnitIsFriend("player",unit)==false then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
 	-- PNJ returns 1 with UnitIsFriend -- PNJ returns 1 or nil (Vendors) with UnitCanAssist
-	if UnitInVehicle(unit)==1 then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
+	if UnitInVehicle(unit)==true then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
 	if jps.PlayerIsBlacklisted(unit) then return false end
 	if not select(1,UnitInRange(unit)) then return false end -- return FALSE when not in a party/raid reason why to be true for player GetUnitName("player") == GetUnitName(unit)
 	return true
@@ -150,14 +150,13 @@ function jps.canDPS(unit)
 	if jps.PvP then 
 		local iceblock = tostring(select(1,GetSpellInfo(45438))) -- ice block mage
 		local divineshield = tostring(select(1,GetSpellInfo(642))) -- divine shield paladin
-		if jps.buff(divineshield,unit) then return false end
+		if jps.buff(divineshield,unit) then  return false end
 		if jps.buff(iceblock,unit) then return false end
 	end
 	if (GetUnitName(unit) == L["Training Dummy"]) or (GetUnitName(unit) == L["Raider's Training Dummy"]) then return true end	
 	if UnitCanAttack("player", unit)~=1 then return false end-- UnitCanAttack(attacker, attacked) return 1 if the attacker can attack the attacked, nil otherwise.
 	if UnitIsEnemy("player",unit)~=1 then return false end -- WARNING a unit is hostile to you or not Returns either 1 ot nil -- Raider's Training returns nil with UnitIsEnemy
-	if jps.PlayerIsBlacklisted(unit) then return false end -- WARNING Blacklist is updated only when UNITH HEALTH occurs 
-	if not jps.IsSpellInRange(jps.HarmSpell,unit) then return false end
+	if not jps.IsSpellInRange(jps.HarmSpell,unit) then  return false end
 	return true
 end
 
@@ -184,10 +183,9 @@ function jps.canCast(spell,unit)
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
 	
-	if jps.PlayerIsBlacklisted(unit) then return false end -- ADDITION jps.PlayerIsBlacklisted(unit) in CANCAST
-	--[[if not jps.spellNeedSelect(spellname) then
+	if not jps.spellNeedSelect(spellname) then
 		if not jps.UnitExists(unit) and not isBattleRez(spell) then return false end
-	end]]--
+	end
 	if spellname == nil then return false end
 	spellname = string.lower(spellname)
 	
@@ -277,7 +275,7 @@ function jps.Cast(spell) -- "number" "string"
 	end
 
 	jps.LastTarget = jps.Target
-	jps.LastTargetGUID = UnitGUID(jps.Target)
+	jps.LastTargetGUID = UnitGUIDnorm(jps.Target)
 	jps.Target = nil
 	jps.Message = ""
 	jps.ThisCast = nil
@@ -313,7 +311,7 @@ function jps.isRecast(spell,unit)
 	
 	if unit==nil then unit = "target" end
 	
-	return jps.LastCast==spellname and UnitGUID(unit)==jps.LastTargetGUID
+	return jps.LastCast==spellname and UnitGUIDnorm(unit)==jps.LastTargetGUID
 end
 
 function jps.shouldSpellBeIgnored(spell)
