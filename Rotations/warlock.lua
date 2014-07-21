@@ -1,3 +1,9 @@
+--[[
+TODO 6.0
+
+remove old spells
+
+]]--
 wl = {}
 wl.maxIntCastLength = 1
 wl.dottableUnits = {
@@ -50,7 +56,7 @@ wl.spells["soulburn"] = toSpellName(74434)
 wl.spells["drainSoul"] = toSpellName(1120)
 wl.spells["maleficGrasp"] = toSpellName(103103)
 --Destruction
-wl.spells["immolate"] = toSpellName(348)
+wl.spells["immolate"] = toSpellName(157736)
 wl.spells["felFlame"] = toSpellName(77799)
 wl.spells["backdraft"] = toSpellName(117896)
 wl.spells["rainOfFire"] = toSpellName(5740)
@@ -63,6 +69,7 @@ wl.spells["shadowburn"] = toSpellName(17877)
 wl.spells["chaosBolt"] = toSpellName(116858)
 wl.spells["incinerate"] = toSpellName(29722)
 wl.spells["conflagrate"] = toSpellName(17962)
+
 --Demonology
 wl.spells["darkSoulKnowledge"] = toSpellName(113861)
 wl.spells["metamorphosis"] = toSpellName(103958)
@@ -89,14 +96,24 @@ wl.spells["grimoireOfService"] = toSpellName(108501)
 wl.spells["harvestLife"] = toSpellName(689)
 wl.spells["moltenCore"] = toSpellName(140074)
 
+
+--6.0
+wl.spells["cataclysm"] = toSpellName(152108)
+wl.spells["charredRemains"] = toSpellName(157696)
+wl.spells["demonbolt"] = toSpellName(157695)
+wl.spells["demonicServitude"] = toSpellName(152107)
+wl.spells["soulburnHaunt"] = toSpellName(152109)
+
+
 -- Professions
 wl.spells["lifeblood"] = toSpellName(121279)
 
 
-function wl.hasKilJaedensCunning()
-	local selected, talentIndex = GetTalentRowSelectionInfo(6)
-	return talentIndex == 17
+function wl.gotCharredRemains()
+	local selected, talentIndex = GetTalentRowSelectionInfo(7)
+	return talentIndex == 17  --TODO return strange stuff currently on beta!
 end
+
 
 
 local function npcId(unit)

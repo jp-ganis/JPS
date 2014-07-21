@@ -459,6 +459,12 @@ jps_SpellControl = {
 	--[123456] = "PvE",		-- This is just an example, not a real spell
 }
 
+
+
+
+--[TODO : get correct frame names for 6.0 ]]--
+
+--[[
 --------------------------------------------------------------------
 -- FUNCTION RETURNS SPEC OF UNITFRAME WHEN MOUSEOVER THE FRAME
 --------------------------------------------------------------------
@@ -597,3 +603,5 @@ ItemRefShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip1:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip2:HookScript("OnTooltipSetItem", attachItemTooltip)
 ShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
+
+]]--
