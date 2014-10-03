@@ -69,7 +69,7 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "frost armor", 'not jps.buff("frost armor")' }, 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
 	{ "Freeze",	'IsAltKeyDown() ~= nil' },
-	{ "rune of power", 'ma_fr.hasRune() == false and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
+	{ "rune of power", 'IsLeftShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune of Power")'}, 
 	{ "mirror image", 'jps.UseCDs'}, 
 	
 
@@ -90,7 +90,7 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving'},
 	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
 
-	{ "nested", 'jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving and jps.LastCast ~= "Evocation"',{
+	{ "nested", 'jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving and jps.LastCast ~= "Evocation" and jps.IsSpellKnown("Invocation")',{
 		{ "Evocation", 'jps.myDebuffDuration("frost bomb","target") > 5'},
 		{ "Evocation", 'jps.myDebuffDuration("living bomb","target") > 5'},
 		{ "Evocation", 'jps.myDebuffDuration("nether tempest","target") > 5'},
