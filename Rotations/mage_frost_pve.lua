@@ -29,7 +29,7 @@ function ma_fr.rangedTarget()
 	end
 end
 
-function ma.hasRune()
+function ma_fr.hasRune()
 	local hasOne,_ = GetTotemInfo(1)
 	local hasSecond,_ = GetTotemInfo(2)
 	if hasOne ~= false then 
@@ -42,7 +42,7 @@ function ma.hasRune()
 end
 
 
-function ma.hasPet() 
+function ma_fr.hasPet() 
 	if UnitExists("pet") == nil then return false end
 	return true
 end
@@ -63,13 +63,13 @@ Based on Noxxic 5.3
 jps.registerStaticTable("MAGE","FROST",{
 	-- Noxxic
 	-- pre fight
-	{ "Summon Water Elemental", 'ma.hasPet() == false and not jps.Moving'},
+	{ "Summon Water Elemental", 'ma_fr.hasPet() == false and not jps.Moving'},
 	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
 	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
 	{ "frost armor", 'not jps.buff("frost armor")' }, 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
 	{ "Freeze",	'IsAltKeyDown() ~= nil' },
-	{ "rune of power", 'ma.hasRune() == false and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
+	{ "rune of power", 'ma_fr.hasRune() == false and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image", 'jps.UseCDs'}, 
 	
 
@@ -85,10 +85,10 @@ jps.registerStaticTable("MAGE","FROST",{
 	-- Rotation ALL
 	{ "nether tempest", 'jps.myDebuffDuration("nether tempest", "target") < 1' }, 
 	{ "nether tempest", 'jps.myDebuffDuration("nether tempest","mouseover") < 2 and jps.canDPS("mouseover")',"mouseover"},
-	{ "living bomb", 'jps.myDebuffDuration("living bomb","target") == 0'},
-	{ "living bomb", 'jps.myDebuffDuration("living bomb","mouseover") == 0 and jps.canDPS("mouseover")',"mouseover"},
-	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
-	{ "frost bomb", 'jps.myDebuffDuration("frost bomb","mouseover") < 2 and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+	{ "living bomb", 'not jps.myDebuff("living bomb","target")'},
+	{ "living bomb", 'not jps.myDebuff("living bomb","mouseover") and jps.canDPS("mouseover")',"mouseover"},
+	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving'},
+	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
 
 	{ "nested", 'jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving and jps.LastCast ~= "Evocation"',{
 		{ "Evocation", 'jps.myDebuffDuration("frost bomb","target") > 5'},
