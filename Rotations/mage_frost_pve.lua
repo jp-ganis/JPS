@@ -29,6 +29,24 @@ function ma_fr.rangedTarget()
 	end
 end
 
+function ma.hasRune()
+	local hasOne,_ = GetTotemInfo(1)
+	local hasSecond,_ = GetTotemInfo(2)
+	if hasOne ~= false then 
+		return true
+	end
+	if hasSecond ~= false then 
+		return true
+	end
+	return false
+end
+
+
+function ma.hasPet() 
+	if UnitExists("pet") == nil then return false end
+	return true
+end
+
 function ma_fr.kick(unit)
 	return jps.shouldKick(unit) or jps.IsCastingPoly(unit)
 end
@@ -45,13 +63,15 @@ Based on Noxxic 5.3
 jps.registerStaticTable("MAGE","FROST",{
 	-- Noxxic
 	-- pre fight
+	{ "Summon Water Elemental", 'ma.hasPet() == false and not jps.Moving'},
 	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
 	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
 	{ "frost armor", 'not jps.buff("frost armor")' }, 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
 	{ "Freeze",	'IsAltKeyDown() ~= nil' },
-	{ "rune of power", 'not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
+	{ "rune of power", 'ma.hasRune() == false and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image", 'jps.UseCDs'}, 
+	
 
 	-- Remove Snares, Roots, Loss of Control, etc.
 	{ "every man for himself", 'jps.LoseControl(player,"CC")' },
@@ -64,11 +84,13 @@ jps.registerStaticTable("MAGE","FROST",{
 	
 	-- Rotation ALL
 	{ "nether tempest", 'jps.myDebuffDuration("nether tempest", "target") < 1' }, 
-	{ "living bomb", 'jps.myDebuffDuration("living bomb","target") < 2 and not jps.Moving'},
-	{ "living bomb", 'jps.myDebuffDuration("living bomb","mouseover") < 2 and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+	{ "nether tempest", 'jps.myDebuffDuration("nether tempest","mouseover") < 2 and jps.canDPS("mouseover")',"mouseover"},
+	{ "living bomb", 'jps.myDebuffDuration("living bomb","target") == 0'},
+	{ "living bomb", 'jps.myDebuffDuration("living bomb","mouseover") == 0 and jps.canDPS("mouseover")',"mouseover"},
 	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
-	
-	{ "nested", "jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving",{
+	{ "frost bomb", 'jps.myDebuffDuration("frost bomb","mouseover") < 2 and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+
+	{ "nested", 'jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving and jps.LastCast ~= "Evocation"',{
 		{ "Evocation", 'jps.myDebuffDuration("frost bomb","target") > 5'},
 		{ "Evocation", 'jps.myDebuffDuration("living bomb","target") > 5'},
 		{ "Evocation", 'jps.myDebuffDuration("nether tempest","target") > 5'},
@@ -81,8 +103,6 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "arcane explosion", 'jps.MultiTarget' }, 
 	
 	-- Rotation Single
-	{ "rune of power", 'jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' }, 
-	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image",'jps.UseCDs'}, 
 	{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
 	{ "icy veins", 'jps.buff("brain freeze")'}, 
