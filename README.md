@@ -29,6 +29,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Copyright (C) 2011 James Ganis
 
 ==============================================================================
+= TO-DO WoD                                                      =
+==============================================================================
+* replace nil/o checks with  true/false (http://wowpedia.org/Patch_6.0.2/API_changes)
+* remove dot snapshotting
+* some frame names changed (e.g. in jputils)
+* Ingame Events changed
+* new GUID format!
+* class specific stuff
+
+==============================================================================
 = TO-DO / KNOWN BUGS                                                         =
 ==============================================================================
 
