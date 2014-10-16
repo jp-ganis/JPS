@@ -138,7 +138,7 @@ function jps.cooldown(spell) -- start, duration, enable = GetSpellCooldown("name
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
-	if not jps.IsSpellKnown(spellname) then return 999 end
+	if not IsUsableSpell(spellname) then return 999 end
 	if jps.Lag == nil then jps.Lag = 0 end
 	local start,duration,_ = GetSpellCooldown(spellname)
 	if start == nil then return 0 end
