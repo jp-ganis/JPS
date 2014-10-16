@@ -24,12 +24,12 @@ jps.registerRotation("MAGE","ARCANE",function()
 		
 		{ "Ice Block", jps.hp() < 0.10  and not jps.buff("Ice Block","player") },
 		
-		{ "rune of power",				 jps.buffDuration("rune of power") < jps.CastTimeLeft() and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "rune of power",				 jps.buffDuration("rune of power") < jps.CastTimeLeft() and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 		{ "mirror image",				 jps.UseCDs },
 		{ "Counterspell",				 jps.Interrupts and jps.shouldKick("target") },
 		
-		{ "rune of power",				 (not jps.buff("rune of power") or jps.buffDuration("rune of power")) and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
-		{ "rune of power",				 jps.cooldown("arcane power")==0 and jps.buffDuration("rune of power") < jps.buffDuration("arcane power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "rune of power",				 (not jps.buff("rune of power") or jps.buffDuration("rune of power")) and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
+		{ "rune of power",				 jps.cooldown("arcane power")==0 and jps.buffDuration("rune of power") < jps.buffDuration("arcane power") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 		{ "mirror image",				 jps.UseCDs },
 		{ {"macro",				"/use Mana Gem"}, mana < 0.8 and GetItemCount("Mana Gem", 0, 1) > 0 and not alterTimeActive, player }, 
 		
@@ -81,7 +81,7 @@ jps.registerRotation("MAGE","ARCANE",function()
 		
 		{ "Ice Block",				 ((UnitHealth("player") / UnitHealthMax("player")) < 0.20 ) and not jps.buff("Ice Block","player") },
 		
-		{ "rune of power",				 (not jps.buff("rune of power") or jps.buffDuration("rune of power") < jps.CastTimeLeft()) and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "rune of power",				 (not jps.buff("rune of power") or jps.buffDuration("rune of power") < jps.CastTimeLeft()) and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 		{ "Counterspell",				 jps.Interrupts and jps.shouldKick("target") },
 
 

@@ -157,7 +157,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		{ jps.useBagItem(5512), jps.hp("player") < 0.5 },
 		
 		-- Spinning Crane Kick for multi-target threat. 	
-		{ "Spinning Crane Kick", IsLeftControlKeyDown() ~= nil and not jps.buff("Spinning Crane Kick"),"player"},
+		{ "Spinning Crane Kick", IsLeftControlKeyDown() == true and not jps.buff("Spinning Crane Kick"),"player"},
 		
 		-- Insta-kill single target when available. 
 		{ "Touch of Death", jps.UseCDs and jps.buff("Death Note") and chi > 2 and not jps.MultiTarget },
@@ -168,7 +168,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		-- Elusive Brew with 10 or more stacks. 	
 		{ "Elusive Brew", 	jps.buffStacks("Elusive Brew") >= 10 },
 		
-		{ "Dizzying Haze" , IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil, "player"},
+		{ "Dizzying Haze" , IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil, "player"},
 		
 		-- Chi Brew if we have no chi (talent based). 
 		{ "Chi Brew", chi == 0 },

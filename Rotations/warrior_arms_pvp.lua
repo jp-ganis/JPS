@@ -266,7 +266,7 @@ jps.registerRotation("WARRIOR","ARMS",function()
 	local spellTable =
 	{
 		-- Class Counters
-		{ "nested", IsShiftKeyDown()~=nil , parse_multitarget() },
+		{ "nested", IsShiftKeyDown() == true , parse_multitarget() },
 		{ "nested", enemycount > 2 , parse_multitarget() },
 		{ "nested", targetClass=="Death Knight" , parse_vsDK() },
 		{ "nested", targetClass=="Hunter" , parse_vsHunter() },
@@ -287,7 +287,7 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		-- { "charge",	},
 		{ "charge", noMelee , rangedTarget },
 		-- { "heroic leap", noMelee and jps.cooldown("charge") > 0 , rangedTarget },
-		{ "heroic leap", IsAltKeyDown() ~= nil },
+		{ "heroic leap", IsAltKeyDown() == true },
 		-- Remove Snares, Roots, Loss of Control, etc.
 		{ "bladestorm", noMelee and rooted , player },
 		-- { "avatar",	noMelee and rooted , player },
@@ -340,7 +340,7 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		{ "recklessness", jps.UseCDs and melee and jps.buff("avatar") and jps.TimeToDie(rangedTarget) > 11 , player },
 		{ "avatar", jps.UseCDs and melee and targethealth_pct < 0.30 and jps.TimeToDie(rangedTarget) > 23 , player },
 		{ "avatar", jps.UseCDs and melee and jps.buff("recklessness") and targethealth_pct < 0.30  and jps.TimeToDie(rangedTarget) > 23 , player },
-		-- { "demoralizing banner", playerhealth_pct < 0.30, "player", jps.groundClick() or IsShiftKeyDown() ~= nil , player },
+		-- { "demoralizing banner", playerhealth_pct < 0.30, "player", jps.groundClick() or IsShiftKeyDown() == true , player },
 		-- { "alliance battle standard", playerhealth_pct < 0.30 and not jps.debuff("demoralizing banner"), jps.groundClick() , player },
 		------------------------
 		-- ATTACKS -------------

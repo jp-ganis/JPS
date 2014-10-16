@@ -78,7 +78,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Holy Prism",	jps.hp() < .6  and jps.UseCDs, "player" },
 
 		-- Heal / Damage
-		{ "Light's Hammer", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
+		{ "Light's Hammer", IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
 
 		-- Buff
 		{ "Righteous Fury",	not jps.buff("Righteous Fury") },
@@ -196,7 +196,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Holy Prism",	jps.hp() < .6  and jps.UseCDs, "player" },
 
 		-- Heal / Damage
-		{ "Light's Hammer",  IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
+		{ "Light's Hammer",  IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
 
 		-- Buff
 		{ "Righteous Fury",	not jps.buff("Righteous Fury") },
@@ -211,7 +211,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Execution Sentence", "onCD" },
 
 		-- Damage
-		{ "Avenger's Shield" , IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Avenger's Shield" , IsControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 
 		-- Damage
 		{ "Shield of the Righteous",	holyPower > 3 },
@@ -291,7 +291,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Holy Prism",	jps.hp() < .6  and jps.UseCDs, "player" },
 
 		-- Heal / Damage
-		{ "Light's Hammer",  IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
+		{ "Light's Hammer",  IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil  and jps.UseCDs },
 
 		-- Buff
 		{ "Righteous Fury",	not jps.buff("Righteous Fury") },

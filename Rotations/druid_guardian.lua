@@ -30,9 +30,9 @@ jps.registerRotation("DRUID","GUARDIAN",function()
 		{"mighty bash",					jps.Interrupts and jps.shouldKick() },
 
 		-- Healing / Support
-		{"heart of the wild",			IsControlKeyDown() ~= nil},
+		{"heart of the wild",			IsControlKeyDown() == true},
 		{"rejuvenation",					jps.buff("heart of the wild") and hp < 75 and not jps.buff("rejuvenation")},
-		{"rejuvenation", 				jps.buff("heart of the wild") and IsControlKeyDown() ~= nil and IsSpellInRange("rejuvenation", "mouseover"), "mouseover" },
+		{"rejuvenation", 				jps.buff("heart of the wild") and IsControlKeyDown() == true and IsSpellInRange("rejuvenation", "mouseover"), "mouseover" },
 
 		-- Defense
 		{"barkskin",						hp < 75 and jps.UseCDs},

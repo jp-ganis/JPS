@@ -60,7 +60,7 @@ function hunter.petShouldAttackMyTarget()
     local playerTargetID = UnitGUID("target")                 -- get unique ID on playertarget
     if playerTargetID ~= nil                                -- 1) check if player has target,
     and playerTargetID ~= petTargetID                        -- 2) check petarget is equal to playertarget,
-    and UnitCanAttack("player", "target") ~= nil then        -- 3) check that player can attack current target
+    and UnitCanAttack("player", "target") == true then        -- 3) check that player can attack current target
         return true
     end
     return false
@@ -81,9 +81,9 @@ function hunter.trapKey()
     local controlKEY_binary = 0
 
     -- Register key downs
-    if IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 end
-    if IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 end
-    if IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
+    if IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 end
+    if IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 end
+    if IsControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
 
     -- Binary calculation
     return shiftKEY_binary + altKEY_binary + controlKEY_binary

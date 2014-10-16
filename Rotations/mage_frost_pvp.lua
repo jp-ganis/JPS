@@ -149,8 +149,8 @@ jps.registerRotation("MAGE","FROST",function()
 		{ "counterspell", kick , rangedTarget },
 		{ "arcane brilliance", not jps.buff("arcane brilliance") }, 
 		{ "frost armor", not jps.buff("frost armor") }, 
-		{ "Freeze",	IsAltKeyDown() ~= nil },
-		{ "rune of power", not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, 
+		{ "Freeze",	IsAltKeyDown() == true },
+		{ "rune of power", not jps.buff("rune of power") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil }, 
 		{ "mirror image", jps.UseCds}, 
 	
 		{ {"macro","/use Mana Gem"}, mana < 0.70 and GetItemCount("Mana Gem", 0, 1) > 0 , player }, 
@@ -160,8 +160,8 @@ jps.registerRotation("MAGE","FROST",function()
 		-- Debuffs
 		{ "remove curse", decurse() , player },
 		
-		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil }, 
-		{ "rune of power", jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil}, 
+		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil }, 
+		{ "rune of power", jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil}, 
 		{ "mirror image", jps.UseCds}, 
 		{ "frozen orb", not jps.buff("fingers of frost")}, 
 		{ "icy veins", (jps.debuffStacks("frostbolt") >= 3 and (jps.buff("brain freeze") or jps.buff("fingers of frost"))) or jps.TimeToDie("target") <22 and not jps.Moving}, 

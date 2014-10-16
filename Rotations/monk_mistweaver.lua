@@ -43,7 +43,7 @@ jps.registerRotation("MONK","MISTWEAVER",function()
 	local dispelTarget = jps.FindMeDispelTarget({"Magic"}, {"Poison"}, {"Disease"})
 	
 	local spellTable = {
-		{ "Summon Jade Serpent Statue", IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Summon Jade Serpent Statue", IsControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 		
 		-- Fortifying Brew if you get low. 
 		{ "Fortifying Brew", jps.UseCDs and jps.hp() < .4 and not defensiveCDActive },
@@ -143,7 +143,7 @@ jps.registerRotation("MONK","MISTWEAVER",function()
 	local spell, target = parseSpellTable(spellTable)
 	
 	-- Debug
-	if IsAltKeyDown() ~= nil and spell then
+	if IsAltKeyDown() == true and spell then
 		print( string.format("Healing: %s, Health: %s, Spell: %s", healTarget, healTargetHP, spell) )
 	end
 	

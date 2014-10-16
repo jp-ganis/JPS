@@ -56,14 +56,14 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		-- Self heals
 		{ "Death Siphon", jps.hp() < .8 and jps.Defensive },
 		{ "Death Strike", jps.hp() < .7 and jps.Defensive },
-		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") ~= nil },
+		{ "Death Pact", jps.UseCDs and jps.hp() < .6 and UnitExists("pet") == true },
 		
 		-- Battle Rezz
     	{ "Raise Ally", UnitIsDeadOrGhost("focus") == 1 and jps.UseCds, "focus" },
     	{ "Raise Ally", UnitIsDeadOrGhost("target") == 1 and jps.UseCds, "target"},
 
 		-- AOE
-		{ "Death and Decay", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil},
+		{ "Death and Decay", IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil},
 		
 		-- spell steal
 		

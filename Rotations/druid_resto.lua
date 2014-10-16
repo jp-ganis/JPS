@@ -130,14 +130,14 @@ Makes you Top Healer...until you run out of mana. You have to use Tranquility ma
 
 jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
-    { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
+    { druid.spells.rebirth, 'IsControlKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
     -- Buffs
     { druid.spells.markOfTheWild, 'not jps.buff(druid.spells.markOfTheWild)', player },
     
     -- CDs
     { druid.spells.barkskin, 'jps.hp() < 0.50' },
-    { druid.spells.incarnation, 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' },
+    { druid.spells.incarnation, 'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil' },
     
     druid.dispel,
     { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeATank()) < 3 or jps.buffStacks(druid.spells.lifebloom,jps.findMeATank()) < 3', jps.findMeATank },
@@ -168,8 +168,8 @@ Modifiers:[br]
 
 jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
-    { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("target") ~= nil and IsSpellInRange("rebirth", "target")', "target" },
-    { druid.spells.rebirth, 'IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
+    { druid.spells.rebirth, 'IsControlKeyDown() == true and UnitIsDeadOrGhost("target") == true and IsSpellInRange("rebirth", "target")', "target" },
+    { druid.spells.rebirth, 'IsControlKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
     -- Buffs
     { druid.spells.markOfTheWild, 'not jps.buff(druid.spells.markOfTheWild)', player },

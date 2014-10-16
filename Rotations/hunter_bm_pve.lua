@@ -42,9 +42,9 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 	local controlKEY_binary = 0
 
 	-- Register key downs
-	if IsShiftKeyDown() ~= nil 		and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 	end
-	if IsAltKeyDown() ~= nil 		and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 	end
-	if IsControlKeyDown() ~= nil 	and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
+	if IsShiftKeyDown() == true 		and GetCurrentKeyBoardFocus() == nil then shiftKEY_binary = 1 	end
+	if IsAltKeyDown() == true 		and GetCurrentKeyBoardFocus() == nil then altKEY_binary = 2 	end
+	if IsControlKeyDown() == true 	and GetCurrentKeyBoardFocus() == nil then controlKEY_binary = 4 end
 
 	-- Binary calculation
 	trapKEY_combo = shiftKEY_binary + altKEY_binary + controlKEY_binary
@@ -78,7 +78,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 	local petTargetID = UnitGUID("pettarget") 		-- get unique ID on pettarget
 	local playerTargetID = UnitGUID("target") 		-- get unique ID on playertarget
 	local petShouldAttackMyTarget = false 			-- default to false
-	if playerTargetID ~= nil and playerTargetID ~= petTargetID and UnitCanAttack("player", "target") ~= nil then -- 1) check if player has target, 2) check petarget is equal to playertarget, 3) check that player can attack current target
+	if playerTargetID ~= nil and playerTargetID ~= petTargetID and UnitCanAttack("player", "target") == true then -- 1) check if player has target, 2) check petarget is equal to playertarget, 3) check that player can attack current target
 		petShouldAttackMyTarget = true				-- set variable to true = pet should attack playertarget
 	end
 
@@ -96,8 +96,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		-- Preparation (flasks)
 		{ jps.useBagItem("Alchemist's Flask") , not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") and jps.UseCDs},
 		-- Revive pet
-		{ "Heart of the Phoenix",			UnitIsDead("pet") ~= nil and HasPetUI() ~= nil }, -- Instant revive pet (only some pets, Ferocity)
-		{ "Revive Pet",						((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving },
+		{ "Heart of the Phoenix",			UnitIsDead("pet") == true and HasPetUI() == true}, -- Instant revive pet (only some pets, Ferocity)
 		-- Heal pet
 		{ "Mend Pet", 						jps.hp("pet") < 0.90 and not jps.buff("Mend Pet","pet") },
 		-- Set pet to passive (IMPORTANT!)
@@ -106,8 +105,8 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ {"macro","/petattack"}, 			petShouldAttackMyTarget },
 
 		-- Misdirect to pet if no "focus" -- for farming, best with Glyph of Misdirection
-		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
-		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },
+		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == false and not IsInGroup() and UnitExists("pet") == true, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
+		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == true, "focus" },
 		-- Healthstone
 		{ jps.useBagItem("Healthstone") , 	jps.hp("player") < 0.50 }, -- restores 20% of total health
 		--
@@ -183,8 +182,8 @@ Trap Keys:[br]
 
 jps.registerStaticTable("HUNTER", "BEASTMASTERY", {
     -- Revive pet
-    { hunter.spells.heartOfThePhoenix, 'UnitIsDead("pet") ~= nil and HasPetUI() ~= nil' }, -- Instant revive pet (only some pets, Ferocity)
-    { hunter.spells.revivePet, '((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving' },
+    { hunter.spells.heartOfThePhoenix, 'UnitIsDead("pet") == true and HasPetUI() == true' }, -- Instant revive pet (only some pets, Ferocity)
+
 
     -- Heal pet
     { hunter.spells.mendPet, 'jps.hp("pet") < 0.90 and not jps.buff(hunter.spells.mendPet, "pet")' },
@@ -197,8 +196,8 @@ jps.registerStaticTable("HUNTER", "BEASTMASTERY", {
     { hunter.spells.aspectOfTheHawk, 'not jps.buff(hunter.spells.aspectOfTheHawk) and not jps.buff(hunter.spells.aspectOfTheIronHawk)' },
 
     -- Misdirection
-    { hunter.spells.misdirection, 'not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil', 'pet' }, -- IsInGroup() returns true/false. Works for any party/raid
-    { hunter.spells.misdirection, 'not jps.buff(hunter.spells.misdirection) and UnitExists("focus") ~= nil', 'focus' },
+    { hunter.spells.misdirection, 'not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == false and not IsInGroup() and UnitExists("pet") == true', 'pet' }, -- IsInGroup() returns true/false. Works for any party/raid
+    { hunter.spells.misdirection, 'not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == true', 'focus' },
 
     -- Interrupt
     { hunter.spells.counterShot, 'jps.shouldKick() and jps.CastTimeLeft("target") < 1.4' },

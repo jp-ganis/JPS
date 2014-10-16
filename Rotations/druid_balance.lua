@@ -32,7 +32,7 @@ jps.registerRotation("DRUID","BALANCE", function()
 	local spellTable =
 	{
 		-- rebirth Ctrl-key + mouseover
-		{ "rebirth", IsControlKeyDown() ~= nil and UnitIsDeadOrGhost("mouseover") ~= nil and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
+		{ "rebirth", IsControlKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover"), "mouseover" },
 		-- Buffs
 		{ "mark of the wild", not jps.buff("mark of the wild") , "player" },
 		-- Rotation

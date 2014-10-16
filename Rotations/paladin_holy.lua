@@ -157,7 +157,7 @@ hpala.spellTable = {
 
 	-- Multi Heals
 
-	{ "Light's Hammer",'IsShiftKeyDown() ~= nil', hpala.ourHealTarget },
+	{ "Light's Hammer",'IsShiftKeyDown() == true', hpala.ourHealTarget },
 	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.holyPower() > 2', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 	{ "Light of Dawn",'jps.CountInRaidStatus(0.7) > 2 and jps.buff("Divine Purpose")', hpala.ourHealTarget }, -- since mop you don't have to face anymore a target! 30y radius
 	--{ "Holy Radiance",'jps.CountInRaidStatus(0.7) > 4', hpala.ourHealTarget },

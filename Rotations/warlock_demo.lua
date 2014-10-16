@@ -44,7 +44,7 @@ local demoSpellTable = {
 	wl.soulStone("target"),
 
 	-- Shadowfury
-	{wl.spells.shadowfury, 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' },
+	{wl.spells.shadowfury, 'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil' },
 
 
 	-- CD's
@@ -161,7 +161,7 @@ local demoTankTable = {
 	wl.soulStone("target"),
 
 	-- Shadowfury
-	{wl.spells.shadowfury, 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' },
+	{wl.spells.shadowfury, 'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil' },
 
 	-- COE Debuff
 	{wl.spells.curseOfTheElements, 'not jps.debuff("Aura of The Elements") and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },

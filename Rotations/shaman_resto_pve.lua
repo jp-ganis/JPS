@@ -50,9 +50,9 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 
 		-- Heals
 		-- Shift key
-		{ "Healing Rain",			IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{ "Healing Rain",			IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 		-- Left Control key
-		{ "chain heal",				IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and defaultHP < 0.7, defaultTarget },
+		{ "chain heal",				IsLeftControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil and defaultHP < 0.7, defaultTarget },
 
 		{ "riptide", 				defaultHP < 0.95 and not jps.buff("RipTide"), defaultTarget },
 		{ "healing wave", 	defaultHP < 0.4, defaultTarget },
@@ -139,13 +139,13 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{"spirit link totem", jps.UseCDs and (jps.CountInRaidStatus(0.4) >= 8 or (jps.CountInRaidStatus(0.4) >= 4 and GetNumGroupMembers < 10)), me },
 		{"unleashed fury", jps.UseCDs and jps.hpInc(tank) <= 0.50, me },
 		{"mana tide totem", jps.UseCDs and jps.mana() <= 0.40 },
-		{"spiritwalker's grace", IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{"spiritwalker's grace", IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 
 		--AoE rain
-		{"healing rain", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
+		{"healing rain", IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
 
 		--Dispells
-		{"purify spirit", IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and cleanseTarget~=nil, cleanseTarget },
+		{"purify spirit", IsLeftControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil and cleanseTarget~=nil, cleanseTarget },
 
 		--main rotation
 		{"riptide", defaultHP <= 0.90, defaultTarget },

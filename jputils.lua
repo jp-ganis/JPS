@@ -50,11 +50,11 @@ function jps.GetHarmfulSpell()
 		local harmful = IsHarmfulSpell(index, booktype)
 		
 		if minRange ~= nil and maxRange ~= nil and harmful ~= nil then
-			if (maxRange > 39) and (harmful == 1) and (minRange == 0) then
+			if (maxRange > 39) and (harmful == true) and (minRange == 0) then
 				table.insert(HarmSpell40,name)
-			elseif (maxRange > 29) and (harmful == 1) and (minRange == 0) then
+			elseif (maxRange > 29) and (harmful == true) and (minRange == 0) then
 				table.insert(HarmSpell30,name)
-			elseif (maxRange > 19) and (harmful == 1) and (minRange == 0) then
+			elseif (maxRange > 19) and (harmful == true) and (minRange == 0) then
 				table.insert(HarmSpell20,name)
 			end
 		end

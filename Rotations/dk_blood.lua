@@ -24,11 +24,11 @@ dkBloodSpellTable[1] = {
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and jps.UseCds', "target"},
 
 	-- Shift is pressed
-	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
-	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+	{"Death and Decay",'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil'},
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil '},
 
 	-- Cntrol is pressed
-	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+	{"Army of the Dead",'IsLeftControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil'},
 
 	-- Defensive cooldowns
 	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
@@ -79,7 +79,7 @@ dkBloodSpellTable[1] = {
 
 	-- Multi target
 	{"Blood Boil",'jps.MultiTarget and jps.IsSpellInRange("Blood Boil","target")'},
-	{"Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.buff("Crimson Scourge")'},
+	{"Death and Decay",'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.buff("Crimson Scourge")'},
 	{"Blood Boil",'jps.buff("Crimson Scourge") and jps.IsSpellInRange("Blood Boil","target")'},
 
 	-- Rotation
@@ -112,10 +112,10 @@ dkBloodSpellTable[4] = {
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and jps.UseCds', "focus" },
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and jps.UseCds', "target"},
 
-	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil '},
 
 	-- Cntrol is pressed
-	{"Army of the Dead",'IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
+	{"Army of the Dead",'IsLeftControlKeyDown() == true and GetCurrentKeyBoardFocus() == nil'},
 
 	-- Defensive cooldowns
 

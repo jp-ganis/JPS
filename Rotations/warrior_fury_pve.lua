@@ -43,7 +43,7 @@ jps.registerStaticTable("WARRIOR","FURY",
 		{warrior.spells["Bloodthirst"],'jps.MultiTarget', warrior.rangedTarget },
 		{warrior.spells["Raging Blow"],'jps.MultiTarget and jps.buff("131116") and jps.buffStacks ("131116") == 2 and jps.cooldown( 86346) >= 3 and jps.buffStacks(12950) == 3', warrior.rangedTarget },
 		{warrior.spells["Raging Blow"],'jps.MultiTarget and jps.buff("131116") and jps.buffStacks ("131116") == 1 and jps.cooldown( 86346) >= 3 and jps.buffStacks(12950) == 3', warrior.rangedTarget },
-		{warrior.spells["Bladestorm"],'jps.MultiTarget and IsShiftKeyDown() ~= nil'},
+		{warrior.spells["Bladestorm"],'jps.MultiTarget and IsShiftKeyDown() == true'},
 		
 		-- Colossus Smash Rotation
 		

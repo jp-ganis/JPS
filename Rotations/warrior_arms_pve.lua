@@ -23,13 +23,13 @@ jps.registerStaticTable("WARRIOR","ARMS",
 	-- Racial
 	{ jps.DPSRacial, 'jps.UseCDs '},
 
-	{ "Heroic Throw", 'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil', "target" },
+	{ "Heroic Throw", 'IsLeftAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil', "target" },
 	-- Multi target
 	{ "Thunder Clap", 'jps.MultiTarget and jps.myDebuff("Deep Wounds")'},
 	{ "Sweeping Strikes", ' jps.MultiTarget and jps.rage() >= 30'},
-	{ "Whirlwind", 'jps.MultiTarget and IsShiftKeyDown() ~= nil and jps.rage() >= 30'},
-	{ "Dragon Roar", 'jps.MultiTarget and IsShiftKeyDown() ~= nil'},
-	{ "Bladestorm", ' jps.MultiTarget and IsShiftKeyDown() ~= nil'},
+	{ "Whirlwind", 'jps.MultiTarget and IsShiftKeyDown() == true and jps.rage() >= 30'},
+	{ "Dragon Roar", 'jps.MultiTarget and IsShiftKeyDown() == true'},
+	{ "Bladestorm", ' jps.MultiTarget and IsShiftKeyDown() == true'},
 
 	-- Cooldowns
 	{ "Bloodbath", 'jps.UseCDs '},

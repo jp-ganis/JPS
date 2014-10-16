@@ -58,9 +58,9 @@ jpsIcon:SetScript("OnClick", function(self, button)
 	if button == "LeftButton" then
 		jps.gui_toggleEnabled()
 	elseif button == "RightButton" then
-		if IsControlKeyDown() then
+		if IsControlKeyDown() == true then
 			InterfaceOptionsFrame_OpenToCategory(jpsConfigFrame)
-		elseif IsShiftKeyDown() then
+		elseif IsShiftKeyDown() == true then
 			jps.gui_setToggleDir()
 		else
 			jps.gui_toggleToggles()

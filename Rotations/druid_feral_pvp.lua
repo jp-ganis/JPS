@@ -265,7 +265,7 @@ local spellTable =
 
 	-- Multitarget 
 	{ "nested",				 		(enemycount > 2) and targethealth_pct >= 0.25 and IsSpellInRange("skull bash",rangedTarget) == 0 , parse_multitarget() },
-	{ "nested",					  	IsShiftKeyDown ~= nil , parse_multitarget() },
+	{ "nested",					  	IsShiftKeyDown() == true , parse_multitarget() },
 	
 	-- Single Target 
 	{ "maim",							executephase , rangedTarget },

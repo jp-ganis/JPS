@@ -48,8 +48,8 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
 	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
-	{ "Freeze",	'IsAltKeyDown() ~= nil' },
-	{ "rune of power", 'not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
+	{ "Freeze",	'IsAltKeyDown() == true' },
+	{ "rune of power", 'not jps.buff("rune of power") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image", 'jps.UseCDs'}, 
 
 	-- Remove Snares, Roots, Loss of Control, etc.
@@ -73,12 +73,12 @@ jps.registerStaticTable("MAGE","FROST",{
 	}},
 	
 	-- Rotation AoE
-	{ "freeze", 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget' }, 
+	{ "freeze", 'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget' }, 
 	{ "frozen orb", 'jps.MultiTarget' }, 
 	
 	-- Rotation Single
-	{ "rune of power", 'jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' }, 
-	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
+	{ "rune of power", 'jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil' }, 
+	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image",'jps.UseCDs'}, 
 	{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
 	{ "icy veins", 'jps.buff("brain freeze")'}, 

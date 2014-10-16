@@ -122,8 +122,8 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 	
 	-- Pet Attacks
 		-- Finishers
-		{ "stampede", IsShiftKeyDown() ~= nil , rangedTarget },
-		{ "beast cleave", IsShiftKeyDown() ~= nil , rangedTarget },
+		{ "stampede", IsShiftKeyDown() == true , rangedTarget },
+		{ "beast cleave", IsShiftKeyDown() == true , rangedTarget },
 	
 	-- Base Attacks
 		{ "dire beast", true , rangedTarget},

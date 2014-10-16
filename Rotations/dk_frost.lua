@@ -40,15 +40,15 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
 
 	--AOE
-	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
-	{"Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+	{ "Death and Decay",'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil'},
+	{"Anti-Magic Zone",'IsLeftAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil '},
 
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
 	{ "Raise Ally",'UnitIsDeadOrGhost("target") == 1 and UnitPlayerControlled("target") and jps.UseCds', "target"},
 
 	-- Self heal
-	{ "Death Pact",'jps.Defensive and jps.hp() < 0.4 and UnitExists("pet") ~= nil'},
+	{ "Death Pact",'jps.Defensive and jps.hp() < 0.4 and UnitExists("pet") == true'},
 	{ "Death Siphon",'jps.Defensive and jps.hp() < 0.8'},
 	{ "Death Strike",'jps.Defensive and jps.hp() < 0.7'},
 
@@ -166,8 +166,8 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{"Horn of Winter",'not jps.buff("Horn of Winter", "player")'},
 
 	--AOE
-	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'},
-	{ "Anti-Magic Zone",'IsLeftAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil '},
+	{ "Death and Decay",'IsShiftKeyDown()  == true and GetCurrentKeyBoardFocus() == nil'},
+	{ "Anti-Magic Zone",'IsLeftAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil '},
 
 	-- Battle Rezz
 	{ "Raise Ally",'UnitIsDeadOrGhost("focus") == 1 and UnitPlayerControlled("focus") and jps.UseCds', "focus" },
@@ -262,10 +262,10 @@ Modifiers:[br]
 ]]--
 jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Horn of Winter",'not jps.buff("Horn of Winter")'},
-	{ "Death and Decay",'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget'},
+	{ "Death and Decay",'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget'},
 
 	-- Self heal
-	{ "Death Pact",'jps.UseCDs and jps.hp() < 0.6 and UnitExists("pet") ~= nil'},
+	{ "Death Pact",'jps.UseCDs and jps.hp() < 0.6 and UnitExists("pet") == true'},
 
 	-- Rune Management
 	{ "Plague Leech",'dk.canCastPlagueLeech(3)'},
