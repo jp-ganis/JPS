@@ -30,6 +30,18 @@ function wl.shouldMouseoverDoom()
 	return true
 end
 
+
+--[[
+
+
+meta:
+
+shadow bolt = touch of chaos
+hand of guldan = chaos wave
+corruption = doom
+hellfire = immolation aura
+
+]]--
 local demoSpellTable = {
 	-- Interrupts
 	wl.getInterruptSpell("target"),

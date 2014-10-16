@@ -247,9 +247,6 @@ local spellTable =
 	-- Buffs
 	{ "mark of the wild",		 	not jps.buff("mark of the wild") , player },
 	
-	-- Engineers may have synapse springs on their gloves (slot 10). 
-	{ jps.useSynapseSprings(),  jps.useSynapseSprings() ~= "" and jps.UseCDs },
-	
 	-- DPS Racial
 	{ jps.DPSRacial,  jps.UseCDs },
 	

@@ -909,8 +909,6 @@ jps.registerRotation("PRIEST","DISCIPLINE",function()
 				{priestLight.innerFocus, jps.UseCDs and priestLight.disc.lowestUnitHP < 0.7},
 				{priestLight.archangel, jps.buffStacks(priestLight.evangelism) == 5 and jps.UseCDs},
 				{ jps.getDPSRacial(),jps.UseCDs},
-				-- Requires engineerins
-				{ jps.useSynapseSprings(),jps.useSynapseSprings() ~= "" and jps.UseCDs},
 				-- Requires herbalism
 				{ "Lifeblood", jps.UseCDs},
 			}

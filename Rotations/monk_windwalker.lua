@@ -53,9 +53,6 @@ jps.registerRotation("MONK","WINDWALKER",function()
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
 		
-		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
-		
 		 -- Lifeblood CD. (herbalists) 
 		{ "Lifeblood", jps.UseCDs },
 		

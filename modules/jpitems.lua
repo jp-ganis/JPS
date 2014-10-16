@@ -190,10 +190,3 @@ function jps.useTrinket(trinketNum)
 
 	return jps.useSlot(slotId)
 end
-
--- Engineers will use synapse springs buff on their gloves
-function jps.useSynapseSprings()
-	-- Get the slot number
-	local slotNum = GetInventorySlotInfo("HandsSlot")
-	return jps.useSlot(slotNum)
-end

@@ -236,7 +236,6 @@ local cdSpellTable = {
 		{{"macro","/cast " .. wl.spells.darkSoulInstability}, 'jps.cooldown(wl.spells.darkSoulInstability) == 0' },
 		{jps.DPSRacial },
 		{wl.spells.lifeblood },
-		{jps.useSynapseSprings(),'jps.useSynapseSprings() ~= ""' },
 		{jps.useTrinket(0) },
 		{jps.useTrinket(1) },
 }

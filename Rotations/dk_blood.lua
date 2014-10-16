@@ -58,8 +58,6 @@ dkBloodSpellTable[1] = {
 	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{
 		{"Dancing Rune Weapon",'jps.UseCDs'},
 	
-		-- Requires engineering
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 		-- Requires herbalism
 		{"Lifeblood",'jps.UseCDs'},
 	
@@ -140,8 +138,6 @@ dkBloodSpellTable[4] = {
 	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	
 	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{	
-		-- Requires engineering
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 	
 		-- Requires herbalism
 		{"Lifeblood",'jps.UseCDs'},

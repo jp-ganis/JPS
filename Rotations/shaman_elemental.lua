@@ -56,7 +56,6 @@ spellTable = {
 	{ jps.getDPSRacial(),'jps.UseCDs '},
 	{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs '},
 	{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs '},
-	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= "" and jps.UseCDs '},
 	-- Requires herbalism
 	{"Lifeblood",'jps.UseCDs '},
 	-- Prio-List

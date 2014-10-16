@@ -39,8 +39,7 @@ jps.registerRotation("MAGE","ARCANE",function()
 		-- On-use Trinkets.
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
+
 		-- Requires herbalism
 		{ "Lifeblood",						jps.UseCDs},
 
@@ -88,10 +87,6 @@ jps.registerRotation("MAGE","ARCANE",function()
 		{ {"macro",				"/use Mana Gem"}, mana < 0.8 and GetItemCount("Mana Gem",0, 1) > 0 and not alterTimeActive, player }, 
 		
 		{ "arcane power",				(jps.buffDuration("rune of power") >=jps.buffDuration("arcane power") and mStacks ==2 and stacks >2) or jps.TimeToDie("target") <jps.buffDuration("arcane power")+5 and not jps.Moving },
-		
-		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
-		-- Requires herbalism
 		
 		{ "arcane missiles",				mStacks == 2 },
 		{ "Nether Tempest" , not jps.debuff("Nether Tempest")},

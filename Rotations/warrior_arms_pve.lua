@@ -15,8 +15,6 @@ jps.registerStaticTable("WARRIOR","ARMS",
 	-- Trinkets
 	{ jps.useTrinket(0), 'jps.UseCDs' },
 	{ jps.useTrinket(1), 'jps.UseCDs '},
-	-- Engi
-	{ jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and jps.UseCDs '},
 
 	-- Herb
 	{ "Lifeblood", 'jps.UseCDs '},

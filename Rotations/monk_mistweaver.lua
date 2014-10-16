@@ -72,9 +72,6 @@ jps.registerRotation("MONK","MISTWEAVER",function()
 		-- Water Spirit if you get low on mana. 
 		{ "Water Spirit", jps.UseCDs and jps.mana() < .6 and GetItemCount("Water Spirit", 0, 1) > 0 },
 		
-		-- Engineers may have synapse springs on their gloves (slot 10). 
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs and healTargetHP < .7 },
-		
 		-- On-Use Trinkets. 
 		{ jps.useTrinket(0), jps.UseCDs and healTargetHP < .7 },
 		

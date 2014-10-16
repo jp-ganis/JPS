@@ -75,7 +75,6 @@ jps.registerRotation("MONK","BREWMASTER",function()
 
 
 		-- PROFESSIONS AND RACIALS
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and chi > 3 and energy >= 50 },
 		-- Herbalists have Lifeblood.
 		{ "Lifeblood", jps.UseCDs },
 		-- DPS Racial on cooldown.
@@ -187,9 +186,6 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		
 		-- On-Use Trinket 2. 
 		{ jps.useTrinket(1), jps.UseCDs },
-		
-		-- Engineers may have synapse springs on their gloves (slot 10). 
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and chi > 3 and energy >= 50 },
 		
 		-- Herbalists have Lifeblood. 
 		{ "Lifeblood", jps.UseCDs },

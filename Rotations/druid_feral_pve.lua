@@ -89,9 +89,6 @@ jps.registerRotation("DRUID","FERAL", function()
 	-- Incarnation if Berserk buff in on. (talent specific) 
 		{ "Incarnation",  jps.UseCDs and berserk },
 		
-	-- Engineers may have synapse springs on their gloves (slot 10). 
-		{ jps.useSynapseSprings(),  jps.useSynapseSprings() ~= "" and jps.UseCDs and tigersFury },
-		
 	-- On-Use Trinkets if Berserk buff in on. 
 		{ jps.useTrinket(0),  jps.UseCDs },
 		{ jps.useTrinket(1),  jps.UseCDs },

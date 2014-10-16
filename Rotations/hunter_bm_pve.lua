@@ -114,8 +114,6 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		-- On-use Trinkets.
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
-		-- Requires engineerins
-		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and jps.UseCDs },
 		-- Requires herbalism
 		{ "Lifeblood",			jps.UseCDs },
 		-- Use pot
@@ -208,7 +206,6 @@ jps.registerStaticTable("HUNTER", "BEASTMASTERY", {
     -- Trinkets and stuff
     { jps.useTrinket(0), 'jps.UseCDs' },
     { jps.useTrinket(1), 'jps.UseCDs' },
-    { jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
     { jps.DPSRacial, 'jps.UseCDs' },
     { hunter.spells.lifeblood, 'jps.UseCDs' },
 

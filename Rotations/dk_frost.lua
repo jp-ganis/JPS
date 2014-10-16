@@ -76,8 +76,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 		-- On-use Trinkets.
 		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
 		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
-		-- Requires engineerins
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 		-- Requires herbalism
 		{ "Lifeblood",'jps.UseCDs'},
 	
@@ -202,8 +200,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 		-- On-use Trinkets.
 		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
 		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
-		-- Requires engineerins
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 		-- Requires herbalism
 		{ "Lifeblood",'jps.UseCDs'},
 	
@@ -278,8 +274,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 		{ jps.getDPSRacial(),'jps.UseCDs'},
 	
 		{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
-		-- Requires engineerins
-		{ jps.useSynapseSprings(),'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 		-- Requires herbalism
 		{ "Lifeblood",'jps.UseCDs'},
 	
@@ -304,10 +298,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 		-- Unholy Blight when our diseases are about to fall off. (talent based)
  	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
  	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},
-
-
-	-- Requires engineerins
-	{ jps.useSynapseSprings() ,'jps.useSynapseSprings() ~= "" and jps.UseCDs'},
 
 	-- Requires herbalism
 	{ "Lifeblood",'jps.UseCDs'},
