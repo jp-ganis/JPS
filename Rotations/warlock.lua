@@ -35,7 +35,10 @@ wl.spells["singeMagic"] = toSpellName(132411)
 wl.spells["sacrificialPact"] = toSpellName(108416)
 wl.spells["burningRush"] = toSpellName(111400)
 wl.spells["soulStone"] = toSpellName(20707)
-wl.spells["shadowfory"] = toSpellName(30283)
+wl.spells["shadowfury"] = toSpellName(30283)
+wl.spells["cataclysm"] = toSpellName(152108)
+
+
 --Affliction
 wl.spells["corruption"] = toSpellName(172)
 wl.spells["darkSoulMisery"] = toSpellName(113860)

@@ -301,7 +301,7 @@ end
 
 -- set's jps.NextSpell if user manually uses a spell/item
 hooksecurefunc("UseAction", function(...)
-	if jps.Enabled and (select(3, ...) ~= nil) and InCombatLockdown() == 1 then
+	if jps.Enabled and (select(1, ...) ~= false) and InCombatLockdown() == true then
 		local stype,id,_ = GetActionInfo(select(1, ...))
 		if stype == "spell" then
 			local name = select(1,GetSpellInfo(id))
@@ -422,16 +422,14 @@ function jps.runFunctionQueue(queueName)
 end
 
 -- TODO wod guid 
-function UnitGUIDnorm(unit, convert)
-	local guid = 0;
-	if convert == nil then
-		guid = UnitGUID(unit)
-	else
-		guid = unit
-	end
+function UnitGUIDnorm(guid)
 	if guid then
-		guid = string.gsub(guid, ":","")
+		guid = string.gsub(guid, "Creature","")
+		guid = string.gsub(guid, "Player","")
+		guid = string.gsub(guid, "Vignette","")
+		guid = string.gsub(guid, "GameObject","")
+		guid = string.gsub(guid, "-","")
 		guid = string.gsub(guid, "%.","")
 	end
-	return guid
+	return guid or 0
 end
