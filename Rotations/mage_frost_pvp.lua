@@ -169,7 +169,6 @@ jps.registerRotation("MAGE","FROST",function()
 		{ "jade serpent potion", jps.buff("icy veins") or jps.TimeToDie("target") <45}, 
 		{ "presence of mind", jps.buff("icy veins") or jps.cooldown("icy veins") >15 or jps.TimeToDie("target") <15}, 
 		{ "alter time", not jps.buff("alter time") and jps.buff("icy veins") }, 
-		{ "flamestrike", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget }, 
 		{ "frostfire bolt", jps.buff("alter time") and jps.buff("brain freeze") }, 
 		{ "ice lance", jps.buff("alter time") and jps.buff("fingers of frost") }, 
 		{ "frost bomb", jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving},

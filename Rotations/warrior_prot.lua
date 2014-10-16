@@ -26,11 +26,9 @@ jps.registerRotation("WARRIOR","PROTECTION",function()
 		-- multitarget
 		{ "Thunder Clap" ,		jps.MultiTarget , "target" },
 		{ "Recklessness" ,		jps.UseCDs , "player" },
-		{ "Cleave" ,				jps.rage() > 70 and jps.MultiTarget , "target" },
 		{ "Heroic Strike" ,		jps.rage() > 70  and jps.buff("player", "Ultimatum") and jps.MultiTarget , "target" },
 
 		-- singletarget
-		{ "Devastate" ,			not jps.debuff("Sunder Armor","target") , "target" },
 		{ "Shield Slam" ,		},
 		{ "Revenge" ,				},
 		{ "Heroic Strike" ,		jps.buff("player", "Ultimatum") and not jps.MultiTarget , "target" },

@@ -45,8 +45,8 @@ function jps.GetHarmfulSpell()
 		-- local spellname,rank,icon,cost,isFunnel,powerType,castTime,minRange,maxRange = GetSpellInfo(spellID)
 		local name = select(1,GetSpellBookItemName(index, booktype))
 		local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-		local maxRange = select(9,GetSpellInfo(spellID))
-		local minRange = select(8,GetSpellInfo(spellID))
+		local maxRange = select(6,GetSpellInfo(spellID))
+		local minRange = select(5,GetSpellInfo(spellID))
 		local harmful = IsHarmfulSpell(index, booktype)
 		
 		if minRange ~= nil and maxRange ~= nil and harmful ~= nil then
@@ -235,7 +235,6 @@ jps_SpellControl = {
 	[110698] = "CC",		-- Hammer of Justice (Paladin)
 	[113004] = "CC",		-- Intimidating Roar [Fleeing in fear] (Warrior)
 	[113056] = "CC",		-- Intimidating Roar [Cowering in fear] (Warrior)
-	[126458] = "Disarm",		-- Grapple Weapon (Monk)
 	[110693] = "Root",		-- Frost Nova (Mage)
 	--[110610] = "Snare",		-- Ice Trap (Hunter)
 	[110617] = "Immune",		-- Deterrence (Hunter)
@@ -459,141 +458,3 @@ jps_SpellControl = {
 	--[123456] = "PvE",		-- This is just an example, not a real spell
 }
 
---------------------------------------------------------------------
--- FUNCTION RETURNS SPEC OF UNITFRAME WHEN MOUSEOVER THE FRAME
---------------------------------------------------------------------
---local _G = getfenv(0)
-local _G = _G 
-
-local function InspectTalents(inspect)
-	local numLines, linesNeeded = GameTooltip:NumLines()
-	local unit = select(2, GameTooltip:GetUnit())
-	if not unit then return end
-	local guild, guildRankName, guildRankIndex = GetGuildInfo(unit)
-	local isInRange = CheckInteractDistance(unit, 1)
-	local UnitIsPlayerControlled = UnitPlayerControlled(unit)
-
-	if UnitIsPlayerControlled == false then return end
-
-	for i=1, GetNumSpecGroups(unit) do -- check for Dualspec
-		local group = GetActiveSpecGroup(unit) --check which Spec is active
-		if group == 1 then
-			activegroup = "|cffddff55<|r"
-		elseif group == 2 then
-			activegroup = "|cFFdddd55<<|r"
-		end
-	end
-
-	local specID = GetInspectSpecialization(unit)
-	local id, name, description, icon, background, role, class = GetSpecializationInfoByID(specID)
-
-	local customRole
-	if role == "HEALER" then
-		customRole = "Heal"
-	elseif role == "DAMAGER" then
-		customRole = "Damage"
-	elseif role == "TANK" then
-		customRole = "Tank"
-	end
-
-	if not icon then return end
-	local linetext = ((string.format("|T%s:%d:%d:0:-1|t", icon, 16, 16)).." "..name.." ("..customRole..")")
-
-	if isInRange then
-		if guild then
-			_G["GameTooltipTextLeft4"]:SetText(linetext)
-			_G["GameTooltipTextLeft4"]:Show()
-		elseif not guild then
-			_G["GameTooltipTextLeft3"]:SetText(linetext)
-			_G["GameTooltipTextLeft3"]:Show()
-		else
-			GameTooltip:AddLine(linetext)
-		end
-	end
-	GameTooltip:AppendText("")
-end
-
-local f = CreateFrame("Frame")
-f:SetScript("OnEvent",function(self, event, guid)
-	self:UnregisterEvent("INSPECT_READY")
-	InspectTalents(1)
-end)
-
-GameTooltip:HookScript("OnTooltipSetUnit", function(self)
-	local unit = select(2, GameTooltip:GetUnit())
-	if not unit then return end
-
-	if UnitIsPlayer(unit) and (UnitLevel(unit) > 9 or UnitLevel(unit) == -1) then
-		if not InspectFrame or not InspectFrame:IsShown() then
-			if CheckInteractDistance(unit,1) and CanInspect(unit) then
-
-				f:RegisterEvent("INSPECT_READY")
-				NotifyInspect(unit)
-			end
-		end
-	end
-end)
-
---------------------------------------------------------------------
--- FUNCTION RETURNS SPELL ID -- on mouseover item/spell/glyph/aura/buff/Debuff
---------------------------------------------------------------------
-
-local select, UnitBuff, UnitDebuff, UnitAura, tonumber, strfind, hooksecurefunc =
-	select, UnitBuff, UnitDebuff, UnitAura, tonumber, strfind, hooksecurefunc
-local GetGlyphSocketInfo = GetGlyphSocketInfo
-
-local function addLine(self,id,isItem)
-	if isItem then
-		self:AddDoubleLine("ItemID:","|cffffffff"..id)
-	else
-		self:AddDoubleLine("SpellID:","|cffffffff"..id)
-	end
-	self:Show()
-end
-
-hooksecurefunc(GameTooltip, "SetUnitBuff", function(self,...)
-	local id = select(11,UnitBuff(...))
-	if id then addLine(self,id) end
-end)
-
-hooksecurefunc(GameTooltip, "SetUnitDebuff", function(self,...)
-	local id = select(11,UnitDebuff(...))
-	if id then addLine(self,id) end
-end)
-
-hooksecurefunc(GameTooltip, "SetUnitAura", function(self,...)
-	local id = select(11,UnitAura(...))
-	if id then addLine(self,id) end
-end)
-
--- local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(i) 
-hooksecurefunc(GameTooltip, "SetGlyph", function(self,...)
-	local id = select(4,GetGlyphSocketInfo(...))
-	if id then addLine(self,id) end
-end)
-
-GameTooltip:HookScript("OnTooltipSetSpell", function(self)
-	local id = select(3,self:GetSpell())
-	if id then addLine(self,id) end
-end)
-
-hooksecurefunc("SetItemRef", function(link, ...)
-	local id = tonumber(link:match("spell:(%d+)"))
-	if id then addLine(ItemRefTooltip,id) end
-end)
-
-local function attachItemTooltip(self)
-	local link = select(2,self:GetItem())
-	if not link then return end
-	local id = select(3,strfind(link, "^|%x+|Hitem:(%-?%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%-?%d+):(%-?%d+)"))
-	if id then addLine(self,id,true) end
-end
-
-GameTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
-ItemRefTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
-ItemRefShoppingTooltip1:HookScript("OnTooltipSetItem", attachItemTooltip)
-ItemRefShoppingTooltip2:HookScript("OnTooltipSetItem", attachItemTooltip)
-ItemRefShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)
-ShoppingTooltip1:HookScript("OnTooltipSetItem", attachItemTooltip)
-ShoppingTooltip2:HookScript("OnTooltipSetItem", attachItemTooltip)
-ShoppingTooltip3:HookScript("OnTooltipSetItem", attachItemTooltip)

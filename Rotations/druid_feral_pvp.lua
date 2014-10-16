@@ -78,16 +78,7 @@ jps.registerRotation("DRUID","FERAL", function()
 -- LOCAL FUNCTIONS -----
 ------------------------
 
--- Hibernate Conditions
-	local function shouldSleep()
-		if UnitCreatureType(rangedTarget) == "beast" then return true end
-		if jps.buff("bear form",rangedTarget) then return true end
-		if jps.buff("cat form",rangedTarget) then return true end
-		if jps.buff("aquatic form",rangedTarget) then return true end
-		if jps.buff("travel form",rangedTarget) then return true end
-		if jps.buff("ghost wolf",rangedTarget) then return true end
-	return false
-	end
+
 
 -- Soothe Conditions
 	local function shouldSoothe()
@@ -234,14 +225,12 @@ local spellTable =
 	{ "pounce",					  	jps.shouldKick() , rangedTarget },
 	{ "force of nature",		  	jps.shouldKick() , rangedTarget },
 	{ "bash",					 	jps.shouldKick() , rangedTarget }, -- Only available after Force of Nature
-	{ "hibernate",				 	jps.shouldKick() and shouldSleep() , rangedTarget },
 	
 	-- Racials
 	{ "war stomp",			 		jps.shouldKick() and playerRace == "tauren" , rangedTarget },
 	
 	-- Survival, Heals, etc.
 	{ "barkskin",			 		playerhealth_pct < 0.30 , player },
-	{ "might of ursoc",			 playerhealth_pct < 0.30 , player },
 	{ "bear form",				  	playerhealth_pct < 0.20 and isMelee() and playerhealth_pct < targethealth_pct , player },
 	{ "survival instincts",	  	playerhealth_pct < 0.20 , player },
 	{ "frenzied regeneration",  	playerhealth_pct < 0.20 , player },
@@ -283,9 +272,8 @@ local spellTable =
 	{ "ferocious bite",			 shouldBite() , rangedTarget },
 	
 	-- Base Attacks
-	{ "lacerate",			 		targetClass == "rogue" and not jps.debuff("lacerate") , rangedTarget },
 	{ "ravage",					  	jps.buff("incarnation: king of the jungle") , rangedTarget },		
-	{ "shred",				 		jps.isBehind and shouldShred() and not jps.buff("incarnation: king of the jungle") , rangedTarget },
+	{ "shred",				 		shouldShred() and not jps.buff("incarnation: king of the jungle") , rangedTarget },
 	{ "mangle",						jps.isNotBehind and shouldMangle() and not jps.buff("incarnation: king of the jungle") , rangedTarget },
 	{ "rake",				 		shouldRake() , rangedTarget },
 	{ "rip",							shouldRip() , rangedTarget },

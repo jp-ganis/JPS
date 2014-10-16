@@ -8,7 +8,10 @@ priest.Spell["PrayerofHealing"] = tostring(select(1,GetSpellInfo(596))) -- "Pri�
 priest.Spell["NaaruGift"] = tostring(select(1,GetSpellInfo(59544))) -- NaaruGift 59544
 priest.Spell["Desesperate"] = tostring(select(1,GetSpellInfo(19236))) -- "Prière du désespoir" 19236
 priest.Spell["BindingHeal"] = tostring(select(1,GetSpellInfo(32546))) -- "Soins de lien" 32546
-priest.Spell["Grace"] = tostring(select(1,GetSpellInfo(77613))) -- Grâce 77613 -- jps.buffStacks(Grace,jps_TANK)
+
+--to do grace is removed
+--priest.Spell["Grace"] = tostring(select(1,GetSpellInfo(77613))) -- Grâce 77613 -- jps.buffStacks(Grace,jps_TANK)
+priest.Spell["Grace"] = nil
 priest.Spell["DivineAegis"] =  tostring(select(1,GetSpellInfo(47753))) -- Egide Divine 47515 - 47753
 
 

@@ -29,24 +29,6 @@ function ma_fr.rangedTarget()
 	end
 end
 
-function ma_fr.hasRune()
-	local hasOne,_ = GetTotemInfo(1)
-	local hasSecond,_ = GetTotemInfo(2)
-	if hasOne ~= false then 
-		return true
-	end
-	if hasSecond ~= false then 
-		return true
-	end
-	return false
-end
-
-
-function ma_fr.hasPet() 
-	if UnitExists("pet") == nil then return false end
-	return true
-end
-
 function ma_fr.kick(unit)
 	return jps.shouldKick(unit) or jps.IsCastingPoly(unit)
 end
@@ -63,15 +45,12 @@ Based on Noxxic 5.3
 jps.registerStaticTable("MAGE","FROST",{
 	-- Noxxic
 	-- pre fight
-	{ "Summon Water Elemental", 'ma_fr.hasPet() == false and not jps.Moving'},
 	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
 	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
-	{ "frost armor", 'not jps.buff("frost armor")' }, 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
 	{ "Freeze",	'IsAltKeyDown() ~= nil' },
-	{ "rune of power", 'IsLeftShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune of Power")'}, 
+	{ "rune of power", 'not jps.buff("rune of power") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image", 'jps.UseCDs'}, 
-	
 
 	-- Remove Snares, Roots, Loss of Control, etc.
 	{ "every man for himself", 'jps.LoseControl(player,"CC")' },
@@ -79,18 +58,15 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "counterspell", 'ma_fr.kick(ma_fr.rangedTarget())' , ma_fr.rangedTarget },
 	
 	{ {"macro","/use Mana Gem"}, 'jps.mana() < 0.70 and GetItemCount("Manaa Gem", 0, 1) > 0' }, 
-	{ {"macro","/cast icy veins\n/cast evocation"}, 'jps.hp() <= 0.4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0 and not jps.Moving'  },
     { jps.useBagItem(5512), 'jps.hp("player") < 0.7' }, -- Healthstone
 	
 	-- Rotation ALL
 	{ "nether tempest", 'jps.myDebuffDuration("nether tempest", "target") < 1' }, 
-	{ "nether tempest", 'jps.myDebuffDuration("nether tempest","mouseover") < 2 and jps.canDPS("mouseover")',"mouseover"},
-	{ "living bomb", 'not jps.myDebuff("living bomb","target")'},
-	{ "living bomb", 'not jps.myDebuff("living bomb","mouseover") and jps.canDPS("mouseover")',"mouseover"},
-	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving'},
-	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
-
-	{ "nested", 'jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving and jps.LastCast ~= "Evocation" and jps.IsSpellKnown("Invocation")',{
+	{ "living bomb", 'jps.myDebuffDuration("living bomb","target") < 2 and not jps.Moving'},
+	{ "living bomb", 'jps.myDebuffDuration("living bomb","mouseover") < 2 and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+	{ "frost bomb", 'jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving'},
+	
+	{ "nested", "jps.buffDuration(ma_fr.invokersEnergy) < 6 and not jps.Moving",{
 		{ "Evocation", 'jps.myDebuffDuration("frost bomb","target") > 5'},
 		{ "Evocation", 'jps.myDebuffDuration("living bomb","target") > 5'},
 		{ "Evocation", 'jps.myDebuffDuration("nether tempest","target") > 5'},
@@ -98,11 +74,11 @@ jps.registerStaticTable("MAGE","FROST",{
 	
 	-- Rotation AoE
 	{ "freeze", 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget' }, 
-	{ "flamestrike", 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget' }, 
 	{ "frozen orb", 'jps.MultiTarget' }, 
-	{ "arcane explosion", 'jps.MultiTarget' }, 
 	
 	-- Rotation Single
+	{ "rune of power", 'jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' }, 
+	{ "rune of power", 'jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil'}, 
 	{ "mirror image",'jps.UseCDs'}, 
 	{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
 	{ "icy veins", 'jps.buff("brain freeze")'}, 

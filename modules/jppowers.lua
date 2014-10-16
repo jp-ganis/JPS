@@ -28,6 +28,7 @@ local L = MyLocalizationTable
 
 function jps.hp(unit,message)
 	if unit == nil then unit = "player" end
+	if not UnitExists(unit) then return 1 end
 	if message == "abs" then
 		return UnitHealthMax(unit) - UnitHealth(unit)
 	else
@@ -35,8 +36,17 @@ function jps.hp(unit,message)
 	end
 end
 
+
+function jps.hpTotal(unit)
+	if unit == nil then unit = "player" end
+	if not UnitExists(unit) then return 1 end
+	return UnitHealth(unit)+60000
+end
+
+
 function jps.hpInc(unit,message)
 	if unit == nil then unit = "player" end
+	if not UnitExists(unit) then return 1 end
 	local hpInc = UnitGetIncomingHeals(unit)
 	if not hpInc then hpInc = 0 end
 	if message == "abs" then
@@ -48,6 +58,7 @@ end
 
 function jps.hpAbs(unit,message)
 	if unit == nil then unit = "player" end
+	if not UnitExists(unit) then return 1 end
 	local hpInc = UnitGetIncomingHeals(unit)
 	if not hpInc then hpInc = 0 end
 	local hpAbs = UnitGetTotalAbsorbs(unit)

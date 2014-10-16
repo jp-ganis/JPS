@@ -9,7 +9,6 @@ Features:[br]
 [*] auto misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid[br]
 [*] Auto use "Healthstone" at 50% hp
 [*] mend pet when hp is less than 90%[br]
-[*] interrupt spellcasting with Silencing Shot[br]
 [*] Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc.
 [br]
 [br]
@@ -124,14 +123,12 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		{ {"macro","/script PetPassiveMode()"},	petIsPassive == nil }, -- Set pet to passive
 		-- Misc
 		{ {"macro","/petattack"}, 		petShouldAttackMyTarget },
-		{ "Aspect of the Hawk", 		not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") }, -- Tier 3 talent
 		-- Misdirect to pet if no "focus" -- for farming, best with Glyph of Misdirection
 		{ "Misdirection", 			not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
 		{ "Misdirection", 			not jps.buff("Misdirection") and UnitExists("focus") ~= nil, "focus" },
 		-- Healthstone
 		{ jps.useBagItem("Healthstone") , 	jps.hp("player") < 0.50 }, -- restores 20% of total health
 		--
-		{ "Silencing Shot", 			jps.shouldKick() and jps.CastTimeLeft("target") < 1.4 }, -- Tier 2 talent
 		-- Trinkets and Engineering Gloves
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
@@ -140,11 +137,10 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		-- Requires herbalism
 		{ "Lifeblood",			jps.UseCDs },
 		-- Use pot
-		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.bloodlusting()) },
+		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and jps.bloodlusting() },
 		{ "A Murder of Crows", 			jps.UseCDs and not jps.myDebuff("A Murder of Crows")}, -- Tier 5 talent
 		{ "Dire Beast", 			"onCD" }, -- Tier 4 talents
-		-- { "Rabid", 				jps.UseCDs }, -- Pet ability
-		{ "Rapid Fire", 			jps.UseCDs and not jps.buff("Rapid Fire") and not jps.bloodlusting() },
+
 		{ "Stampede", 				jps.UseCDs },
 		-- Traps
 		{ "Trap Launcher", 			not jps.buff("Trap Launcher") },
@@ -164,7 +160,6 @@ local _, _, _, _, petIsPassive, _, _ = GetPetActionInfo(10) -- Slot 10 is Passiv
 		{ "serpent sting", 			jps.myDebuffDuration("serpent sting") < .3 },
 		{ "explosive shot", 			"onCD" },
 		{ "black arrow", 			not jps.myDebuff("black arrow") and not jps.MultiTarget },
-		{ "cobra shot", 			jps.myDebuffDuration("serpent sting") < 6 },
 		{ "arcane shot", 			focus >= 70 and not jps.buff("lock and load") and not jps.MultiTarget },
 		{ "steady shot", 			"onCD" and not IsSpellKnown(77767) }, -- Cobra Shot (77767), in MoP learned at level 81, so we use Steady Shot until then
 		{ "cobra shot", 			"onCD"},

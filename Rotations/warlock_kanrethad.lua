@@ -262,7 +262,6 @@ local genericSpellTable = {
 	{"nested", 'jps.IsCastingSpell(wlk.kanrethadSpells.chaosBolt,"focus") and UnitGUID("player") == UnitGUID("focustarget") and jps.CastTimeLeft(unit) < 5', {
 		{wl.spells.unendingResolve, 'not jps.buff(wl.spells.sacrificialPact) and not jps.isRecast(wl.spells.sacrificialPact,"player")', "player"},
 		{wl.spells.sacrificialPact, 'not jps.buff(wl.spells.unendingResolve) and not jps.isRecast(wl.spells.unendingResolve,"player")', "player"},
-		{wl.spells.twilightWard},
 	}},
 	--Dispell Dots, if possible
 	{wl.spells.commandDemon, 'wlk.hasDebuffs()', "player"},

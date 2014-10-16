@@ -73,8 +73,7 @@
 		
 		-- "Stoneform" 20594 "Forme de pierre"
 		{ 20594, player_Aggro > 0 , player , "Stoneform" },
-		-- "Disarm" 676 "Désarmement"
-		{ 676, ClassCac , rangedTarget , "Disarm"  },
+
 		-- "Lifeblood" 74497 same ID spell & buff -- Herbalist.
 		{ 74497, UnitAffectingCombat(player)==1 , player , "Lifeblood" },
 		
@@ -92,8 +91,6 @@
 		{ 100130, jps.buff(46916) and jps.rage() > 20 , rangedTarget ,"Wild Strike" },
 		-- "Execute" 5308 "Exécution"
 		{ 5308, jps.hp(rangedTarget) < 0.20 , rangedTarget , "Execute" },
-		-- "Cleave" 845 "Enchaînement"
-		{ 845, (enemycount > 1) and jps.rage() > 60 , rangedTarget , "Cleave" },
 		-- "Thunder Clap" 6343 "Coup de tonnerre" 
 		{ 6343, (enemycount > 3) , rangedTarget , "Thunder Clap" },
 		-- "Deadly Calm" 85730 "Calme mortel" same ID spell & buff -- REMOVED 5.2
@@ -159,12 +156,10 @@ end, "Warrior MultiTarget PvP" , false, true)
 	-- "Disrupting Shout" 102060 "Cri perturbant" -- Interrompt toutes les incantations de sorts à moins de 10 mètres et empêche tout sort de la même école d’être lancé pendant 4 s
 	-- "Mass Spell Reflection" 114028 "Renvoi de sort de masse" BUFF same ID -- Renvoie le prochain sort lancé sur vous et les membres du groupe ou raid à moins de 20 mètres d’un sort unique pendant 5 s.
 	-- "Stoneform" 20594 "Forme de pierre" -- réduit tous les dégâts subis de 10% pendant 8 s
-	-- "Disarm" 676 "Désarmement" -- Retire ses armes et son bouclier à l’ennemi pendant 8 s
 
 	-- "Raging Blow" 85288 "Coup déchaîné" -- Le fait de devenir Enragé permet une utilisation de Coup déchaîné.
 	-- "Colossus Smash" 86346 "Frappe du colosse" -- permet à vos attaques d'ignorer 100% de son armure pendant 6 s
 	-- "Recklessness" 1719 "Témérité" -- Confère à vos attaques spéciales 50% de chances supplémentaires d’être critiques. Dure 12 s.
-	-- "Cleave" 845 "Enchaînement" -- Une attaque circulaire qui frappe la cible et une cible proche supplémentaire
 	-- "Thunder Clap" 6343 "Coup de tonnerre" -- Foudroie les ennemis à moins de 8 mètres, leur infligeant 312 points de dégâts, et applique sur eux l'effet Coups affaiblis
 	-- "Heroic Strike" 78 "Frappe héroïque" -- 
 	-- Glyphe de coups gênants -- Frappe héroïque et Enchaînement diminuent aussi la vitesse de déplacement de la cible de 50% pendant 8 s

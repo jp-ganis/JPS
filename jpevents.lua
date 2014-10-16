@@ -457,7 +457,7 @@ jps.registerEvent("UNIT_SPELLCAST_START", function(...)
 			jps.CrowdControlTarget = nil
 		end
 		local spellID = select(5,...)
-		local castingTime = select(7,GetSpellInfo(spellID)) / 1000 -- castTime - Number - The cast time, in milliseconds
+		local castingTime = select(4, GetSpellInfo(spellID)) / 1000 -- castTime - Number - The cast time, in milliseconds
 		local descriptor = GetSpellDescription(spellID) 
 		for _,desc in ipairs(descriptorTable) do
 			if jps.canDPS(unitID) and string.find(descriptor,desc) then

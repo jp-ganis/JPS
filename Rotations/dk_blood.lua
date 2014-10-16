@@ -34,7 +34,7 @@ dkBloodSpellTable[1] = {
 	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
 	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
-	{"Rune Tap",'jps.hp() < 0.8'},
+	{"Rune Tap",'jps.hp() < 0.8 and not jps.buff("Rune Tap")'},
 	{jps.useBagItem(5512), 'jps.hp("player") < 0.70'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
@@ -96,9 +96,9 @@ dkBloodSpellTable[1] = {
 
 	{"Heart Strike",'jps.myDebuff("Blood Plague") and jps.myDebuff("Frost Fever") and GetRuneType(1) ~= 4 and GetRuneType(2) ~= 4'},
 
-	{"Rune Strike",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
+	{"Death Coil",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
 
-	{"Horn of Winter", "onCD"},
+	{"Horn of Winter", 'not jps.buff("Horn of Winter")'},
 	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
 	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
 	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},
@@ -122,7 +122,7 @@ dkBloodSpellTable[4] = {
 	{"Death Pact",'jps.hp() < 0.5 and dk.hasGhoul()'},
 	{"Lichborne",'jps.UseCDs and jps.hp() < 0.5 and jps.runicPower() >= 40 and jps.IsSpellKnown("Lichborne")'},
 	{"Death Coil",'jps.hp() < 0.9 and jps.runicPower() >= 40 and jps.buff("lichborne")', "player"},
-	{"Rune Tap",'jps.hp() < 0.8'},
+	{"Rune Tap",'jps.hp() < 0.8 and not jps.buff("Rune Tap")'},
 	{jps.useBagItem(5512), 'jps.hp("player") < 0.70'},
 	{"Icebound Fortitude",'jps.UseCDs and jps.hp() <= 0.3'},
 	{"Vampiric Blood",'jps.UseCDs and jps.hp() < 0.4'},
@@ -169,9 +169,9 @@ dkBloodSpellTable[4] = {
 	-- Death Siphon when we need a bit of healing. (talent based)
 	{"Death Siphon",'jps.hp() < 0.6'}, -- moved here, because we heal often more with Death Strike than Death Siphon
 
-	{"Rune Strike",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
+	{"Death Coil",'jps.runicPower() >= 30 and not jps.buff("lichborne")'}, -- stop casting Rune Strike if Lichborne is up
 
-	{"Horn of Winter", "onCD"},
+	{"Horn of Winter", 'not jps.buff("Horn of Winter")'},
 	{"Plague Leech",'dk.canCastPlagueLeech(3)'},
 	{"Blood Tap", 'jps.buffStacks("Blood Charge") >= 5'},
 	{"Empower Rune Weapon",'jps.UseCDs and IsSpellInRange("Rune Strike","target") == 1 and not dk.rune("oneDr") and not dk.rune("oneFr") and not dk.rune("oneUr") and jps.runicPower() < 30'},

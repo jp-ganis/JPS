@@ -51,6 +51,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate", "focus" },
+		{ "Horn of Winter", 'not jps.buff("Horn of Winter")'},
 		
 		-- Self heals
 		{ "Death Siphon", jps.hp() < .8 and jps.Defensive },
@@ -70,7 +71,6 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{"Dark Simulacrum ", dk.shouldDarkSimFocus() , "focus"},
 		
 		-- CDs
-		{ "unholy frenzy" },
 		{ jps.getDPSRacial(), jps.UseCDs },
 		{ jps.useTrinket(0), jps.UseCDs },
 		{ jps.useTrinket(1), jps.UseCDs },
@@ -112,7 +112,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "scourge strike" },
 		{ "festering strike" },
 		{ "death coil", 			jps.cooldown("summon gargoyle") > 8 },
-		{ "horn of winter" },
+		
 		{ "empower rune weapon" , jps.UseCDs},
 	}
 

@@ -256,8 +256,6 @@ local spellTable = {
 	{ 8122, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
 -- "Void Tendrils" 108920 --  debuff "Void Tendril's Grasp" 114404 -- FARMING OR PVP -- NOT PVE
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
--- "Psyfiend" 108921 Démon psychique
-	{ 108921, (FriendTable[player] ~= nil) and jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , player },
 -- "Psychic Horror" 64044 "Horreur psychique" -- CaC Class avec canFear
 	{ 64044, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) and (Orbs < 3), rangedTarget , "Psychic Horror_"..rangedTarget },
 -- "Psychic Horror" 64044 "Horreur psychique" -- Range Class avec unitFor_Silence
@@ -344,8 +342,6 @@ local spellTable_moving =
 	{ 8122, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
 -- "Void Tendrils" 108920 --  debuff "Void Tendril's Grasp" 114404 -- FARMING OR PVP -- NOT PVE
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
--- "Psyfiend" 108921 Démon psychique
-	{ 108921, (FriendTable[player] ~= nil) and jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , player },
 -- "Psychic Horror" 64044 "Horreur psychique" -- CaC Class avec canFear
 	{ 64044, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) and (Orbs < 3), rangedTarget , "Psychic Horror_"..rangedTarget },
 -- "Psychic Horror" 64044 "Horreur psychique" -- Range Class avec unitFor_Silence

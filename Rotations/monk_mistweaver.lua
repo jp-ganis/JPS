@@ -45,8 +45,6 @@ jps.registerRotation("MONK","MISTWEAVER",function()
 	local spellTable = {
 		{ "Summon Jade Serpent Statue", IsControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
 		
-		{ "Healing Sphere", IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
-		
 		-- Fortifying Brew if you get low. 
 		{ "Fortifying Brew", jps.UseCDs and jps.hp() < .4 and not defensiveCDActive },
 		

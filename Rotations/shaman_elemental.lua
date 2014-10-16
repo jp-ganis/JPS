@@ -47,13 +47,11 @@ spellTable = {
 	{ "Ascendance", 'jps.myDebuffDuration("Flame Shock") >= 15 and jps.UseCDs'},
 	{ "Elemental Mastery", 'jps.UseCDs'},
 	{ "Ancestral Swiftness", 'jps.UseCDs and not jps.MultiTarget' },
-	{ "Healing Tide Totem",' jps.hp() < 0.5 and jps.UseCDs'},
 	{ "Healing Surge", 'jps.hp() < 0.70 and jps.Defensive' },
 	{ "Magma Totem", 'jps.UseCDs and jps.MultiTarget and not totemActive(1)'},
 	{ "Fire Elemental Totem", 'jps.UseCDs and not totemActive(1)'},
 	{ "Searing Totem", 'not totemActive(1)' },
 	{ "Earth Elemental Totem", 'jps.UseCDs and jps.bloodlusting()' },
-	{ "Stormlash Totem",' jps.UseCDs and jps.bloodlusting()' },
 
 	{ jps.getDPSRacial(),'jps.UseCDs '},
 	{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs '},

@@ -336,7 +336,7 @@ function jps.addSettingsFrame()
 
 		local function settingsJPS_IconOptions_CheckButton_OnClick()
             local settingsStatus = nil
-            if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+            if(settingsJPS_IconOptions_CheckButton:GetChecked() == false) then 
                 settingsStatus = 0 
             else 
                 settingsStatus = 1 
@@ -412,7 +412,7 @@ function jps.addSettingsCheckbox(settingName)
     
     local function settingsJPS_IconOptions_CheckButton_OnClick()
         local settingStatus = nil
-        if(settingsJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+        if(settingsJPS_IconOptions_CheckButton:GetChecked() == false) then 
             settingStatus = 0 
         else 
             settingStatus = 1 
@@ -479,7 +479,7 @@ function jps.addRotationDropdownFrame()
 	
 			local function rotationJPS_IconOptions_CheckButton_OnClick()
 	            local spellStatus = nil
-	            if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+	            if(rotationJPS_IconOptions_CheckButton:GetChecked() == false) then 
 	                spellStatus = 0 
 	            else 
 	                spellStatus = 1 
@@ -552,7 +552,7 @@ function jps.addSpellCheckboxToFrame(spellName)
     
     local function rotationJPS_IconOptions_CheckButton_OnClick()
         local spellStatus = nil
-        if(rotationJPS_IconOptions_CheckButton:GetChecked() == nil) then 
+        if(rotationJPS_IconOptions_CheckButton:GetChecked() == false) then 
             spellStatus = 0 
         else 
             spellStatus = 1 

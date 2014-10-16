@@ -6,29 +6,7 @@
 Demo Rotation.<br>
 ALT Key for instant casts.<br>
 ]]--
-function wl.hasDemoProc()
-	if jps.buff(wl.spells.darkSoulKnowledge)
-	or jps.buff(126577) --Inner Brilliance, int
-	or jps.buff(138703) --Acceleration, haste
-	or jps.buff(139133) --Mastermind, int
-	or jps.buff(125487)	--Lightweave, int
-	or jps.bloodlusting()
-	or jps.buff(105702) --potion of jade serpent
-	or jps.buff(128985)	--Blessing of the Celestials, int
-	or jps.buff(104423)	--Windsong, haste
-	or jps.buff(96230)	--Synapse Springs
-	or jps.buff(104993)--Jade Spirit, int
-	or jps.buff(126659)--Quickened Tongues,haste
-	or jps.buff(138786)--Wushoolay's Lightning,  int
-	or jps.buff(138788)--Electrified, int
-	or jps.debuff(138002) --fluidity jinrokh, dmg
-	or jps.buff(112879) -- primal nutriment jikun, dmg
-	or jps.buff(138963) --Perfect Aim, 1005 crit
-	then
-		return true
-	end
-	return false
-end
+
 
 function wl.hasPowerfulDemoProc()
 	if jps.buff(wl.spells.darkSoulKnowledge)
@@ -48,10 +26,6 @@ end
 function wl.shouldMouseoverDoom()
 	if not jps.canDPS("mouseover") then return false end
 	if jps.debuff(wl.spells.doom, "mouseover") then return false end
-	local usable, nomana = IsUsableSpell(wl.spells.metaDoom) -- usable, nomana = IsUsableSpell("spellName" or spellID)
-	if not usable then return false end
-	if nomana then return false end
-	if jps.SpellHasRange(wl.spells.doom) and not jps.IsSpellInRange(wl.spells.doom,"mouseover") then return false end
 	return true
 end
 
@@ -63,7 +37,6 @@ local demoSpellTable = {
 
 	-- Def CD's
 	{wl.spells.mortalCoil, 'jps.Defensive and jps.hp() <= 0.80' },
-	{wl.spells.createHealthstone, 'jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= wl.spells.createHealthstone'},
 	{jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
 	{wl.spells.lifeTap, 'jps.hp("player") > 0.6 and jps.mana() <= 0.3' },
 
@@ -73,42 +46,27 @@ local demoSpellTable = {
 	-- Shadowfury
 	{wl.spells.shadowfury, 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' },
 
-	-- COE Debuff
-	{wl.spells.curseOfTheElements, 'not jps.debuff(wl.spells.curseOfTheElements) and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
-	{wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff(wl.spells.curseOfTheElements, "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
 
 	-- CD's
-	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
-	{ jps.getDPSRacial(), 'jps.UseCDs' },
-	{ wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
-	{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= ""  and jps.UseCDs' },
-	{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= ""  and  jps.UseCDs' },
-	{"nested", 'jps.Opening == false',{
-		{ wl.spells.grimoireFelguard,'jps.UseCDs'},
-		{ wl.spells.impSwarm , 'jps.UseCDs'},
+	{"nested", 'jps.demonicFury() >= 400', {
+		{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
+		{ jps.getDPSRacial(), 'jps.UseCDs' },
+		{ wl.spells.lifeblood, 'jps.UseCDs' },
+		{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= ""  and jps.UseCDs' },
+		{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= ""  and  jps.UseCDs' },
+		{ wl.spells.impSwarm , 'jps.UseCDs and jps.buff(wl.spells.darkSoulKnowledge)'},
 	}},
+	
+	{ wl.spells.grimoireFelguard,'jps.UseCDs'},
 
 	{wl.spells.commandDemon, 'wl.hasPet() and jps.UseCDs'},
-
-	-- opener
-	{"nested", 'jps.Opening == true',{
-		{wl.spells.corruption, 'not jps.buff(wl.spells.metamorphosis) and not jps.debuff(wl.spells.corruption,"target")'},
-		{wl.spells.shadowBolt, 'not jps.buff(wl.spells.metamorphosis) and jps.LastCast ~= wl.spells.shadowBolt'},
-		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 2 and not jps.buff(wl.spells.metamorphosis)'},
-		{wl.spells.grimoireFelguard,'jps.UseCDs'},
-		{wl.spells.impSwarm , 'jps.UseCDs'},
-		{wl.spells.handOfGuldan, 'not jps.buff(wl.spells.metamorphosis)'},
-		{wl.spells.metamorphosis,  'not jps.buff(wl.spells.metamorphosis)'},
-		{wl.spells.corruption, 'jps.myDebuffDuration(wl.spells.doom) < 30 and jps.buff(wl.spells.metamorphosis)'},
-	}},
 
 	-- rules for enter meta
 	{"nested", 'not jps.buff(wl.spells.metamorphosis)', {
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 950'},
-		{wl.spells.metamorphosis, 'jps.demonicFury() >= 500 and wl.hasPowerfulDemoProc()'},
-		{wl.spells.metamorphosis, 'jps.demonicFury() >= 900 and wl.hasDemoProc()'},
-		{wl.spells.metamorphosis, 'jps.myDebuffDuration(wl.spells.doom) < 15 and not jps.MultiTarget	'},
+		{wl.spells.metamorphosis, 'jps.demonicFury() >= 450 and wl.hasProc(1)'},
+		{wl.spells.metamorphosis, 'jps.demonicFury() >= 400 and wl.hasProc(2)'},
+		{wl.spells.metamorphosis, 'jps.myDebuffDuration(wl.spells.doom) < 15 and not jps.MultiTarget and jps.demonicFury() >= 300'},
 	}},
 
 	-- instant casts while moving
@@ -116,7 +74,6 @@ local demoSpellTable = {
 		jps.dotTracker.castTableStatic("corruption"),
 		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 2'},
 		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 1 and jps.myDebuffDuration(wl.spells.shadowflame) >= 2 and jps.myDebuffDuration(wl.spells.shadowflame) < 4'},
-		{wl.spells.felFlame },
 	}},
 
 
@@ -125,7 +82,6 @@ local demoSpellTable = {
 		{wl.spells.corruption, 'wl.shouldMouseoverDoom()',"mouseover"},
 		{wl.spells.shadowBolt},
 	}},
-
 
 	-- single target without meta
 	{"nested", 'not jps.buff(wl.spells.metamorphosis) and not jps.MultiTarget',{
@@ -141,9 +97,10 @@ local demoSpellTable = {
 	{"nested", 'jps.buff(wl.spells.metamorphosis) and not jps.MultiTarget',{
 		{wl.spells.corruption, 'jps.myDebuffDuration(wl.spells.doom) < 15'},
 		{wl.spells.corruption, 'wl.shouldMouseoverDoom()',"mouseover"},
-		{ {"macro","/cancelaura " .. wl.spells.metamorphosis}, 'jps.demonicFury() <= 580 and not wl.hasDemoProc()' },
+		{ {"macro","/cancelaura " .. wl.spells.metamorphosis}, 'jps.demonicFury() <= 100' },
+		{ {"macro","/cancelaura " .. wl.spells.metamorphosis}, 'jps.demonicFury() <= 300 and not wl.hasProc(1)' },
 		{wl.spells.shadowBolt, 'jps.myDebuffDuration(wl.spells.corruption) < 5'},
-		{wl.spells.soulFire, 'jps.buffStacks(wl.spells.moltenCore) > 1 and wl.hasDemoProc()'},
+		{wl.spells.soulFire, 'jps.buffStacks(wl.spells.moltenCore) > 4 and wl.hasProc(1)'},
 		{wl.spells.shadowBolt}, --touch of chaos
 	}},
 
@@ -188,6 +145,92 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 	return nextSpell,target
 end,"Demonology 5.3 PVE")
 
+local demoTankTable = {
+	-- Interrupts
+	wl.getInterruptSpell("target"),
+	wl.getInterruptSpell("focus"),
+	wl.getInterruptSpell("mouseover"),
+	{"Dark Apotheosis" , 'not jps.buff("Dark Apotheosis")'}, 
+	-- Def CD's
+	{wl.spells.mortalCoil, 'jps.Defensive and jps.hp() <= 0.80' },
+	{wl.spells.createHealthstone, 'jps.Defensive and GetItemCount(5512, false, false) == 0 and jps.LastCast ~= wl.spells.createHealthstone'},
+	{jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
+	{wl.spells.lifeTap, 'jps.hp("player") > 0.6 and jps.mana() <= 0.3' },
+
+	-- Soulstone
+	wl.soulStone("target"),
+
+	-- Shadowfury
+	{wl.spells.shadowfury, 'IsShiftKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil' },
+
+	-- COE Debuff
+	{wl.spells.curseOfTheElements, 'not jps.debuff("Aura of The Elements") and not wl.isTrivial("target") and not wl.isCotEBlacklisted("target")' },
+	{wl.spells.curseOfTheElements, 'wl.attackFocus() and not jps.debuff("Aura of The Elements", "focus") and not wl.isTrivial("focus") and not wl.isCotEBlacklisted("focus")' , "focus" },
+
+	-- CD's
+	{ {"macro","/cast " .. wl.spells.darkSoulKnowledge}, 'jps.cooldown(wl.spells.darkSoulKnowledge) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulKnowledge)' },
+	{ jps.getDPSRacial(), 'jps.UseCDs' },
+	{ wl.spells.lifeblood, 'jps.UseCDs' },
+	{ jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and  jps.UseCDs' },
+	{ jps.useTrinket(0),	   'jps.useTrinket(0) ~= ""  and jps.UseCDs' },
+	{ jps.useTrinket(1),	   'jps.useTrinket(1) ~= ""  and  jps.UseCDs' },
+	{"nested", 'jps.Opening == false',{
+		{ wl.spells.grimoireFelguard,'jps.UseCDs'},
+		{ wl.spells.impSwarm , 'jps.UseCDs'},
+	}},
+
+	{wl.spells.commandDemon, 'wl.hasPet() and jps.UseCDs'},
+
+
+	-- instant casts while moving
+	{"nested", 'not jps.MultiTarget and IsAltKeyDown() and not jps.buff(wl.spells.metamorphosis)', {
+		jps.dotTracker.castTableStatic("corruption"),
+		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 2'},
+		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 1 and jps.myDebuffDuration(wl.spells.shadowflame) >= 2 and jps.myDebuffDuration(wl.spells.shadowflame) < 4'},
+		{wl.spells.felFlame },
+	}},
+
+
+	-- single target without meta
+	{"nested", 'not jps.MultiTarget',{
+		jps.dotTracker.castTableStatic("corruption"),
+		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 2'},
+		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 1 and jps.myDebuffDuration(wl.spells.shadowflame) >= 2 and jps.myDebuffDuration(wl.spells.shadowflame) < 4'},
+		{wl.spells.shadowBolt},
+		{wl.spells.hellfire, 'jps.hp() > 0.6 and jps.demonicFury() > 800 and not jps.buff("Immolation Aura")'},
+		{"Void Ray", "jps.demonicFury() > 800"},
+		{"Drain Life"},
+	}},
+
+
+	-- aoe without meta
+	{"nested", 'jps.MultiTarget',{
+		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 2'},
+		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 1 and jps.myDebuffDuration(wl.spells.shadowflame) >= 2 and jps.myDebuffDuration(wl.spells.shadowflame) < 4'},
+		jps.dotTracker.castTableStatic("corruption"),
+		{wl.spells.hellfire, 'jps.hp() > 0.6 and jps.demonicFury() > 800 and not jps.buff("Immolation Aura"'},
+		{wl.spells.harvestLife},
+	}},
+
+}
+jps.registerRotation("WARLOCK","DEMONOLOGY",function()
+	wl.deactivateBurningRushIfNotMoving(1)
+
+	if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
+		SpellStopCasting()
+		jps.NextSpell = nil
+	end
+	if UnitChannelInfo("player") == wl.spells.hellfire and jps.hp() < 0.59 then
+		SpellStopCasting()
+		jps.NextSpell = nil
+	end
+	nextSpell,target  = parseStaticSpellTable(demoTankTable)
+	if nextSpell == wl.spells.corruption and jps.Opening and jps.buff(wl.spells.metamorphosis) then
+		jps.Opening = false
+	end
+
+	return nextSpell,target
+end,"Demonology Tank")
 
 --[[[
 @rotation Demo Raid (untested)

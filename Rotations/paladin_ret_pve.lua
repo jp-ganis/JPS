@@ -21,11 +21,7 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 		{ "Flash of Light", jps.hp() < .75 and jps.buff("The Art of War") }, 
 	
 		-- Heal
-		{ "Sacred Shield", jps.hp() < .7 and not jps.buff("Sacred Shield") }, 
-	
-		-- Guardian of Ancient Kings
-		{ "Guardian of Ancient Kings", jps.UseCDs }, 
-	
+		{ "Sacred Shield", jps.hp() < .7 and not jps.buff("Sacred Shield") }, 	
 		-- Avenging Wrath
 		{ "Avenging Wrath", jps.UseCDs }, 
 	
@@ -50,9 +46,6 @@ jps.registerRotation("PALADIN","RETRIBUTION",function()
 	
 		-- DPS Racial CD.
 		{ jps.DPSRacial, jps.UseCDs }, 
-	
-		-- Buff
-		{ "Inquisition", jps.buffDuration("Inquisition") < 5  and (holyPower > 2 or jps.buff("Divine Purpose")) }, 
 		
 		-- Damage
 		{ "Divine Storm", jps.MultiTarget and holyPower > 2 },  -- AOE

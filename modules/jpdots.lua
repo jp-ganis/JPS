@@ -34,7 +34,7 @@ dotTracker.targets = {}
 local function toSpell(id,r,altId) return { id = id, name = GetSpellInfo(id), refreshedByFelFlame = r, alternativeId = altId} end
 dotTracker.spells = {}
 	-- Warlock Spells
-	dotTracker.spells["immolate"] = toSpell(348, false, 108686) -- Immolate + Fire and Brimstone
+	dotTracker.spells["immolate"] = toSpell(157114, false, 108686) -- Immolate + Fire and Brimstone
 	dotTracker.spells["felFlame"] = toSpell(77799)
 	dotTracker.spells["corruption"] = toSpell(172, false, 146739) -- Corruption from Seed of Corruption
 	dotTracker.spells["agony"] = toSpell(980, false)
@@ -144,8 +144,6 @@ function dotTracker.handleEvent(self, event, ...)
 				end
 			end
 		end
-	elseif event == "COMBAT_RATING_UPDATE" or event == "SPELL_POWER_CHANGED" or event == "UNIT_STATS" or event == "PLAYER_DAMAGE_DONE_MODS" then
-		dotTracker.updateDotDamage()
 	elseif event == "PLAYER_TALENT_UPDATE" then
 		LOG.warn("Player changed Talents")
 		dotTracker.registerEvents()
@@ -154,18 +152,6 @@ function dotTracker.handleEvent(self, event, ...)
 		for k,v in pairs(dotTracker.targets) do
 			if dotTracker.targets[k].age < maxAge then dotTracker.targets[k]=nil end
 		end
-	end
-end
-
--- OnUpdate Handler - updates Tracked Target Spells
---[[[ Internal Function - DON'T USE! ]]--
-function dotTracker.handleUpdate(self,elapsed)
-	dotTracker.timer = dotTracker.timer + elapsed;
-	if dotTracker.timer >= dotTracker.throttle then
-		for k,v in pairs(dotTracker.trackedSpells) do
-			dotTracker.updateTrackedSpellsOnTargets(v)
-		end
-		dotTracker.timer = 0
 	end
 end
 
@@ -188,24 +174,6 @@ end
 function dotTracker.updateTrackedSpellsOnTargets(trackedSpell)
 	local guid = UnitGUID(trackedSpell.target)
 	local _,_,_,_,_,duration,expires = UnitDebuff(trackedSpell.target,trackedSpell.name,nil,"player")
-	if duration and guid then
-		local target = dotTracker.targets[guid..trackedSpell.id]
-		if target then
-			local newStrength = math.floor(dotTracker.dotDamage[trackedSpell.id].dps*100/target.dps)
-			if target.strength ~= newStrength then
-				target.strength = newStrength
-				LOG.info("Strength of %s changed: %s%% on %s (%s)", trackedSpell.name, newStrength, guid, trackedSpell.target)
-			end
-			if not target.pandemicSafe then
-				if expires - GetTime() <= dotTracker.dotDamage[trackedSpell.id].duration/2 then
-					target.pandemicSafe = true
-					LOG.info("%s is now Pandemic Safe on %s (%s)", trackedSpell.name, guid, trackedSpell.target)
-				end
-			end
-		else
-			LOG.debug("No %s on %s (%s)", trackedSpell.name, guid, trackedSpell.target)
-		end
-	end
 end
 
 -- Register Events and sets OnUpdate/OnEvent Handler
@@ -233,7 +201,7 @@ function dotTracker.registerEvents()
 		LOG.info("Registering DoT Tracker Hooks for %s SPEC %s...", class, spec)
 		dotTracker.classSpecificUpdateDotDamage = dotTracker.supportedClasses[class][spec].updateFunction
 		dotTracker.classSpecificSpells = dotTracker.supportedClasses[class][spec].spells
-		dotTracker.updateDotDamage()
+
 		dotTracker.frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 		dotTracker.frame:RegisterEvent("COMBAT_RATING_UPDATE")
 		dotTracker.frame:RegisterEvent("SPELL_POWER_CHANGED")
@@ -242,7 +210,6 @@ function dotTracker.registerEvents()
 		dotTracker.frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 		dotTracker.frame:RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
 		dotTracker.frame:SetScript("OnEvent", dotTracker.handleEvent)
-		dotTracker.frame:SetScript("OnUpdate", dotTracker.handleUpdate)
 		dotTracker.frame:Show()
 		wipe(dotTracker.trackedSpells)
 		for i, spell in ipairs(dotTracker.classSpecificSpells) do
@@ -255,21 +222,6 @@ function dotTracker.registerEvents()
 	else
 		LOG.warn("Class %s with Spec %s is not supported!", class, spec)
 	end
-end
-
---[[[ Internal Function - DON'T USE! ]]--
-function dotTracker.updateDotDamage()
-	LOG.debug("Updating DoT Damage...")
-	local damageBuff = 1
-	for i, buff in ipairs(dotTracker.buffs) do
-		hasBuff,_,_,stacks = UnitAura("player", buff.name, nil, buff.filter)
-		if hasBuff then
-			damageBuff = damageBuff + buff.increase + (buff.increasePerStack * stacks)
-		end
-	end
-	local mastery, haste, crit, spellDamage = GetMastery(), GetRangedHaste(), GetSpellCritChance(6), GetSpellBonusDamage(6)
-	if crit > 100 then crit = 100 end
-	dotTracker.classSpecificUpdateDotDamage(mastery, haste, crit, spellDamage, damageBuff)
 end
 
 dotTracker.results = {}
@@ -399,31 +351,11 @@ function dotTracker.shouldSpellBeCast(spellId, unit)
 		local myCastLeft = jps.CastTimeLeft("player")
 		local target = dotTracker.targets[guid..spellId]
 		
-		if target then			  
-			if target.pandemicSafe then
-				if target.strength > 100 then
-					LOG.info("Re-Casting: %s@%s (Pandemic Safe @ %s%% with %s sec left", name, unit, target.strength, timeLeft)
-					castSpell = true
-				else
-					if timeLeft <= (2.0 + myCastLeft) then
-						LOG.info("Re-Casting: %s@%s (Pandemic Safe @ %s%% with %s sec left (current cast left: %s)", name, unit, target.strength, timeLeft, myCastLeft)
-						castSpell = true
-					end
-				end
-			else
-			--if enough dps increase - fuck pandemic!
-				if target.strength > 100 then
-					damageDelta = (dotTracker.dotDamage[spellId].dps * dotTracker.dotDamage[spellId].duration) - (target.dps * timeLeft)
-					-- assume 150k dps - if you waste 1.5 seconds for gcd (or immolate cast) you should get an increase of at least 225k to compensate
-					if damageDelta >= 225000  then
-						LOG.info("Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
-						castSpell = true
-					else
-						LOG.debug("NOT Re-Casting: %s@%s (NOT Pandemic Safe @ %s%% with %s sec left (Damage-Delta: %s)", name, unit, target.strength, timeLeft, damageDelta)
-					end
-				end
+		if target then 
+			if timeLeft <= (2.0 + myCastLeft) then
+				LOG.info("Re-Casting: %s@%s (Pandemic Safe @ %s%% with %s sec left (current cast left: %s)", name, unit, target.strength, timeLeft, myCastLeft)
+				castSpell = true
 			end
-			
 		else
 			LOG.info("Casting: %s@%s - was not on target! (GUID: %s, SpellID: %s)", name, unit, guid, spellId)
 			castSpell = true

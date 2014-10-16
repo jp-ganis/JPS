@@ -31,7 +31,6 @@ local spellTable_single =
 	
 	-- Single Target 
 	{ "Avenger's Shield" },
-	{ "Hammer of the Righteous",      not jps.debuff("Weakened Blows") }, 
 	{ "Shield of the Righteous",      holyPower > 3 },  
 	{ "Judgment" },      
 	{ "Crusader Strike" },

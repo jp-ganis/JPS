@@ -85,10 +85,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ "arcane torrent", jps.shouldKick() and CheckInteractDistance("target",3)==1 and playerRace == "blood elf" },
 		{ "concussive shot", shouldCShot() , rangedTarget },
 		{ "intimidation", jps.shouldKick() , rangedTarget },
-		{ "scatter shot", jps.shouldKick() , rangedTarget },
-		{ "silencing shot", jps.shouldKick() , rangedTarget },
 		{ "wyvern sting", jps.shouldKick() , rangedTarget },
-		{ "scare beast", jps.buff("bear form","target") or jps.buff("cat form","target") or UnitCreatureType("target") == "beast" , rangedTarget },
 	
 	-- Heals etc.
 		{ "gift of the naaru", playerhealth_pct <= 0.90 and playerRace == "draenei" , player },
@@ -105,8 +102,6 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ "crouching tiger, hidden chimera", jps.cooldown("deterrence") > 0 or jps.cooldown("disengage") > 0 , player },
 	
 	-- Debuffs
-		{ "hunter's mark", not jps.debuff("hunter's mark") , rangedTarget },
-		{ "widow venom", not jps.debuff("widow venom") , rangedTarget },
 		{ "binding shot", true , rangedTarget },
 		{ "tranquilizing shot", jps.buff("enrage",rangedTarget) , rangedTarget },
 	
@@ -114,12 +109,10 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ jps.DPSRacial, jps.UseCDs },
 		-- { jps.useTrinket(1), },
 		{ "trueshot aura", not jps.buff("trueshot aura") , player },
-		{ "Aspect of the Hawk", not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") },
 		{ "aspect of the fox", jps.Moving and not jps.buff("aspect of the fox") , player },
 		{ "fervor", focus < 65 and not jps.buff("fervor") , player },
 		{ "bestial wrath", focus > 60 and not jps.buff("the beast within") , player },
 		{ "focus fire", pet_frenzy==5 , player },
-		{ "rapid fire", not jps.buff("rapid fire") and not jps.buff("the beast within") and not jps.bloodlusting() , player },
 	
 	-- Traps
 		-- { "explosive trap",
@@ -133,7 +126,6 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ "beast cleave", IsShiftKeyDown() ~= nil , rangedTarget },
 	
 	-- Base Attacks
-		{ "lynx rush", true , rangedTarget },
 		{ "dire beast", true , rangedTarget},
 		{ "blink strike", true , rangedTarget },
 		{ "kill command", true , rangedTarget },

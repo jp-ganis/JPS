@@ -44,7 +44,6 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 
 		-- Buffs
 		{ "water shield", 			not jps.buff("water shield"), me  },
-		{ "Earthliving Weapon", 	not mh, me},
 
 		-- Set focus to put Earth Shield on focus target
 		{ "earth shield",			tank ~= me and not jps.buff("earth shield",tank), tank },
@@ -56,8 +55,7 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{ "chain heal",				IsLeftControlKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil and defaultHP < 0.7, defaultTarget },
 
 		{ "riptide", 				defaultHP < 0.95 and not jps.buff("RipTide"), defaultTarget },
-		{ "greater healing wave", 	defaultHP < 0.4, defaultTarget },
-		{ "healing wave",			defaultHP < 0.8, defaultTarget },
+		{ "healing wave", 	defaultHP < 0.4, defaultTarget },
 
 		{ "Purify spirit",			cleanseTarget~=nil, cleanseTarget },
 		-- Totems.
@@ -139,7 +137,6 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{"Ancestral Swiftness", jps.UseCDs and jps.hpInc(tank) <= 0.50, me },
 		{"ascendance", jps.UseCDs and not moving and (jps.CountInRaidStatus(0.4) >= 8 or (jps.CountInRaidStatus(0.4) >= 4 and GetNumGroupMembers < 10)), me },
 		{"spirit link totem", jps.UseCDs and (jps.CountInRaidStatus(0.4) >= 8 or (jps.CountInRaidStatus(0.4) >= 4 and GetNumGroupMembers < 10)), me },
-		{"stormlash totem", jps.buff("bloodlust") or jps.buff("time warp") or jps.buff("ancient hysteria") },
 		{"unleashed fury", jps.UseCDs and jps.hpInc(tank) <= 0.50, me },
 		{"mana tide totem", jps.UseCDs and jps.mana() <= 0.40 },
 		{"spiritwalker's grace", IsAltKeyDown() ~= nil and GetCurrentKeyBoardFocus() == nil },
@@ -154,16 +151,14 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{"riptide", defaultHP <= 0.90, defaultTarget },
 		{"healing stream totem", not haveWaterTotem },
 		{"healing surge", not moving and jps.hpInc(tank) <= 0.40, tank },
-		{"greater healing wave", not moving and jps.hpInc(tank) <= 0.70, tank },
+		{"healing wave", not moving and jps.hpInc(tank) <= 0.60, tank },
 		{"healing surge", not moving and defaultHP <= 0.50 and defaultTarget ~= tank, defaultTarget },
 		{"chain heal", jps.CountInRaidStatus(0.8) >= 3, defaultTarget },
 		{"unleash elements", defaultHP <= 0.75, defaultTarget },
-		{"greater healing wave", not moving and defaultHP <= 0.70, defaultTarget },
-		{"healing wave", not moving and defaultHP <= 0.85, defaultTarget },
+		{"healing wave", not moving and defaultHP <= 0.40, defaultTarget },
 
 		--Filler heal the tank
 		{"riptide", jps.hpInc(tank) <= 0.95, tank},
-		{"healing wave", not moving and jps.hpInc(tank) <= 0.85, tank },
 	}
 
 	local spell,target = parseSpellTable(spellTable)

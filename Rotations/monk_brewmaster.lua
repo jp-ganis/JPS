@@ -4,7 +4,6 @@
 @spec brewmaster
 @description
 modifiers:
-alt: place healing sphere<br>
 shift+alt: black Ox statue<br>
 alt+ctrl: dizzying haze<br>
 shift: spinning crane kick<br>
@@ -19,13 +18,13 @@ jps.registerRotation("MONK","BREWMASTER",function()
 
 	local spellTable ={
 		-- GROUND SPELLS
-		{ "Healing Sphere",	keyPressed("alt") },
+
 		{ "Summon Black Ox Statue",	keyPressed("shift","alt") },
 		{ "Dizzying Haze", keyPressed("ctrl") },
 
 		-- SHORT COOLDOWNS
 		-- Guard when Power Guard buff is available and while taking some damage.
-		{ "Guard", jps.buff("Power Guard") and jps.hp() < 0.98 and chi >= 2 },
+		{ "Guard",  jps.hp() < 0.98 and chi >= 2 },
 
 		-- INTERRUPTS
 		{ "Spear Hand Strike", jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 },
@@ -93,8 +92,8 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		--{ "Invoke Xuen, the White Tiger", jps.UseCDs },
 
 		-- MAIN ROTATION
-		-- Keg Smash to build some chi and keep the Weakened Blows debuff up.
-		{ "Keg Smash", chi < 3 or not jps.debuff("Weakened Blows") },
+		-- Keg Smash to build some chi 
+		{ "Keg Smash", chi < 3},
 		-- Blackout Kick if shuffle is missing or about to drop.
 		{ "Blackout Kick", (not jps.buff("Shuffle") or jps.buffDuration("Shuffle") < 3 ) and chi >= 2 },
 		-- Expel Harm for building some chi and healing if not at full health.
@@ -181,7 +180,7 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		{ "Blackout Kick", (not jps.buff("Shuffle") or jps.buffDuration("Shuffle") < 3 ) and chi >= 2 },
 		
 		-- Guard when Power Guard buff is available and while taking some damage. 	
-		{ "Guard", 	jps.buff("Power Guard") 	and jps.hp() < .9 	and chi >= 2 },
+		{ "Guard", jps.hp() < .9 	and chi >= 2 },
 		
 		-- On-Use Trinket 1. 
 		{ jps.useTrinket(0), jps.UseCDs },
@@ -195,8 +194,8 @@ jps.registerRotation("MONK","BREWMASTER",function()
 		-- Herbalists have Lifeblood. 
 		{ "Lifeblood", jps.UseCDs },
 		
-		-- Keg Smash to build some chi and keep the weakened blows debuff up. 	
-		{ "Keg Smash", 	chi < 3 or not jps.debuff("Weakened Blows") },
+		-- Keg Smash to build some chi
+		{ "Keg Smash", 	chi < 3 },
 		
 		-- Interrupt. 
 		{ "Spear Hand Strike", jps.Interrupts and jps.shouldKick() },

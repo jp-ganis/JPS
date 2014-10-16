@@ -37,13 +37,10 @@ jps.registerRotation("DRUID","GUARDIAN",function()
 		-- Defense
 		{"barkskin",						hp < 75 and jps.UseCDs},
 		{"survival instincts",			hp < 50 and jps.UseCDs},
-		{"might of ursoc",				hp < 25 and jps.UseCDs},
 		{"frenzied regeneration",	hp < 55 and jps.buff("savage defense")},
 		{"savage defense",				hp < 90 and rage >= 60},
 		{"renewal", 						hp < 20 and jps.UseCDs },
-		{"nature’s swiftness", 			hp < 20 and jps.UseCDs },
 		{"healing touch", 				hp < 20 and jps.buff("nature's swiftness") and jps.UseCDs },
-		{"enrage",							rage <= 10 and hp > 95},
 
 		-- Offense
 		{"berserk",						jps.UseCDs and jps.debuff("thrash") and jps.debuff("faerie fire")},
@@ -51,7 +48,6 @@ jps.registerRotation("DRUID","GUARDIAN",function()
 		-- Multi-Target
 		{"thrash",			jps.MultiTarget and not jps.debuff("thrash")},
 		{"mangle",			jps.MultiTarget },
-		{"swipe",			jps.MultiTarget },
 
 		-- Single Target
 		{"mangle",			onCD or jps.buff("berserk") },

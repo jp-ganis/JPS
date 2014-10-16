@@ -8,7 +8,6 @@ Features:[br]
 [*] auto misdirect to pet if soloing[br]
 [*] misdirect to "focus" e.g. in party/raid[br]
 [*] mend pet when hp is less than 90%[br]
-[*] interrupt spellcasting with Silencing Shot[br]
 [*] use CDs incl. Lifeblood (herbalism)[br]
 [*] hot-keys for traps[br]
 ]]--
@@ -105,7 +104,6 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ {"macro","/script PetPassiveMode()"},		petIsPassive == nil }, -- Set pet to passive
 		-- Misc
 		{ {"macro","/petattack"}, 			petShouldAttackMyTarget },
-		{ "Aspect of the Hawk", not jps.buff("Aspect of the Hawk") and not jps.buff("Aspect of the Iron Hawk") },
 
 		-- Misdirect to pet if no "focus" -- for farming, best with Glyph of Misdirection
 		{ "Misdirection", 					not jps.buff("Misdirection") and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil, "pet" }, -- IsInGroup() returns true/false. Works for any party/raid
@@ -113,7 +111,6 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		-- Healthstone
 		{ jps.useBagItem("Healthstone") , 	jps.hp("player") < 0.50 }, -- restores 20% of total health
 		--
-		{ "Silencing Shot", 				jps.shouldKick() and jps.CastTimeLeft("target") < 1.4 }, -- Tier 2 talent
 		-- Trinkets and Engineering Gloves
 		-- On-use Trinkets.
 		{ jps.useTrinket(0), jps.UseCDs },
@@ -123,7 +120,7 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		-- Requires herbalism
 		{ "Lifeblood",			jps.UseCDs },
 		-- Use pot
-		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and (jps.buff("Rapid Fire") or jps.bloodlusting()) },
+		{ jps.useBagItem("Virmen's Bite"), 	autoUseVirminsBite and jps.UseCDs and jps.bloodlusting() },
 		-- CDs
 		{ "Lifeblood", 						jps.UseCDs }, -- Herbalism
 		-- Traps
@@ -139,20 +136,17 @@ jps.registerRotation("HUNTER","BEASTMASTERY", function()
 		{ "serpent sting", 					not jps.myDebuff("serpent sting") },
 		{ "fervor", 						focus < 65 and not jps.buff("fervor") },
 		{ "stampede", 						jps.UseCDs },
-		{ "Rapid Fire", 					jps.UseCDs and not jps.buff("Rapid Fire") },
 		{ "bestial wrath", 					focus > 60 and not jps.buff("The Beast Within") and jps.cooldown("Kill Command") == 0 },
 		{ "a murder of crows", 				jps.UseCDs and not jps.myDebuff("a murder of crows") },
 		{ "kill shot", 						},
 		{ "kill command", 					},
 		{ "glaive toss", 					},
-		{ "lynx rush", 						},
 		{ "dire beast", 					focus <= 90 },
 		{ "barrage", 						},
 		{ "powershot", 						},
 		{ "blink strike", 					},
 		{ "arcane shot", 					jps.buff("thrill of the hunt") },
 		{ "focus fire", 					jps.buffStacks("Frenzy") == 5 and not jps.buff("The Beast Within")},
-		{ "cobra shot", 					not jps.buff("The Beast Within") and sps_duration  < 6 },
 		{ "arcane shot", 					focus >= 61 or jps.buff("The Beast Within") },
 		{ "cobra shot", 					not jps.buff("The Beast Within") },
 	}

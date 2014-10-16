@@ -96,7 +96,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Avenger's Shield" , "onCD"},
 
 		-- Damage (Multi target or missing debuff)
-		{ "Hammer of the Righteous", not jps.debuff("Weakened Blows") or jps.MultiTarget },
+		{ "Hammer of the Righteous", jps.MultiTarget },
 
 		-- Damage
 		{ "Shield of the Righteous",	holyPower > 3 },
@@ -309,7 +309,7 @@ jps.registerRotation("PALADIN","PROTECTION",function()
 		{ "Avenger's Shield" , "onCD"},
 
 		-- Damage (Multi target or missing debuff)
-		{ "Hammer of the Righteous", not jps.debuff("Weakened Blows") or jps.MultiTarget },
+		{ "Hammer of the Righteous",  jps.MultiTarget },
 
 		-- Damage
 		{ "Shield of the Righteous",	holyPower > 3 },

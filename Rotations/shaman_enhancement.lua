@@ -44,8 +44,6 @@ jps.registerRotation("SHAMAN","ENHANCEMENT",function()
 		{ "Flametongue Weapon", mh and not oh },
 		-- Oh shit button 
 		{ "Astral Shift", jps.hp() < .35 },
-		-- Healing Tide 
-		{ "Healing Tide Totem", jps.hp() < .5 },
 		-- Healing Surge 
 		{ "Healing Surge", jps.hp() < .7 },
 		-- Wolves 

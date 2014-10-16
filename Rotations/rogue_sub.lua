@@ -32,9 +32,6 @@ jps.registerRotation("ROGUE","SUBTLETY",function()
 		{ 5171	 , (snd_duration < 4) or (snd_duration < 15 and jps.buffStacks("Bandit's Guile") == 11 and cp > 3) , rangedTarget , "SND_SpellID_Bandit"},
 		{ {"macro","/cast "..snd_spell}, (snd_duration < 4) and (cp > 3) , rangedTarget , "SND_Macro" },
 		
-		-- Shadow Blades
-		{ 121471	, jps.bloodlusting() and snd_duration >= jps.buffDuration(121471)	, player },
-		
 		-- Killing Spree
 		{ 51690	 , (energy < 35 and snd_duration > 4 and not jps.buff(13750)) and jps.multitarget	, rangedTarget },
 		

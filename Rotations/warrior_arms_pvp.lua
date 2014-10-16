@@ -62,8 +62,7 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		{
 		{ "taunt", jps.LastCast==charge , rangedTarget },
 		{ "mocking banner", playerhealth_pct < 0.50 and not jps.buff("bestial wrath",rangedTarget), player },
-		{ "disarm", true , rangedTarget },
-		{ "intimidating shout", CheckInteractDistance("target",3)==1 and not jps.debuff("disarm",rangedTarget) , rangedTarget },
+		{ "intimidating shout", CheckInteractDistance("target",3)==1, rangedTarget },
 		-- { attack pet until 100 rage },
 		}
 		return table
@@ -88,7 +87,6 @@ jps.registerRotation("WARRIOR","ARMS",function()
 	local function parse_vsPaladin()
 		local table =
 		{
-		{ "disarm", jps.buff("avenging wrath",rangedTarget) , rangedTarget },
 		{ "shattering throw", dmgBlock , rangedTarget },
 		-- { trinket and pummel after stun },
 		}
@@ -108,8 +106,7 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		{
 		{ "demoralizing banner", true , rangedTarget },
 		{ "intimidating shout", jps.buff("shadow dance",rangedTarget) , rangedTarget },
-		{ "disarm", jps.debuff("dismantle",player) and not jps.LoseControl(rangedTarget,"CC") , rangedTarget },
-		{ "disarm", jps.buff("shadow dance",rangedTarget) and not jps.LoseControl(rangedTarget,"CC") , rangedTarget },
+
 		{ "berserker rage", jps.debuff("gouge",player) , player },
 		{ {"macro","/cast every man for himself\n/cast defensive stance"}, rogueStun , player },
 		-- { "battle stance", not jps.StunEvents() and playerhealth_pct > targethealth_pct , player },
@@ -120,7 +117,6 @@ jps.registerRotation("WARRIOR","ARMS",function()
 	local function parse_vsShaman()
 		local table =
 		{
-		{ "disarm", targetSpec == "Enhancement" , rangedTarget },
 		-- { "pummel", casting lesser healing wave targethealth_pct < 0.30 , rangedTarget },
 		-- { "pummel", casting lava burst or lightning , rangedTarget },
 		-- { trinket and pummel, jps.debuff("warstomp",player) and targethealth_pct < 0.30 , rangedTarget },
@@ -258,10 +254,8 @@ jps.registerRotation("WARRIOR","ARMS",function()
 	local function parse_multitarget()
 		local table =
 		{
-		{ "thunder clap", not jps.debuff("weakened blows") , rangedTarget },
 		{ "sweeping strikes", enemycount = 3 , rangedTarget },
 		{ "bladestorm", true , rangedTarget },
-		{ "cleave", enemycount = 3 and shouldHStrike() and targethealth_pct >= 0.21 , rangedTarget },
 		{ "whirlwind", enemycount > 3 and rage > 29 , rangedTarget },
 		}
 		return table
@@ -328,7 +322,6 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		-- { UseEquipmentSet("Raid DPS"),	stance == 1 or stance == 3 and shield },
 		-- { UseEquipmentSet("Raid Tank"), stance == 2 and shield == nil},
 		-- Debuffs
-		{ "disarm", shouldDisarm() and targetName~="Training Dummy" , rangedTarget },
 		{ "thunder clap", shouldDisarm() and not jps.debuff("weakend blows") , rangedTarget },
 		{ "piercing howl", melee and not jps.LoseControl(rangedTarget,"Snare") , rangedTarget },
 		{ "piercing howl", jps.buff("bladestorm",player) , rangedTarget },
@@ -344,10 +337,9 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		{ "berserker rage", not jps.buff("enrage") and jps.TimeToDie(rangedTarget) > 6 , player },
 
 		-- { "recklessness", jps.UseCDs and melee and (jps.debuffDuration("Colossus Smash") >= 5 or jps.cooldown("Colossus Smash") <= 4 ) or targethealth_pct < 0.21 , player },
-		{ "recklessness", jps.UseCDs and melee and jps.buff("avatar") and jps.TimeToDie(rangedTarget) > 11 or jps.buff("skull banner") , player },
+		{ "recklessness", jps.UseCDs and melee and jps.buff("avatar") and jps.TimeToDie(rangedTarget) > 11 , player },
 		{ "avatar", jps.UseCDs and melee and targethealth_pct < 0.30 and jps.TimeToDie(rangedTarget) > 23 , player },
-		{ "avatar", jps.UseCDs and melee and jps.buff("recklessness") or jps.buff("skull banner") and targethealth_pct < 0.30  and jps.TimeToDie(rangedTarget) > 23 , player },
-		{ "skull banner", jps.UseCDs and jps.buff("avatar") or jps.buff("recklessness") , player },
+		{ "avatar", jps.UseCDs and melee and jps.buff("recklessness") and targethealth_pct < 0.30  and jps.TimeToDie(rangedTarget) > 23 , player },
 		-- { "demoralizing banner", playerhealth_pct < 0.30, "player", jps.groundClick() or IsShiftKeyDown() ~= nil , player },
 		-- { "alliance battle standard", playerhealth_pct < 0.30 and not jps.debuff("demoralizing banner"), jps.groundClick() , player },
 		------------------------
@@ -360,7 +352,6 @@ jps.registerRotation("WARRIOR","ARMS",function()
 		{ "victory rush", jps.buff("victorious") , rangedTarget },
 		{ "overpower", true , rangedTarget },
 		{ "colossus smash", shouldSmash() , rangedTarget },
-		{ "cleave", enemycount = 2 and shouldHStrike() and targethealth_pct >= 0.21 , rangedTarget },
 		{ "heroic strike", shouldHStrike() and targethealth_pct >= 0.21 , rangedTarget },
 		{ "mortal strike", targethealth_pct >= 0.21 or not jps.debuff("mortal strike") , rangedTarget },
 		{ "mortal strike", true , rangedTarget },

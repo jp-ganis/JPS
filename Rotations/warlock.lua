@@ -93,6 +93,45 @@ wl.spells["moltenCore"] = toSpellName(140074)
 wl.spells["lifeblood"] = toSpellName(121279)
 
 
+-- check if our procs are up
+function wl.hasProc(min)
+	local power = 0
+	local id = 0;
+	if jps.buff(wl.spells.darkSoulMisery) then power = power +2; id = wl.spells.darkSoulMisery; end 
+	
+	if jps.buff(126577) then power = power +1; id = 126577; end  --Inner Brilliance, int
+	if jps.buff(138703) then power = power +1; id = 138703; end  --Acceleration, haste
+	if jps.buff(139133) then power = power +1; id = 139133; end  --Mastermind, int
+	if jps.buff(125487) then power = power +1; id = 125487; end 	--Lightweave, int
+	if jps.buff(wl.spells.darkSoulKnowledge) then id = 113861; power = power +1 end
+	if jps.bloodlusting() then power = power +1; id = 40; end 
+	if jps.buff(105702) then power = power +2; id = 105702; end  --potion of jade serpent
+	if jps.buff(128985) then power = power +1; id = 128985; end 	--Blessing of the Celestials, int
+	if jps.buff(104423) then power = power +1; id = 104423; end 	--Windsong, haste
+	if jps.buff(104993) then power = power +0.5; id = 104993; end --Jade Spirit, int
+	if jps.buff(126659) then power = power +1; id = 126659; end --Quickened Tongues,haste
+	if jps.buff(138786) then power = power +1; id = 138786; end --Wushoolay's Lightning,  int
+	if jps.buff(138788) then power = power +1; id = 138788; end --Electrified, int
+	if jps.debuff(138002) then power = power +1; id = 138002; end  --fluidity jinrokh, dmg
+	if jps.buff(112879) then power = power +1; id = 112879; end  -- primal nutriment jikun, dmg
+	if jps.buff(138963) then power = power +1; id = 138963; end  --Perfect Aim, 1005 crit
+	--t16
+
+	if jps.buff(146046) then power = power +1; id = 146046; end  -- expanded mind, immerseus trinket, int
+	if jps.buff(148906) then power = power +1; id = 148906; end  -- toxic power, shamans trinket, int
+	if jps.buff(146184) then power = power +1; id = 146184; end  -- garrosh trinket, int
+	if jps.buff(148897) then power = power +1; id = 148897; end  -- malkorok trinket int
+	
+	local durationLeft = 0;
+	
+	if id ~= 40 and id ~= 138002 and id ~= 0 then
+		durationLeft = jps.buffDuration(id);
+	else
+		durationLeft = 40
+	end
+	if power >= min then return true,durationLeft  else return false, 0 end
+end
+
 function wl.hasKilJaedensCunning()
 	local selected, talentIndex = GetTalentRowSelectionInfo(6)
 	return talentIndex == 17
@@ -107,13 +146,11 @@ end
 local interruptSpellTables = {}
 function wl.getInterruptSpell(unit)
 	return function()
-		if not interruptSpellTables[unit] then interruptSpellTables[unit] = {{"macro", "/cast " .. wl.spells.commandDemon }, false , unit} end
+		if not interruptSpellTables[unit] then interruptSpellTables[unit] = {{"macro", "/cast Command Demon" }, false , unit} end
 		local canInterrupt = false
 		if jps.canCast(wl.spells.opticalBlast, unit) then -- Observer Pet 
 			canInterrupt = true
-		elseif jps.canCast(wl.spells.spellLock, unit) then -- Felhunter Pet
-			canInterrupt = true
-		elseif jps.canCast(wl.spells.commandDemon, unit) and select(3,GetSpellInfo(wl.spells.commandDemon))=="Interface\\Icons\\Spell_Shadow_MindRot" then -- GoSac Felhunter
+		elseif jps.canCast("Command Demon", unit) and select(3,GetSpellInfo("Command Demon"))=="Interface\\Icons\\Spell_Shadow_MindRot" then -- GoSac Felhunter
 			canInterrupt = true
 		end
 		local shouldInterrupt = jps.Interrupts and jps.shouldKick(unit) and jps.CastTimeLeft(unit) < wl.maxIntCastLength
@@ -122,23 +159,9 @@ function wl.getInterruptSpell(unit)
 	end
 end
 
--- stop spam curse of the elements at invalid targets @ mop
-function wl.isCotEBlacklisted(unit) 
-	local table_noSpamCotE = {
-		56923, -- Twilight Sapper
-		56341, 56575, -- Burning Tendons 4.3.0/5.2.0
-		53889, -- Corrupted Blood
-		60913, -- Energy Charge
-		60793, -- Celestial Protector
-	}
-	for i,j in pairs(table_noSpamCotE) do
-		if npcId(unit) == j then return true end
-	end
-	return false
-end
 
 function wl.isTrivial(unit)
-	local minHp = 1000000
+	local minHp = 100000
 	if IsInGroup() or IsInRaid() then minHp = minHp * GetNumGroupMembers() end
 	return	UnitHealth(unit) <= minHp
 end

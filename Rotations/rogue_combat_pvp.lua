@@ -17,7 +17,6 @@ jps.registerRotation("ROGUE","COMBAT",function()
 		{ BFMacro,		jps.buff("Blade Flurry") and not jps.MultiTarget },
 		{ "Blade Flurry",	jps.MultiTarget and not jps.buff("Blade Flurry") },
 		{ "Evasion",		jps.hp() < 0.6 and not jps.buff("evasion") },
-		{ "Dismantle",		shouldDisarm and jps.cooldown("dismantle") == 0 },
 		{ "Adrenaline Rush",	jps.UseCDs and energy < 20 },
 		{ "Killing Spree",	not jps.buff("adrenaline rush") and jps.UseCDs and energy < 20 and jps.cooldown("Adrenaline Rush") > 0 },
 		{ "Recuperate",		IsUsableSpell("Recuperate") and jps.hp() < 0.8 and not jps.buff("Recuperate") },

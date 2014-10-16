@@ -32,6 +32,7 @@ jps.registerRotation("DRUID","FERAL", function()
 	
 	
 	-- Berserk makes every ability cost 50% less energy, so we can't hardcode these values (more future proof this way, anyways).
+	--to do wod ... get spell info no longer returns ability cost!
 	local thrashCost = ({ GetSpellInfo('Thrash') })[4]
 	local swipeCost = ({ GetSpellInfo('Swipe') })[4]
 	local shredCost = ({ GetSpellInfo('Shred') })[4]
@@ -162,13 +163,13 @@ jps.registerRotation("DRUID","FERAL", function()
 		{ "Rake",  not jps.MultiTarget and (energy >= rakeCost or clearcasting) and rakeDuration < 3  and (berserk  or tigersFuryCD + .8 >= rakeDuration) },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and clearcasting and jps.isBehind },
+		{ "Shred",  not jps.MultiTarget and clearcasting },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and predatorySwiftnessDuration > 1  and not (energy + (energyPerSec * (predatorySwiftnessDuration - 1)) < (4 - cp) * 20) and jps.isBehind },
+		{ "Shred",  not jps.MultiTarget and predatorySwiftnessDuration > 1  and not (energy + (energyPerSec * (predatorySwiftnessDuration - 1)) < (4 - cp) * 20) },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (  (cp < 5  and ripDuration < 3)  or (cp == 0  and savageRoarDuration < 2 )  ) and jps.isBehind },
+		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (  (cp < 5  and ripDuration < 3)  or (cp == 0  and savageRoarDuration < 2 )  )  },
 		
 	-- Thrash 
 		{ "Thrash",  cp >= 5  and energy >= thrashCost and thrashDuration < 6  and (tigersFury  or berserk) },
@@ -180,13 +181,13 @@ jps.registerRotation("DRUID","FERAL", function()
 		{ "Thrash",  cp >= 5  and energy >= thrashCost and thrashDuration < 6  and energy >= 100 - energyPerSec },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (tigersFury  or berserk)  and jps.isBehind },
+		{ "Shred",  not jps.MultiTarget and energy >= shredCost and (tigersFury  or berserk) },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= shredCost and tigersFuryCD <= 3  and jps.isBehind },
+		{ "Shred",  not jps.MultiTarget and energy >= shredCost and tigersFuryCD <= 3  },
 		
 	-- Shred 
-		{ "Shred",  not jps.MultiTarget and energy >= 100 - (energyPerSec * 2)  and jps.isBehind }, 
+		{ "Shred",  not jps.MultiTarget and energy >= 100 - (energyPerSec * 2) }, 
 	-- Mangle if not behind
 		{ "Mangle",  not jps.MultiTarget and jps.isNotBehind }  
 	}

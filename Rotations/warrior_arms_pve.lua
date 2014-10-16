@@ -34,7 +34,6 @@ jps.registerStaticTable("WARRIOR","ARMS",
 	-- Cooldowns
 	{ "Bloodbath", 'jps.UseCDs '},
 	{ "Avatar", 'jps.UseCDs '},
-	{ "Skull Banner", ' jps.UseCDs '},
 	{ "Recklessness", ' jps.UseCDs '},
 	{ "Berserker Rage", ' jps.UseCDs '},
 

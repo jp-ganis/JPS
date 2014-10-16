@@ -120,9 +120,9 @@ end
 
 function jps.UnitExists(unit)
 	if unit == nil then return false end
-	if UnitExists(unit)~=1 then return false end
-	if UnitIsVisible(unit)~=1 then return false end
-	if UnitIsDeadOrGhost(unit)==1 then return false end
+	if UnitExists(unit)== false then return false end
+	if UnitIsVisible(unit)==false then return false end
+	if UnitIsDeadOrGhost(unit)==true then return false end
 	return true
 end
 
@@ -133,10 +133,10 @@ end
 function jps.canHeal(unit)
 	if not jps.UnitExists(unit) then return false end
 	if GetUnitName("player") == GetUnitName(unit) then return true end
-	if UnitCanAssist("player",unit)~=1 then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
-	if UnitIsFriend("player",unit)~=1 then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
+	if UnitCanAssist("player",unit)==false then return false end -- UnitCanAssist(unitToAssist, unitToBeAssisted) return 1 if the unitToAssist can assist the unitToBeAssisted, nil otherwise
+	if UnitIsFriend("player",unit)==false then return false end -- UnitIsFriend("unit","otherunit") return 1 if otherunit is friendly to unit, nil otherwise. 
 	-- PNJ returns 1 with UnitIsFriend -- PNJ returns 1 or nil (Vendors) with UnitCanAssist
-	if UnitInVehicle(unit)==1 then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
+	if UnitInVehicle(unit)==true then return false end -- inVehicle - 1 if the unit is in a vehicle, otherwise nil
 	if jps.PlayerIsBlacklisted(unit) then return false end
 	if not select(1,UnitInRange(unit)) then return false end -- return FALSE when not in a party/raid reason why to be true for player GetUnitName("player") == GetUnitName(unit)
 	return true
@@ -154,8 +154,8 @@ function jps.canDPS(unit)
 		if jps.buff(iceblock,unit) then return false end
 	end
 	if (GetUnitName(unit) == L["Training Dummy"]) or (GetUnitName(unit) == L["Raider's Training Dummy"]) then return true end	
-	if UnitCanAttack("player", unit)~=1 then return false end-- UnitCanAttack(attacker, attacked) return 1 if the attacker can attack the attacked, nil otherwise.
-	if UnitIsEnemy("player",unit)~=1 then return false end -- WARNING a unit is hostile to you or not Returns either 1 ot nil -- Raider's Training returns nil with UnitIsEnemy
+	if UnitCanAttack("player", unit)==false then return false end-- UnitCanAttack(attacker, attacked) return 1 if the attacker can attack the attacked, nil otherwise.
+	if UnitIsEnemy("player",unit)==false then return false end -- WARNING a unit is hostile to you or not Returns either 1 ot nil -- Raider's Training returns nil with UnitIsEnemy
 	if jps.PlayerIsBlacklisted(unit) then return false end -- WARNING Blacklist is updated only when UNITH HEALTH occurs 
 	if not jps.IsSpellInRange(jps.HarmSpell,unit) then return false end
 	return true
@@ -213,17 +213,15 @@ end
 -- "Power Word: Barrier" 62618 -- Priest
 -- "Flamestrike" 2120 -- Mage
 -- "Rain of Fire" 104233 -- Mage
--- "Dizzying Haze" 118022 -- Brewmaster
+-- "Dizzying Haze" 115180 -- Brewmaster
 -- "Light's Hammer" 114158 -- Paladin
 -- "Healing Rain" 73921 -- Shaman
 -- "wild mushroom" 88747 -- Druid
--- "Explosive Trap" 13813 - Hunter
--- "Ice Trap" 13809 - Hunter
--- "Snake Trap" 34600 - Hunter
--- "Freezing Trap" 1499 - Hunter
+-- "Explosive Trap" 82939 - Hunter (was 13813)
+-- "Ice Trap" 82941 - Hunter (was 13809)
+-- "Freezing Trap" 60192 - Hunter (was 1499)
 -- "Summon Jade Serpent Statue" - 115313 Monk
 -- "Healing Sphere" - 115460 Monk
--- "demoralizing banner" - 114203 warrior
 -- "mocking banner" - 114192 warrior 
 -- "heroic leap" - 6544 warrior
 -- "Freeze" - 33395 Frost Mage
@@ -233,8 +231,10 @@ end
 -- "Holy Word: Sanctuary" 88685 - Priest
 -- "Shadowfury" 30283 - Warlock
 -- "Summon Black Ox Statue" - 115315 - Monk 
+-- "Summon Black Ox Statue" - 115315 - Monk 
+-- "cataclysm" - 152108 Warlock
 
-jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740, 115315}
+jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,115180,114158,73921,88747, 82939, 82941, 60192, 115313, 115460, 114192, 6544, 33395, 116011, 5740, 115315, 152108}
 function jps.spellNeedSelect(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = string.lower(spell) end

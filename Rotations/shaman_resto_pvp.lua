@@ -80,7 +80,7 @@ jps.registerRotation("SHAMAN","RESTORATION",function()
 		{ "riptide",				defaultHP < 0.8, defaultTarget },
 		{ "unleash elements",		defaultHP < 0.8, defaultTarget },
 	
-		{ "greater healing wave",	defaultHP < 0.8 and jps.buff("tidal waves"), defaultTarget },
+		{ "healing wave",	defaultHP < 0.8 and jps.buff("tidal waves"), defaultTarget },
 		{ "healing surge",			defaultHP < 0.6, defaultTarget },
 	
 		-- Kick.

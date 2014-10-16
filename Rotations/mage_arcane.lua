@@ -20,7 +20,6 @@ jps.registerRotation("MAGE","ARCANE",function()
 	local spellTable = {
 		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
 		
-		{ "mage armor",				 not jps.buff("mage armor") }, 
 		{ "ice barrier",				 not jps.buff("ice barrier") }, 
 		
 		{ "Ice Block", jps.hp() < 0.10  and not jps.buff("Ice Block","player") },
@@ -58,8 +57,6 @@ jps.registerRotation("MAGE","ARCANE",function()
 		{ "presence of mind" , jps.UseCds },
 		{ "arcane blast" },
 		{ "arcane barrage",				 jps.Moving },
-		{ "fire blast ",				 jps.Moving },
-		{ "ice lance ",				 jps.Moving },
 	}
 
 	return parseSpellTable(spellTable)

@@ -39,10 +39,8 @@ local spellTable_single =
 	-- Buffs
 	{ "Avenging Wrath", jps.UseCDs , player },
 	{ "Execution Sentence", onCD and not jps.cooldown("Avenging Wrath") > 0.2 , rangedTarget },
-	{ "Guardian of Ancient Kings", jps.UseCDs , rangedTarget },
 	-- Single Target 
 	{ "Seal of Truth", stance ~= 1 , player },
-	{ "Inquisition", jps.buffDuration("Inquisition") < 5 and (holyPower > 2 or jps.buff("Divine Purpose")) , player },
 	{ "Templar's Verdict", holyPower = 5 , rangedTarget},
 	{ "Hammer of Wrath", true , rangedTarget }, 
 	{ "Exorcism" , true , rangedTarget },
@@ -61,10 +59,8 @@ local spellTable_multi =
 	-- Buffs
 	{ "Avenging Wrath", jps.UseCDs , player },
 	{ "Execution Sentence", onCD and not jps.cooldown("Avenging Wrath") > 0.2 , rangedTarget },
-	{ "Guardian of Ancient Kings", jps.UseCDs , rangedTarget },
 	-- Single Target 
 	{ "Seal of Righteousness", stance ~= 2 , player},
-	{ "Inquisition", jps.buffDuration("Inquisition") < 5 and (holyPower > 2 or jps.buff("Divine Purpose")) , player },
 	{ "Divine Storm", holyPower >= 3 , rangedTarget},
 	{ "Hammer of Wrath", true , rangedTarget }, 
 	{ "Exorcism" , true , rangedTarget },

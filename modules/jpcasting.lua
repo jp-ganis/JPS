@@ -61,7 +61,7 @@ function jps.IsChannelingSpell(spell,unit)
 end
 
 function jps.spellCastTime(spell)
-	return select(7, GetSpellInfo(spell)) /1000
+	return select(4, GetSpellInfo(spell)) /1000
 end
 
 jps.polySpellIds = {
@@ -151,19 +151,31 @@ function jps_IsSpellKnown(spell)
 	local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(2)
 	local booktype = "spell"
 	local mySpell = nil
-		local spellname = nil
-		if type(spell) == "string" then spellname = spell end
-		if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
-			for index = offset+1, numSpells+offset do
-				-- Get the Global Spell ID from the Player's spellbook
-				local spellID = select(2,GetSpellBookItemInfo(index, booktype))
-				local slotType = select(1,GetSpellBookItemInfo(index, booktype))
-				local name = select(1,GetSpellBookItemName(index, booktype))
-				if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
-					mySpell = spellname
-					break -- Breaking out of the for/do loop, because we have a match
-				end
-			end
+	local spellname = nil
+	if type(spell) == "string" then spellname = spell end
+	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
+	for index = offset+1, numSpells+offset do
+		-- Get the Global Spell ID from the Player's spellbook
+		local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+		local slotType = select(1,GetSpellBookItemInfo(index, booktype))
+		local name = select(1,GetSpellBookItemName(index, booktype))
+		if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
+			mySpell = spellname
+			break -- Breaking out of the for/do loop, because we have a match
+		end
+	end
+		
+	local name, texture, offset, numSpells, isGuild = GetSpellTabInfo(1)
+	for index = offset+1, numSpells+offset do
+		-- Get the Global Spell ID from the Player's spellbook
+		local spellID = select(2,GetSpellBookItemInfo(index, booktype))
+		local slotType = select(1,GetSpellBookItemInfo(index, booktype))
+		local name = select(1,GetSpellBookItemName(index, booktype))
+		if ((spellname:lower() == name:lower()) or (spellname == name)) and slotType ~= "FUTURESPELL" then
+			mySpell = spellname
+			break -- Breaking out of the for/do loop, because we have a match
+		end
+	end			
 	return mySpell
 end
 

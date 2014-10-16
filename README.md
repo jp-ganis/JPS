@@ -2,9 +2,10 @@
 = JPS =
 ==============================================================================
 
-***AADDON FOR WORLD OF WARCRAFT***
+***A PLUA ADDON FOR WORLD OF WARCRAFT***
 
-This addon help you get the most out of your WoW experience. See commands below for a full list of available
+This addon in combination with enabled protected LUA will help you get the most
+out of your WoW experience. See commands below for a full list of available
 commands.
 
 ***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd
@@ -29,14 +30,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Copyright (C) 2011 James Ganis
 
 ==============================================================================
-= TO-DO WoD                                                      =
+= NEW: JPS Support forums                                                    =
 ==============================================================================
-* replace nil/o checks with  true/false (http://wowpedia.org/Patch_6.0.2/API_changes)
-* remove dot snapshotting
-* some frame names changed (e.g. in jputils)
-* Ingame Events changed
-* new GUID format!
-* class specific stuff
+
+due to the shutdown off PG we created a new Support forum for JPS & protected LUA
+
+http://kazuhiro.nishi.co/keymoon/
+
+
+==============================================================================
+= USAGE                                                                      =
+==============================================================================
+
+With protected LUA enabled (through and external hack, not included with this
+package) this addon will play on your behalf, detecting your class and spec
+simply attacking a target will cause the mod to take over. Using all the best
+spells and abilities with split second timing to ensure maximum DPS, TPS or
+HPS for your class and spec.
 
 ==============================================================================
 = TO-DO / KNOWN BUGS                                                         =

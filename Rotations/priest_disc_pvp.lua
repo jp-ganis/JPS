@@ -517,8 +517,6 @@ local spellTable =
 	priest.unitFor_Fear_Event,
 	priest.unitFor_Fear_Enemy,
 	{ 8122, isInBG and jps.canDPS(rangedTarget) and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
--- "Psyfiend" 108921 Démon psychique
-	{ 108921, (FriendTable[player] ~= nil) and jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , player },
 -- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
 -- "Torve-esprit" 123040 -- "Ombrefiel" 34433 "Shadowfiend"
@@ -611,8 +609,6 @@ local spellTable_moving =
 	priest.unitFor_Fear_Event,
 	priest.unitFor_Fear_Enemy,
 	{ 8122, isInBG and jps.canDPS(rangedTarget) and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
--- "Psyfiend" 108921 Démon psychique
-	{ 108921, (FriendTable[player] ~= nil) and jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , player },
 -- "Void Tendrils" 108920 -- debuff "Void Tendril's Grasp" 114404
 	{ 108920, jps.canDPS(rangedTarget) and isInBG and canFear and not unitLoseControl(rangedTarget) , rangedTarget },
 -- "Torve-esprit" 123040 -- "Ombrefiel" 34433 "Shadowfiend"
@@ -687,7 +683,6 @@ end, "Disc Priest PvP", false, true)
 
 -- "Leap of Faith" -- "Saut de foi" 
 -- "Mass Dispel"  -- Dissipation de masse 32375
--- "Psyfiend" -- "Démon psychique" 108921
 -- "Evangélisme" 81661
 -- "Archange" 81700
 -- "Sursis" 59889 "Borrowed"

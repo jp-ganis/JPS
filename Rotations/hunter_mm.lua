@@ -1,131 +1,100 @@
 --[[[
-@rotation Default
+@rotation MM Hunter PVE 6.0.2
 @class HUNTER
 @spec MARKSMANSHIP
-@author Chiffon, Scribe, jpganis
-@description 
-SimCraft
+@author tropic, updated by peanutbird
+@description
+Talents/gear:[br]
+[*] Weapon DPS >>> Crit > Haste > Mastery > Multistrike > Agility[br]
+[*] Thrill of the Hunt[br]
+[*] Stampede[br]
+[*] Barrage > Glaive Toss[br]
+[br]
+Features:[br]
+[*] "Defensive" button toggles misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid[br]
+[*] Auto use "Healthstone" at 30% hp[br]
+[*] mend pet when hp is less than 90%[br]
+[*] interrupt spellcasting with Counter Shot[br]
+[*] Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc.[br]
+[br]
+Trap Keys:[br]
+[*][code]SHIFT:[/code] Explosive Trap[br]
+[*][code]ALT:[/code] Freezing Trap[br]
+[*][code]CONTROL:[/code] Snake Trap[br]
+[*][code]SHIFT-CONTROL:[/code] Ice Trap[br]
 ]]--
 
-jps.registerRotation("HUNTER","MARKSMANSHIP", function()
+-- cast_regen always returns zero even though it should be working (?)
+-- the simcraft rotation uses it a lot to prevent focus capping
+-- GetPowerRegen() stays constant despite haste changes (buffs, gear) - bug in the game (?)
 
-	local spell = nil
-	local target = nil
-	local up = UnitPower
-	local r = jps.Macro;
-	local focus = UnitPower("player")
-
-	-- Interupting, Borrowed directly from feral cat
-	if jps.Interrupts and jps.shouldKick("target") and cd("Silencing Shot") == 0 then
-		return "Silencing Shot"
-
-	-- Misdirecting to pet if not in a party
-	elseif GetNumSubgroupMembers() == 0 and jps.Opening and not UnitIsDead("pet") then
-		jps.Target = "pet"
-		spell = "Misdirection"
-		jps.Opening = false	
-		
-	-- Misdirecting to focus if set
-	elseif jps.Opening and UnitExists("focus") and cd("Misdirection") then
-		print("Misdirecting to",GetUnitName("focus", showServerName)..".")
-		jps.Target = "focus"
-		spell = "Misdirection"
-		jps.Opening = false
-		
-	-- Main rotation (Shift to launch trap in Multi Mob situations)
-	elseif UnitThreatSituation("player") == 3 and cd("Feign Death") == 0 and jps.checkTimer("feign") and GetNumSubgroupMembers() > 0 then
-		print("Aggro! Feign Death cast.")
-		jps.createTimer("feign", "2")
-		spell = "Feign Death"
-	elseif jps.checkTimer("feign") > 0 then
-		spell = nil
-	elseif jps.buff("Feign Death") and jps.checkTimer("feign") == 0 then
-		CancelUnitBuff("player", "Feign Death")
-		spell = nil
-	elseif UnitIsDead("pet") then
-		spell = "Revive Pet"
-	
-	--SIMCRAFT
-	else
-		local spellTable = 
-		{
-			{ "aspect of the iron hawk", 
-				not jps.Moving
-				and not jps.buff("aspect of the iron hawk") },
-
-			{ "aspect of the fox",
-				jps.Moving
-				and not jps.buff("aspect of the fox") },
-
-			{ "explosive trap",
-				jps.MultiTarget },
-
-			-- Lifeblood. (requires herbalism)
-			{ "Lifeblood",
-				jps.UseCDs
-				and jps.hp() < .7 },
-
-			{ "glaive toss" },
-
-			{ "powershot" },
-
-			{ "barrage" },
-
-			{ "blink strike" },
-
-			{ "lynx rush" },
-
-			{ "multi-shot",
-				jps.MultiTarget },
-
-			{ "steady shot",
-				jps.MultiTarget },
-
-			{ "serpent sting",
-				not jps.debuff("Serpent Sting") 
-				and jps.hp("target") <= 0.9 },
-
-			{ "chimera shot",
-				jps.hp("target") <= 0.9 },
-
-			{ "dire beast" },
-
-			{ "rapid fire",
-				not jps.buff("rapid fire") },
-
-			{ "stampede" },
+-- _, focusPerSec = GetPowerRegen()
+-- cast_regen = jps.CastTimeLeft("player") * GetPowerRegen()
 
 
-			{ "kill shot" },
+-- Pool focus for "Rapid Fire" so we can spam "Aimed shot" with "Careful Aim" buff
+function hunter.rapidfirepooling()
+    if UnitMana("player") < 85
+    and jps.cooldown(3045) < 8 and jps.cooldown(3045) ~= 0 then
+        return true
+    end
+    return false
+end
 
-			{ "aimed shot",
-				jps.buff("Fire!") },
+jps.registerStaticTable("HUNTER","MARKSMANSHIP", {
 
-			{ "a murder of crows",
-				not jps.debuff("a murder of crows") },
+    -- Revive pet
+    --{ hunter.spells.heartOfThePhoenix, 'UnitIsDead("pet") ~= nil and HasPetUI() ~= nil' }, -- Instant revive pet (only some pets, Ferocity)
+    --{ hunter.spells.revivePet, '((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving' },
 
-			{ "arcane shot",
-				jps.buff("thrill of the hunt") },
+    -- Heal pet
+    { hunter.spells.mendPet, 'jps.hp("pet") < 0.90 and not jps.buff(hunter.spells.mendPet, "pet")' },
 
-			{ "aimed shot",
-				jps.hp("target") > 0.9 
-				or jps.buff("rapid fire") 
-				or jps.bloodlusting() },
+    -- Misdirection
+    { hunter.spells.misdirection, 'jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil', 'pet' }, -- IsInGroup() returns true/false. Works for any party/raid
+    { hunter.spells.misdirection, 'jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") ~= nil', 'focus' },
 
-			{ "arcane shot",
-				( focus >= 66 
-					or jps.cooldown("chimera shot") >= 5) 
-				and (jps.hp("target") < 90 
-					and not jps.buff("rapid fire") 
-					and not jps.bloodlusting() ) },
+    -- Interrupt
+    --{ hunter.spells.counterShot, 'jps.shouldKick()' },
+    { hunter.spells.counterShot, 'jps.shouldKick() and jps.CastTimeLeft("target") < 1.4' },
 
-			{ "fervor",
-				focus <= 50 },
+    -- Healthstone
+    { jps.useBagItem(5512), 'jps.hp("player") < 0.30' },
 
-			{ "steady shot" },
-		}
-		spell,target = parseSpellTable(spellTable)
-	end
-	
-	return spell,target
-end, "Default")
+    -- Trinkets and stuff
+    { jps.useTrinket(0), 'jps.UseCDs' },
+    { jps.useTrinket(1), 'jps.UseCDs' },
+    { jps.DPSRacial, 'jps.UseCDs' },
+
+    -- Traps
+    { hunter.spells.trapLauncher, 'not jps.buff(hunter.spells.trapLauncher)' },
+    { hunter.spells.explosiveTrap, '(hunter.trapKey() == 1 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+    { hunter.spells.freezingTrap, '(hunter.trapKey() == 2 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+    { hunter.spells.snakeTrap, '(hunter.trapKey() == 4 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+    { hunter.spells.iceTrap, '(hunter.trapKey() == 3 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+    
+    -- Rotation
+    { hunter.spells.chimaeraShot },
+    { hunter.spells.killShot },
+    { hunter.spells.rapidFire, 'jps.UseCDs and jps.hp("target") < 0.80 and not jps.bloodlusting()' },
+    { hunter.spells.stampede, 'jps.UseCDs and jps.TimeToDie("target") > 20' },
+    {"nested", jps.buff(hunter.buffs.carefulAim), {
+        { hunter.spells.glaiveToss, 'jps.Multitarget' },
+        { hunter.spells.barrage, 'jps.Multitarget' },
+        { hunter.spells.aimedShot },
+        { hunter.spells.steadyShot },
+    }},
+    { hunter.spells.direBeast, 'jps.focus() < 90' },
+    { hunter.spells.glaiveToss },
+    { hunter.spells.powershot },
+    { hunter.spells.aMurderOfCrows, 'jps.UseCDs' },
+    { hunter.spells.barrage },
+    --Pool max focus for rapid fire so we can spam AimedShot with Careful Aim buff
+    { hunter.spells.steadyShot, 'hunter.rapidfirepooling()'},
+    --Cast a second shot for steady focus if that won't cap us.
+    { hunter.spells.steadyShot, 'jps.LastCast = hunter.spells.steadyShot and jps.focus() < 80'},
+    { hunter.spells.aimedShot, 'jps.focus() > 90' },
+    { hunter.spells.aimedShot, 'jps.buff(hunter.buffs.thrillOfTheHunt) and jps.focus() > 60' },
+    { hunter.spells.steadyShot },
+
+}, "MM Hunter PVE 6.0.2", true, false)

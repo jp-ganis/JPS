@@ -76,7 +76,7 @@ local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or
               { jps.DPSRacial, jps.UseCDs },
              
               -- Use Vanish
-              { "Vanish", not jps.debuff("Shadow Blades") and not jps.buff("Adrenaline Rush") and energy < 20 and jps.buff("Deep Insight") and cp < 4 and jps.UseCDs and jps.cooldown("Shadowstep") == 0 },
+              { "Vanish", not jps.buff("Adrenaline Rush") and energy < 20 and jps.buff("Deep Insight") and cp < 4 and jps.UseCDs and jps.cooldown("Shadowstep") == 0 },
              
               -- Use Shadowstep After Vanish-Talent Specific
               { "Shadowstep", jps.LastCast == "Vanish" },
@@ -86,9 +86,6 @@ local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or
              
               -- Slice and Dice
               { "Slice and Dice", snd_duration < 2 or snd_duration < 15 and jps.buffStacks("Bandits Guile") == 11 and cp >= 4 },
-             
-              -- Shadow Blades while bloodlusting
-              { "Shadow Blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("Shadow Blades") },
              
               -- Killing Spree CD
               { "Killing Spree", jps.UseCDs and energy < 35 and snd_duration > 4 and not jps.buff("Adrenaline Rush") },
@@ -180,9 +177,6 @@ local defensiveCDActive = jps.buff("Evasion") or jps.buff("Cloak of Shadows") or
              
               -- Slice and Dice
               { "Slice and Dice", snd_duration < 2 or snd_duration < 15 and jps.buffStacks("Bandits Guile") == 11 and cp >= 4 },
-             
-              -- Shadow Blades while bloodlusting
-              { "Shadow Blades", jps.bloodlusting() and snd_duration >= jps.buffDuration("Shadow Blades") },
              
               -- Killing Spree CD
               { "Killing Spree", energy < 35 and snd_duration > 4 and not jps.buff("Adrenaline Rush") },

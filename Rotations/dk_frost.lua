@@ -112,7 +112,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},
 	{ "frost strike",'not dk.rune("oneFr")'},
 	{ "frost strike",'jps.buffStacks("blood charge")<=10 and jps.IsSpellKnown("Blood Tap")'},
-	{ "horn of winter"},
 	{ "frost strike",'not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")'},
 	{ "obliterate",'"onCD"'},
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.buff("Potion of Mogu Power") and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
@@ -237,7 +236,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "unholy blight",'jps.myDebuffDuration("Frost Fever") < 3'},
 	{ "unholy blight",'jps.myDebuffDuration("Blood Plague") < 3'},
 	{ "frost strike",'jps.buffStacks("blood charge")>=8'},
-	{ "horn of winter"},
 	{ "frost strike",'not jps.buff("runic corruption") and jps.IsSpellKnown("runic corruption")'},
 	{ "frost strike",'"onCD"'},
 	{ "empower rune weapon",'IsSpellInRange("Obliterate","target") == 1 and jps.buff("Potion of Mogu Power") and not dk.rune("twoDr") and not dk.rune("twoUr") and not dk.rune("twoFr") and jps.runicPower() < 60 and jps.UseCDs'},
@@ -315,7 +313,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Lifeblood",'jps.UseCDs'},
 
 	-- Diseases
-	{ "Necrotic Strike",'not jps.myDebuff("Necrotic Strike",target)'},
 	{ "Howling Blast",'jps.myDebuffDuration("Frost Fever") <= 1'},
 	{ "Howling Blast",'jps.buff("Freezing Fog") and jps.runicPower() < 88'},
 	{ "Plague Strike",'jps.myDebuffDuration("Blood Plague") <= 1'},
@@ -328,7 +325,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Obliterate",'jps.buff("Killing Machine")'},
 	{ "Obliterate",'jps.bloodlusting()'},
 	-- Filler.
-	{ "Horn of Winter",'jps.runicPower() < 20'},
 
 	{ "Frost Strike",'jps.runicPower() >= 76'},
 	{ "Frost Strike",'jps.bloodlusting()'},
@@ -363,7 +359,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	{ "Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
 	-- Buffs
 	{ "frost presence",'not jps.buff("frost presence")'},
-	{ "horn of winter",'"onCD"'},
 	{ "Outbreak",'jps.myDebuffDuration("Frost Fever") < 3'},
 	{ "Outbreak",'jps.myDebuffDuration("Blood Plague") < 3'},
 	{ "Unholy Blight",'jps.myDebuffDuration("Frost Fever") < 3'},

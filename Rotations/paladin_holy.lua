@@ -12,7 +12,7 @@ Modifiers:[br]
 [*] [code]LEFT-CTRL[/code]: Light of Dawn[br]
 ]]--
 hpala = {}
-hpala.interruptTable = {{"Flash of Light", 0.43}, {"Divine Light", 0.89},{ "Holy Light", 0.98}}
+hpala.interruptTable = {{"Flash of Light", 0.43}, {"Holy Light", 0.89}}
 hpala.importantHealTargetsValue =  {}
 hpala.UpdateInterval = 0.2
 hpala.timestamp = GetTime()
@@ -140,13 +140,10 @@ hpala.spellTable = {
 
 -- Cooldowns
 	{ "Lay on Hands",'jps.hp(hpala.myLowestImportantUnit()) < 0.20 and jps.UseCDs', hpala.myLowestImportantUnit, "casted lay on hands!" },
-	{ "Divine Plea",'jps.mana() < 0.60 and jps.glyphInfo(45745) == false and jps.UseCDs', hpala.player },
 	{ jps.useBagItem("Master Mana Potion"),'jps.mana() < 0.60 and jps.UseCDs', hpala.player },
 
 	{ "Avenging Wrath",'jps.UseCDs and jps.CountInRaidStatus(0.7) > 2', hpala.player },
 	{ "Avenging Wrath",'jps.UseCDs and jps.hp(hpala.ourHealTarget()) < 0.5 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.player },
-	{ "Divine Favor",'jps.UseCDs and jps.CountInRaidStatus(0.7) > 2', hpala.player },
-	{ "Divine Favor",'jps.UseCDs and jps.hp(hpala.ourHealTarget()) < 0.5 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.player },
 
 	{ jps.useTrinket(0),'jps.UseCDs and not jps.isManaRegTrinket(0) and jps.useTrinket(0) ~= ""', "player"},
 	{ jps.useTrinket(1),'jps.UseCDs and not jps.isManaRegTrinket(1) and jps.useTrinket(1) ~= ""', "player"},
@@ -177,7 +174,7 @@ hpala.spellTable = {
 	{ "Divine Shield",'jps.hp(hpala.player()) < 0.30 and jps.cooldown("Divine Protection")~=0', hpala.player },
 
 -- Infusion of Light Proc
-	{ "Divine Light",'jps.buff("Infusion of Light") and jps.hp(hpala.ourHealTarget()) < 0.6', hpala.ourHealTarget },
+	{ "Holy Light",'jps.buff("Infusion of Light") and jps.hp(hpala.ourHealTarget()) < 0.6', hpala.ourHealTarget },
 
 -- Divine Purpose Proc
 	{ "Eternal Flame",'jps.buff("Divine Purpose") and not jps.buff("Eternal Flame", hpala.ourHealTarget())  and jps.hp(hpala.ourHealTarget()) < 0.97', hpala.ourHealTarget },
@@ -188,15 +185,13 @@ hpala.spellTable = {
 
 	-- tank + focus + target
 	{ "Flash of Light",'jps.hp(hpala.ourHealTarget()) < 0.35 and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
-	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.78  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
+	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.78  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 	{ "Holy Shock",'jps.hp(hpala.ourHealTarget()) < 0.94  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
-	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.88  and hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget },
 
 	-- other raid / party
 	{ "Flash of Light",'jps.hp(hpala.ourHealTarget()) < 0.30', hpala.ourHealTarget },
-	{ "Divine Light",'jps.hp(hpala.ourHealTarget()) < 0.55', hpala.ourHealTarget },
+	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.55', hpala.ourHealTarget },
 	{ "Holy Shock",'jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget },
-	{ "Holy Light",'jps.hp(hpala.ourHealTarget()) < 0.88 and not hpala.unitIsImportant(hpala.ourHealTarget())', hpala.ourHealTarget }, -- prevent spamming Holy Light on tanks
 	{ "Word of Glory",'jps.holyPower() > 2 and jps.hp(hpala.ourHealTarget()) < 0.90', hpala.ourHealTarget },
 	{ "Divine Plea",'jps.mana() < 0.60 and jps.CountInRaidStatus(0.8) < 1', hpala.player },
 }

@@ -154,7 +154,6 @@ local spellTable = {
 
 	{"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
 		-- On the move
-		{ wl.spells.felFlame, 'jps.Moving and not wl.hasKilJaedensCunning() and jps.mana() > 0.5' },
 		-- Life Tap
 		{wl.spells.lifeTap, 'jps.mana() < 0.4 and jps.mana() < jps.hp("player")' },
 		wl.soulburnSoulSwapTable(),
@@ -177,7 +176,6 @@ local spellTable = {
 	}},
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown()', {
 		-- On the move
-		{ wl.spells.felFlame, 'jps.Moving and not wl.hasKilJaedensCunning() and jps.mana() > 0.5' },
 		wl.soulburnSoulSwapTable(),
 		-- DoT's
 		jps.dotTracker.castTableStatic("corruption"),
