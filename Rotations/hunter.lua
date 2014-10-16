@@ -48,6 +48,7 @@ hunter.buffs["theBeastWithin"] = toSpellName(34692)
 hunter.buffs["thrillOfTheHunt"] = toSpellName(109306)
 hunter.buffs["feigndeath"] = toSpellName(5384)
 hunter.buffs["beastCleave"] = toSpellName(115939)
+hunter.buffs["carefulAim"] = toSpellName(34483)
 
 
 function hunter.petIsPassive()
