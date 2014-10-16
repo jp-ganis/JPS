@@ -88,6 +88,7 @@ wl.spells["grimoireFelguard"] = toSpellName(111898)
 wl.spells["grimoireOfService"] = toSpellName(108501)
 wl.spells["harvestLife"] = toSpellName(689)
 wl.spells["moltenCore"] = toSpellName(140074)
+wl.spells["demonicSynergy"] = toSpellName(171982)
 
 -- Professions
 wl.spells["lifeblood"] = toSpellName(121279)
@@ -121,6 +122,7 @@ function wl.hasProc(min)
 	if jps.buff(148906) then power = power +1; id = 148906; end  -- toxic power, shamans trinket, int
 	if jps.buff(146184) then power = power +1; id = 146184; end  -- garrosh trinket, int
 	if jps.buff(148897) then power = power +1; id = 148897; end  -- malkorok trinket int
+	if jps.buff(171982) then power = power +1; id = 171982; end  -- demonic synergy demo
 	
 	local durationLeft = 0;
 	
