@@ -175,11 +175,12 @@ Modifiers:[br]
 [*] [code]jps.UseCDs[/code]: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated![br]
 ]]--
 
-addUIButton("DontUseCotE", 0,40, "Interface\\Icons\\Spell_shadow_chilltouch");
-addUIButton("incinerateMouseover", 40,40, "Interface\\Icons\\spell_fire_burnout");
 
-addUIButton("mouseoverGateway", 120,40, "Interface\\Icons\\spell_warlock_demonicportal_green");
-addUIButton("altShadowfury", 160,40, "Interface\\Icons\\ability_warlock_shadowfurytga");
+--addUIButton("DontUseCotE", 0,40, "Interface\\Icons\\Spell_shadow_chilltouch");
+--addUIButton("incinerateMouseover", 40,40, "Interface\\Icons\\spell_fire_burnout");
+
+--addUIButton("mouseoverGateway", 120,40, "Interface\\Icons\\spell_warlock_demonicportal_green");
+--addUIButton("altShadowfury", 160,40, "Interface\\Icons\\ability_warlock_shadowfurytga");
 
 
 

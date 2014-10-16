@@ -11,7 +11,7 @@ commands.
 ***Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd
 and many more for all their contributions to keeping this project going!***
 
-*** VERSION 1.3 - Huge updates from PCMD/Htordeux. ***
+*** VERSION 1.4 - Huge updates from PCMD/Htordeux. ***
 *** All credit for this version to them.           ***
 
 This program is free software: you can redistribute it and/or modify
@@ -29,14 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Copyright (C) 2011 James Ganis
 
-==============================================================================
-= NEW: JPS Support forums                                                    =
-==============================================================================
-
-due to the shutdown off PG we created a new Support forum for JPS & protected LUA
-
-http://kazuhiro.nishi.co/keymoon/
-
 
 ==============================================================================
 = USAGE                                                                      =
@@ -52,13 +44,7 @@ HPS for your class and spec.
 = TO-DO / KNOWN BUGS                                                         =
 ==============================================================================
 
-* test ALL rotations for proper function & spell usage (dps/simcraft 5.3 optimization later) !
-* BUG: some rotation could cause a fps drop
-* jps.findTanksInRaid(),jps.cancelCasting() leak memory
-* remove jps.targetTargetTank()
-* test jps.kickDelay()
-* save last jps.updateInterval used
-* Add a silent mode for jps (no chat messages)
+* coming soon
 
 ==============================================================================
 = COMMANDS                                                                   =
