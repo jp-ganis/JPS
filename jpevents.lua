@@ -408,8 +408,9 @@ jps.registerEvent("UI_ERROR_MESSAGE", function(event_error)
 
 			local TargetGuid = UnitGUID("target")
 			if FireHack and (TargetGuid ~= nil) then
-				local TargetObject = GetObjectFromGUID(TargetGuid)
-				TargetObject:Face ()
+				--FH abpi changed
+				--local TargetObject = GetObjectFromGUID(TargetGuid)
+				--TargetObject:Face ()
 			else
 				jps.createTimer("Facing",0.6)
 				jps.createTimer("FacingBug",1.2)
