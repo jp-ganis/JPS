@@ -59,7 +59,7 @@ local demoSpellTable = {
 
 
 	-- CD's
-	{"nested", 'jps.demonicFury() >= 350', cdTable},
+	{"nested", 'jps.demonicFury() >= 400', cdTable},
 	{"nested", 'jps.buff(wl.spells.darkSoulKnowledge)', cdTable},
 	
 	{ wl.spells.grimoireFelguard,'jps.UseCDs'},
@@ -71,8 +71,8 @@ local demoSpellTable = {
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 800'},
 		{wl.spells.metamorphosis, 'IsShiftKeyDown() == true and IsControlKeyDown() == true'},
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 300 and jps.buff(wl.spells.darkSoulKnowledge)'},
-		{wl.spells.metamorphosis, 'jps.demonicFury() >= 350 and wl.hasProc(1)'},
-		{wl.spells.metamorphosis, 'jps.myDebuffDuration(wl.spells.doom) < 15 and not jps.MultiTarget and jps.demonicFury() >= 350'},
+		{wl.spells.metamorphosis, 'jps.demonicFury() >= 420 and wl.hasProc(1)'},
+		{wl.spells.metamorphosis, 'jps.myDebuffDuration(wl.spells.doom) < 15 and not jps.MultiTarget and jps.demonicFury() >= 350 and jps.combatTime() >= 9'},
 	}},
 
 	-- instant casts while moving
@@ -117,7 +117,7 @@ local demoSpellTable = {
 		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) >= 1'},
 		{wl.spells.shadowBolt, 'jps.Moving'},
 		{wl.spells.soulFire, 'jps.buffStacks(wl.spells.moltenCore) > 1 and wl.hasProc(1) '},
-		{wl.spells.soulFire, 'jps.buffStacks(wl.spells.moltenCore) >= 7'},
+		{wl.spells.soulFire, 'jps.buffStacks(wl.spells.moltenCore) >= 3'},
 		{wl.spells.shadowBolt}, --touch of chaos
 	}},
 
@@ -212,7 +212,7 @@ local demoSpellTable = {
 	{wl.spells.commandDemon, 'wl.hasPet() and jps.UseCDs'},
 
 	-- rules for enter meta
-	{"nested", 'not jps.buff(wl.spells.metamorphosis)', {
+	{"nested", 'not jps.buff(wl.spells.metamorphosis) and IsAltKeyDown() == false', {
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 800'},
 		{wl.spells.metamorphosis, 'IsShiftKeyDown() == true and IsControlKeyDown() == true'},
 		{wl.spells.metamorphosis, 'jps.demonicFury() >= 300 and jps.buff(wl.spells.darkSoulKnowledge)'},
