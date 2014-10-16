@@ -54,10 +54,6 @@ local demoSpellTable = {
 	-- Soulstone
 	wl.soulStone("target"),
 
-	-- Shadowfury
-	{wl.spells.shadowfury, 'IsAltKeyDown() ~= true' },
-
-
 	-- CD's
 	{"nested", 'jps.demonicFury() >= 400', cdTable},
 	{"nested", 'jps.buff(wl.spells.darkSoulKnowledge)', cdTable},
@@ -150,6 +146,9 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		SpellStopCasting()
 		jps.NextSpell = nil
 	end
+	if jps.IsSpellKnown("Shadowfury") and jps.cooldown("Shadowfury") == 0 and IsAltKeyDown() == true and not GetCurrentKeyBoardFocus() then
+		jps.Cast("Shadowfury")
+	end
 	if UnitChannelInfo("player") == wl.spells.hellfire and jps.hp() < 0.59 then
 		SpellStopCasting()
 		jps.NextSpell = nil
@@ -199,9 +198,6 @@ local demoSpellTable = {
 	-- Soulstone
 	wl.soulStone("target"),
 
-	-- Shadowfury
-	{wl.spells.shadowfury, 'IsAltKeyDown() ~= true' },
-
 
 	-- CD's
 	{"nested", 'jps.demonicFury() >= 350', cdTable},
@@ -227,13 +223,11 @@ local demoSpellTable = {
 		{wl.spells.handOfGuldan, 'select(1,GetSpellCharges(wl.spells.handOfGuldan)) == 1 and jps.myDebuffDuration(wl.spells.shadowflame) >= 2 and jps.myDebuffDuration(wl.spells.shadowflame) < 4'},
 	}},
 
-
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown() and jps.buff(wl.spells.metamorphosis) and not IsShiftKeyDown()', {
 		{wl.spells.corruption, 'jps.myDebuffDuration(wl.spells.doom) < 15'},
 		{wl.spells.corruption, 'wl.shouldMouseoverDoom()',"mouseover"},
 		{wl.spells.shadowBolt},
 	}},
-
 
 	--opener
 	{"nested","jps.combatTime() < 10",{
@@ -295,11 +289,16 @@ jps.registerRotation("WARLOCK","DEMONOLOGY",function()
 		SpellStopCasting()
 		jps.NextSpell = nil
 	end
+
 	if UnitChannelInfo("player") == wl.spells.hellfire and jps.hp() < 0.59 then
 		SpellStopCasting()
 		jps.NextSpell = nil
 	end
-
+	
+	if jps.IsSpellKnown("Shadowfury") and jps.cooldown("Shadowfury") == 0 and IsAltKeyDown() == true and not GetCurrentKeyBoardFocus() then
+		jps.Cast("Shadowfury")
+	end
+	
 	nextSpell,target  = parseStaticSpellTable(demoSpellTable)
 	return nextSpell,target
 end,"Demonology 6.0.2 Advanced")
