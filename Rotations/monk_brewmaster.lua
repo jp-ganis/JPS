@@ -13,116 +13,118 @@ left ctrl: breath on fire single target<br>
 
 jps.registerRotation("MONK","BREWMASTER",function()
  
-   local chi = jps.chi()
-   local energy = jps.energy()
-   local defensiveCDActive = jps.buff("Fortifying Brew") or jps.buff("Diffuse Magic") or jps.buff("Dampen Harm")
+	local chi = jps.chi()
+	local energy = jps.energy()
+	local defensiveCDActive = jps.buff("Fortifying Brew") or jps.buff("Diffuse Magic") or jps.buff("Dampen Harm")
 
-   local spellTable ={
-      -- GROUND SPELLS
-      { "Healing Sphere",   keyPressed("alt") },
-      { "Summon Black Ox Statue",   keyPressed("shift","alt") },
-      { "Dizzying Haze", keyPressed("ctrl") },
+	local spellTable ={
+		-- GROUND SPELLS
+		{ "Healing Sphere",	keyPressed("alt") },
+		{ "Summon Black Ox Statue",	keyPressed("shift","alt") },
+		{ "Dizzying Haze", keyPressed("ctrl") },
 
-      -- SHORT COOLDOWNS
-      -- Guard when Power Guard buff is available and while taking some damage.
-      { "Guard", jps.buff("Power Guard") and jps.hp() < 0.98 and chi >= 2 },
+		-- SHORT COOLDOWNS
+		-- Guard when Power Guard buff is available and while taking some damage.
+		{ "Guard", jps.buff("Power Guard") and jps.hp() < 0.98 and chi >= 2 },
 
-      -- BREWS
-      -- Chi Brew if we have no chi and less than 5 Elusive Brew stacks (talent based).
-      { "Chi Brew", chi == 0 and jps.buffStacks("Elusive Brew") < 5 },
-      -- Purifying Brew to clear stagger when it's moderate or heavy.
-      { "Purifying Brew", jps.debuff("Moderate Stagger","player") or jps.debuff("Heavy Stagger","player") and chi >= 1},
-      -- Elusive Brew with 10 or more stacks.
-      { "Elusive Brew", jps.buffStacks("Elusive Brew") >= 10 },
+		-- INTERRUPTS
+		{ "Spear Hand Strike", jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 },
+		{ "Paralysis", jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" },
+		{ "Breath of Fire", jps.shouldKick("target") and chi >= 2 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
+		{ "Arcane Torrent", jps.shouldKick("target") and CheckInteractDistance("target",3)==1 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
 
-      -- ITEMS, BUFFS AND SURVAVIBILITY
-      { "Legacy of the Emperor", not jps.buff("Legacy of the Emperor") and energy >= 40 },
-      { jps.useBagItem("Alchemist's Flask"), not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") },
-      { jps.useBagItem("Healthstone"), jps.hp("player") < 0.50},
-      { jps.useBagItem("Master Healing Potion"), jps.hp("player") < 0.30},
-       
-       -- On-Use Trinket 2.
-      { jps.useTrinket(0), jps.UseCDs },
-      { jps.useTrinket(1), jps.UseCDs },
+		-- BREWS
+		-- Chi Brew if we have no chi and less than 5 Elusive Brew stacks (talent based).
+		{ "Chi Brew", chi == 0 and jps.buffStacks("Elusive Brew") < 5 },
+		-- Purifying Brew to clear stagger when it's moderate or heavy.
+		{ "Purifying Brew", jps.debuff("Moderate Stagger","player") or jps.debuff("Heavy Stagger","player") and chi >= 1},
+		-- Elusive Brew with 10 or more stacks.
+		{ "Elusive Brew", jps.buffStacks("Elusive Brew") >= 10 },
 
-      -- SELF-HEALING
-      -- Expel Harm when below 35% heatlh does not have cooldown due Desperate Measures.
-      { "Expel Harm", jps.hp() < 0.35 and energy >= 40 },
-      -- Chi Wave for heal (talent based).
-      { "Chi Wave", jps.hp() < 0.85 },
-      -- Zen Sphere for heal (talent based).
-      { "Zen Sphere", jps.hp() < 0.85 },
-      -- Chi Wave for heal (talent based).
-      { "Chi Burst", jps.hp() < 0.85 },
-      -- Purifying Brew to heal you if yoy have Healing Elixirs talent.
-      { "Purifying Brew", jps.buff("Healing Elixirs") and jps.hp() < 0.80 and chi >= 1},
+		-- ITEMS, BUFFS AND SURVAVIBILITY
+		{ "Legacy of the Emperor", not jps.hasStatsBuff("player") and energy >= 20 },
+		-- Invoke Xuen on cooldown for single-target. (talent based) 
+		{ "Invoke Xuen, the White Tiger", jps.UseCDs },
+		
+		{ jps.useBagItem("Alchemist's Flask"), not jps.buff("Enhanced Agility") and not jps.buff("Flask of Spring Blossoms") },
+		{ jps.useBagItem("Healthstone"), jps.hp("player") < 0.50},
+		{ jps.useBagItem("Master Healing Potion"), jps.hp("player") < 0.30},
+		 
+		 -- On-Use Trinket 2.
+		{ jps.useTrinket(0), jps.UseCDs and jps.hp() < 0.95 },
+		{ jps.useTrinket(1), jps.UseCDs and jps.hp() < 0.95 },
 
-      -- Spinning Crane Kick for multi-target threat&dps. Triggers with Left Shift Key pressed.
-      { "Spinning Crane Kick", keyPressed("shift") and not jps.buff("Spinning Crane Kick"),"player"},
-      
-      
-      -- INTERRUPTS
-      { "Spear Hand Strike", jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 },
-      { "Paralysis", jps.shouldKick("target") and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" },
-      { "Breath of Fire", jps.shouldKick("target") and chi >= 2 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
-      { "Arcane Torrent", jps.shouldKick("target") and CheckInteractDistance("target",3)==1 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
+		-- SELF-HEALING
+		-- Expel Harm when below 35% heatlh does not have cooldown due Desperate Measures.
+		{ "Expel Harm", jps.hp() < 0.35 and energy >= 40 },
+		-- Chi Wave for heal (talent based).
+		{ "Chi Wave", jps.hp() < 0.85 },
+		-- Zen Sphere for heal (talent based).
+		{ "Zen Sphere", jps.hp() < 0.85 },
+		-- Chi Wave for heal (talent based).
+		{ "Chi Burst", jps.hp() < 0.85 },
+		-- Purifying Brew to heal you if yoy have Healing Elixirs talent.
+		{ "Purifying Brew", jps.buff("Healing Elixirs") and jps.hp() < 0.80 and chi >= 1},
 
-      -- INTERRUPT FOCUS
-      { "Spear Hand Strike", jps.shouldKick("focus") and jps.CastTimeLeft("focus") < 1.4 },
-      { "Paralysis", jps.shouldKick("focus") and jps.CastTimeLeft("focus") < 1.4 and IsSpellInRange("Spear Hand Strike","focus")==0 and jps.LastCast ~= "Spear Hand Strike" },
-      { "Arcane Torrent", jps.shouldKick("focus") and CheckInteractDistance("focus",3)==1 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
+		-- Spinning Crane Kick for multi-target threat&dps. Triggers with Left Shift Key pressed.
+		{ "Spinning Crane Kick", keyPressed("shift") and not jps.buff("Spinning Crane Kick"),"player"},
+
+		-- INTERRUPT FOCUS
+		{ "Spear Hand Strike", jps.shouldKick("focus") and jps.CastTimeLeft("focus") < 1.4 },
+		{ "Paralysis", jps.shouldKick("focus") and jps.CastTimeLeft("focus") < 1.4 and IsSpellInRange("Spear Hand Strike","focus")==0 and jps.LastCast ~= "Spear Hand Strike" },
+		{ "Arcane Torrent", jps.shouldKick("focus") and CheckInteractDistance("focus",3)==1 and jps.CastTimeLeft("target") < 1.4 and jps.LastCast ~= "Spear Hand Strike" and jps.LastCast ~= "Paralysis" },
 
 
-      -- PROFESSIONS AND RACIALS
-      { jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and chi > 3 and energy >= 50 },
-      -- Herbalists have Lifeblood.
-      { "Lifeblood", jps.UseCDs },
-      -- DPS Racial on cooldown.
-      { jps.DPSRacial, jps.UseCDs },
+		-- PROFESSIONS AND RACIALS
+		{ jps.useSynapseSprings(), jps.useSynapseSprings() ~= "" and chi > 3 and energy >= 50 },
+		-- Herbalists have Lifeblood.
+		{ "Lifeblood", jps.UseCDs },
+		-- DPS Racial on cooldown.
+		{ jps.DPSRacial, jps.UseCDs },
 
-      -- COOLDOWNS
-      -- Fortifying Brew if you get low. Is set to 35% health because when at or below it, Desperate Measures triggers.
-      { "Fortifying Brew", jps.Defensive and jps.hp() < 0.35 and not defensiveCDActive },
-      -- Diffuse Magic if you get low. (talent based)
-      { "Diffuse Magic", jps.Defensive and jps.hp() < 0.5 and not defensiveCDActive },
-      -- Dampen Harm if you get low. (talent based)
-      { "Dampen Harm", jps.Defensive and jps.hp() < 0.6 and not defensiveCDActive },
-      -- Invoke Xuen on cooldown for single-target. (talent based)
-      --{ "Invoke Xuen, the White Tiger", jps.UseCDs },
+		-- COOLDOWNS
+		-- Fortifying Brew if you get low. Is set to 35% health because when at or below it, Desperate Measures triggers.
+		{ "Fortifying Brew", jps.Defensive and jps.hp() < 0.35 and not defensiveCDActive },
+		-- Diffuse Magic if you get low. (talent based)
+		{ "Diffuse Magic", jps.Defensive and jps.hp() < 0.5 and not defensiveCDActive },
+		-- Dampen Harm if you get low. (talent based)
+		{ "Dampen Harm", jps.Defensive and jps.hp() < 0.6 and not defensiveCDActive },
+		-- Invoke Xuen on cooldown for single-target. (talent based)
+		--{ "Invoke Xuen, the White Tiger", jps.UseCDs },
 
-      -- MAIN ROTATION
-      -- Keg Smash to build some chi and keep the Weakened Blows debuff up.
-      { "Keg Smash", chi < 3 or not jps.debuff("Weakened Blows") },
-      -- Blackout Kick if shuffle is missing or about to drop.
-      { "Blackout Kick", (not jps.buff("Shuffle") or jps.buffDuration("Shuffle") < 3 ) and chi >= 2 },
-      -- Expel Harm for building some chi and healing if not at full health.
-      { "Expel Harm", jps.hp() < 0.85 and energy >= 40 and chi < 4 },
-      -- Jab is our basic chi builder.
-      { "Jab", chi < 4 and energy > 70 },
-      -- Tiger Palm to keep the Tiger Power buff up. No chi cost due to Brewmaster specialization at level 34.
-      { "Tiger Palm", not jps.buff("Tiger Power") or jps.buffDuration("Tiger Power") <= 1.5 },
-      { "Chi Wave", jps.hp() > 0.90 },
+		-- MAIN ROTATION
+		-- Keg Smash to build some chi and keep the Weakened Blows debuff up.
+		{ "Keg Smash", chi < 3 or not jps.debuff("Weakened Blows") },
+		-- Blackout Kick if shuffle is missing or about to drop.
+		{ "Blackout Kick", (not jps.buff("Shuffle") or jps.buffDuration("Shuffle") < 3 ) and chi >= 2 },
+		-- Expel Harm for building some chi and healing if not at full health.
+		{ "Expel Harm", jps.hp() < 0.85 and energy >= 40 and chi < 4 },
+		-- Jab is our basic chi builder.
+		{ "Jab", chi < 4 and energy > 70 },
+		-- Tiger Palm to keep the Tiger Power buff up. No chi cost due to Brewmaster specialization at level 34.
+		{ "Tiger Palm", not jps.buff("Tiger Power") or jps.buffDuration("Tiger Power") <= 1.5 },
+		{ "Chi Wave", jps.hp() > 0.90 },
 
-      -- AOE ROTATION
-      -- Rushing Jade Wind for multi-target threat & dps
-      { "Rushing Jade Wind", jps.MultiTarget and not jps.buff("Rushing Jade Wind"),"player"},
-      -- Breath of Fire when target(s) have Dizzying Haze debuff.
-      { "Breath of Fire", jps.MultiTarget and jps.debuff("Dizzying Haze") and chi >= 2},
-         -- Breath of Fire when Left Control is pressed.
-      { "Breath of Fire", keyPressed("left-ctrl") },
+		-- AOE ROTATION
+		-- Rushing Jade Wind for multi-target threat & dps
+		{ "Rushing Jade Wind", jps.MultiTarget and not jps.buff("Rushing Jade Wind"),"player"},
+		-- Breath of Fire when target(s) have Dizzying Haze debuff.
+		{ "Breath of Fire", jps.MultiTarget and jps.debuff("Dizzying Haze") and chi >= 2},
+			-- Breath of Fire when Left Control is pressed.
+		{ "Breath of Fire", keyPressed("left-ctrl") },
 
-      -- FINISHERS
-      -- Insta-kill single target when available.
-      { "Touch of Death", not jps.MultiTarget and jps.UseCDs and jps.buff("Death Note") },
+		-- FINISHERS
+		-- Insta-kill single target when available.
+		{ "Touch of Death", not jps.MultiTarget and jps.UseCDs and jps.buff("Death Note") },
 
-      -- CHI DUMPERS AND ROTATION FILLERS
-      -- Blackout Kick as a chi dump.
-      { "Blackout Kick", chi >= 4 },
-      -- Tiger Palm as a filler.
-      { "Tiger Palm" },
-   }
-   
-   return parseSpellTable(spellTable)
+		-- CHI DUMPERS AND ROTATION FILLERS
+		-- Blackout Kick as a chi dump.
+		{ "Blackout Kick", chi >= 4 },
+		-- Tiger Palm as a filler.
+		{ "Tiger Palm" },
+	}
+	
+	return parseSpellTable(spellTable)
 end, "PVE 5.4")
 
 

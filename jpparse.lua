@@ -232,8 +232,9 @@ end
 -- "Lightwell" 724 - Priest
 -- "Holy Word: Sanctuary" 88685 - Priest
 -- "Shadowfury" 30283 - Warlock
+-- "Summon Black Ox Statue" - 115315 - Monk 
 
-jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740}
+jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,118022,114158,73921,88747, 13813, 13809, 34600, 1499, 115313, 115460, 114203, 114192, 6544, 33395, 116011, 5740, 115315}
 function jps.spellNeedSelect(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = string.lower(spell) end
@@ -253,12 +254,12 @@ function jps.Cast(spell) -- "number" "string"
 	if jps.Target == nil then jps.Target = "target" end
 	if not jps.Casting then jps.LastCast = spellname end
 	
-	if jps.spellNeedSelect(spellname) and SpellIsTargeting() then
-		jps.groundClick()
-	end
-	
-	if jps.spellNeedSelect(spellname) then
+	if jps.spellNeedSelect(spellname) then		
+		SetCVar("deselectOnClick", "0")
 		CastSpellByName(spellname)
+		CameraOrSelectOrMoveStart(1)
+		CameraOrSelectOrMoveStop(1)
+		SetCVar("deselectOnClick", "1")
 	else 
 		CastSpellByName(spellname,jps.Target) -- CastSpellByID(spellID [, "target"])
 	end
