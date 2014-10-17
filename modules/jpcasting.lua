@@ -33,7 +33,7 @@ function jps.spellCastTime(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
 	if type(spell) == "number" then spellname = tostring(select(1,GetSpellInfo(spell))) end
-	castTime = select(4, GetSpellInfo(spellname)
+	castTime = select(4, GetSpellInfo(spellname))
 	return castTime or 0
 end
 
