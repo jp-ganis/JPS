@@ -57,7 +57,6 @@ end
 @spec frost
 @author Kirk24788
 @description 
-Based on Noxxic 5.3
 ]]--
 
 
@@ -69,26 +68,23 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
-	{ "Freeze",	'IsAltKeyDown() == true' },
-	{ "rune of power", 'IsLeftShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune of Power")'}, 
+
+	{ "rune of power", 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune of Power")'}, 
 
 	-- Remove Snares, Roots, Loss of Control, etc.
 	{ "every man for himself", 'jps.LoseControl(player,"CC")' },
 	-- Kicks, Crowd Control, etc.
 	{ "counterspell", 'ma_fr.kick(ma_fr.rangedTarget())' , ma_fr.rangedTarget },
-	
+	{ "Comet Storm", "jps.UseCDs"},
+	{ "Prismatic Crystal","jps.UseCDs and IsShiftKeyDown() == true"},
 
 	{ jps.useBagItem(5512), 'jps.hp("player") < 0.7' }, -- Healthstone
 	
 	-- Rotation ALL
 	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving'},
-	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
 
-	
 	-- Rotation AoE
-	{ "freeze", 'IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.MultiTarget' }, 
 	{ "frozen orb", 'jps.MultiTarget' }, 
-	
 	-- Rotation Single
 	{"nested", 'jps.canDPS("target") and not jps.Moving', {
 		{ "mirror image",'jps.UseCDs'}, 
@@ -97,11 +93,9 @@ jps.registerStaticTable("MAGE","FROST",{
 		{ "icy veins", 'jps.buff("fingers of frost")'}, 
 		{ "berserking", 'jps.buff("icy veins") and jps.UseCDs'}, 
 	}},
-	{ "frostfire bolt", 'jps.buff("alter time") and jps.buff("brain freeze")' }, 
-	{ "ice lance", 'jps.buff("alter time") and jps.buff("fingers of frost")' }, 
-	
-	{ "frostfire bolt", 'jps.buff("brain freeze") and jps.cooldown("icy veins") > 2' }, 
+	{ "frostfire bolt", 'jps.buff("brain freeze")' }, 
 	{ "ice lance", 'jps.buff("fingers of frost")' }, 
+	{ "frostfire bolt", 'jps.buff("brain freeze") and jps.cooldown("icy veins") > 2' }, 
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "ice lance", 'jps.Moving'}, 
 },"6.0.2 lvl 90 PVE",true,false)
