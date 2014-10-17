@@ -1,184 +1,100 @@
 --[[[
-@rotation Default PvP
+@rotation Frost Mage PvE
 @class mage
 @spec frost
 @author SwollNMember
 @description 
-WoW v5.2 compliant
+SimCraft 5.3
 ]]--
 
-jps.registerRotation("MAGE","FROST",function()
-
--- Player Specific
-	local player = jpsName
-	local mana = UnitPower(player,0)/UnitPowerMax(player,0)
-	local stun = jps.StunEvents()
-	local isFalling = IsFalling()==1
-------------------------
--- LOCAL FUNCTIONS -----
-------------------------
--- COUNTERS
--- Death Knight
-	local function parse_vsDK()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end
--- Druid
-	local function parse_vsDruid()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end
--- Hunter
-	local function parse_vsHunter()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}	
-	return table
-	end
--- Mage
-	local function parse_vsMage()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end	
--- Monk
--- Paladin
-	local function parse_vsPaladin()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end
--- Priest
-	local function parse_vsPriest()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end
--- Rogue
-	local function parse_vsRogue()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end
--- Shaman
-	local function parse_vsShaman()
-	local table =
-	{
-		-- { "empty", empty , empty },	 
-	}
-	return table
-	end
--- Warlock
-	local function parse_vsWarlock()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end	
--- Warrior
-	local function parse_vsWarrior()
-	local table =
-	{
-		-- { "empty", empty , empty },
-	}
-	return table
-	end
- 
-
--- Remove Curse
-	local function decurse()
-		if jps.debuff("curse of the elements",player) then return true end
-		if jps.debuff("curse of enfeeblement",player) then return true end
-		if jps.debuff("curse of exhaustion",player) then return true end
-		if jps.debuff("agony",player) then return true end
-		if jps.debuff("doom",player) then return true end
-		if jps.debuff("havok",player) then return true end
-		if jps.debuff("hex",player) then return true end
-		return false
-	end
- 
+ma_fr = {}
 -- Enemy Tracking
-	local enemycount,targetcount = jps.RaidEnemyCount()
-	local EnemyUnit = {}
-		for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
+function ma_fr.rangedTarget()
 	local rangedTarget = "target"
-		if jps.canDPS("target") then rangedTarget = "target"
-		elseif jps.canDPS("focustarget") then rangedTarget = "focustarget"
-		elseif jps.canDPS("targettarget") then rangedTarget = "targettarget"
-		elseif jps.canDPS(EnemyUnit[1]) then rangedTarget = EnemyUnit[1]
+	if jps.canDPS("target") then 
+		return "target"
+	elseif jps.canDPS("focustarget") then 
+		return "focustarget"
+	elseif jps.canDPS("targettarget") then 
+		return "targettarget"
+	else
+		local enemycount,targetcount = jps.RaidEnemyCount()
+		local EnemyUnit = {}
+		for name, index in pairs(jps.RaidTarget) do table.insert(EnemyUnit,index.unit) end
+		if jps.canDPS(EnemyUnit[1]) then 
+			return EnemyUnit[1] 
+		else
+			return "target" 
+		end
 	end
--- Unit Info
-	local targetName = GetUnitName("target")
-	local targetClass = UnitClass("target")
-	local kick = jps.shouldKick(rangedTarget) or jps.IsCastingPoly(rangedTarget)
+end
 
-	------------------------
-	-- SPELL TABLE ---------
-	------------------------
-	local spellTable = {
-		{ "slow fall", isFalling and not jps.buff("slow fall") , player },
-		{ "nested", targetClass=="Death Knight" , parse_vsDK() },
-		{ "nested", targetClass=="Hunter" , parse_vsHunter() },
-		{ "nested", targetClass=="Mage" or jps.debuff("frost nova",player) or jps.debuff("freeze",player) , parse_vsMage() },
-		{ "nested", targetClass=="Paladin" , parse_vsPaladin() },
-		{ "nested", targetClass=="Rogue" or jps.debuff("cheap shot",player) or jps.debuff("kidney shot",player) , parse_vsRogue() },
-		{ "nested", targetClass=="Shaman" , parse_vsShaman() },
-		{ "nested", targetClass=="Warlock" , parse_vsWarlock() },
-		{ "nested", targetClass=="Warrior" , parse_vsWarrior() },
-		-- Gap Closers
-		-- Remove Snares, Roots, Loss of Control, etc.
-		{ "every man for himself", jps.LoseControl(player,"CC") , player },
-		
-		-- Kicks, Crowd Control, etc.
-		{ "counterspell", kick , rangedTarget },
-		{ "arcane brilliance", not jps.buff("arcane brilliance") }, 
-		{ "frost armor", not jps.buff("frost armor") }, 
-		{ "Freeze",	IsAltKeyDown() == true },
-		{ "rune of power", not jps.buff("rune of power") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil }, 
-		{ "mirror image", jps.UseCds}, 
+function ma_fr.hastTwoRunes()
+local hasOne,_ = GetTotemInfo(1)
+	local hasSecond,_ = GetTotemInfo(2)
+	return hasOne and hasSecond
+end
+
+
+function ma_fr.hasPet() 
+	if UnitExists("pet") == false then return false end
+	return true
+end
+
+function ma_fr.kick(unit)
+	return jps.shouldKick(unit) or jps.IsCastingPoly(unit)
+end
+
+--[[[
+@rotation Noxxic PvE
+@class mage
+@spec frost
+@author Kirk24788
+@description 
+Based on Noxxic 5.3
+]]--
+
+
+jps.registerStaticTable("MAGE","FROST",{
+	-- Noxxic
+	-- pre fight
+	{ "Summon Water Elemental", 'ma_fr.hasPet() == false and not jps.Moving'},
+	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
+	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
+
+	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
+
+	{ "rune of power", 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune of Power") and ma_fr.hastTwoRunes()'}, 
+
+	-- Remove Snares, Roots, Loss of Control, etc.
+	{ "every man for himself", 'jps.LoseControl(player,"CC")' },
+	-- Kicks, Crowd Control, etc.
+	{ "counterspell", 'ma_fr.kick(ma_fr.rangedTarget())' , ma_fr.rangedTarget },
+	{ "Comet Storm", "jps.UseCDs"},
+	{ "Prismatic Crystal","jps.UseCDs and IsShiftKeyDown() == true"},
+
+	{ jps.useBagItem(5512), 'jps.hp("player") < 0.7' }, -- Healthstone
+	-- Rotation ALL
+	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving'},
+	{ "frost bomb", 'not jps.myDebuff("frost bomb","mouseover") and not jps.Moving and jps.canDPS("mouseover")',"mouseover"},
+
 	
-		{ {"macro","/use Mana Gem"}, mana < 0.70 and GetItemCount("Mana Gem", 0, 1) > 0 , player }, 
-		{ {"macro","/cast icy veins\n/cast evocation"}, jps.hp() <= .4 and jps.cooldown("icy veins") == 0 and jps.cooldown("evocation") == 0 , player },
-		{ "Healthstone",		jps.hp() < .7 and GetItemCount("Healthstone", 0, 1) > 0 },
-		
-		-- Debuffs
-		{ "remove curse", decurse() , player },
-		
-		{ "rune of power", jps.buffDuration("rune of power") < jps.CastTimeLeft() and not jps.buff("alter time") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil }, 
-		{ "rune of power", jps.cooldown("icy veins") == 0 and jps.buffDuration("rune of power") <20 and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil}, 
-		{ "mirror image", jps.UseCds}, 
-		{ "frozen orb", not jps.buff("fingers of frost")}, 
-		{ "icy veins", (jps.debuffStacks("frostbolt") >= 3 and (jps.buff("brain freeze") or jps.buff("fingers of frost"))) or jps.TimeToDie("target") <22 and not jps.Moving}, 
-		{ "berserking", jps.buff("icy veins") or jps.TimeToDie("target") <18}, 
-		{ "jade serpent potion", jps.buff("icy veins") or jps.TimeToDie("target") <45}, 
-		{ "presence of mind", jps.buff("icy veins") or jps.cooldown("icy veins") >15 or jps.TimeToDie("target") <15}, 
-		{ "alter time", not jps.buff("alter time") and jps.buff("icy veins") }, 
-		{ "frostfire bolt", jps.buff("alter time") and jps.buff("brain freeze") }, 
-		{ "ice lance", jps.buff("alter time") and jps.buff("fingers of frost") }, 
-		{ "frost bomb", jps.TimeToDie("target") > tonumber(jps.CastTimeLeft()) and not jps.Moving},
-		{ "frostbolt", jps.debuffStacks("frostbolt") < 3 and not jps.Moving }, 
-		{ "frostfire bolt", jps.buff("brain freeze") and jps.cooldown("icy veins") > 2 }, 
-		{ "ice lance", jps.buff("fingers of frost") and jps.cooldown("icy veins") >2 }, 
-		{ "frostbolt" , not jps.Moving }, 
-		{ "fire blast", jps.Moving}, 
-		{ "ice lance", jps.Moving}, 
-	}
-	local spell,target = parseSpellTable(spellTable)
-	return spell,target
-end, "Default PvP", false, true)
+	-- Rotation AoE
+	{ "frozen orb", 'jps.MultiTarget' }, 
+	
+	-- Rotation Single
+	{"nested", 'jps.canDPS("target") and not jps.Moving', {
+		{ "mirror image",'jps.UseCDs'}, 
+		{ "frozen orb", 'not jps.buff("fingers of frost")'}, 
+		{ "icy veins", 'jps.buff("brain freeze")'}, 
+		{ "icy veins", 'jps.buff("fingers of frost")'}, 
+		{ "berserking", 'jps.buff("icy veins") and jps.UseCDs'}, 
+	}},
+	{ "frostfire bolt", 'jps.buff("brain freeze")' }, 
+	{ "ice lance", 'jps.buff("fingers of frost")' }, 
+	
+	{ "frostfire bolt", 'jps.buff("brain freeze") and jps.cooldown("icy veins") > 2' }, 
+	{ "ice lance", 'jps.buff("fingers of frost")' }, 
+	{ "frostbolt" , 'not jps.Moving' }, 
+	{ "ice lance", 'jps.Moving'}, 
+},"6.0.2 lvl 90 PVE",true,false)
