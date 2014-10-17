@@ -66,13 +66,13 @@ end
 mage.incantersLastBuffstacks = 0
 mage.incantersIsGrowing = false
 mage.gotIncantersBuff = function(percentage)
-	local buffStacks = jps.buffStacks(mage.incantersFlow)
+	local buffStacks = jps.buffStacks(mage.incantersFlow) or 0
 	if buffStacks > mage.incantersLastBuffstacks then 
 		mage.incantersIsGrowing = true
 	elseif buffstacks < mage.incantersLastBuffstacks then
-		incantersIsGrowing = false
+		mage.incantersIsGrowing = false
 	end
-	 mage.incantersLastBuffstacks = buffStacks 
+		mage.incantersLastBuffstacks = buffStacks 
 	return (mage.incantersLastBuffstacks * 4) >= percentage
 end
 
@@ -81,11 +81,11 @@ mage.incantersBuffIsGrowing = function()
 end
 
 mage.targetsInRangeForAOE = function(numberOfTargets, range)
-	if FireHack then
-		return UnitsAroundUnit("target",range) >= numberOfTargets
-	else
+--	if FireHack then
+		--return UnitsAroundUnit("target",range) >= numberOfTargets
+--	else
 		if jps.MultiTarget then return true end
-	end
+	--end
 	return false
 end
 
@@ -132,7 +132,7 @@ mage.currentIgnite = 0
 function mage.shouldCombustion()
 	if jps.cooldown(mage.combustion) > 15 then return false end
 	if mage.lastCast == mage.infernoBlast or mage.lastCast == mage.pyroblast then
-		if mage.gotProc(1) == true then
+		if mage.gotProc(3) == true then
 			return true
 		end
 	end
@@ -165,7 +165,7 @@ local spellTable = {
 		{mage.pyroblast, 'not jps.myDebuff(mage.pyroblast)' },
 		{mage.coldSnap, 'jps.glyphInfo(mage.dragonsBreath) and jps.cooldown(mage.dragonsBreath) == 0' },
 		{mage.dragonsBreath, 'jps.glyphInfo(mage.dragonsBreath)' },
-		{mage.flamestrike, 'jps.Mana() > 0.10 and remains < 2.4' },
+		{mage.flamestrike, 'jps.Mana() > 0.10 and remains	 < 2.4' },
 	}},
 	
 	{"nested","not jps.MultiTarget",{
