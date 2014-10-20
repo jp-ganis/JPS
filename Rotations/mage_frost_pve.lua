@@ -96,6 +96,7 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "frostfire bolt", 'jps.buff("brain freeze")' }, 
 	{ "ice lance", 'jps.buff("fingers of frost")' }, 
 	{ "frostfire bolt", 'jps.buff("brain freeze") and jps.cooldown("icy veins") > 2' }, 
+	{ "frostbolt" , 'jps.buffDuration("Ice Floes") > 1.5' }, 
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "ice lance", 'jps.Moving'}, 
 },"6.0.2 lvl 90 PVE",true,false)
