@@ -86,8 +86,6 @@ local spellTable = {
 	{wl.spells.emberTap, 'jps.Defensive and jps.hp() <= 0.4 and jps.burningEmbers() > 0 ' },
 	
 	{"Sacrificial Pact" , 'jps.ChannelTimeLeft("target") >= 4 and jps.IsCastingSpell("Whirling Corruption","target") or  jps.IsCastingSpell("Empowered Whirling Corruption","target")'},
-	{"Twilight Ward" , 'jps.ChannelTimeLeft("target") >= 4 and jps.IsCastingSpell("Whirling Corruption","target") and not jps.buff("Sacrificial Pact")'},
-	{"Twilight Ward" , 'jps.ChannelTimeLeft("target") >= 4 and jps.IsCastingSpell("Empowered Whirling Corruption","target") and not jps.buff("Sacrificial Pact")'},
 
 	-- Soulstone
 	wl.soulStone("target"),
