@@ -373,7 +373,7 @@ jps.raidBuffFunctions = {
 
 -- checks wheter a unit have a similarbuff ( e.G. arcane brilliance = still water)
 function jps.hasSimilarBuff(buffName, unit)
-	local buffType = Ternary(jps.raidBuffs[buffname] ~= nil, jps.raidBuffs[buffname], nil)
+	local buffType = Ternary(jps.raidBuffs[buffName] ~= nil, jps.raidBuffs[buffName], nil)
 	if buffType ~= nil then
 		if jps.raidBuffFunctions[buffType] ~= nil then
 			return pcall(jps.raidBuffFunctions[buffType], unit)
