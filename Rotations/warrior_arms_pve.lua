@@ -1,51 +1,81 @@
---gig3m
-jps.registerStaticTable("WARRIOR","ARMS",
-{
 
-	-- Interrupts
-	{ "Pummel", ' jps.shouldKick() '},
-	{ "Pummel", ' jps.shouldKick("focus")', "focus" },
-	{ "Disrupting Shout", ' jps.shouldKick() '},
-	{ "Disrupting Shout", ' jps.shouldKick("focus")', "focus" },
+-- SwollNMember
+-- A rudimentary WoD arms warrior rotation based on Icy Veins guidelines
+-- Talents: Double Time, Impending Victory, Taste for Blood, Storm Bolt
+-- Glyphs: Unending Rage, Bull Rush, Sweeping Strikes, Subtle Defender
 
-	-- Pots and Flasks
-	{ jps.useBagItem("Flask of Winter's Bite"), 'jps.targetIsRaidBoss() and not jps.playerInLFR() and not jps.buff("Flask of Winter\'s Bite") '},
-	{ jps.useBagItem("Potion of Mogu Power"), 'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
+jps.registerStaticTable("WARRIOR","ARMS", {
+-- Interrupts
+{"nested","jps.Interrupts",{
+	{"spell reflection", 'UnitThreatSituation("player","target") == 3 and (UnitCastingInfo("target") or UnitChannelInfo("target"))'},
+	{"pummel", 'not jps.targetIsRaidBoss() and jps.shouldKick()'},
+}},
 
-	-- Trinkets
-	{ jps.useTrinket(0), 'jps.UseCDs' },
-	{ jps.useTrinket(1), 'jps.UseCDs '},
+-- Damage Mitigation
+{"nested",'jps.Defensive',{
+	{"lifeblood", 'jps.hp("player") < 0.95'},
+	{"impending victory", 'jps.hp("player") <= 0.85'},
+	{jps.useBagItem(5512), 'jps.hp("player") < 0.30'}, -- Healthstone
+	{"die by the sword", 'UnitThreatSituation("player","target") == 3 and IsSpellInRange("execute","target") == 1 and jps.hp("player") < 0.30 and jps.UseCDs'},
+	{"shield barrier", 'jps.hp() < 0.30 and jps.UseCDs'},
+	{"defensive stance", 'not jps.buff("defensive stance") and jps.hp() < 0.20'},
+}},
 
-	-- Herb
-	{ "Lifeblood", 'jps.UseCDs '},
-	-- Racial
-	{ jps.DPSRacial, 'jps.UseCDs '},
+{"battle stance", 'not jps.buff("battle stance") and jps.hp() > 0.20'},
 
-	{ "Heroic Throw", 'IsLeftAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil', "target" },
-	-- Multi target
-	{ "Thunder Clap", 'jps.MultiTarget and jps.myDebuff("Deep Wounds")'},
-	{ "Sweeping Strikes", ' jps.MultiTarget and jps.rage() >= 30'},
-	{ "Whirlwind", 'jps.MultiTarget and IsShiftKeyDown() == true and jps.rage() >= 30'},
-	{ "Dragon Roar", 'jps.MultiTarget and IsShiftKeyDown() == true'},
-	{ "Bladestorm", ' jps.MultiTarget and IsShiftKeyDown() == true'},
+{"battle shout", 'jps.raidIsBuffed("attackPower") == false '},
 
-	-- Cooldowns
-	{ "Bloodbath", 'jps.UseCDs '},
-	{ "Avatar", 'jps.UseCDs '},
-	{ "Recklessness", ' jps.UseCDs '},
-	{ "Berserker Rage", ' jps.UseCDs '},
+{"nested",'IsSpellInRange("execute","target") == true and jps.UseCDs', {
+	{jps.useTrinket(0), 'jps.UseCDs'},
+	{jps.useTrinket(1),   'jps.UseCDs'},
+	{jps.DPSRacial},
+	{"bloodbath"},
+	{"recklessness"},
+}},
 
 
-	-- pop a heal when solo
-	{ "Impending Victory", ' jps.hp() <= 0.7 and GetNumSubgroupMembers() == 0', "target" },
+-- MULTI-TARGET
+{"nested","jps.MultiTarget",{
+	{"sweeping strikes",'not jps.myDebuff("sweeping strikes")'},
+	{"rend", 'jps.myDebuffDuration("rend") <= 4'},
+	{"Dragon Roar"},
+	{"whirlwind"},
+}},
 
-	{ "Colossus Smash", ' jps.buff("Sudden Death") ', "target" }, -- Sudden Death procs
-	{ "Execute", "onCD", "target" }, -- only available less than 20% health, no need to check
-	{ "Mortal Strike", "onCD", "target" },
-	{ "Colossus Smash", "onCD", "target" },
-	{ "Heroic Strike", 'jps.rage() >= 70' },
-	{ "Overpower", 'jps.buff("Taste for Blood")', "target"},
-	{ "Slam", ' jps.rage() >= 40 '},
-	{ "Battle Shout", ' jps.rage() <= 70' , "player" },
-}
-, "5.3 Arms PVE")
+-- SINGLE TARGET
+{"colossus smash", 'not jps.debuff("colossus smash") and jps.rage() >= 60'},
+{"mortal strike", 'jps.rage() > 100'},
+
+-- Rotation > 20% Health
+-- Without Colossus Smash
+{"nested",' not jps.debuff("colossus smash") and jps.hp("target") > 0.20', {
+	{"rend", 'jps.myDebuffDuration("rend") <= 4'},
+	{"whirlwind", 'jps.rage() > 40'},
+	{"mortal strike"},
+	{"colossus smash"},
+	{"storm bolt"},
+	{"Dragon Roar"},
+}},
+
+-- With Colossus Smash
+{"nested",' jps.debuff("colossus smash") and jps.hp("target") > 0.20', {
+	{"mortal strike"},
+	{"storm bolt", 'jps.rage() > 70'},
+	{"whirlwind"},
+}},
+-- Execute Phase < 20% Health
+{"nested",'jps.hp("target") <= 0.20 and not jps.debuff("colossus smash")', {
+	{"rend", 'jps.myDebuffDuration("rend") <= 4'},
+	{"execute", 'jps.rage() > 60'},
+	{"colossus smash"},
+	{"storm bolt"},
+	{"Dragon Roar"},
+}},
+
+-- With Colossus Smash
+{"nested",'jps.hp("target") <= 0.20 and jps.debuff("colossus smash")', {
+	{"storm bolt", 'jps.rage() < 70'},
+	{"execute"},
+}},
+
+} , "6.0.2 Arms PVE 90")
