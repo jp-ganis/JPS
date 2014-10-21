@@ -116,7 +116,7 @@ local spellTable = {
 
 
 	{"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
-		{wl.spells.havoc, 'not wl.btn("mouseoverGateway") and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus() and not jps.debuff("havoc","target")', "mouseover" },
+		{wl.spells.havoc, 'not wl.btn("mouseoverGateway") and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
 		{wl.spells.havoc, 'not jps.Moving and jps.emberShards() >= 35  and jps.canDPS("focus") ', "focus"  },
 		{wl.spells.havoc, 'not jps.Moving and jps.burningEmbers() > 0 and wl.hasProc(1) and jps.emberShards() >= 15 and jps.canDPS("focus") ', "focus"  },
 								
