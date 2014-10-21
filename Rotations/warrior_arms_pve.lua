@@ -23,9 +23,9 @@ jps.registerStaticTable("WARRIOR","ARMS", {
 
 {"battle stance", 'not jps.buff("battle stance") and jps.hp() > 0.20'},
 
-{"battle shout", 'jps.raidIsBuffed("attackPower") == false '},
+{"battle shout", 'jps.raidIsBuffed("Battle Shout") == false '},
 
-{"nested",'IsSpellInRange("execute","target") == true and jps.UseCDs', {
+{"nested",'IsSpellInRange("execute","target") == 1 and jps.UseCDs', {
 	{jps.useTrinket(0), 'jps.UseCDs'},
 	{jps.useTrinket(1),   'jps.UseCDs'},
 	{jps.DPSRacial},
