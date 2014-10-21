@@ -41,6 +41,12 @@ spells and abilities with split second timing to ensure maximum DPS, TPS or
 HPS for your class and spec.
 
 ==============================================================================
+= DOCUMENTATION                                                              =
+==============================================================================
+
+http://htmlpreview.github.io/?https://raw.githubusercontent.com/jp-ganis/JPS/master/doc/index.html
+
+==============================================================================
 = TO-DO / KNOWN BUGS                                                         =
 ==============================================================================
 
