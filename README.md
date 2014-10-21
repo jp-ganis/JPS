@@ -44,7 +44,8 @@ HPS for your class and spec.
 = DOCUMENTATION                                                              =
 ==============================================================================
 
-open Documentation.app or go into the /doc/ directory and open the index.html.
+on OS-X open Documentation.app or navigate directly into the /doc/ directory and open the index.html with your browser.
+
 If you want to recreate the documentation run in your terminal/console:
 
     python doc/gendoc.py
