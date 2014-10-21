@@ -44,7 +44,10 @@ HPS for your class and spec.
 = DOCUMENTATION                                                              =
 ==============================================================================
 
-http://htmlpreview.github.io/?https://raw.githubusercontent.com/jp-ganis/JPS/master/doc/index.html
+open Documentation.app or go into the /doc/ directory and open the index.html.
+If you want to recreate the documentation run in your terminal/console:
+
+    python doc/gendoc.py
 
 ==============================================================================
 = TO-DO / KNOWN BUGS                                                         =
