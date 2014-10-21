@@ -67,7 +67,7 @@ function removeUIButton(name)
 		name:Hide()
 	end
 end
-function wl.btn(name) return wl.extraButtons[name] end
+function wl.btn(name) return wl.extraButtons[name] or false end
 
 
 local spellTable = {
@@ -92,9 +92,7 @@ local spellTable = {
 
 	-- Rain of Fire
 	{wl.spells.rainOfFire, 'IsShiftKeyDown() and jps.buffDuration(wl.spells.rainOfFire) < 1.5 and not GetCurrentKeyBoardFocus()'	},
-
 	{wl.spells.rainOfFire, 'IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()' },
-	--{"twilight ward", 'jps.Defensive'},
 
 
 	{wl.spells.fireAndBrimstone, 'jps.burningEmbers() > 0 and not jps.buff(wl.spells.fireAndBrimstone, "player") and jps.MultiTarget and not jps.isRecast(wl.spells.fireAndBrimstone, "target")' },
@@ -134,7 +132,6 @@ local spellTable = {
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.emberShards() >= 35 and jps.hpTotal("target") > 30000' ,"target"},
 		{wl.spells.chaosBolt, 'not jps.Moving and wl.hasProc(1) and jps.emberShards() >= 10 and jps.buffStacks(wl.spells.backdraft) < 3 and jps.hpTotal("target") > 30000' ,"target"},
 		{wl.spells.conflagrate },
-		{wl.spells.incinerate, 'wl.btn("incinerateMouseover") and jps.canDPS("mouseover")',"mouseover"},
 		{wl.spells.incinerate },
 	}},
 	
@@ -147,7 +144,6 @@ local spellTable = {
 		--{wl.spells.shadowburn, 'jps.hp("target") <= 0.19 and jps.burningEmbers() > 0 and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()'  },
 		{wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player")' },
 		{wl.spells.immolate , 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(wl.spells.immolate) <= 2.0 and jps.LastCast ~= wl.spells.immolate'},
-		{wl.spells.incinerate, 'wl.btn("incinerateMouseover") and jps.canDPS("mouseover")',"mouseover"},
 		{wl.spells.incinerate },
 	}},
 }
@@ -174,11 +170,7 @@ Modifiers:[br]
 ]]--
 
 
---addUIButton("DontUseCotE", 0,40, "Interface\\Icons\\Spell_shadow_chilltouch");
---addUIButton("incinerateMouseover", 40,40, "Interface\\Icons\\spell_fire_burnout");
-
 --addUIButton("mouseoverGateway", 120,40, "Interface\\Icons\\spell_warlock_demonicportal_green");
---addUIButton("altShadowfury", 160,40, "Interface\\Icons\\ability_warlock_shadowfurytga");
 
 
 
@@ -204,7 +196,7 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
 		end
 	end
 
-	if jps.IsSpellKnown("Shadowfury") and jps.cooldown("Shadowfury") == 0 and IsAltKeyDown() and not GetCurrentKeyBoardFocus() and wl.btn("altShadowfury") then
+	if jps.IsSpellKnown("Shadowfury") and jps.cooldown("Shadowfury") == 0 and IsAltKeyDown() == true and not GetCurrentKeyBoardFocus() then
 		jps.Cast("Shadowfury")
 	end
 	
