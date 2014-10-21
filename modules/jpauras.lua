@@ -386,7 +386,7 @@ end
 function jps.raidIsBuffed(buff) 
 	for unit, _ in pairs(jps.RaidStatus) do
 		if jps.UnitExists(unit) then
-			if not jps.hasSimilarRaidBuff(buff, unit) then return false end
+			if not jps.hasSimilarBuff(buff, unit) then return false end
 		end
 	end
 	return true
