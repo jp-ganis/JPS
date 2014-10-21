@@ -1,24 +1,5 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-	Copyright (C) 2011 Jp Ganis
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
-]]--
-
-
---[[
-@module jps Auras
+--[[[
+@module Functions: Auras
 @description 
 Unit Aura related functions
 ]]--
@@ -48,7 +29,7 @@ function jps.buffId(spellId,unit)
 	end
 return false
 end
---[[
+--[[[
 @function jps.buff
 @description 
 checks if a unit has a buff applied
@@ -71,7 +52,7 @@ function jps.buff(spell,unit)
 	return false
 end
 
---[[
+--[[[
 @function jps.debuff
 @description 
 checks if a unit has a debuff applied
@@ -94,7 +75,7 @@ function jps.debuff(spell,unit)
 	return false
 end
 
---[[
+--[[[
 @function jps.debuff
 @description 
 checks if a unit has a debuff applied by the player
@@ -117,7 +98,7 @@ function jps.myDebuff(spell,unit)
 	return false
 end
 
---[[
+--[[[
 @function jps.myBuffDuration
 @description 
 checks the duration off a buff applied by the player on a unit 
@@ -145,7 +126,7 @@ function jps.myBuffDuration(spell,unit)
 	return duration
 end
 
---[[
+--[[[
 @function jps.myDebuffDuration
 @description 
 checks the duration off a debuff applied by the player on a unit 
@@ -173,7 +154,7 @@ function jps.myDebuffDuration(spell,unit)
 	return duration
 end
 
---[[
+--[[[
 @function jps.buffDuration
 @description 
 checks the duration off a buff on a unit 
@@ -200,7 +181,7 @@ function jps.buffDuration(spell,unit)
 	return duration
 end
 
---[[
+--[[[
 @function jps.debuffDuration
 @description 
 checks the duration off a debuff on a unit 
@@ -256,7 +237,18 @@ function jps.buffTracker(buff)
 	end
 	return false
 end
+--[[[
+@function jps.bloodlusting
+@description 
+check's if any +haste buffs are up (e.g. bloodlust, time warp)
+[br][i]Usage:[/i][br]
+[code]
+jps.bloodlusting()
 
+[/code]
+
+@returns boolean
+]]--
 function jps.bloodlusting()
 	return jps.buff("bloodlust") or jps.buff("heroism") or jps.buff("time warp") or jps.buff("ancient hysteria") or jps.buff("Drums of Rage") -- drums coming with 5.4
 end
@@ -277,7 +269,7 @@ jps.raidBuffs = {
 	["Power Word: Fortitude"] = "stamina",
 	["Commanding Shout"] = "stamina",
 	["Qiraji Fortitude"] = "stamina",
-	["Dark Intent"] = "stamina",
+	["Dark Intent"] = "multistrike",
 	["Mark of the Wild"] = "stats",
 	["Legacy of the Emperor"] = "stats",
 	["Blessing of Kings"] = "stats",
@@ -315,7 +307,7 @@ jps.raidBuffs = {
 
 
 -- functions for raid buffs
-jps.staminaBuffs = {"Power Word: Fortitude", "Commanding Shout", "Qiraji Fortitude", "Dark Intent"}
+jps.staminaBuffs = {"Power Word: Fortitude", "Commanding Shout", "Qiraji Fortitude"}
 function jps.hasStaminaBuff(unit)
 	return jps.buffLooper(jps.staminaBuffs, unit)
 end
@@ -359,6 +351,12 @@ function jps.hasSpellPowerCritBuff(unit)
 	return jps.hasCritBuff(unit) and jps.hasSpellPowerBuff(unit)
 end
 
+
+jps.multistrikeBuffs = {"Dark Intent"}
+function jps.hasMultistrikeBuff(unit)
+	return jps.buffLooper(jps.multistrikeBuffs, unit)
+end
+
 -- type of raid buffs to functions
 jps.raidBuffFunctions = { 
 	["stamina"] = jps.hasStaminaBuff,
@@ -368,7 +366,8 @@ jps.raidBuffFunctions = {
 	["spellHaste"] = jps.hasSpellHasteBuff,
 	["crit"] = jps.hasCritBuff,
 	["spellPower"] = jps.hasSpellPowerBuff,
-	["mastery"] = jps.hasMasteryBuff
+	["mastery"] = jps.hasMasteryBuff,
+	["multistrike"] = jps.hasMultistrikeBuff
 }
 
 -- checks wheter a unit have a similarbuff ( e.G. arcane brilliance = still water)
@@ -376,6 +375,7 @@ function jps.hasSimilarBuff(buffName, unit)
 	local buffType = Ternary(jps.raidBuffs[buffName] ~= nil, jps.raidBuffs[buffName], nil)
 	if buffType ~= nil then
 		if jps.raidBuffFunctions[buffType] ~= nil then
+
 			return pcall(jps.raidBuffFunctions[buffType], unit)
 		end
 	end
@@ -383,6 +383,22 @@ function jps.hasSimilarBuff(buffName, unit)
 end
 
 -- checks if our whole(valid) raid is buffed with a specific buff
+
+--[[[
+@function jps.raidIsBuffed
+@description 
+checks if our whole(valid) raid is buffed with a specific buff
+[br][i]Usage:[/i][br]
+[code]
+jps.raidIsBuffed("Battle Shout")[br]
+jps.raidIsBuffed("Arcane Brilliance")[br]
+jps.raidIsBuffed("Horn of Winter")[br]
+jps.raidIsBuffed("Dark Intent")[br]
+[/code]
+@param spell: name of a spell you wan't to buff (currently only englisch client)
+
+@returns boolean
+]]--
 function jps.raidIsBuffed(buff) 
 	for unit, _ in pairs(jps.RaidStatus) do
 		if jps.UnitExists(unit) then

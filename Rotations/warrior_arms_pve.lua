@@ -43,9 +43,8 @@ jps.registerStaticTable("WARRIOR","ARMS", {
 }},
 
 -- SINGLE TARGET
-{"rend", 'not jps.debuff("rend")'},
-{"mortal strike", 'jps.rage() > 60'},
 {"colossus smash", 'not jps.debuff("colossus smash") and jps.rage() >= 60'},
+{"mortal strike", 'jps.rage() > 100'},
 
 -- Rotation > 20% Health
 -- Without Colossus Smash

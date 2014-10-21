@@ -1,24 +1,8 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-	Copyright (C) 2011 Jp Ganis
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
+--[[[
+@module Functions: Unit Dispel
+@description
+Functions which handle dispels
 ]]--
-
---------------------------
--- LOCALIZATION
---------------------------
 
 local L = MyLocalizationTable
 
@@ -102,25 +86,73 @@ function jps.CurseDispel(unit,debuffunit)
 	end
 	return false
 end
+--[[[
+@function jps.DispelMagicTarget
+@description 
+looks for a unit with a magic debuff that we can dispel
+[br][i]Usage:[/i][br]
+[code]
+jps.DispelMagicTarget("target")
 
+[/code]
+@param unit: UnitID
+
+@returns unitID
+]]--
 function jps.DispelMagicTarget()
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.MagicDispel(unit) then return unit end
 	end
 end 
+--[[[
+@function jps.DispelDiseaseTarget
+@description 
+looks for a unit with a disease debuff that we can dispel
+[br][i]Usage:[/i][br]
+[code]
+jps.DispelDiseaseTarget("target")
 
+[/code]
+@param unit: UnitID
+
+@returns unitID
+]]--
 function jps.DispelDiseaseTarget()
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.DiseaseDispel(unit) then return unit end
 	end
 end 
+--[[[
+@function jps.DispelPoisonTarget
+@description 
+looks for a unit with a poison debuff that we can dispel
+[br][i]Usage:[/i][br]
+[code]
+jps.DispelPoisonTarget("target")
 
+[/code]
+@param unit: UnitID
+
+@returns unitID
+]]--
 function jps.DispelPoisonTarget()
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.PoisonDispel(unit) then return unit end
 	end
 end 
+--[[[
+@function jps.DispelCurseTarget
+@description 
+looks for a unit with a curse debuff that we can dispel
+[br][i]Usage:[/i][br]
+[code]
+jps.DispelCurseTarget("target")
 
+[/code]
+@param unit: UnitID
+
+@returns unitID
+]]--
 function jps.DispelCurseTarget()
 	for unit,index in pairs(jps.RaidStatus) do	 
 		if (index["inrange"] == true) and jps.CurseDispel(unit) then return unit end

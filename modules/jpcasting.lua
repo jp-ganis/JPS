@@ -1,5 +1,5 @@
 --[[[
-@module JPS Casting
+@module Functions: Unit Castinfo
 @description
 Functions which handle casting & channeling stuff.
 ]]--
@@ -15,20 +15,57 @@ local L = MyLocalizationTable
 --name, subText, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo("unit")
 --name, subText, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo("unit")
 
+--[[[
+@function jps.CastTimeLeft
+@description 
+gets units cast time
+[br][i]Usage:[/i][br]
+[code]
+jps.CastTimeLeft("player")
+
+[/code]
+@param unit: UnitID
+
+@returns cast time in seconds or 0
+]]--
 function jps.CastTimeLeft(unit)
 	if unit == nil then unit = "player" end
 	local spellName,_,_,_,_,endTime,_,_,_ = UnitCastingInfo(unit)
 	if endTime == nil then return 0 end
 	return ((endTime - (GetTime() * 1000 ) )/1000), spellName
 end
+--[[[
+@function jps.ChannelTimeLeft
+@description 
+gets units channel time
+[br][i]Usage:[/i][br]
+[code]
+jps.ChannelTimeLeft("player")
 
+[/code]
+@param unit: UnitID
+
+@returns channel time in seconds or 0
+]]--
 function jps.ChannelTimeLeft(unit)
 	if unit == nil then unit = "player" end
 	local spellName,_,_,_,_,endTime,_,_,_ = UnitChannelInfo(unit)
 	if endTime == nil then return 0 end
 	return ((endTime - (GetTime() * 1000 ) )/1000), spellName
 end
+--[[[
+@function jps.spellCastTime
+@description 
+gets the cast time for a spell
+[br][i]Usage:[/i][br]
+[code]
+jps.spellCastTime("Incinerate")
 
+[/code]
+@param spell: spellName or SpellID
+
+@returns cast time in seconds or 0
+]]--
 function jps.spellCastTime(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -46,6 +83,19 @@ function jps.IsCasting(unit)
 	return enemycasting
 end
 
+--[[[
+@function jps.IsCastingSpell
+@description 
+checks if a unit cast a specific spell
+[br][i]Usage:[/i][br]
+[code]
+jps.IsCastingSpell("Divine Hymn","target")
+
+[/code]
+@param spell: SpellName or SpellID
+@param unit: UnitID
+@returns boolean
+]]--
 function jps.IsCastingSpell(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -56,7 +106,19 @@ function jps.IsCastingSpell(spell,unit)
 	if spellname:lower() == name:lower() and jps.CastTimeLeft(unit) > 0 then return true end
 	return false
 end
+--[[[
+@function jps.IsChannelingSpell
+@description 
+checks if a unit cast a specific channel spell
+[br][i]Usage:[/i][br]
+[code]
+jps.IsChannelingSpell("Divine Hymn","target")
 
+[/code]
+@param spell: SpellName or SpellID
+@param unit: UnitID
+@returns boolean
+]]--
 function jps.IsChannelingSpell(spell,unit)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -68,9 +130,6 @@ function jps.IsChannelingSpell(spell,unit)
 	return false
 end
 
-function jps.spellCastTime(spell)
-	return select(4, GetSpellInfo(spell)) /1000
-end
 
 jps.polySpellIds = {
 	[51514] = "Hex" ,
@@ -110,6 +169,19 @@ jps.CCSpellIds = {
 }
 
 -- Enemy Casting Polymorph Target is Player
+--[[[
+@function jps.IsCastingPoly
+@description 
+check's if a unit is casting polymorph
+[br][i]Usage:[/i][br]
+[code]
+jps.IsCastingPoly("target")
+
+[/code]
+@param unit: UnitID
+
+@returns boolean
+]]--
 function jps.IsCastingPoly(unit)
 	if not jps.canDPS(unit) then return false end
 	local delay = 0
@@ -126,6 +198,19 @@ function jps.IsCastingPoly(unit)
 end
 
 -- Enemy casting CrowdControl Spell
+--[[[
+@function jps.IsCastingControl
+@description 
+check's if a unit is casting a cc spell
+[br][i]Usage:[/i][br]
+[code]
+jps.IsCastingControl("target")
+
+[/code]
+@param unit: UnitID
+
+@returns boolean
+]]--
 function jps.IsCastingControl(unit)
 	if not jps.canDPS(unit) then return false end
 	local delay = 0
@@ -141,7 +226,19 @@ function jps.IsCastingControl(unit)
 	return false
 end
 
--- returns cooldown off a spell
+--[[[
+@function jps.cooldown
+@description 
+get a spell cooldown
+[br][i]Usage:[/i][br]
+[code]
+jps.cooldown("Bloodlust")
+
+[/code]
+@param spell: spellID or SpellName
+
+@returns time in seconds
+]]--
 function jps.cooldown(spell) -- start, duration, enable = GetSpellCooldown("name") or GetSpellCooldown(id)
 	local spellname = nil
 	if type(spell) == "string" then spellname = spell end
@@ -220,7 +317,19 @@ end
 ---------
 -- timed casting
 ---------
-
+--[[[
+@function jps.castEverySeconds
+@description 
+allows you to repeat a cast every x seconds
+[br][i]Usage:[/i][br]
+[code]
+jps.castEverySeconds("Blood Boil", 10)
+-- casts blood boil every 10 seconds
+[/code]
+@param spell: spellName only!
+@param time: time in seconds
+@returns boolean
+]]--
 function jps.castEverySeconds(spell, seconds)
 	if not jps.timedCasting[string.lower(spell)] then
 		return true
@@ -232,12 +341,7 @@ function jps.castEverySeconds(spell, seconds)
 end
 
 
---[[[
-@function jps.cancelCasting
-@description
-Cancels spell casting on matched conditions. Useful for overhealing, execute phases, long cast's / channels. Careful: currently only "dynamic" tables are supported, this leaks currently some memory!
-@param table with spell & condition: {"pew pew healspell","jps.hp(unit) > 0.9"},{"less pew healspell","jps.hp(unit) > 0.5"}....
-]]--
+
 function jps.cancelCasting(hydraTable)
 	if not hydraTable or type(hydraTable) ~= "table" then
 		write("jps.cancelCasting() wrong params in rotation "..jps.Spec.."  -  "..jps.Class)

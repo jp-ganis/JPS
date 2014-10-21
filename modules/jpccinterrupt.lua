@@ -1,24 +1,9 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-	Copyright (C) 2011 Jp Ganis
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
+--[[[
+@module Functions: CC & interrupt
+@description
+Functions which handle cc & interrupt stuff
 ]]--
 
---------------------------
--- LOCALIZATION
---------------------------
 
 local L = MyLocalizationTable
 
@@ -94,7 +79,19 @@ function jps.LoseControlTable(unit,table) -- {"CC", "Snare", "Root", "Silence", 
 return targetControlled, timeControlled
 end
 
+--[[[
+@function jps.shouldKick
+@description 
+check's if the passed unit is casting a spell that we can interrupt. [br]Interrupt button in jps needs to be activated![br]This is a instant interrupt
+[br][i]Usage:[/i][br]
+[code]
+jps.shouldKick("target")
 
+[/code]
+@param unit: UnitID
+
+@returns boolean
+]]--
 function jps.shouldKick(unit)
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end
@@ -111,7 +108,19 @@ function jps.shouldKick(unit)
 	end
 	return false
 end
+--[[[
+@function jps.shouldKick
+@description 
+check's if the passed unit is casting a spell that we can interrupt. [br]Interrupt button in jps needs to be activated![br]This is a interrupt with a delay
+[br][i]Usage:[/i][br]
+[code]
+jps.shouldKick("target")
 
+[/code]
+@param unit: UnitID
+
+@returns boolean
+]]--
 function jps.shouldKickLag(unit)
 	if not jps.Interrupts then return false end
 	if unit == nil then unit = "target" end

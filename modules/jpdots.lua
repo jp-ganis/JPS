@@ -1,5 +1,5 @@
 --[[[
-@module DoT Tracker
+@module Functions: DoT tracking
 @description 
 DoT Tracker for DoT-Classes. Currently only Destruction-Warlocks and Affliction-Warlocks are supported.
 [br][br]

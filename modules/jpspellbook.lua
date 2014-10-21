@@ -1,24 +1,9 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-    Copyright (C) 2011 Jp Ganis
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+--[[[
+@module Functions: spellbook functions
+@description
+Functions which handle talents & glyphs
 ]]--
 
---------------------------
--- LOCALIZATION
---------------------------
 local L = MyLocalizationTable
 
 ------------------------------
@@ -31,7 +16,20 @@ local L = MyLocalizationTable
 
 -- isKnown = IsSpellKnown(spellID [, isPet])
 -- isKnown - True if the player (or pet) knows the given spell. false otherwise
+--[[[
+@function jps.talentInfo
+@description 
+check's if a player has skilled a talent or not
+[br][i]Usage:[/i][br]
+[code]
+jps.talentInfo("Shadowfury")
 
+[/code]
+@param string: talent name or spellID
+
+@returns boolean
+]]--
+--JPTODO: check jps.talentInfo functionality
 function jps.talentInfo(talent)
 	local talentname = nil
 	if type(talent) == "string" then talentname = talent end
@@ -47,7 +45,20 @@ end
 -- numGlyphs = GetNumGlyphs() numGlyphs the number of glyphs THAT THE CHARACTER CAN LEARN
 -- name, glyphType, isKnown, icon, glyphId, glyphLink, spec = GetGlyphInfo(index)
 -- enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(socketID[[, talentGroup], isInspect, inspectUnit])
+--[[[
+@function jps.glyphInfo
+@description 
+checks if a player has skilled a glyph or not
+[br][i]Usage:[/i][br]
+[code]
+jps.glyphInfo(4)
 
+[/code]
+@param int: glyphID 
+
+@returns boolean
+]]--
+--JPTODO: check jps.glyphInfo functionality
 function jps.glyphInfo(glyphID)
 	for i = 1, NUM_GLYPH_SLOTS do
 		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(i)

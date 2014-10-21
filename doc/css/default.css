@@ -1,6 +1,3 @@
-* {
-    font-family: "Arial", "Verdana", sans-serif;
-}
 
 code {
     font-family: "Courier New", "Lucida Console", monospace;
@@ -14,27 +11,20 @@ div.tt {
 
 /* TOC */
 div.toc {
-    margin-left: 10px;
-    margin-top: 50px;
-    margin-bottom: 25px;
 }
 
-/* TOC Links */
-a.toc-link {
-    color: black; 
-    text-transform:capitalize;
-    text-decoration:none;
-}
-a.toc-link:hover { 
-    font-weight:bold; 
-    color:blue;
-}
 
 /* Command List */
 ul.toc-list {
     list-style-type: none;
 }
 
+ul.toc-list a {
+	font-weight: bold;
+}
+ul.toc-sublist a{ 
+	font-weight: normal;
+}
 /* Command List */
 ul.toc-sublist {
     margin-left: -10px;
@@ -67,7 +57,7 @@ div.section-title {
     margin-left: -5px;
     font-size: 25px;
     font-weight: bold;
-    font-variant:small-caps;
+
 }
 
 
@@ -87,7 +77,6 @@ div.module-name {
     margin-bottom: 10px;
     font-size: 20px;
     font-weight: bold;
-    font-variant:small-caps;
 }
 
 /* Module Description */
@@ -171,7 +160,6 @@ div.rotation-spec-title {
     margin-bottom: 10px;
     font-size: 20px;
     font-weight: bold;
-    font-variant:small-caps;
     text-transform:capitalize;
 }
 /* Rotation Class*/
@@ -184,7 +172,6 @@ div.rotation-class-title {
     margin-bottom: 10px;
     font-size: 20px;
     font-weight: bold;
-    font-variant:small-caps;
     text-transform:capitalize;
 }
 
@@ -211,3 +198,59 @@ ul.todo-list {
 /* TODO List Item */
 li.todo-item {
 }
+
+#wrapper {
+  padding-left: 250px;
+  transition: all 0.4s ease 0s;
+}
+
+#sidebar-wrapper {
+  margin-left: -250px;
+  left: 250px;
+  width: 250px;
+  background: #000;
+  position: fixed;
+  height: 100%;
+  overflow-y: auto;
+  z-index: 1000;
+  transition: all 0.4s ease 0s;
+}
+
+#page-content-wrapper {
+  width: 100%;
+}
+
+.sidebar-nav {
+  position: absolute;
+  top: 0;
+  width: 250px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width:767px) {
+
+    #wrapper {
+      padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+      left: 0;
+    }
+
+    #wrapper.active {
+      position: relative;
+      left: 250px;
+    }
+
+    #wrapper.active #sidebar-wrapper {
+      left: 300px;
+      width: 300px;
+      transition: all 0.4s ease 0s;
+    }
+
+}
+	.sidebar-nav {
+		top:20px;
+	}

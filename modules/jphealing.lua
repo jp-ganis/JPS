@@ -1,7 +1,8 @@
-
-------------------------------
--- SPELLTABLE -- contains the average value of healing spells
-------------------------------
+--[[[
+@module Functions: Unit Healing
+@description
+Functions which handle healing rotations and unit health
+]]--
 
 function update_healtable(...)
 	local healname = select(13, ...)
@@ -96,6 +97,19 @@ function jps.CountInRaidStatus(lowHealthDef)
 end
 
 -- LOWEST PERCENTAGE in RaidStatus
+--[[[
+@function jps.LowestInRaidStatus
+@description 
+
+[br][i]Usage:[/i][br]
+[code]
+jps.LowestInRaidStatus()
+
+[/code]
+
+
+@returns lowest unit in raid
+]]--
 function jps.LowestInRaidStatus()
 	local lowestUnit = jpsName
 	local lowestHP = 1
@@ -142,7 +156,20 @@ function jps.LowestFriendly()
 end
 
 -- AVG RAID PERCENTAGE in RaidStatus without aberrations
-function jps.avgRaidHP(noFilter)
+--[[[
+@function jps.avgRaidHP
+@description 
+get's the raid average hp for aoe healing
+[br][i]Usage:[/i][br]
+[code]
+jps.avgRaidHP()
+
+[/code]
+
+
+@returns float: avg raid hp
+]]--
+function jps.avgRaidHP()
 	local raidHP = 1
 	local unitCount = 0
 	local minUnit = 1
@@ -160,24 +187,8 @@ function jps.avgRaidHP(noFilter)
 	end
 	avgHP = raidHP / unitCount
 	if not avgHP then return 1 end
-	if unitCount > 10 or noFilter == true then
-		return avgHP
-	end
-	 -- remove aberrations in 10 man groups (they lower the avg raid hp too much) allow max 30% hp difference to avg hp
-	for unit, unitTable in pairs(jps.RaidStatus) do
-		if unitTable["inrange"] then
-			unitHP = unitTable["hpct"]
-			if unitHP then
-				if unitHP < (avgHP / 1.3) then
-					raidHP = raidHP - unitHP
-					unitCount = unitCount - 1
-				end
-			end
-		end
-	end
-	avgHP = raidHP / unitCount
-	if not avgHP then return 1 end
 	return avgHP
+
 end
 
 ------------------------------------
@@ -260,6 +271,20 @@ return groupToHeal -- RETURN Group with at least 3 unit in range
 end
 
 -- FIND THE TARGET IN SUBGROUP TO HEAL WITH POH IN RAID
+--[[[
+@function jps.FindSubGroupTarget
+@description 
+find a target in a raid group to heal with group heal spells like prayer of healing
+[br][i]Usage:[/i][br]
+[code]
+jps.FindSubGroupTarget(0.5)
+
+[/code]
+@param float: max hp to check for
+
+@returns string: unitID
+]]--
+--JPTODO: check jps.FindSubGroupTarget functionality
 function jps.FindSubGroupTarget(lowHealthDef)
 	if lowHealthDef == nil then lowHealthDef = 0.75 end
 	local groupToHeal = jps.FindSubGroup()

@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <title>JPS Documentation</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="css/default.css">
 <script src="js/jquery-2.0.3.js"></script>
 <script>
 window.onload = function () {
     // Looks for an element with the class "toc" and appends an empty list
-    $('.toc').append('<ul id="toc" class="toc-list"></ul>')
+    $('.toc').append('<ul id="toc" class="toc-list sidebar-nav"></ul>')
     // find the new list
+
     var TOC = $('ul#toc');
     $.each($('div.section'), function(k,v) {
         var heading = $(v).find('div.section-title');
@@ -27,7 +29,17 @@ window.onload = function () {
             var headingID = headingText.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             $(this).attr("id", headingID);
             subList = subList + '<li><a class="toc-link" href="#' + headingID +'">' + headingText +  '</a></li>';
+			/*
+			
+            $(this).find(".module-function").each(function(key,val) {
+            	 headingText = $(this).find(".module-function-name").text();
+            	 console.log(headingText);
+            	var headingID = headingText.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+	            subList = subList +  '<li><a class="toc-link" href="#' + headingID +'">' + headingText +  '</a></li>';
+            });*/
         });
+        
+        
         $(this).find('div.rotation-class').each(function() {
             if (subList == '') {
                 subList = '<li><ul class="toc-sublist">';
@@ -43,55 +55,45 @@ window.onload = function () {
             TOC.append(subList);
         }
     });
-  $(".toc").prepend('<div class=\"section-title\">Table of Contents</div>')
 }
 </script>
 </head>
 <body>
-<div class="title">= JPS - A PLUA ADDON FOR WORLD OF WARCRAFT =</div>
-
-<p>This addon in combination with enabled protected LUA will help you get the most out of your WoW experience. See commands below for a full list of available commands.</p>
-
-<p>Huge HUGE thanks to htordeux, nishikazuhiro, hax mcgee, pcmd and many more for all their contributions to keeping this project going!</p>
-
-<p>*** VERSION 1.3 - Huge updates from PCMD/Htordeux. *** *** All credit for this version to them. ***</p>
-
-<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
-
-<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
-
-<p>You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</p>
-
-<p>Copyright (C) 2011 James Ganis</p>
-
-<div class="toc"></div>
-
-<div class="section">
-<div class="section-title">Usage</div>
-With protected LUA enabled (through and external hack, not included with this package) this addon will play on your behalf, detecting your class and spec simply attacking a target will cause the mod to take over. Using all the best spells and abilities with split second timing to ensure maximum DPS, TPS or HPS for your class and spec.
-</div>
-
-<div class="section">
-<div class="section-title">Commands</div>
-<ul class="command-list"> 
-  <li><code>/jps enable</code> (or <code>/jps e</code>) Enables JPS</li> 
-  <li><code>/jps disable</code> (or <code>/jps d</code>) Disables JPS</li> 
-  <li><code>/jps toggle</code> (or <code>/jps t</code>) Toggle whether JPS is enabled or not</li>
-  <li><code>/jps multi</code> Toggle support for AOE</li>
-  <li><code>/jps cds</code> Use cooldowns in rotations</li>
-  <li><code>/jps interrupts</code> (or <code>/jps int</code>) Interrupt spell casting where possible</li>
-  <li><code>/jps pew</code> manually start attacking with jps your current target (for ingame macros)</li>
-  <li><code>/jps face</code> auto rotate your toon until you face your current target</li>
-  <li><code>/jps defensive</code> (or <code>/jps def</code>) toggle defensiv mode (def / heal usage)</li>
-  <li><code>/jps pvp</code> toggle pvp mode manually</li>
-  <li><code>/jps version</code> prints your current JPS version/revision</li>
-  <li><code>/jps db</code> resets ingame addon database</li>
-  <li><code>/jps reset</code> resets position of JPS icons / jps UI</li>
-  <li><code>/jps debug</code> Enable debug output</li>
-  <li><code>/jps help</code> show help</li>
-</ul>
-</div>
-<div class="section">
+<div id="wrapper">
+    <div id="sidebar-wrapper" class="toc">
+    </div>
+    <div id="page-content-wrapper">
+        <div class="page-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+	<h2>Documentation</h2>
+	<div class="section">
+	<div class="section-title">Usage</div>
+	With protected LUA enabled (through and external hack, not included with this package) this addon will play on your behalf, detecting your class and spec simply attacking a target will cause the mod to take over. Using all the best spells and abilities with split second timing to ensure maximum DPS, TPS or HPS for your class and spec.
+	</div>
+	
+	<div class="section">
+	<div class="section-title">Commands</div>
+	<ul class="command-list"> 
+	  <li><code>/jps enable</code> (or <code>/jps e</code>) Enables JPS</li> 
+	  <li><code>/jps disable</code> (or <code>/jps d</code>) Disables JPS</li> 
+	  <li><code>/jps toggle</code> (or <code>/jps t</code>) Toggle whether JPS is enabled or not</li>
+	  <li><code>/jps multi</code> Toggle support for AOE</li>
+	  <li><code>/jps cds</code> Use cooldowns in rotations</li>
+	  <li><code>/jps interrupts</code> (or <code>/jps int</code>) Interrupt spell casting where possible</li>
+	  <li><code>/jps pew</code> manually start attacking with jps your current target (for ingame macros)</li>
+	  <li><code>/jps face</code> auto rotate your toon until you face your current target</li>
+	  <li><code>/jps defensive</code> (or <code>/jps def</code>) toggle defensiv mode (def / heal usage)</li>
+	  <li><code>/jps pvp</code> toggle pvp mode manually</li>
+	  <li><code>/jps version</code> prints your current JPS version/revision</li>
+	  <li><code>/jps db</code> resets ingame addon database</li>
+	  <li><code>/jps reset</code> resets position of JPS icons / jps UI</li>
+	  <li><code>/jps debug</code> Enable debug output</li>
+	  <li><code>/jps help</code> show help</li>
+	</ul>
+	</div>
+	<div class="section">
 <div class="section-title">Modules</div>
 <div class="module">
 <div class="module-name">Static Spell Tables</div>
@@ -105,16 +107,6 @@ With protected LUA enabled (through and external hack, not included with this pa
 </ul>
 <div class="module-function-section">Returns:</div>
 <div class="module-function-returns">Tupel <code>spell,target</code> if a spell should be cast, else <code>nil</code></div>
-</div>
-<div class="module-function" id="parseStaticRaidTable">
-<div class="module-function-name">function parseStaticRaidTable(hydraTable)</div>
-<div class="module-function-description">Parses a spellTable from a jps raid encounter. (jpraid.data.lua) <br /> <strong>Spell</strong><br> spell is the encounter spellname<br> <strong>Condition</strong><br> conditions are either functions or booleans, similar like in normal spelltables but without macros or nested tables. The conditions could be like<br> <code>jps.raid.getTimer("Quills") < 2</code><br> <strong>SpellType</strong><br> spellType is the type of a "counter-ability" jps raid should execute to prevent incoming damage. (runSpeed, physicalDmgReduce etc.) Defined in jpraid.data.lua (jps.raid.supportedAbilities)</div>
-<div class="module-function-section">Parameters:</div>
-<ul class="module-function-parameters">
-  <li class="module-function-parameter"><b>hydraTable:</b> static spell table from jpraid.data.lua (jps.raid.supportedEncounters)</li>
-</ul>
-<div class="module-function-section">Returns:</div>
-<div class="module-function-returns">Tupel <code>spell,spellType</code> if a spell should be cast, else <code>nil</code></div>
 </div>
 <div class="module-function" id="jps.cachedValue">
 <div class="module-function-name">function jps.cachedValue(fn, updateInterval)</div>
@@ -183,7 +175,269 @@ With protected LUA enabled (through and external hack, not included with this pa
 </div>
 </div>
 <div class="module">
-<div class="module-name">DoT Tracker</div>
+<div class="module-name">Functions: Auras</div>
+<div class="module-description">Unit Aura related functions</div>
+<div class="module-function" id="jps.buff">
+<div class="module-function-name">function jps.buff(spell, unit)</div>
+<div class="module-function-description">checks if a unit has a buff applied <br /><i>Usage:</i><br /> <code> jps.buff("Enrage","player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the buff is applied (on nil / default unit = player)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean: true if buff applied, false if not</div>
+</div>
+<div class="module-function" id="jps.debuff">
+<div class="module-function-name">function jps.debuff(spell, unit)</div>
+<div class="module-function-description">checks if a unit has a debuff applied <br /><i>Usage:</i><br /> <code> jps.debuff("Sunder Armor","target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the debuff is applied (on nil / default unit = target)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean: true if debuff applied, false if not</div>
+</div>
+<div class="module-function" id="jps.debuff">
+<div class="module-function-name">function jps.debuff(spell, unit)</div>
+<div class="module-function-description">checks if a unit has a debuff applied by the player <br /><i>Usage:</i><br /> <code> jps.debuff("Sunder Armor","player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the debuff is applied (on nil / default unit = player)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean: true if debuff applied + applied by the player, false if not</div>
+</div>
+<div class="module-function" id="jps.myBuffDuration">
+<div class="module-function-name">function jps.myBuffDuration(spell, unit)</div>
+<div class="module-function-description">checks the duration off a buff applied by the player on a unit <br /><i>Usage:</i><br /> <code> jps.buffDuration("Sunder Armor","player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the buff is applied (on nil / default unit = player)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">integer: buff duration</div>
+</div>
+<div class="module-function" id="jps.myDebuffDuration">
+<div class="module-function-name">function jps.myDebuffDuration(spell, unit)</div>
+<div class="module-function-description">checks the duration off a debuff applied by the player on a unit <br /><i>Usage:</i><br /> <code> jps.myDebuffDuration("Sunder Armor","player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the debuff is applied (on nil / default unit = player)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">integer: debuff duration</div>
+</div>
+<div class="module-function" id="jps.buffDuration">
+<div class="module-function-name">function jps.buffDuration(spell, unit)</div>
+<div class="module-function-description">checks the duration off a buff on a unit <br /><i>Usage:</i><br /> <code> jps.buffDuration("Sunder Armor","player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the buff is applied (on nil / default unit = player)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">integer: buff duration</div>
+</div>
+<div class="module-function" id="jps.debuffDuration">
+<div class="module-function-name">function jps.debuffDuration(spell, unit)</div>
+<div class="module-function-description">checks the duration off a debuff on a unit <br /><i>Usage:</i><br /> <code> jps.debuffDuration("Sunder Armor","player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell:</b> spellname or spell-ID (not case sensitive)</li>
+  <li class="module-function-parameter"><b>unit:</b> <i>Optional:</i> Unit to check if the debuffdebuff is applied (on nil / default unit = player)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">integer: debuff duration</div>
+</div>
+<div class="module-function" id="jps.bloodlusting">
+<div class="module-function-name">function jps.bloodlusting()</div>
+<div class="module-function-description">check's if any +haste buffs are up (e.g. bloodlust, time warp) <br /><i>Usage:</i><br /> <code> jps.bloodlusting() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.raidIsBuffed">
+<div class="module-function-name">function jps.raidIsBuffed(spell:)</div>
+<div class="module-function-description">checks if our whole(valid) raid is buffed with a specific buff <br /><i>Usage:</i><br /> <code> jps.raidIsBuffed("Battle Shout")<br /> jps.raidIsBuffed("Arcane Brilliance")<br /> jps.raidIsBuffed("Horn of Winter")<br /> jps.raidIsBuffed("Dark Intent")<br /> </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell::</b> name of a spell you wan't to buff (currently only englisch client)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: Unit Castinfo</div>
+<div class="module-description">Functions which handle casting & channeling stuff.</div>
+<div class="module-function" id="jps.CastTimeLeft">
+<div class="module-function-name">function jps.CastTimeLeft(unit:)</div>
+<div class="module-function-description">gets units cast time <br /><i>Usage:</i><br /> <code> jps.CastTimeLeft("player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">cast time in seconds or 0</div>
+</div>
+<div class="module-function" id="jps.ChannelTimeLeft">
+<div class="module-function-name">function jps.ChannelTimeLeft(unit:)</div>
+<div class="module-function-description">gets units channel time <br /><i>Usage:</i><br /> <code> jps.ChannelTimeLeft("player") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">channel time in seconds or 0</div>
+</div>
+<div class="module-function" id="jps.spellCastTime">
+<div class="module-function-name">function jps.spellCastTime(spell:)</div>
+<div class="module-function-description">gets the cast time for a spell <br /><i>Usage:</i><br /> <code> jps.spellCastTime("Incinerate") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell::</b> spellName or SpellID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">cast time in seconds or 0</div>
+</div>
+<div class="module-function" id="jps.IsCastingSpell">
+<div class="module-function-name">function jps.IsCastingSpell(spell:, unit:)</div>
+<div class="module-function-description">checks if a unit cast a specific spell <br /><i>Usage:</i><br /> <code> jps.IsCastingSpell("Divine Hymn","target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell::</b> SpellName or SpellID</li>
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.IsChannelingSpell">
+<div class="module-function-name">function jps.IsChannelingSpell(spell:, unit:)</div>
+<div class="module-function-description">checks if a unit cast a specific channel spell <br /><i>Usage:</i><br /> <code> jps.IsChannelingSpell("Divine Hymn","target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell::</b> SpellName or SpellID</li>
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.IsCastingPoly">
+<div class="module-function-name">function jps.IsCastingPoly(unit:)</div>
+<div class="module-function-description">check's if a unit is casting polymorph <br /><i>Usage:</i><br /> <code> jps.IsCastingPoly("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.IsCastingControl">
+<div class="module-function-name">function jps.IsCastingControl(unit:)</div>
+<div class="module-function-description">check's if a unit is casting a cc spell <br /><i>Usage:</i><br /> <code> jps.IsCastingControl("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.cooldown">
+<div class="module-function-name">function jps.cooldown(spell:)</div>
+<div class="module-function-description">get a spell cooldown <br /><i>Usage:</i><br /> <code> jps.cooldown("Bloodlust") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell::</b> spellID or SpellName</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">time in seconds</div>
+</div>
+<div class="module-function" id="jps.castEverySeconds">
+<div class="module-function-name">function jps.castEverySeconds(spell:, time:)</div>
+<div class="module-function-description">allows you to repeat a cast every x seconds <br /><i>Usage:</i><br /> <code> jps.castEverySeconds("Blood Boil", 10) -- casts blood boil every 10 seconds </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>spell::</b> spellName only!</li>
+  <li class="module-function-parameter"><b>time::</b> time in seconds</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: CC & interrupt</div>
+<div class="module-description">Functions which handle cc & interrupt stuff</div>
+<div class="module-function" id="jps.shouldKick">
+<div class="module-function-name">function jps.shouldKick(unit:)</div>
+<div class="module-function-description">check's if the passed unit is casting a spell that we can interrupt. <br />Interrupt button in jps needs to be activated!<br />This is a instant interrupt <br /><i>Usage:</i><br /> <code> jps.shouldKick("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.shouldKick">
+<div class="module-function-name">function jps.shouldKick(unit:)</div>
+<div class="module-function-description">check's if the passed unit is casting a spell that we can interrupt. <br />Interrupt button in jps needs to be activated!<br />This is a interrupt with a delay <br /><i>Usage:</i><br /> <code> jps.shouldKick("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: Unit Dispel</div>
+<div class="module-description">Functions which handle dispels</div>
+<div class="module-function" id="jps.DispelMagicTarget">
+<div class="module-function-name">function jps.DispelMagicTarget(unit:)</div>
+<div class="module-function-description">looks for a unit with a magic debuff that we can dispel <br /><i>Usage:</i><br /> <code> jps.DispelMagicTarget("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">unitID</div>
+</div>
+<div class="module-function" id="jps.DispelDiseaseTarget">
+<div class="module-function-name">function jps.DispelDiseaseTarget(unit:)</div>
+<div class="module-function-description">looks for a unit with a disease debuff that we can dispel <br /><i>Usage:</i><br /> <code> jps.DispelDiseaseTarget("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">unitID</div>
+</div>
+<div class="module-function" id="jps.DispelPoisonTarget">
+<div class="module-function-name">function jps.DispelPoisonTarget(unit:)</div>
+<div class="module-function-description">looks for a unit with a poison debuff that we can dispel <br /><i>Usage:</i><br /> <code> jps.DispelPoisonTarget("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">unitID</div>
+</div>
+<div class="module-function" id="jps.DispelCurseTarget">
+<div class="module-function-name">function jps.DispelCurseTarget(unit:)</div>
+<div class="module-function-description">looks for a unit with a curse debuff that we can dispel <br /><i>Usage:</i><br /> <code> jps.DispelCurseTarget("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">unitID</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: DoT tracking</div>
 <div class="module-description">DoT Tracker for DoT-Classes. Currently only Destruction-Warlocks and Affliction-Warlocks are supported. <br /><br /> The DoT Tracker will track your DoT's on all valid units (<code>target</code>, <code>focus</code>, <code>mouseover</code> and <code>boss1-4</code>) and will tell you when to recast the spell. If it is pandemic safe and you don't loose DPS your DoT's will always be re-applied. If it is not pandemic safe the DoT will only be re-applied if you gain at least 225K DPS - based on 150K average DPS this should compensate for the lost GCD. If you don't have the DoT on the target or there is only 2 seconds left it will be applied ignoring any DPS difference. <br /><br /> The DoT Tracker can be used with normal tables (<a href="#jps.dotTracker.castTable" class="ref">jps.dotTracker.castTable</a>) but since normal tables are deprecated you should instead convert your rotation to a static spell table and use the appropriate function (<a href="#jps.dotTracker.castTableStatic" class="ref">jps.dotTracker.castTableStatic</a>).</div>
 <div class="module-function" id="jps.dotTracker.castTableStatic">
 <div class="module-function-name">function jps.dotTracker.castTableStatic(spellID, unit)</div>
@@ -198,7 +452,7 @@ With protected LUA enabled (through and external hack, not included with this pa
 </div>
 <div class="module-function" id="jps.dotTracker.castTable">
 <div class="module-function-name">function jps.dotTracker.castTable(spellID, unit)</div>
-<div class="module-function-description"><i>This function is DEPRECATED! Use: <a href="#jps.dotTracker.castTableStatic" class="ref">jps.dotTracker.castTableStatic</a></i><br /><br />Generates a Spell Table Element for the given DoT for old-style Spell Tables.<br /> The DoT Tracker will track your DoT's on all valid units (<code>target</code>, <code>focus</code>, <code>mouseover</code> and <code>boss1-4</code>) and will tell you when to recast the spell. If it is pandemic safe and you don't loose DPS your DoT's will always be re-applied. If it is not pandemic safe the DoT will only be re-applied if you gain at least 225K DPS - based on 150K average DPS this should compensate for the lost GCD. If you don't have the DoT on the target or there is only 2 seconds left it will be applied ignoring any DPS difference.<br /> <br /><i>Usage:</i><br /> <code> local spellTable = {<br /> ...<br /> jps.dotTracker.castTable("Immolate"),<br /> ...<br /> }<br /> </code></div>
+<div class="module-function-description"><i>This function is DEPRECATED! Use: <a href="#jps.dotTracker.castTableStatic" class="ref">jps.dotTracker.castTableStatic</a></i><br /><br />Generates a Spell Table Element for the given DoT for old-style Spell Tables.<br /> The DoT Tracker will track your DoT's on all valid units (<code>target</code>, <code>focus</code>, <code>mouseover</code> and <code>boss1-4</code>) and will tell you when to recast the spell. <br /><i>Usage:</i><br /> <code> local spellTable = {<br /> ...<br /> jps.dotTracker.castTable("Immolate"),<br /> ...<br /> }<br /> </code></div>
 <div class="module-function-section">Parameters:</div>
 <ul class="module-function-parameters">
   <li class="module-function-parameter"><b>spellID:</b> Spell-ID to cast, can be a spell name, a spell id</li>
@@ -206,6 +460,259 @@ With protected LUA enabled (through and external hack, not included with this pa
 </ul>
 <div class="module-function-section">Returns:</div>
 <div class="module-function-returns">Spell-Table Element, e.g.: <code>{"Immolate", false, "mouseover"}</code></div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: global helper functions</div>
+<div class="module-description">global functions</div>
+<div class="module-function" id="jps.tableLength">
+<div class="module-function-name">function jps.tableLength(table:)</div>
+<div class="module-function-description">return the length of a table <br /><i>Usage:</i><br /> <code> jps.tableLength({1,2,3}) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>table::</b> a pointer to a table</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: length of a table or 0</div>
+</div>
+<div class="module-function" id="jps.stringSplit">
+<div class="module-function-name">function jps.stringSplit(string:)</div>
+<div class="module-function-description">splits a Player-Realm string and returns playerName <br /><i>Usage:</i><br /> <code> jps.stringSplit("Bob-RandomServer","-") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>string::</b> A player-realm string</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">string: playerName</div>
+</div>
+<div class="module-function" id="jps.combatTime()">
+<div class="module-function-name">function jps.combatTime()()</div>
+<div class="module-function-description">get's the time the player is in combat <br /><i>Usage:</i><br /> <code> jps.combatTime() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: time in seconds</div>
+</div>
+<div class="module-function" id="inArray">
+<div class="module-function-name">function inArray(string:, table:)</div>
+<div class="module-function-description"><br /><i>Usage:</i><br /> <code> inArray("target",{"target","player","focus"}) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>string::</b> needle</li>
+  <li class="module-function-parameter"><b>table::</b> table with data</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="keyPressed">
+<div class="module-function-name">function keyPressed(string:, string:, string:)</div>
+<div class="module-function-description"><br /><i>Usage:</i><br /> <code> keyPressed("shift")<br /> keyPressed("shift","alt")<br /> </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>string::</b> name of a modifier key<br /></li>
+  <li class="module-function-parameter"><b>string::</b> another name of a modifier key<br /></li>
+  <li class="module-function-parameter"><b>string::</b> another name of a modifier key<br /></li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean if the passed key combination is pressed</div>
+</div>
+<div class="module-function" id="dump">
+<div class="module-function-name">function dump(table:)</div>
+<div class="module-function-description">dumps a table content to print() - recursive <br /><i>Usage:</i><br /> <code> dump({1,2:{"bob","test"},3}) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>table::</b> a table</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">output in print()</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: Unit Healing</div>
+<div class="module-description">Functions which handle healing rotations and unit health</div>
+<div class="module-function" id="jps.LowestInRaidStatus">
+<div class="module-function-name">function jps.LowestInRaidStatus()</div>
+<div class="module-function-description"><br /><i>Usage:</i><br /> <code> jps.LowestInRaidStatus() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">lowest unit in raid</div>
+</div>
+<div class="module-function" id="jps.avgRaidHP">
+<div class="module-function-name">function jps.avgRaidHP()</div>
+<div class="module-function-description">get's the raid average hp for aoe healing <br /><i>Usage:</i><br /> <code> jps.avgRaidHP() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">float: avg raid hp</div>
+</div>
+<div class="module-function" id="jps.FindSubGroupTarget">
+<div class="module-function-name">function jps.FindSubGroupTarget(float:)</div>
+<div class="module-function-description">find a target in a raid group to heal with group heal spells like prayer of healing <br /><i>Usage:</i><br /> <code> jps.FindSubGroupTarget(0.5) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>float::</b> max hp to check for</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">string: unitID</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: Items & Equipment</div>
+<div class="module-description">Functions which handle Items (e.g. trinkets, items in bag)</div>
+<div class="module-function" id="jps.useBagItem">
+<div class="module-function-name">function jps.useBagItem(string:)</div>
+<div class="module-function-description">uses a item in our bag <br /><i>Usage:</i><br /> <code> jps.useBagItem("Healthstone") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>string::</b> Item Name</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">nil</div>
+</div>
+<div class="module-function" id="jps.useSlot">
+<div class="module-function-name">function jps.useSlot(int:)</div>
+<div class="module-function-description">tries to use a slot we have equipped (e.g. glider, nitro boost etc..) <br /><i>Usage:</i><br /> <code> jps.useSlot(10) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>int::</b> slotID from our equipment</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">nil</div>
+</div>
+<div class="module-function" id="jps.useTrinket">
+<div class="module-function-name">function jps.useTrinket(int:)</div>
+<div class="module-function-description">uses a on-use trinket <br /><i>Usage:</i><br /> <code> jps.useTrinket(0)<br /> jps.useTrinket(1) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>int::</b> trinket number (0 or 1)</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">nil</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: Unit health & powers</div>
+<div class="module-description">Functions which handle unit health, unit powers</div>
+<div class="module-function" id="jps.hp">
+<div class="module-function-name">function jps.hp(unit:)</div>
+<div class="module-function-description">get unit's hp left as percentage( decimal format: 0.80, 0.50...) <br /><i>Usage:</i><br /> <code> jps.hp("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">float</div>
+</div>
+<div class="module-function" id="jps.hpTotal">
+<div class="module-function-name">function jps.hpTotal(unit:)</div>
+<div class="module-function-description">get unit's hp as integer <br /><i>Usage:</i><br /> <code> jps.hpTotal("target") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>unit::</b> UnitID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current hp as value</div>
+</div>
+<div class="module-function" id="jps.rage">
+<div class="module-function-name">function jps.rage()</div>
+<div class="module-function-description">returns players rage <br /><i>Usage:</i><br /> <code> jps.rage() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current rage</div>
+</div>
+<div class="module-function" id="jps.energy">
+<div class="module-function-name">function jps.energy()</div>
+<div class="module-function-description">returns players energy <br /><i>Usage:</i><br /> <code> jps.energy() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current energy</div>
+</div>
+<div class="module-function" id="jps.focus">
+<div class="module-function-name">function jps.focus()</div>
+<div class="module-function-description">returns players focus <br /><i>Usage:</i><br /> <code> jps.focus() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current focus</div>
+</div>
+<div class="module-function" id="jps.runicPower">
+<div class="module-function-name">function jps.runicPower()</div>
+<div class="module-function-description">returns players runic Power <br /><i>Usage:</i><br /> <code> jps.runicPower() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current runic power</div>
+</div>
+<div class="module-function" id="jps.soulShards">
+<div class="module-function-name">function jps.soulShards()</div>
+<div class="module-function-description">returns players soulShards <br /><i>Usage:</i><br /> <code> jps.soulShards() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current soul shards</div>
+</div>
+<div class="module-function" id="jps.eclipsePower">
+<div class="module-function-name">function jps.eclipsePower()</div>
+<div class="module-function-description">returns players eclipser Power <br /><i>Usage:</i><br /> <code> jps.eclipsePower() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current eclipse Power</div>
+</div>
+<div class="module-function" id="jps.chi">
+<div class="module-function-name">function jps.chi()</div>
+<div class="module-function-description">returns players chi <br /><i>Usage:</i><br /> <code> jps.chi() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current chi</div>
+</div>
+<div class="module-function" id="jps.holyPower">
+<div class="module-function-name">function jps.holyPower()</div>
+<div class="module-function-description">returns players holy power <br /><i>Usage:</i><br /> <code> jps.holy Power() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current holy Power</div>
+</div>
+<div class="module-function" id="jps.shadowOrbs">
+<div class="module-function-name">function jps.shadowOrbs()</div>
+<div class="module-function-description">returns players shadow orbs <br /><i>Usage:</i><br /> <code> jps.rage() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current shadow orbs</div>
+</div>
+<div class="module-function" id="jps.burningEmbers">
+<div class="module-function-name">function jps.burningEmbers()</div>
+<div class="module-function-description">returns players burning emvers <br /><i>Usage:</i><br /> <code> jps.burningEmbers() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current burning embers</div>
+</div>
+<div class="module-function" id="jps.emberShards">
+<div class="module-function-name">function jps.emberShards()</div>
+<div class="module-function-description">returns players emberShards <br /><i>Usage:</i><br /> <code> jps.emberShards() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current ember shards</div>
+</div>
+<div class="module-function" id="jps.demonicFury">
+<div class="module-function-name">function jps.demonicFury()</div>
+<div class="module-function-description">returns players demonic fury <br /><i>Usage:</i><br /> <code> jps.demonicFury() </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">int: current demonic fury</div>
+</div>
+<div class="module-function" id="jps.mana">
+<div class="module-function-name">function jps.mana()</div>
+<div class="module-function-description">returns unit''s mana as percentage (float) or as a value(int) <br /><i>Usage:</i><br /> <code> jps.mana("unit")<br /> jps.mana("unit","abs") -- for current mana value </code></div>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">float: current mana percentage</div>
+</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: raid functions</div>
+<div class="module-description">Functions which handle Raid information about tanks, aggro, raid enemies</div>
+</div>
+<div class="module">
+<div class="module-name">Functions: spellbook functions</div>
+<div class="module-description">Functions which handle talents & glyphs</div>
+<div class="module-function" id="jps.talentInfo">
+<div class="module-function-name">function jps.talentInfo(string:)</div>
+<div class="module-function-description">check's if a player has skilled a talent or not <br /><i>Usage:</i><br /> <code> jps.talentInfo("Shadowfury") </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>string::</b> talent name or spellID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
+</div>
+<div class="module-function" id="jps.glyphInfo">
+<div class="module-function-name">function jps.glyphInfo(int:)</div>
+<div class="module-function-description">checks if a player has skilled a glyph or not <br /><i>Usage:</i><br /> <code> jps.glyphInfo(4) </code></div>
+<div class="module-function-section">Parameters:</div>
+<ul class="module-function-parameters">
+  <li class="module-function-parameter"><b>int::</b> glyphID</li>
+</ul>
+<div class="module-function-section">Returns:</div>
+<div class="module-function-returns">boolean</div>
 </div>
 </div>
 </div>
@@ -308,27 +815,41 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="rotations-spec">
   <div class="rotation-spec-title warlock_demonology">demonology</div>
 <div class="rotation">
-<div class="rotation-name">'Demo Raid (untested)' <i>by Unknown</i></div>
-<div class="rotation-description"><i>This Rotation is DEPRECATED! </i><br /><br />Demo Rotation.</div>
+<div class="rotation-name">'Demonology 6.0.2 Basic' <i>by Unknown</i></div>
+<div class="rotation-description">Demo Rotation.<br> ALT Key for instant casts.<br> Shift+Control for enter meta at any time<br> Shift+Alt to cancel meta<br> Control for cataclysm</div>
 </div>
 <div class="rotation">
-<div class="rotation-name">'Interrupt Only' <i>by Kirk24788</i></div>
-<div class="rotation-description">This is Rotation will only take care of Interrupts. <i>Attention:</i> <code>jps.Interrupts</code> still has to be active!</div>
+<div class="rotation-name">'Demonology 6.0.2 Advanced' <i>by Unknown</i></div>
+<div class="rotation-description">Demo Rotation.<br> ALT Key for instant casts.<br> Shift+Control for enter meta at any time<br> Shift+Alt to cancel meta<br> Control for cataclysm</div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Demonology 6.0.2 Advanced HoG' <i>by Unknown</i></div>
+<div class="rotation-description">Demo Rotation.<br> ALT Key for instant casts.<br> Shift+Control for enter meta at any time<br> Shift+Alt to cancel meta<br> Control for cataclysm</div>
 </div>
 </div>
 <div class="rotations-spec">
   <div class="rotation-spec-title warlock_destruction">destruction</div>
 <div class="rotation">
-<div class="rotation-name">'Destruction 5.3' <i>by Kirk24788</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#Vb!112101!ZbS" class="talent-url">Talents</a>)</div>
-<div class="rotation-description">This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP. <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Cast Rain of Fire @ Mouse - <b>ONLY</b> if RoF Duration is less than 1 seconds<br /> &bull; <code>CTRL-SHIFT</code>: Cast Rain of Fire @ Mouse - ignoring the current RoF duration<br /> &bull; <code>CTRL</code>: If target is dead or ghost cast Soulstone, else cast Havoc @ Mouse<br /> &bull; <code>ALT</code>: Stop all casts and only use instants (useful for Dark Animus Interrupting Jolt)<br /> &bull; <code>jps.Interrupts</code>: Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)<br /> &bull; <code>jps.Defensive</code>: Create Healthstone if necessary, cast mortal coil and use ember tap<br /> &bull; <code>jps.UseCDs</code>: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated!<br /></div>
-</div>
-<div class="rotation">
-<div class="rotation-name">'Interrupt Only' <i>by Kirk24788</i></div>
-<div class="rotation-description">This is Rotation will only take care of Interrupts. <i>Attention:</i> <code>jps.Interrupts</code> still has to be active!</div>
+<div class="rotation-name">'Destruction 5.4' <i>by Kirk24788</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#Vb!112101!ZbS" class="talent-url">Talents</a>)</div>
+<div class="rotation-description">This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP. <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Cast Rain of Fire @ Mouse - <b>ONLY</b> if RoF Duration is less than 1 seconds<br /> &bull; <code>CTRL-SHIFT</code>: Cast Rain of Fire @ Mouse - ignoring the current RoF duration<br /> &bull; <code>ALT-SHIFT</code>: Cast Shadowfury @ Mouse<br /> &bull; <code>CTRL</code>: If target is dead or ghost cast Soulstone, else cast Havoc @ Mouse<br /> &bull; <code>ALT</code>: Stop all casts and only use instants (useful for Dark Animus Interrupting Jolt)<br /> &bull; <code>jps.Interrupts</code>: Casts from target, focus or mouseover will be interrupted (with FelHunter or Observer only!)<br /> &bull; <code>jps.Defensive</code>: Create Healthstone if necessary, cast mortal coil and use ember tap<br /> &bull; <code>jps.UseCDs</code>: Use short CD's - NO Virmen's Bite, NO Doomguard/Terrorguard etc. - those SHOULDN'T be automated!<br /></div>
 </div>
 <div class="rotation">
 <div class="rotation-name">'Kanrethad Ebonlocke' <i>by Kirk24788</i></div>
 <div class="rotation-description">As the name already suggest - this is a special Rotation designed for the green fire questline endboss. It has been tested it with iLvl 495 and 529 - both iLvl will work without Purification Potions. If you go below 495 you should consider Buff-Food, Flask and a Purification Potion and you should be fine. The Rotation will take care of targeting and your Rotation, you only have to move! For more information please visit the PG Forums. There you can find a detailed explanation with images.</div>
+</div>
+</div>
+</div>
+<div class="rotation-class">
+<div class="rotation-class-title warrior">warrior</div>
+<div class="rotations-spec">
+  <div class="rotation-spec-title warrior_fury">fury</div>
+<div class="rotation">
+<div class="rotation-name">'Default' <i>by atx, kyletxag</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#ZZ!!c" class="talent-url">Talents</a>)</div>
+<div class="rotation-description">This Rotation requires Glyph of Unending Rage. Shouldn't be used at lower levels</div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Noxxic 5.3' <i>by Kirk24788</i></div>
+<div class="rotation-description">This Rotation is based on Noxxic, but aims to be also used at lower levels. This is based on the Default Rotation by atx and kyletxag.</div>
 </div>
 </div>
 </div>
@@ -341,6 +862,21 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="rotation-description">This is a Raid-Rotation, which will do fine on normal mobs, even while leveling but might not be optimal for PvP. <br /> Modifiers:<br /> &bull; <code>LEFT-SHIFT</code>: Light's Hammer<br /> &bull; <code>LEFT-CTRL</code>: Light of Dawn<br /></div>
 </div>
 </div>
+<div class="rotations-spec">
+  <div class="rotation-spec-title paladin_protection">protection</div>
+<div class="rotation">
+<div class="rotation-name">'Protection PVE 5.3 - Default' <i>by unknown</i></div>
+<div class="rotation-description">This is a PVE Rotation. It uses most off your cooldowns to migitate incoming damage. It interrupts your target&focus. Seal of Insight is auomatic used for a survivability boost. <br><br> Talents:<br> -- Tier 1: Pursuit of Justice for permament speed increase(up to 30%) or Speed of Light for 70% speed increase every 45 sec. -- Tier 2: Fist of Justice -- Tier 3: Sacred Shield -- Tier 4: Unbreakable Spirit -- Tier 5: Holy Avenger -- Tier 6: Depending on the encounter, Use Execution Sentence for Survivability & threat, Holy Prism & Lights Hammer for Healing. Lights Hammer for AOE fights. -- Major Glyphs: Glyph of Alabaster Shield other Glyphs are optional <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Light's Hammer @ mouse position<br /></div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Protection PVE 5.3 Default no AOE/only Off Tank' <i>by unknown</i></div>
+<div class="rotation-description">This is a PVE Rotation. It uses most off your cooldowns to migitate incoming damage. It interrupts your target&focus. Seal of Insight is auomatic used for a survivability boost. It doesn't use any AOE Spells. Avengers Shield is used with ControlKeyDown; <br><br> Talents:<br> -- Tier 1: Pursuit of Justice for permament speed increase(up to 30%) or Speed of Light for 70% speed increase every 45 sec. -- Tier 2: Fist of Justice -- Tier 3: Sacred Shield -- Tier 4: Unbreakable Spirit -- Tier 5: Holy Avenger -- Tier 6: Depending on the encounter, Use Execution Sentence for Survivability & threat, Holy Prism & Lights Hammer for Healing. Lights Hammer for AOE fights. -- Major Glyphs: Glyph of Alabaster Shield other Glyphs are optional <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Light's Hammer @ mouse position<br /> &bull; <code>CONTROL</code>: Avenger's Shield<br /></div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Protection PVE more Control(no deff cd's)' <i>by PCMD</i></div>
+<div class="rotation-description">This is a PVE Rotation. It interrupts your target&focus. Seal of Insight is auomatic used for a survivability boost. Damage Mitigation CD's + CD's applying forbearance debuff should be used manually in this rotation. It allows you too better migitate incoming damage.<br> <br><br> Talents:<br> -- Tier 1: Pursuit of Justice for permament speed increase(up to 30%) or Speed of Light for 70% speed increase every 45 sec. -- Tier 2: Fist of Justice -- Tier 3: Sacred Shield -- Tier 4: Unbreakable Spirit -- Tier 5: Holy Avenger -- Tier 6: Depending on the encounter, Use Execution Sentence for Survivability & threat, Holy Prism & Lights Hammer for Healing. Lights Hammer for AOE fights. -- Major Glyphs: Glyph of Alabaster Shield other Glyphs are optional <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Light's Hammer @ mouse position<br /></div>
+</div>
+</div>
 </div>
 <div class="rotation-class">
 <div class="rotation-class-title hunter">hunter</div>
@@ -348,7 +884,11 @@ With protected LUA enabled (through and external hack, not included with this pa
   <div class="rotation-spec-title hunter_beastmastery">beastmastery</div>
 <div class="rotation">
 <div class="rotation-name">'BM Hunter PVE 5.3' <i>by tropic</i></div>
-<div class="rotation-description">Features:<br /> &bull; auto misdirect to pet if soloing<br /> &bull; misdirect to "focus" e.g. in party/raid<br /> &bull; mend pet when hp is less than 90%<br /> &bull; interrupt spellcasting with Silencing Shot<br /> &bull; use CDs incl. Lifeblood (herbalism)<br /> &bull; hot-keys for traps<br /></div>
+<div class="rotation-description">Features:<br /> &bull; auto misdirect to pet if soloing<br /> &bull; misdirect to "focus" e.g. in party/raid<br /> &bull; mend pet when hp is less than 90%<br /> &bull; use CDs incl. Lifeblood (herbalism)<br /> &bull; hot-keys for traps<br /></div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'BM Hunter PVE 5.3' <i>by tropic</i></div>
+<div class="rotation-description">Features:<br /> &bull; auto misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid<br /> &bull; Auto use "Healthstone" at 50% hp &bull; mend pet when hp is less than 90%<br /> &bull; interrupt spellcasting with Counter Shot<br /> &bull; Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc. <br /> <br /> Trap Keys:<br /> &bull;<code>SHIFT:</code> Explosive Trap<br /> &bull;<code>ALT:</code> Freezing Trap<br /> &bull;<code>CONTROL:</code> Snake Trap<br /> &bull;<code>SHIFT-CONTROL:</code> Ice Trap<br /></div>
 </div>
 <div class="rotation">
 <div class="rotation-name">'Default PvP' <i>by Unknown</i></div>
@@ -358,15 +898,19 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="rotations-spec">
   <div class="rotation-spec-title hunter_marksmanship">marksmanship</div>
 <div class="rotation">
-<div class="rotation-name">'Default' <i>by Chiffon, Scribe, jpganis</i></div>
-<div class="rotation-description">SimCraft</div>
+<div class="rotation-name">'MM Hunter PVE 6.0.2' <i>by tropic, updated by peanutbird</i></div>
+<div class="rotation-description">Talents/gear:<br /> &bull; Weapon DPS >>> Crit > Haste > Mastery > Multistrike > Agility<br /> &bull; Thrill of the Hunt<br /> &bull; Stampede<br /> &bull; Barrage > Glaive Toss<br /> <br /> Features:<br /> &bull; "Defensive" button toggles misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid<br /> &bull; Auto use "Healthstone" at 30% hp<br /> &bull; mend pet when hp is less than 90%<br /> &bull; interrupt spellcasting with Counter Shot<br /> &bull; Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc.<br /> <br /> Trap Keys:<br /> &bull;<code>SHIFT:</code> Explosive Trap<br /> &bull;<code>ALT:</code> Freezing Trap<br /> &bull;<code>CONTROL:</code> Snake Trap<br /> &bull;<code>SHIFT-CONTROL:</code> Ice Trap<br /></div>
 </div>
 </div>
 <div class="rotations-spec">
   <div class="rotation-spec-title hunter_survival">survival</div>
 <div class="rotation">
 <div class="rotation-name">'Default' <i>by tropic</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#Yb!001100!dfgkmM" class="talent-url">Talents</a>)</div>
-<div class="rotation-description">Features:<br /> &bull; auto misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid<br /> &bull; Auto use "Healthstone" at 50% hp &bull; mend pet when hp is less than 90%<br /> &bull; interrupt spellcasting with Silencing Shot<br /> &bull; Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc. (manually use "Readiness")<br /> <br /> Trap Keys:<br /> &bull;<code>SHIFT:</code> Explosive Trap<br /> &bull;<code>ALT:</code> Freezing Trap<br /> &bull;<code>CONTROL:</code> Snake Trap<br /> &bull;<code>SHIFT-CONTROL:</code> Ice Trap<br /></div>
+<div class="rotation-description">Features:<br /> &bull; auto misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid<br /> &bull; Auto use "Healthstone" at 50% hp &bull; mend pet when hp is less than 90%<br /> &bull; Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc. <br /> <br /> Trap Keys:<br /> &bull;<code>SHIFT:</code> Explosive Trap<br /> &bull;<code>ALT:</code> Freezing Trap<br /> &bull;<code>CONTROL:</code> Snake Trap<br /> &bull;<code>SHIFT-CONTROL:</code> Ice Trap<br /></div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Default' <i>by tropic</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#Yb!001100!dfgkmM" class="talent-url">Talents</a>)</div>
+<div class="rotation-description">Features:<br /> &bull; auto misdirect to pet if soloing, misdirect to "focus" e.g. in party/raid<br /> &bull; Auto use "Healthstone" at 50% hp &bull; mend pet when hp is less than 90%<br /> &bull; interrupt spellcasting with Counter Shot<br /> &bull; Use CDs: Blows all cooldowns: trinkets, eng. gloves pots (if boss) etc. <br /> <br /> Trap Keys:<br /> &bull;<code>SHIFT:</code> Explosive Trap<br /> &bull;<code>ALT:</code> Freezing Trap<br /> &bull;<code>CONTROL:</code> Snake Trap<br /> &bull;<code>SHIFT-CONTROL:</code> Ice Trap<br /></div>
 </div>
 </div>
 </div>
@@ -401,7 +945,7 @@ With protected LUA enabled (through and external hack, not included with this pa
   <div class="rotation-spec-title druid_restoration">restoration</div>
 <div class="rotation">
 <div class="rotation-name">'Legacy Rotation' <i>by Unknown</i></div>
-<div class="rotation-description">Makes you Top Healer...until you run out of mana. You have to use Innervate and Tranquility manually!<br /></div>
+<div class="rotation-description">Makes you Top Healer...until you run out of mana. You have to use Tranquility manually!<br /></div>
 </div>
 <div class="rotation">
 <div class="rotation-name">'Advanced Rotation' <i>by Kirk24788</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#UY!002010!gUTSPF" class="talent-url">Talents</a>)</div>
@@ -424,7 +968,7 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="rotations-spec">
   <div class="rotation-spec-title shaman_elemental">elemental</div>
 <div class="rotation">
-<div class="rotation-name">'Default' <i>by duplicate</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#W!22020." class="talent-url">Talents</a>)</div>
+<div class="rotation-name">'Default' <i>by duplicate</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#W!22020. & PCMD" class="talent-url">Talents</a>)</div>
 <div class="rotation-description">Updated for MoP</div>
 </div>
 </div>
@@ -435,14 +979,25 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="rotation-description">Simcraft and more<br /> <br /> Usage Info:<br /> &bull; Use CDs for trinkets, Feral Spirit and Fire Elemental Totem<br /> &bull; Use AoE for Magma Totem, Fire Nova and Chain Lightning on Maelstrom Stacks<br /> &bull; Searing and Magma Totem will not override Fire Elemental Totem<br /> <br /> Todo:<br /> &bull; Perhaps implement more survivability for soloing</div>
 </div>
 </div>
+<div class="rotations-spec">
+  <div class="rotation-spec-title shaman_restoration">restoration</div>
+<div class="rotation">
+<div class="rotation-name">'Shaman Resto PVE 5.3' <i>by shadowstepster & pgnomeian</i></div>
+<div class="rotation-description">Modifiers:<br> Alt Key: spiritwalker's grace<br> Shift Key: healing rain<br> Left Control Key: purify spirit</div>
+</div>
+</div>
 </div>
 <div class="rotation-class">
 <div class="rotation-class-title death_knight">death knight</div>
 <div class="rotations-spec">
   <div class="rotation-spec-title death_knight_frost">frost</div>
 <div class="rotation">
-<div class="rotation-name">'Frost PVE 5.3' <i>by PCMD</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#d!210011" class="talent-url">Talents</a>)</div>
+<div class="rotation-name">'Frost 2h PVE 5.4' <i>by PCMD</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#d!210011" class="talent-url">Talents</a>)</div>
 <div class="rotation-description">This is a Raid-Rotation based on Simcraft results. While Bloodlusting it uses a potion of Mogu Power inside raids and a flask if you got one inside your bags.<br> It switches automatically to Frost presence. Unit's in focus or target are automatically battle-rezzed <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Casts Death and Decay<br /> &bull; <code>ALT</code>:Places your Anti-Magic Zone<br /> &bull; <code>jps.Interrupts</code>: Casts from target, focus will be interrupted br] &bull; <code>jps.Defensive</code>: uses Death Pact, Death Siphon(if skilled) and Death Strike(be careful this could reduce your dps)<br /></div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Frost DW PVE 5.4' <i>by PCMD</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#d!210011" class="talent-url">Talents</a>)</div>
+<div class="rotation-description">This is a Raid-Rotation based on testing. While Bloodlusting it uses a potion of Mogu Power inside raids and a flask if you got one inside your bags.<br> It switches automatically to Frost presence. Unit's in focus or target are automatically battle-rezzed <br /> Modifiers:<br /> &bull; <code>SHIFT</code>: Casts Death and Decay<br /> &bull; <code>ALT</code>:Places your Anti-Magic Zone<br /> &bull; <code>jps.Interrupts</code>: Casts from target, focus will be interrupted br] &bull; <code>jps.Defensive</code>: uses Death Pact, Death Siphon(if skilled) and Death Strike(be careful this could reduce your dps)<br /></div>
 </div>
 <div class="rotation">
 <div class="rotation-name">'Frost PVP 5.3' <i>by PCMD</i> (<a href="http://eu.battle.net/wow/en/tool/talent-calculator#d!210011" class="talent-url">Talents</a>)</div>
@@ -471,11 +1026,15 @@ With protected LUA enabled (through and external hack, not included with this pa
 </div>
 <div class="rotation">
 <div class="rotation-name">'Noxxic PvE' <i>by Kirk24788</i></div>
-<div class="rotation-description">Based on Noxxic 5.3</div>
+<div class="rotation-description"></div>
 </div>
 <div class="rotation">
-<div class="rotation-name">'Default PvP' <i>by SwollNMember</i></div>
-<div class="rotation-description">WoW v5.2 compliant</div>
+<div class="rotation-name">'Frost Mage PvE' <i>by SwollNMember</i></div>
+<div class="rotation-description">SimCraft 5.3</div>
+</div>
+<div class="rotation">
+<div class="rotation-name">'Noxxic PvE' <i>by Kirk24788</i></div>
+<div class="rotation-description">Based on Noxxic 5.3</div>
 </div>
 </div>
 </div>
@@ -484,8 +1043,12 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="rotations-spec">
   <div class="rotation-spec-title monk_brewmaster">brewmaster</div>
 <div class="rotation">
+<div class="rotation-name">'PVE 5.4' <i>by Unknown</i></div>
+<div class="rotation-description">modifiers: shift+alt: black Ox statue<br> alt+ctrl: dizzying haze<br> shift: spinning crane kick<br> left ctrl: breath on fire single target<br></div>
+</div>
+<div class="rotation">
 <div class="rotation-name">'Default' <i>by Unknown</i></div>
-<div class="rotation-description">Usage info:<br /> &bull; <code>SHIFT</code>: "Dizzying Haze" at mouse position - AoE threat builder - "Hurl a keg of your finest brew"<br /> &bull; <code>CTRL</code>: "Chi Wave" on mouseover friendlies and enemies (disabled for now)<br /></div>
+<div class="rotation-description">Usage info:<br /> &bull; <code>SHIFT</code>: "Dizzying Haze" at mouse position - AoE threat builder - "Hurl a keg of your finest brew"<br /></div>
 </div>
 </div>
 <div class="rotations-spec">
@@ -500,12 +1063,52 @@ With protected LUA enabled (through and external hack, not included with this pa
 <div class="section">
 <div class="section-title">ToDo's</div>
 <div class="todo">
+  <div class="todo-file">jpparse.lua</div>
+  <ul class="todo-list">
+<li class="todo-item">6.0 jps.spellNeedSelectTable need new spell Ids for new ground spells</li>
+<li class="todo-item">6.0 check jps_canHeal_debug debug output</li>
+<li class="todo-item">6.0 check jps_canCast_debug debug output</li>
+  </ul>
+</div>
+<div class="todo">
+  <div class="todo-file">jputils.lua</div>
+  <ul class="todo-list">
+<li class="todo-item">jputils debuffs below line 129 are outdated!</li>
+  </ul>
+</div>
+<div class="todo">
   <div class="todo-file">jpdots.lua</div>
   <ul class="todo-list">
 <li class="todo-item">Remove dotTracker.castTable when all Rotations use static tables</li>
   </ul>
 </div>
+<div class="todo">
+  <div class="todo-file">jphealing.lua</div>
+  <ul class="todo-list">
+<li class="todo-item">check jps.FindSubGroupTarget functionality</li>
+  </ul>
+</div>
+<div class="todo">
+  <div class="todo-file">jpitems.lua</div>
+  <ul class="todo-list">
+<li class="todo-item">6.0 Remove jps.glovesCooldown)</li>
+  </ul>
+</div>
+<div class="todo">
+  <div class="todo-file">jpspellbook.lua</div>
+  <ul class="todo-list">
+<li class="todo-item">check jps.talentInfo functionality</li>
+<li class="todo-item">check jps.glyphInfo functionality</li>
+  </ul>
+</div>
 </div>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

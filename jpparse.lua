@@ -235,7 +235,7 @@ end
 -- "Summon Black Ox Statue" - 115315 - Monk 
 -- "Summon Black Ox Statue" - 115315 - Monk 
 -- "cataclysm" - 152108 Warlock
-
+--JPTODO: 6.0 jps.spellNeedSelectTable need new spell Ids for new ground spells
 jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,115180,114158,73921,88747, 82939, 82941, 60192, 115313, 115460, 114192, 6544, 33395, 116011, 5740, 115315, 152108}
 function jps.spellNeedSelect(spell)
 	local spellname = nil
@@ -334,7 +334,7 @@ end
 ----------------------
 -- DEBUG MODE
 ----------------------`
-
+--JPTODO: 6.0 check jps_canHeal_debug debug output
 function jps_canHeal_debug(unit)
 	if not jps.UnitExists(unit) then write("not Unit") return false end
 	if GetUnitName("player") == GetUnitName(unit) then write("Player") return true end
@@ -348,7 +348,7 @@ function jps_canHeal_debug(unit)
 	write("Passed all tests canHeal".."|cffa335ee"..unit)
 	return true
 end
-
+--JPTODO: 6.0 check jps_canCast_debug debug output
 function jps_canCast_debug(spell,unit) -- NEED A SPELLNAME
 	LOG.info("Can Cast Debug for %s @ $s ", spell, unit)
 	if spell == nil then LOG.info("spell is nil  %s @ $s", spell, unit)return false end

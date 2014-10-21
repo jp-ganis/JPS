@@ -1,24 +1,9 @@
---[[
-	 JPS - WoW Protected Lua DPS AddOn
-		Copyright (C) 2011 Jp Ganis
-
-		This program is free software: you can redistribute it and/or modify
-		it under the terms of the GNU General Public License as published by
-		the Free Software Foundation, either version 3 of the License, or
-		(at your option) any later version.
-
-		This program is distributed in the hope that it will be useful,
-		but WITHOUT ANY WARRANTY; without even the implied warranty of
-		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the 
-		GNU General Public License for more details.
-
-		You should have received a copy of the GNU General Public License
-		along with this program. If not, see <http://www.gnu.org/licenses/>.
+--[[[
+@module Functions: global helper functions
+@description
+global functions
 ]]--
 
---------------------------
--- LOCALIZATION
---------------------------
 
 local L = MyLocalizationTable
 
@@ -32,7 +17,19 @@ function jps.removeTableKey(table, key)
 		table[key] = nil
 		return element
 end
+--[[[
+@function jps.tableLength
+@description 
+return the length of a table
+[br][i]Usage:[/i][br]
+[code]
+jps.tableLength({1,2,3})
 
+[/code]
+@param table: a pointer to a table
+
+@returns int: length of a table or 0
+]]--
 --get table length
 function jps.tableLength(table)
 	if table == nil then return 0 end
@@ -64,7 +61,19 @@ end
 --------------------------
 -- STRING FUNCTION -- change a string "Bob" or "Bob-Garona" to "Bob"
 --------------------------
+--[[[
+@function jps.stringSplit
+@description 
+splits a Player-Realm string and returns playerName
+[br][i]Usage:[/i][br]
+[code]
+jps.stringSplit("Bob-RandomServer","-")
 
+[/code]
+@param string: A player-realm string
+
+@returns string: playerName
+]]--
 function jps.stringSplit(unit,case)
 	if unit == nil then return "UnKnown" end -- ERROR if threatUnit is nil
 	local threatUnit = tostring(unit)
@@ -112,6 +121,19 @@ function jps.checkTimer( name )
 end
 
 -- returns seconds in combat or if out of combat 0
+--[[[
+@function jps.combatTime()
+@description 
+get's the time the player is in combat
+[br][i]Usage:[/i][br]
+[code]
+jps.combatTime()
+
+[/code]
+
+
+@returns int: time in seconds
+]]--
 function jps.combatTime()
 	return GetTime() - jps.combatStart
 end
@@ -123,7 +145,19 @@ end
 function Ternary(condition, doIt, notDo)
 	if condition then return doIt else return notDo end
 end
+--[[[
+@function inArray
+@description 
 
+[br][i]Usage:[/i][br]
+[code]
+inArray("target",{"target","player","focus"})
+
+[/code]
+@param string: needle
+@param table: table with data
+@returns boolean
+]]--
 function inArray(needle, haystack)
 	if type(haystack) ~= "table" then return false end
 	for key, value in pairs(haystack) do 
@@ -190,6 +224,22 @@ keyDownMapper["ctrl"] = IsControlKeyDown
 keyDownMapper["left-ctrl"] = IsLeftControlKeyDown
 keyDownMapper["right-ctrl"] = IsRightControlKeyDown
 
+--[[[
+@function keyPressed
+@description 
+
+[br][i]Usage:[/i][br]
+[code]
+keyPressed("shift")[br]
+keyPressed("shift","alt")[br]
+
+[/code]
+@param string: name of a modifier key[br]
+@param string: another name of a modifier key[br]
+@param string: another name of a modifier key[br]
+
+@returns boolean if the passed key combination is pressed
+]]--
 function keyPressed(...)	
 	local paramType = type(arrayOrString)
 	matchesNeed = select("#", ...)
@@ -211,6 +261,19 @@ function keyPressed(...)
 	return false
 end
 
+--[[[
+@function dump
+@description 
+dumps a table content to print() - recursive
+[br][i]Usage:[/i][br]
+[code]
+dump({1,2:{"bob","test"},3})
+
+[/code]
+@param table: a table
+
+@returns output in print()
+]]--
 function dump(o)
 	if type(o) == 'table' then
 		local s = '{ \n'

@@ -73,7 +73,19 @@ end
 ---------------------------
 -- GET CLASS COOLDOWNS
 ---------------------------
+--[[[
+@function jps.getDPSRacial
+@description 
+get players dps racial (berserking, blood fury)
+[br][i]Usage:[/i][br]
+[code]
+jps.getDPSRacial()
 
+[/code]
+
+
+@returns string: players DPS racials or nil
+]]--
 function jps.getDPSRacial()
 	-- Trolls n' Orcs
 	if jps.DPSRacial ~= nil then return jps.DPSRacial end -- no more checks needed
@@ -114,7 +126,7 @@ end
 ---------------------------
 -- TABLES
 ---------------------------
-
+--JPTODO: jputils debuffs below line 129 are outdated!
 jps_DebuffToDispel_Name = 
 {
 	L["Death Coil"] ,
