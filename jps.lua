@@ -20,8 +20,8 @@
 -- Universal
 local L = MyLocalizationTable
 jps = {}
-jps.Version = "1.3.2"
-jps.Revision = "r613"
+jps.Version = "1.5"
+jps.Revision = "r700"
 jps.NextSpell = nil
 jps.Rotation = nil
 jps.UpdateInterval = 0.05
@@ -131,7 +131,9 @@ jps.CastBar.currentMessage = ""
 SLASH_jps1 = '/jps'
 
 function write(...)
-   DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
+	if jps.getConfigVal("quiet mode",0) == 0 then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffff8000JPS: " .. strjoin(" ", tostringall(...))); -- color orange
+	end
 end
 function macrowrite(...)
    DEFAULT_CHAT_FRAME:AddMessage("|cffff8000MACRO: " .. strjoin(" ", tostringall(...))); -- color orange
@@ -269,6 +271,8 @@ function SlashCmdList.jps(cmd, editbox)
 		write("Opening flag is now set to",tostring(jps.Opening))
 	elseif msg == "size" then
 		jps.resize( rest )
+	elseif msg == "update" then
+		jps.loadDefaultSettings()
 	elseif msg == "reset" then
 		jps.resetView()
 	elseif msg == "help" then

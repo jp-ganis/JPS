@@ -369,10 +369,11 @@ function jps.addSettingsFrame()
 	
 end
 
-function jps.getConfigVal(key)
+function jps.getConfigVal(key, default)
 	local setting = jps.settings[string.lower(key)]
+	local def = default or 1
 	if setting == nil then
-		jps.setConfigVal(key, 1)
+		jps.setConfigVal(key, def)
 		if not jps.Configged then
 			if jps.settingsQueue[key] == nil then
 				jps.settingsQueue[key] = {settingType="checkbox" }
@@ -380,7 +381,7 @@ function jps.getConfigVal(key)
 		else
 			jps.addSettingsCheckbox(key)
 		end
-		return 1
+		return def
 	else 
 		return setting
 	end
@@ -577,10 +578,11 @@ end
 function jps.loadDefaultSettings() 
 	
 	local settingsTable = {}
-	settingsTable["rotation dropdown visible"] = 1
-	settingsTable["timetodie frame visible"] = 1
-	settingsTable["facetarget rotate direction. checked = left, unchecked = right"] = 1
-	settingsTable["dismount in combat"] = 0
+	if not jps.settings[string.lower("rotation dropdown visible")] then settingsTable["rotation dropdown visible"] = 1; end
+	if not jps.settings[string.lower("timetodie frame visible")] then settingsTable["timetodie frame visible"] = 1; end
+	if not jps.settings[string.lower("facetarget rotate direction. checked = left, unchecked = right")] then settingsTable["facetarget rotate direction. checked = left, unchecked = right"] = 1; end
+	if not jps.settings[string.lower("dismount in combat")] then settingsTable["dismount in combat"] = 0; end
+	if not jps.settings[string.lower("quiet mode")] then settingsTable["quiet mode"] = 0; end
 
 	for key,val in pairs(settingsTable) do 
 		if jps.settings[string.lower(key)] == nil then
