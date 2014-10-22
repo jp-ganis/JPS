@@ -304,6 +304,7 @@ jps.UserInitiatedSpellsToIgnore = {
 	111400, -- warlock burning rush
 	108978, --alter time
 	12051, --evocation
+	1953, -- blink
 	
 }
 
