@@ -88,7 +88,17 @@ function jps_createConfigFrame()
 
 		local function JPS_IconOptions_CheckButton_OnShow()
 			jps_SAVE_PROFILE()
-			JPS_IconOptions_CheckButton:SetChecked(jpsDB[jpsRealm][jpsName][v]);
+			if type(jpsDB[jpsRealm][jpsName][v]) == "boolean" then
+				isChecked = jpsDB[jpsRealm][jpsName][v]
+			else
+				if jpsDB[jpsRealm][jpsName][v] == 1 then
+					isChecked = true
+				else
+					isChecked = false
+				end
+			end
+			
+			JPS_IconOptions_CheckButton:SetChecked(isChecked);
 		end  
 
 		JPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
@@ -346,7 +356,12 @@ function jps.addSettingsFrame()
 		end  
 		
 		local function settingsJPS_IconOptions_CheckButton_OnShow()
-			settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingsKey));
+			if jps.getConfigVal(settingsKey) == 1 then
+				isChecked = true
+			else
+				isChecked = false
+			end
+			settingsJPS_IconOptions_CheckButton:SetChecked(isChecked);
 		end  
 
 		settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
@@ -423,7 +438,12 @@ function jps.addSettingsCheckbox(settingName)
     end  
     
     local function settingsJPS_IconOptions_CheckButton_OnShow()
-        settingsJPS_IconOptions_CheckButton:SetChecked(jps.getConfigVal(settingName));
+    	if jps.getConfigVal(settingName) == 1 then
+    		isChecked = true
+    	else
+    		isChecked = false
+    	end
+        settingsJPS_IconOptions_CheckButton:SetChecked(isChecked);
     end  
     
     settingsJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
@@ -489,7 +509,12 @@ function jps.addRotationDropdownFrame()
 			end  
 			
 			local function rotationJPS_IconOptions_CheckButton_OnShow()
-				rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellKey));
+				if getSpellStatus(spellKey) == 1 then
+					isChecked = true
+				else
+					isChecked = false
+				end
+				rotationJPS_IconOptions_CheckButton:SetChecked(isChecked);
 			end  
 	
 			rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
@@ -562,7 +587,12 @@ function jps.addSpellCheckboxToFrame(spellName)
     end  
     
     local function rotationJPS_IconOptions_CheckButton_OnShow()
-        rotationJPS_IconOptions_CheckButton:SetChecked(getSpellStatus(spellName));
+		if getSpellStatus(spellName) == 1 then
+			isChecked = true
+		else
+			isChecked = false
+		end
+        rotationJPS_IconOptions_CheckButton:SetChecked(isChecked);
     end  
     
     rotationJPS_IconOptions_CheckButton:RegisterForClicks("AnyUp");
