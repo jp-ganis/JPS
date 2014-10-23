@@ -5,14 +5,8 @@
 @talents W!22020. & PCMD
 @author duplicate
 @description
-Updated for MoP
+Updated for WoD
 ]]--
-
-function weaponMainhandEnchant()
-	return select(1, GetWeaponEnchantInfo())
-end
-
-
 function totemDuration(totemId)
 	-- 1 = fire
 	-- 2 = earth
@@ -155,4 +149,4 @@ if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
 end
 
 return spell,target
-end, "Simcraft Shaman-ELEMENTAL")
+end, "Simcraft Elemental Shaman 6.0.2")
