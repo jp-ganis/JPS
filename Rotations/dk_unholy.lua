@@ -51,7 +51,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "Strangulate",		jps.shouldKick("focus") and jps.UseCDs and IsSpellInRange("mind freeze","focus")==0 and jps.LastCast ~= "mind freeze" , "focus" },
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate" },
 		{ "Asphyxiate",			jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate", "focus" },
-		{ "Horn of Winter", 'not jps.buff("Horn of Winter")'},
+		{ "Horn of Winter", not jps.buff("Horn of Winter")},
 		
 		-- Self heals
 		{ "Death Siphon", jps.hp() < .8 and jps.Defensive },
@@ -81,23 +81,26 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		-- rezz pet
 		{ "Raise Dead", jps.UseCDs and UnitExists("pet") == nil },
 		
-		-- DOT CDs
-
-		{ "outbreak",				not jps.myDebuff("frost fever") or not jps.myDebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
-		{ "unholy blight",			not jps.myDebuff("frost fever") or not jps.myDebuff("blood plague") or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague") },
 		
 		-- Execute
 		{ "soul reaper",			jps.hp("target") <= 0.35 },
 		
+		
+		-- DOT CDs
+
+		{ "outbreak",				not jps.myDebuff("frost fever") or not jps.myDebuff("blood plague")},
+		{ "unholy blight",			not jps.myDebuff("frost fever") or not jps.myDebuff("blood plague") },
+		
+		
 		-- renew Dots
 		--{ "icy touch",				ffDuration <= 0 },
-		{ "plague strike",			bpDuration <= 0 or ffDuration <= 0 or dk.shouldRefreshDot("frost fever") or dk.shouldRefreshDot("blood plague")  },
+		{ "plague strike",			bpDuration <= 0 or ffDuration <= 0},
 		
 		-- get Runes
 		{ "summon gargoyle" },
 		
-		{ "dark transformation",	siStacks >= 5 and not superPet },
-		
+		{ "dark transformation",	siStacks >= 5 and superPet == false },
+		{ "death coil",				siStacks < 5 },
 		-- 
 		{ "scourge strike",			twoUr and rp < 90 },
 		{ "festering strike",		twoDr and twoFr and rp < 90 },
@@ -109,7 +112,6 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "scourge strike" },
 		{ "festering strike" },
 		{ "death coil", 			jps.cooldown("summon gargoyle") > 8 },
-		
 		{ "empower rune weapon" , jps.UseCDs},
 	}
 

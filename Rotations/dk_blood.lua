@@ -52,8 +52,6 @@ dkBloodSpellTable[1] = {
 	-- Spell Steal
 	{"Dark Simulacrum ", 'dk.shouldDarkSimTarget() ~= ""' , "target"},
 	{"Dark Simulacrum ", 'dk.shouldDarkSimFocus() ~= ""' , "focus"},
-
-	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	
 	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{
 		{"Dancing Rune Weapon",'jps.UseCDs'},
@@ -134,8 +132,6 @@ dkBloodSpellTable[4] = {
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"'},
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "mouseover"},
 	{"Asphyxiate",'jps.shouldKick() and jps.LastCast ~= "Mind Freeze" and jps.LastCast ~= "Strangulate"', "focus"},
-
-	{"Raise Dead",'jps.UseCDs and not dk.hasGhoul()'},
 	
 	{"nested", 'IsSpellInRange("Rune Strike","target") == 1',{	
 	

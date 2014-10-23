@@ -195,8 +195,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 		{ jps.useBagItem("Potion of Mogu Power"),'jps.targetIsRaidBoss() and not jps.playerInLFR() and jps.bloodlusting()'},
 	
 		{ jps.getDPSRacial(),'jps.UseCDs'},
-	
-		{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
 		-- On-use Trinkets.
 		{ jps.useTrinket(0),'jps.useTrinket(0) ~= nil and jps.UseCDs'},
 		{ jps.useTrinket(1),'jps.useTrinket(1) ~= nil and jps.UseCDs'},
@@ -273,7 +271,6 @@ jps.registerStaticTable("DEATHKNIGHT","FROST",{
 	
 		{ jps.getDPSRacial(),'jps.UseCDs'},
 	
-		{ "Raise Dead",'jps.UseCDs and UnitExists("pet") == nil'},
 		-- Requires herbalism
 		{ "Lifeblood",'jps.UseCDs'},
 	
