@@ -34,10 +34,16 @@ function jps.talentInfo(talent)
 	local talentname = nil
 	if type(talent) == "string" then talentname = talent end
 	if type(talent) == "number" then talentname = tostring(select(1,GetSpellInfo(talent))) end
-	local numTalents = GetNumTalents();
-	for t = 1, numTalents do
-		local name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq, previewRank, meetsPreviewPrereq= GetTalentInfo(t);
-		if name == talentname and rank then return true end
+
+	local asg = GetActiveSpecGroup();
+	local rows = 7
+	local cols = 3
+
+	for r = 1, rows do
+		for c = 1, cols do
+			local talentID, name, iconTexture, selected, available = GetTalentInfo(r,c,asg)
+			if name:lower() == talentname:lower() and selected == true then return true end
+		end
 	end
 	return false
 end

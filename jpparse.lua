@@ -235,8 +235,9 @@ end
 -- "Summon Black Ox Statue" - 115315 - Monk 
 -- "Summon Black Ox Statue" - 115315 - Monk 
 -- "cataclysm" - 152108 Warlock
+-- "earthquake" - 61882 shaman 
 --JPTODO: 6.0 jps.spellNeedSelectTable need new spell Ids for new ground spells
-jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,115180,114158,73921,88747, 82939, 82941, 60192, 115313, 115460, 114192, 6544, 33395, 116011, 5740, 115315, 152108}
+jps.spellNeedSelectTable = {30283,88685,724,32375,43265,62618,2120,104233,115180,114158,73921,88747, 82939, 82941, 60192, 115313, 115460, 114192, 6544, 33395, 116011, 5740, 115315, 152108,61882}
 function jps.spellNeedSelect(spell)
 	local spellname = nil
 	if type(spell) == "string" then spellname = string.lower(spell) end
