@@ -97,7 +97,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		{ "plague strike",			bpDuration <= 0 or ffDuration <= 0},
 		
 		-- get Runes
-		{ "summon gargoyle" },
+		{ "summon gargoyle" ,jps.UseCDs},
 		
 		{ "dark transformation",	siStacks >= 5 and superPet == false },
 		{ "death coil",				siStacks < 5 },
@@ -111,7 +111,7 @@ jps.registerRotation("DEATHKNIGHT","UNHOLY",function()
 		--{ "festering strike",		(dk.shouldExtendDot("frost fever") or dk.shouldExtendDot("blood plague")) and (ffDuration < 20 or bpDuration < 20)},
 		{ "scourge strike" },
 		{ "festering strike" },
-		{ "death coil", 			jps.cooldown("summon gargoyle") > 8 },
+		{ "death coil"},
 		{ "empower rune weapon" , jps.UseCDs},
 	}
 
