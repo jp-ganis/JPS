@@ -306,6 +306,8 @@ jps.UserInitiatedSpellsToIgnore = {
 	108978, --alter time
 	12051, --evocation
 	1953, -- blink
+	19263, -- Deterrence
+	781, -- Disengage
 	
 }
 
