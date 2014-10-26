@@ -48,7 +48,7 @@ jps.registerStaticTable("HUNTER","MARKSMANSHIP", {
     --{ hunter.spells.revivePet, '((UnitIsDead("pet") ~= nil and HasPetUI() ~= nil) or HasPetUI() == nil) and not jps.Moving' },
 
     -- Heal pet
-    { hunter.spells.mendPet, 'jps.hp("pet") < 0.90 and not jps.buff(hunter.spells.mendPet, "pet")' },
+    { hunter.spells.mendPet, 'jps.hp("pet") < 0.90 and not jps.buff(hunter.spells.mendPet, "pet") and UnitExists("pet") == true and not UnitIsDead("pet")' },
 
     -- Misdirection
     { hunter.spells.misdirection, 'jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == nil and not IsInGroup() and UnitExists("pet") ~= nil', 'pet' }, -- IsInGroup() returns true/false. Works for any party/raid
