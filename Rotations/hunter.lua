@@ -34,7 +34,7 @@ hunter.spells["lynxRush"] = toSpellName(120697)
 hunter.spells["barrage"] = toSpellName(120360)
 hunter.spells["powershot"] = toSpellName(109259)
 hunter.spells["blinkStrikes"] = toSpellName(130392)
-hunter.spells["chimeraShot"] = toSpellName(53209)
+hunter.spells["chimaeraShot"] = toSpellName(53209)
 hunter.spells["aimedShot"] = toSpellName(19434)
 hunter.spells["steadyShot"] = toSpellName(56641)
 
