@@ -62,14 +62,6 @@ if jps.TimetoDie == nil then
 	end
 end
 
-jps.sub = function(p1,p2)
-	return p1 - p2
-end
-
-jps.add = function(p1,p2)
-	return p1+p2
-end
-
 
 local spellTable = {
 		
