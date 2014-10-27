@@ -1,3 +1,87 @@
+if not rogue then rogue = {} end
+rogue.adrenalinerush = "adrenaline rush";				
+rogue.anticipation = "anticipation";				
+rogue.arcanetorrent = "arcane torrent";				
+rogue.banditsguile = "bandits guile";				
+rogue.bladeflurry = "blade flurry";				
+rogue.bloodfury = "blood fury";				
+rogue.bloodlust = "bloodlust";				
+rogue.deepinsight = "deep insight";				
+rogue.killingspree = "killing spree";				
+rogue.markedfordeath = "marked for death";				
+rogue.revealingstrike = "revealing strike";				
+rogue.shadowfocus = "shadow focus";				
+rogue.shadowreflection = "shadow reflection";				
+rogue.sliceanddice = "slice and dice";				
+rogue.vanish = "vanish";				
+rogue.eviscerate = "Eviscerate";
+rogue.cimsontempest = "Crimson Tempest";
+rogue.sinisterstrike = "Sinister Strike";
+
+rogue.cp = function()
+	return GetComboPoints("player")
+end
+rogue.energy = function() 
+	return UnitPower("player")
+end
+rogue.conditionsGenerator = function()
+	return rogue.cp() < 5 or (jps.talentInfo(rogue.anticipation) and select(1,GetSpellCharges(rogue.anticipation)) <= 4 and not jps.buff(rogue.deepinsight))
+end
+rogue.conditionsFinisher = function()
+	return rogue.cp() == 5 and (jps.buff(deepinsight) or not jps.talentInfo(rogue.anticipation) or (jps.talentInfo(rogue.anticipation) and select(1,GetSpellCharges(rogue.anticipation)) >= 4))
+end
+
+local spellTable = {
+	{rogue.kick, 'jps.shouldKick("target")' },
+	{jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
+	
+	{ "nested",'IsSpellInRange(rogue.revealingstrike, "target") == 1 and jps.UseCDs',{	
+		{rogue.preparation, 'not jps.buff(rogue.vanish) and jps.cooldown(rogue.vanish) > 60' },
+		{rogue.bloodFury},
+		{rogue.berserking},
+		{rogue.arcanetorrent, 'rogue.energy() < 60' },
+		{rogue.vanish,'jps.combatTime()>10 and rogue.cp()<3 and jps.talentInfo(rogue.shadowfocus) and not jps.buff(adrenalinerush) and rogue.enegery()<20' },
+		{rogue.shadowreflection, 'jps.buff(rogue.adrenalinerush)' },
+		{rogue.shadowreflection, 'jps.cooldown(rogue.killingspree) < 10 and rogue.cp() > 3' },
+		{rogue.killingspree, 'rogue.energy() < 50 and not jps.talentInfo(shadowReflection)' },
+		{rogue.killingspree, 'rogue.energy() < 50 and jps.cooldown(shadowReflection) > 30' },
+		{rogue.killingspree, 'rogue.energy() < 50 and jps.buffDuration(shadowReflection) > 3)' },
+		{rogue.adrenalinerush, 'rogue.energy() < 35' },
+	}},
+	
+	{{"macro", "/cancelaura "..rogue.bladeflurry}, 'not jps.MultiTarget and jps.buff(rogue.bladeflurry)' },
+	{rogue.bladeflurry, 'jps.MultiTarget and not jps.buff(rogue.bladeflurry)' },
+
+	{rogue.ambush, 'onCD' },
+
+	{rogue.sliceanddice, 'jps.buffDuration(rogue.sliceanddice) < 2' },
+	{rogue.sliceanddice, 'jps.buffDuration(rogue.sliceanddice) < 15 and jps.buffStacks(rogue.banditsguile)==11 and rogue.cp() >= 4' },
+	{ "nested",'IsSpellInRange(rogue.revealingstrike, "target") == 1 and jps.UseCDs',{	
+		{rogue.markedfordeath, 'rogue.cp() <= 1 and jps.myDebuff(rogue.revealingstrike) and not jps.talentInfo(rogue.shadowReflection)' },
+		{rogue.markedfordeath, 'rogue.cp() <= 1 and jps.myDebuff(rogue.revealingstrike) and jps.buff(rogue.shadowReflection)' },
+		{rogue.markedfordeath, 'rogue.cp() <= 1 and jps.myDebuff(rogue.revealingstrike) and jps.cooldown(rogue.shadowReflection) > 30' },
+	}},
+	{"nested", "rogue.conditionsGenerator() == true",{
+		{rogue.revealingstrike, 'jps.myDebuffDuration(rogue.revealingstrike) < 3'},
+		{rogue.sinisterstrike}
+	}},
+	{"nested", "rogue.conditionsFinisher() == true",{
+		{rogue.cimsontempest, "jps.MultiTarget and jps.myDebuffDuration(rogue.crimsontempest) < 2"},
+		{rogue.eviscerate},
+	}},
+
+}
+
+jps.registerRotation("ROGUE","COMBAT",function()
+	local spell = nil
+	local target = nil
+	spell,target = parseStaticSpellTable(spellTable)
+	return spell,target
+end, "WIP Simcraft Combat Rogue 6.0.2")
+
+
+
+
 --[[[
 @rotation PVE single target/PVE 2-5 targets/PVE 5+ targets
 @class rogue
