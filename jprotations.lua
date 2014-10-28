@@ -201,7 +201,8 @@ end
 --[[[ Internal function: Returns the active Rotation for use in the Combat Loop ]]--
 function jps.activeRotation(rotationTable)
     if rotationTable == nil then
-	    if not jps.Combat then return jps.activeRotation(oocRotations) end
+	    local oocCount = tableCount(oocRotations, getCurrentKey())
+	    if not jps.Combat and oocCount > 0 then return jps.activeRotation(oocRotations) end
         if jps.PvP then return jps.activeRotation(pvpRotations) else return jps.activeRotation(pveRotations) end
     end
 
