@@ -123,12 +123,13 @@ end
 Makes you Top Healer...until you run out of mana. You have to use Tranquility manually![br]
 [*] [code]SHIFT[/code]: Place Wild Mushroom[br]
 [*] [code]CONTROL[/code]: Incarnation Tree of Life[br]
+[*] [code]ALT[/code]: combat resurrection @ mouseover[br]
 ]]--
 
 
 jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
-    { druid.spells.rebirth, 'IsControlKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
+    { druid.spells.rebirth, 'IsAltKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
     -- Buffs
     { druid.spells.markOfTheWild, 'not jps.buff(druid.spells.markOfTheWild)', player },
@@ -163,13 +164,14 @@ run out of mana. Don't worry, if there is something to heal, it will heal! Use T
 [br]
 Modifiers:[br]
 [*] [code]SHIFT[/code]: Place Wild Mushroom[br]
+[*] [code]ALT[/code]: combat resurrection @ mouseover[br]
 
 ]]--
 
 jps.registerStaticTable("DRUID","RESTORATION",{
     -- rebirth Ctrl-key + mouseover
-    { druid.spells.rebirth, 'IsControlKeyDown() == true and UnitIsDeadOrGhost("target") == true and IsSpellInRange("rebirth", "target")', "target" },
-    { druid.spells.rebirth, 'IsControlKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
+    { druid.spells.rebirth, 'IsAltKeyDown() == true and UnitIsDeadOrGhost("target") == true and IsSpellInRange("rebirth", "target")', "target" },
+    { druid.spells.rebirth, 'IsAltKeyDown() == true and UnitIsDeadOrGhost("mouseover") == true and IsSpellInRange("rebirth", "mouseover")', "mouseover" },
     
     -- Buffs
     { druid.spells.markOfTheWild, 'not jps.buff(druid.spells.markOfTheWild)', player },
