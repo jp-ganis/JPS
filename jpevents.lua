@@ -302,13 +302,11 @@ jps.registerOnUpdate(collectGarbage)
 jps.registerOnUpdate(updateTimeToDie)
 -- Combat
 jps.registerOnUpdate(function()
-	if jps.Combat and jps.Enabled then
-		jps_Combat()  
-	end
-	if not jps.Combat and jps.Enabled then
+	if jps.Enabled and (jps.hasOOCRotation() > 0 or jps.Combat) then
 		jps_Combat()  
 	end
 end)
+
 
 --------------------------
 -- EVENT FUNCTIONS
