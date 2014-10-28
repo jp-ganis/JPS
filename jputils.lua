@@ -83,7 +83,8 @@ function jps.getUsableHarmSpells(searchNew)
 		local spellID = select(2,GetSpellBookItemInfo(index, booktype))
 		local harmful = IsHarmfulSpell(index, booktype)
 		if harmSpells[name] == nil and searchNew == true then
-			if harmful == true and  IsUsableSpell(name)  then
+			isUsable, noMana = IsUsableSpell(name)
+			if harmful == true and (isUsable == true or (isUsable == false and noMana == true )) then
 				HarmSpell = name
 			end
 		end
