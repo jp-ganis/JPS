@@ -8,162 +8,142 @@
 @description 
 This Rotation requires Glyph of Unending Rage. Shouldn't be used at lower levels
 ]]--
+
+fury = {}
+fury.angermanagement =	 "anger management";
+fury.arcanetorrent =	 "arcane torrent";
+fury.avatar =	"avatar";
+fury.battlestance =	 "battle stance"
+fury.berserkerrage =	 "berserker rage";
+fury.berserking =	 "berserking";
+fury.bladestorm =	 "bladestorm"
+fury.bloodbath =	 "bloodbath";
+fury.bloodfury =	 "blood fury";
+fury.bloodsurge =	 "bloodsurge";
+fury.bloodthirst =	 "bloodthirst"
+fury.defensivestance =	 "defensive stance"
+fury.diebythesword =	 "die by the sword"
+fury.dragonroar =	 "dragon roar";
+fury.enrage =	 "enrage";
+fury.execute =	 "execute"
+fury.heroicleap =	 "heroic leap";
+fury.impendingvictory =	 "impending victory";
+fury.lifeblood =	 "lifeblood"
+fury.meatcleaver =	 "meat cleaver";
+fury.ragingblow =	 "raging blow";
+fury.ravager =	 "ravager"
+fury.recklessness =	 "recklessness";
+fury.shieldbarrier =	 "shield barrier"
+fury.shockwave =	 "shockwave"
+fury.siegebreaker =	 "siegebreaker"
+fury.stormbolt =	 "storm bolt";
+fury.suddendeath =	 "sudden death";
+fury.unquenchablethirst =	 "unquenchable thirst";
+fury.whirlwind =	 "whirlwind"
+fury.wildstrike =	 "wild strike";
+fury.charge = "charge"
+fury.heroicleap ="Heroic Leap" 
+fury.pummel ="pummel"
+
+fury.shouldRecklessness = function()
+	return ((jps.TimeToDie("target") > 190 or jps.hp("target") < 0.20) and (jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath))) or jps.TimeToDie("target") <= 10 or jps.talentInfo(fury.angermanagement)
+end
+fury.rage = function() return UnitPower("player") end
+fury.maxRage = function(minus)
+	if not minus then minus = 0 end
+	return UnitPowerMax("player") -minus
+end
+fury.canCharge = function()
+	if IsSpellInRange(fury.charge, "target") == 1 then return true end
+	return false
+end
 jps.registerStaticTable("WARRIOR","FURY",
 	{
--- Interrupts
-		-- "Pummel" 6552 "Volée de coups"
-		{ 6552, 'jps.shouldKick()' , warrior.rangedTarget , "Pummel" },
-		{warrior.spells["Pummel"],'jps.shouldKick()'},
-		{warrior.spells["Pummel"],'jps.shouldKick("focus")', "focus"},
-		{warrior.spells["Disrupting Shout"],'jps.shouldKick()'},
-		{warrior.spells["Disrupting Shout"],'jps.shouldKick("focus")', "focus"},
-		
--- Cooldowns and Utility
-		{warrior.spells["Impending Victory"],'jps.buff("Victorious") and jps.rage() >= 10 and jps.hp("player") < 0.8', warrior.rangedTarget },
-		-- "Victory Rush" 34428 "Ivresse de la victoire" -- buff "Victorious" 32216 "Victorieux"
-		{warrior.spells["Victory Rush"],'jps.buff(32216) and jps.rage() >= 10 and jps.hp("player") < 0.8', warrior.rangedTarget },
-		{warrior.spells["Recklessness"],'jps.UseCDs and jps.debuffDuration( 86346) >= 5', warrior.rangedTarget },
-		{warrior.spells["Recklessness"],'jps.UseCDs and jps.cooldown( 86346) == 0', warrior.rangedTarget },
-		
-		{warrior.spells["Berserker Rage"],'jps.debuffDuration( 86346) > 0 and not jps.buff("Berserker Rage","player")', warrior.rangedTarget },
-		{warrior.spells["Bloodbath"],'jps.UseCDs'},
-		
-		{ jps.getDPSRacial(),'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		-- Requires herbalism
-		{warrior.spells["Lifeblood"],'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		
-		-- AoE Rotation
-		-- "Raging Blow" 85288 "Coup déchaîné" -- buff Raging Blow! 131116
-		
-		{warrior.spells["Whirlwind"],'jps.MultiTarget and jps.buffStacks(12950) < 3 and jps.rage() >= 30', warrior.rangedTarget },
-		{warrior.spells["Colossus Smash"],'jps.MultiTarget', warrior.rangedTarget },
-		{warrior.spells["Bloodthirst"],'jps.MultiTarget', warrior.rangedTarget },
-		{warrior.spells["Raging Blow"],'jps.MultiTarget and jps.buff("131116") and jps.buffStacks ("131116") == 2 and jps.cooldown( 86346) >= 3 and jps.buffStacks(12950) == 3', warrior.rangedTarget },
-		{warrior.spells["Raging Blow"],'jps.MultiTarget and jps.buff("131116") and jps.buffStacks ("131116") == 1 and jps.cooldown( 86346) >= 3 and jps.buffStacks(12950) == 3', warrior.rangedTarget },
-		{warrior.spells["Bladestorm"],'jps.MultiTarget and IsShiftKeyDown() == true'},
-		
-		-- Colossus Smash Rotation
-		
-		{warrior.spells["Bloodthirst"],'jps.myDebuff( 86346,"target")', warrior.rangedTarget },
-		{warrior.spells["Execute"],'jps.rage() >= 30 and jps.hp("target") < 0.2 and jps.myDebuff( 86346,"target")', warrior.rangedTarget}, 
-		{warrior.spells["Raging Blow"],'jps.buff("131116") and jps.rage() >= 10 and jps.myDebuff( 86346,"target")', warrior.rangedTarget },
-		{warrior.spells["Wild Strike"],'jps.buff("Bloodsurge") and jps.myDebuff( 86346,"target")', warrior.rangedTarget },
-		{warrior.spells["Heroic Strike"],'jps.hp("target") > 0.2 and jps.rage() >= 30 and jps.myDebuff( 86346,"target")', warrior.rangedTarget },
-		
-		-- Normal Rotation
-		
-		{warrior.spells["Colossus Smash"],'jps.rage() >= 100', warrior.rangedTarget },
-		{warrior.spells["Bloodthirst"],'onCD', warrior.rangedTarget},
-		{warrior.spells["Heroic Strike"],'jps.cooldown( 86346) >= 3 and jps.rage() > 105', warrior.rangedTarget },
-		{warrior.spells["Raging Blow"],'jps.rage() >= 10 and jps.buff("131116") and jps.buffStacks ("131116") == 2 and jps.cooldown( 86346) >= 3', warrior.rangedTarget },
-		{warrior.spells["Wild Strike"],'jps.buff("Bloodsurge")', warrior.rangedTarget },
-		{warrior.spells["Dragon Roar"],'(CheckInteractDistance(warrior.rangedTarget(), 3) == 1)', warrior.rangedTarget },
-		{warrior.spells["Raging Blow"],'jps.buff("131116") and jps.buffStacks ("131116") == 1 and jps.cooldown( 86346) >= 3 and jps.rage() >= 10', warrior.rangedTarget },
-		{warrior.spells["Battle Shout"],'jps.rage() <= 20 and jps.cooldown( 86346) < 3 ', "player" },
-		{warrior.spells["Battle Shout"],'jps.rage() <= 20 and jps.debuffDuration( 86346) < 6' , "player"},
-		{warrior.spells["Wild Strike"],'jps.rage() > 106 and jps.cooldown( 86346) >= 3', warrior.rangedTarget },
-	}
+	-- Interrupts
+	{fury.pummel, 'jps.shouldKick()'},
+	{fury.charge, 'IsAltKeyDown() == true and fury.canCharge() == true'},
+	{fury.heroicleap, 'IsShiftKeyDown() == true'},
+	
+	-- Damage Mitigation
+	{"nested",'jps.Defensive',{
+		{fury.lifeblood, 'jps.hp("player") < 0.95'},
+		{fury.arcanetorrent, 'jps.hp("player") <= 0.85'},
+		{jps.useBagItem(5512), 'jps.hp("player") < 0.30'}, -- Healthstone
+		{fury.diebythesword, 'UnitThreatSituation("player","target") == 3 and IsSpellInRange("execute","target") == 1 and jps.hp("player") < 0.30 and jps.UseCDs'},
+		{fury.shieldbarrier, 'jps.hp() < 0.30 and jps.UseCDs and jps.buff(fury.defensivestance)'},
+		{fury.defensivestance, 'not jps.buff(fury.defensivestance) and jps.hp() < 0.20'},
+	}},
+
+	{fury.battlestance, 'not jps.buff(fury.battlestance) and jps.hp() > 0.20'},
+	{"nested",'IsSpellInRange(fury.execute,"target") == 1 and jps.UseCDs', {
+		{jps.useTrinket(0), 'jps.UseCDs'},
+		{jps.useTrinket(1), 'jps.UseCDs'},
+		{fury.recklessness, 'fury.shouldRecklessness()' },
+		{fury.avatar, 'jps.buff(fury.recklessness) or jps.TimeToDie("target") <= 25' },
+		{fury.berserkerrage, 'not jps.buff(fury.enrage)' },
+		{fury.berserkerrage, 'jps.talentInfo(fury.unquenchablethirst) and not jps.buff(fury.ragingblow)' },
+		{fury.bloodfury, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath) or jps.buff(fury.recklessness)' },
+		{fury.berserking, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath) or jps.buff(fury.recklessness)' },
+		{fury.arcanetorrent, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath) or jps.buff(fury.recklessness)' },
+		{fury.bloodbath, 'onCD' },
+	}},
+	
+	-- single target
+	{"nested", 'fh.UnitsAroundUnit("target") <= 1',{
+		{fury.wildstrike, 'fury.rage() > 110 and jps.hp("target") > 0.20' },
+		{fury.bloodthirst, 'not jps.talentInfo(fury.unquenchablethirst) and fury.rage() < 80' },
+		{fury.bloodthirst, 'not jps.buff(fury.enrage)' },
+		{fury.ravager, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath)' },
+		{fury.execute, 'jps.buff(fury.suddendeath)' },
+		{fury.siegebreaker, 'onCD' },
+		{fury.stormBolt, 'onCD' },
+		{fury.wildstrike, 'jps.buff(fury.bloodsurge)' },
+		{fury.execute, 'jps.buff(fury.enrage) or jps.TimeToDie("target") < 12' },
+		{fury.dragonroar, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath)' },
+		{fury.ragingblow, 'onCD' },
+		{fury.wildstrike, 'jps.buff(fury.enrage) and jps.hp("target") > 0.20' },
+		{fury.shockwave, 'not jps.talentInfo(fury.unquenchablethirst)' },
+		{fury.arcanetorrent, 'not jps.talentInfo(fury.unquenchablethirst) and jps.hp("target") > 0.20' },
+		{fury.bloodthirst, 'onCD' },
+	}},
+	
+	{"nested", 'fh.UnitsAroundUnit("target") == 2',{
+			{fury.ravager, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath)' },
+			{fury.dragonroar, 'jps.buff(fury.bloodbath) or  not jps.talentInfo(fury.bloodbath)' },
+			{fury.bladestorm, 'jps.buff(fury.enrage)' },
+			{fury.bloodthirst, 'not jps.buff(fury.enrage) or fury.rage() < 50 or not jps.buff(fury.ragingblow)' },
+			{fury.execute, 'jps.hp("target") < 0.20 or jps.buff(fury.suddendeath)' },
+			{fury.ragingblow, 'jps.buff(fury.meatcleaver)' },
+			{fury.whirlwind, 'not jps.buff(fury.meatcleaver)' },
+			{fury.wildstrike, 'jps.buff(fury.bloodsurge) and fury.rage() > 75' },
+			{fury.bloodthirst, 'onCD' },
+			{fury.whirlwind, 'fury.rage() > fury.maxRage(20)' },
+			{fury.wildstrike, 'jps.buff(fury.bloodsurge)' },
+	}},
+	
+	{"nested", 'fh.UnitsAroundUnit("target") == 3',{
+	 	{ravager, 'jps.buff(fury.bloodbath) or  not jps.talentInfo(fury.bloodbath)' },
+		{fury.bladestorm, 'jps.buff(fury.enrage) and IsControlKeyDown() == true' },
+		{fury.bloodthirst, 'not jps.buff(fury.enrage) or fury.rage() < 50 or not jps.buff(fury.ragingblow)' },
+		{fury.execute, 'jps.buff(fury.suddendeath)' },
+		{fury.ragingblow, 'jps.buffStacks(fury.meatcleaver) >= 2' },
+		{fury.dragonroar, 'jps.buff(fury.bloodbath) or  not jps.talentInfo(fury.bloodbath)' },
+		{fury.whirlwind, 'onCD' },
+		{fury.bloodthirst, 'onCD' },
+		{fury.wildstrike, 'jps.buff(fury.bloodsurge)' },
+	}},
+	
+	{"nested", 'fh.UnitsAroundUnit("target") > 3',{
+		{fury.ravager, 'jps.buff(fury.bloodbath) or  not jps.talentInfo(fury.bloodbath)' },
+		{fury.ragingblow, 'jps.buffStacks(fury.meatcleaver) >= 3 and jps.buff(fury.enrage)' },
+		{fury.bloodthirst, 'not jps.buff(fury.enrage) or fury.rage() < 50 or not jps.buff(fury.ragingblow)' },
+		{fury.ragingblow, 'jps.buffStacks(fury.meatcleaver) >= 3' },
+		{fury.bladestorm, 'jps.buff(fury.enrage)  and IsControlKeyDown() == true' },
+		{fury.whirlwind, 'onCD' },
+		{fury.execute, 'jps.buff(fury.suddendeath)' },
+		{fury.dragonroar, 'jps.buff(fury.bloodbath) or not jps.talentInfo(fury.bloodbath)' },
+		{fury.bloodthirst, 'onCD' },
+		{fury.wildstrike, 'jps.buff(fury.bloodsurge)' },
+	}},
+}
 ,"Default PvE" , true, false)
-
-
-
---[[[
-@rotation Noxxic 5.3
-@class warrior
-@spec fury
-@author Kirk24788
-@description 
-This Rotation is based on Noxxic, but aims to be also used at lower levels.
-This is based on the Default Rotation by atx and kyletxag.
-]]--
-jps.registerStaticTable("WARRIOR","FURY",
-	{
--- Interrupts
-		{warrior.spells["Pummel"],'jps.shouldKick()'},
-		{warrior.spells["Pummel"],'jps.shouldKick("focus")', "focus"},
-		{warrior.spells["Disrupting Shout"],'jps.shouldKick()'},
-		{warrior.spells["Disrupting Shout"],'jps.shouldKick("focus")', "focus"},
-		
--- Cooldowns and Utility
-		-- "Victory Rush" 34428 "Ivresse de la victoire" -- buff "Victorious" 32216 "Victorieux"
-		{warrior.spells["Victory Rush"],'jps.buff(32216) and jps.rage() >= 10 and jps.hp("player") < 0.8', warrior.rangedTarget },
-		{warrior.spells["Recklessness"],'jps.UseCDs and jps.debuffDuration( 86346) >= 5', warrior.rangedTarget },
-		{warrior.spells["Recklessness"],'jps.UseCDs and jps.cooldown( 86346) == 0', warrior.rangedTarget },
-		
-		{warrior.spells["Berserker Rage"],'jps.debuffDuration( 86346) > 0 and not jps.buff(18499,"player")', warrior.rangedTarget },
-		{warrior.spells["Bloodbath"],'jps.UseCDs'},
-		
-		{ jps.getDPSRacial(),'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{ jps.useTrinket(0),'jps.useTrinket(0) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{ jps.useTrinket(1),'jps.useTrinket(1) ~= "" and jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		{warrior.spells["Lifeblood"],'jps.UseCDs and jps.debuffDuration( 86346) >= 5'},
-		
--- AoE Rotation
-		{"nested", 'jps.MultiTarget', {
-			{warrior.spells["Whirlwind"],'jps.buffStacks(12950) < 3', warrior.rangedTarget },
-			{warrior.spells["Raging Blow"],'jps.buffStacks(12950) == 3', warrior.rangedTarget },
-			{warrior.spells["Dragon Roar"],'onCD', warrior.rangedTarget },
-		}},
-		
-		{"nested", 'not jps.MultiTarget', {
-			-- Colossus Smash Rotation
-			{"nested", 'jps.myDebuff( 86346,"target")', {
-				{warrior.spells["Bloodthirst"],'onCD', warrior.rangedTarget },
-				{warrior.spells["Execute"],'jps.hp("target") < 0.2', warrior.rangedTarget}, 
-				{warrior.spells["Heroic Leap"],'onCD', warrior.rangedTarget}, 
-				{warrior.spells["Heroic Strike"],'onCD', warrior.rangedTarget},
-				-- "Raging Blow" 85288 "Coup déchaîné" -- buff Raging Blow! 131116
-				{warrior.spells["Raging Blow"],'jps.buff(131116)', warrior.rangedTarget },
-				-- "Bloodsurge" 46916 "Afflux sanguin"
-				{warrior.spells["Wild Strike"],'jps.buff(46916)', warrior.rangedTarget },
-			}},
-			{"nested", 'jps.Level >= 81', {
-				{warrior.spells["Colossus Smash"],'jps.rage() >= warrior.relativeRage(0.75)', warrior.rangedTarget },
-				{warrior.spells["Bloodthirst"],'onCD', warrior.rangedTarget },
-				{warrior.spells["Heroic Strike"],'jps.rage() >= warrior.relativeRage(0.8)', warrior.rangedTarget },
-				-- "Raging Blow" 85288 "Coup déchaîné" -- buff Raging Blow! 131116
-				{warrior.spells["Raging Blow"],'jps.buffStacks(131116) == 2', warrior.rangedTarget },
-				-- "Bloodsurge" 46916 "Afflux sanguin"
-				{warrior.spells["Wild Strike"],'jps.buff(46916)', warrior.rangedTarget },
-				{warrior.spells["Battle Shout"],'jps.rage() <= warrior.relativeRage(0.2) and jps.cooldown( 86346) < 3', "player" },
-				{warrior.spells["Impending Victory"],'onCD', warrior.rangedTarget },
-				{warrior.spells["Heroic Throw"],'onCD', warrior.rangedTarget },
-			}},
-			{"nested", 'jps.Level < 81', {
-				{warrior.spells["Bloodthirst"],'onCD', warrior.rangedTarget },
-				{warrior.spells["Execute"],'jps.hp("target") < 0.2', warrior.rangedTarget}, 
-				{warrior.spells["Heroic Leap"],'onCD', warrior.rangedTarget}, 
-				{warrior.spells["Impending Victory"],'onCD', warrior.rangedTarget },
-				{warrior.spells["Heroic Throw"],'onCD', warrior.rangedTarget },
-				{warrior.spells["Heroic Strike"],'onCD', warrior.rangedTarget },
-				-- "Raging Blow" 85288 "Coup déchaîné" -- buff Raging Blow! 131116
-				{warrior.spells["Raging Blow"],'jps.buffStacks(131116) == 2', warrior.rangedTarget },
-				-- "Bloodsurge" 46916 "Afflux sanguin"
-				{warrior.spells["Wild Strike"],'jps.buff(46916)', warrior.rangedTarget },
-				{warrior.spells["Battle Shout"],'jps.rage() <= warrior.relativeRage(0.2)', "player" },
-			}},
-		}},
-	}
-,"Noxxic 5.3" , true, false)
-
-
-jps.registerStaticTable("WARRIOR","FURY",
-	{
-		-- "Heroic Throw" 57755 "Lancer héroïque"
-		{warrior.spells["Heroic Throw"], 'true' , warrior.rangedTarget },
-		-- "Raging Blow" 85288 "Coup déchaîné" -- buff Raging Blow! 131116
-		{warrior.spells["Raging Blow"],'jps.buff(131116)', warrior.rangedTarget },
-		-- "Bloodthirst" 23881 "Sanguinaire"
-		{warrior.spells["Bloodthirst"],'true', warrior.rangedTarget },
-		-- "Thunder Clap" 6343 "Coup de tonnerre" 
-		{warrior.spells["Thunder Clap"], 'true' , warrior.rangedTarget   },
-		-- "Shockwave" 46968 "Onde de choc"
-		{warrior.spells["Shockwave"], 'CheckInteractDistance(warrior.rangedTarget(), 3) == 1', warrior.rangedTarget },
-		-- "Whirlwind" 1680 "Tourbillon"
-		{warrior.spells["Whirlwind"], 'true' , warrior.rangedTarget },
-		-- "Dragon Roar" 118000 "Rugissement de dragon"
-		{warrior.spells["Dragon Roar"],'onCD', warrior.rangedTarget },
-	}
-	,"MultiTarget PvE", true, false)

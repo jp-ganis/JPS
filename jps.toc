@@ -4,6 +4,7 @@
 ## SavedVariables: jpsDB
 ## Dependencies:
 
+fh.lua
 jplocal.lua
 jps.lua
 jplogging.lua
