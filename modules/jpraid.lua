@@ -190,3 +190,14 @@ function jps.getInstanceInfo()
 
 	return jps.instance
 end
+
+
+function jps.startPulltimer(duration)
+	jps.createTimer( "DBMpull", duration )
+end
+
+function jps.pulltimer()
+	jps.currentTimer = jps.checkTimer("DBMpull")
+	if jps.currentTimer == 0 then return jps.pulltimerDefault end
+	return jps.currentTimer
+end

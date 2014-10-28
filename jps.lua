@@ -127,6 +127,9 @@ jps.CastBar.currentSpell = ""
 jps.CastBar.currentTarget = ""
 jps.CastBar.currentMessage = ""
 
+jps.pulltimerDefault = 900
+jps.currentTimer = 900
+
 -- Slash Cmd
 SLASH_jps1 = '/jps'
 

@@ -553,6 +553,17 @@ jps.registerEvent("PLAYER_LEVEL_UP", function(level)
 	end
 end)
 
+jps.registerEvent("CHAT_MSG_ADDON",function(prefix,message,channel,sender)
+
+	if prefix == "D4"  and (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "WHISPER" or channel == "GUILD") then --DBM Pull
+
+		 local _,pt = (message or ""):match("^(PT).(%d+)")
+		 if pt then
+		 	jps.startPulltimer(tonumber(pt))
+		 end
+	end
+end)
+
 --------------------------
 -- COMBAT_LOG_EVENT_UNFILTERED FUNCTIONS
 --------------------------
