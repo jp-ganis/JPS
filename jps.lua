@@ -171,6 +171,7 @@ function jps.detectSpec()
 				write("jps couldn't find your talent tree... One second please.") 
 			end
 		else
+			jps.customRotationFunc = ""
 		-- local id, name, description, icon, background, role = GetSpecializationInfo(specIndex [, isInspect [, isPet]])
 			local _,name,_,_,_,_ = GetSpecializationInfo(id) -- patch 5.0.4 remplace GetTalentTabInfo( id )
 			if name then
