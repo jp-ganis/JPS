@@ -305,6 +305,9 @@ jps.registerOnUpdate(function()
 	if jps.Combat and jps.Enabled then
 		jps_Combat()  
 	end
+	if not jps.Combat and jps.Enabled then
+		jps_Combat()  
+	end
 end)
 
 --------------------------

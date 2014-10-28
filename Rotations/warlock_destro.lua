@@ -207,3 +207,16 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
 
 	return parseStaticSpellTable(spellTable)
 end,"Destruction 5.3")
+
+-- out of combat rotation
+local spellTableOOC = {
+	{"Dark Intent",'not jps.buff("Dark Intent")',"player"}
+}
+
+jps.registerRotation("WARLOCK","DESTRUCTION",function()
+	wl.deactivateBurningRushIfNotMoving(1)
+	spell,target = parseStaticSpellTable(spellTableOOC)
+
+	return parseStaticSpellTable(spellTableOOC)
+end,"Out of Combat",false,false,nil, true)
+

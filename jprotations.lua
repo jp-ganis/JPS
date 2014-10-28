@@ -6,6 +6,7 @@ Most of the rotations are registered on load, but you can also (un)register Rota
 You could even outsource your rotations to a separate addon if you want to.
 ]]--
 local pveRotations = {}
+local oocRotations = {}
 local pvpRotations = {}
 local activeRotation = 1
 
@@ -105,17 +106,21 @@ choose your Rotation.
 @param pve [i]Optional:[/i] [code]True[/code] if this should be registered as PvE rotation else [code]False[/code] - defaults to  [code]True[/code]
 @param pvp [i]Optional:[/i] [code]True[/code] if this should be registered as PvP rotation else [code]False[/code] - defaults to  [code]True[/code]
 @param config [i]Optional:[/i] Key/Value Pair Table which contains Config which can be used in your rotation #see:jps.getRotationValue - defaults to [code]{}[/code]
+@param ooc [i]Optional:[/i] [code]True[/code] if this should be registered as a out of combat rotation else [code]False[/code] - defaults to  [code]false[/code]
 ]]--
-function jps.registerRotation(class,spec,fn,tooltip,pve,pvp,config)
-    local key = toKey(class, spec)
+function jps.registerRotation(class,spec,fn,tooltip,pve,pvp,config,ooc)
+	key = toKey(class, spec)
     if pve==nil then pve = true end
     if pvp==nil then pvp = true end
+    if ooc==nil then ooc = false end
     if config== nil then config = {} end
     if pvp and not pvpRotations[key] then pvpRotations[key] = {} end
     if pve and not pveRotations[key] then pveRotations[key] = {} end
+    if ooc and not oocRotations[key] then oocRotations[key] = {} end
     local rotation = {tooltip = tooltip, getSpell = fn, config = config}
     if pvp then addRotationToTable(pvpRotations[key], rotation) end
     if pve then addRotationToTable(pveRotations[key], rotation) end
+    if ooc then addRotationToTable(oocRotations[key], rotation) end
     jps.resetRotationTable()
 end
 
@@ -135,10 +140,12 @@ function jps.printRotations()
             local key = toKey(class, spec)
             local pveCount = tableCount(pveRotations,key)
             local pvpCount = tableCount(pvpRotations,key)
-            msg = msg .. spec .. "(PvE " .. pveCount .. " / PvP " .. pvpCount .. ") "
+            local oocCount = tableCount(oocRotations,key)
+            msg = msg .. spec .. "(PvE " .. pveCount .. " / PvP " .. pvpCount .. " / OOC " ..oocCount..") "
         end
         print(msg)
     end
+
 end
 
 --[[[
@@ -150,8 +157,9 @@ Unregister the Rotation with the given tooltip. You can choose to only unregiste
 @param tooltip Name of the Rotation to unregister
 @param pve [i]Optional:[/i] [code]True[/code] if this should only be unregistered from the PvE rotations else [code]False[/code] - defaults to  [code]True[/code]
 @param pvp [i]Optional:[/i] [code]True[/code] if this should only be unregistered from the PvP rotations else [code]False[/code] - defaults to  [code]True[/code]
+
 ]]--
-function jps.unregisterRotation(class,specId,tooltip,pve,pvp)
+function jps.unregisterRotation(class,specId,tooltip,pve,pvp,ooc)
     local key = toKey(class, specId)
     if pve==nil then pve = true end
     if pvp==nil then pvp = true end
@@ -183,15 +191,17 @@ For mor info look at #see:jps.registerRotation.
 @param pve [i]Optional:[/i] [code]True[/code] if this should be registered as PvE rotation else [code]False[/code] - defaults to  [code]True[/code]
 @param pvp [i]Optional:[/i] [code]True[/code] if this should be registered as PvP rotation else [code]False[/code] - defaults to  [code]True[/code]
 @param config [i]Optional:[/i] Key/Value Pair Table which contains Config which can be used in your rotation #see:jps.getRotationValue - defaults to [code]{}[/code]
+@param ooc [i]Optional:[/i] [code]True[/code] if this should be registered as a out of combat rotation else [code]False[/code] - defaults to  [code]false[/code]
 ]]--
-function jps.registerStaticTable(class,spec,spellTable,tooltip,pve,pvp,config)
-    jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,pve,pvp,config)
+function jps.registerStaticTable(class,spec,spellTable,tooltip,pve,pvp,config,ooc)
+    jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,pve,pvp,config,ooc)
 end
 
 
 --[[[ Internal function: Returns the active Rotation for use in the Combat Loop ]]--
 function jps.activeRotation(rotationTable)
     if rotationTable == nil then
+	    if not jps.Combat then return jps.activeRotation(oocRotations) end
         if jps.PvP then return jps.activeRotation(pvpRotations) else return jps.activeRotation(pveRotations) end
     end
 
