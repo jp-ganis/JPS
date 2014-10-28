@@ -197,6 +197,9 @@ function jps.registerStaticTable(class,spec,spellTable,tooltip,pve,pvp,config,oo
     jps.registerRotation(class,spec,function() return parseStaticSpellTable(spellTable) end,tooltip,pve,pvp,config,ooc)
 end
 
+function jps.hasOOCRotation()
+	return tableCount(oocRotations, getCurrentKey())
+end
 
 --[[[ Internal function: Returns the active Rotation for use in the Combat Loop ]]--
 function jps.activeRotation(rotationTable)
