@@ -210,8 +210,13 @@ end,"Destruction 5.3")
 
 -- out of combat rotation
 local spellTableOOC = {
-	{"Dark Intent",'not jps.buff("Dark Intent")',"player"}
+	{"Dark Intent",'not jps.buff("Dark Intent")',"player"},
+	{"Summon Voidwalker",'not jps.Moving and jps.talentInfo("Grimoire of Sacrifice") and not wl.hasPet() and not jps.buff("Grimoire of Sacrifice") and not jps.isRecast("Summon Voidwalker")',"player"},
+	{"Grimoire of Sacrifice",'jps.talentInfo("Grimoire of Sacrifice") and wl.hasPet() and not jps.buff("Grimoire of Sacrifice")',"player"},
 }
+
+
+
 
 jps.registerRotation("WARLOCK","DESTRUCTION",function()
 	wl.deactivateBurningRushIfNotMoving(1)

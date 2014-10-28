@@ -195,7 +195,18 @@ end
 function jps.startPulltimer(duration)
 	jps.createTimer( "DBMpull", duration )
 end
+--[[[
+@function jps.pulltimer
+@description 
+checks for a running DBM / BigWigs / VEM pulltimer and returns time left
+[br][i]Usage:[/i][br]
+[code]
+jps.pulltimer() <= 4
+jps.pulltimer() >= 4
+[/code]
 
+@returns float: time in seconds
+]]--
 function jps.pulltimer()
 	jps.currentTimer = jps.checkTimer("DBMpull")
 	if jps.currentTimer == 0 then return jps.pulltimerDefault end

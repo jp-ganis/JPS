@@ -38,7 +38,6 @@ wl.spells["soulStone"] = toSpellName(20707)
 wl.spells["shadowfury"] = toSpellName(30283)
 wl.spells["cataclysm"] = toSpellName(152108)
 
-
 --Affliction
 wl.spells["corruption"] = toSpellName(172)
 wl.spells["darkSoulMisery"] = toSpellName(113860)
@@ -173,7 +172,7 @@ wl.attackFocus = jps.cachedValue(function()
 end)
 
 function wl.hasPet()
-	if UnitExists("pet") == nil then return false end
+	if UnitExists("pet") == false then return false end
 	return true
 end
 	
