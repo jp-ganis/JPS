@@ -32,8 +32,8 @@ local L = MyLocalizationTable
 -- Name, Subtext = GetSpellBookItemName(index, "bookType") or GetSpellBookItemName("spellName")
 -- Name - Name of the spell. (string)
 -- skillType, spellId = GetSpellBookItemInfo(index, "bookType") or GetSpellBookItemInfo("spellName") -- spellId - The global spell id (number) 
-
-function jps.GetHarmfulSpell()
+local harmSpells = {}
+function jps.GetHarmfulSpell(searchNew)
 	local HarmSpell = nil
 	local HarmSpell40 = {}
 	local HarmSpell30 = {}
@@ -48,14 +48,15 @@ function jps.GetHarmfulSpell()
 		local maxRange = select(6,GetSpellInfo(spellID))
 		local minRange = select(5,GetSpellInfo(spellID))
 		local harmful = IsHarmfulSpell(index, booktype)
-		
-		if minRange ~= nil and maxRange ~= nil and harmful ~= nil then
-			if (maxRange > 39) and (harmful == true) and (minRange == 0) then
-				table.insert(HarmSpell40,name)
-			elseif (maxRange > 29) and (harmful == true) and (minRange == 0) then
-				table.insert(HarmSpell30,name)
-			elseif (maxRange > 19) and (harmful == true) and (minRange == 0) then
-				table.insert(HarmSpell20,name)
+		if (harmSpells[name] == nil and searchNew == true) or searchNew == nil then
+			if minRange ~= nil and maxRange ~= nil and harmful ~= nil then
+				if (maxRange > 39) and (harmful == true) and (minRange == 0) then
+					table.insert(HarmSpell40,name)
+				elseif (maxRange > 29) and (harmful == true) and (minRange == 0) then
+					table.insert(HarmSpell30,name)
+				elseif (maxRange > 19) and (harmful == true) and (minRange == 0) then
+					table.insert(HarmSpell20,name)
+				end
 			end
 		end
 	end
@@ -66,10 +67,30 @@ function jps.GetHarmfulSpell()
 	else 
 		HarmSpell = HarmSpell20[1]
 	end
-	
+	if HarmSpell ~= nil then
+		harmSpells[HarmSpell] = true
+	end
 	return HarmSpell
 end
 
+function jps.getHarmSpellTable(spellCount)
+
+	if not spellcount then spellCount = 3 end
+	tableBody = 'spelltableSpec = {};'
+	local p = 1;
+	for i=1, spellCount+1 do
+		spell = jps.GetHarmfulSpell(true)
+		if spell ~= nil and IsUsableSpell(spell) then
+			tableBody = tableBody..'spelltableSpec['..p..'] = {"'..spell..'",not jps.myDebuff("'..spell..'"),"target"};'
+			p = p +1
+		end
+	end
+	tableBody = tableBody..'return parseSpellTable(spelltableSpec)';
+
+	jps.customRotationFunc = tableBody
+
+	assert(loadstring('function jps.customRotation() '.. jps.customRotationFunc..' end'))() 
+end
 ---------------------------
 -- GET CLASS COOLDOWNS
 ---------------------------

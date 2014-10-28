@@ -147,7 +147,7 @@ end
 ------------------------
 
 function jps.detectSpec()
-	if jps.detectSpecDisabled then return false end
+	if jps.detectSpecDisabled == true then return false end
 
 	jps.Count = 1
 	jps.Tooltip = ""
@@ -164,8 +164,8 @@ function jps.detectSpec()
 		local id = GetSpecialization() -- remplace GetPrimaryTalentTree() patch 5.0.4
 		if not id then 
 			if jps.Level < 10 then 
-				write("You need to be at least at level 10 and have a specialization choosen to use JPS, shutting down") 
-				jps.Enabled = false
+				write("You need to be at least at level 10 and have a specialization choosen to use JPS is using now random spells") 
+				jps.getHarmSpellTable()
 				jps.detectSpecDisabled = true
 			else
 				write("jps couldn't find your talent tree... One second please.") 
@@ -329,9 +329,11 @@ end)
 function jps_Combat()  
 	-- Check for the Rotation
 	if not jps.Class then return end
-	if not jps.activeRotation() then
-		write("JPS does not have a rotation for your",jps.Spec,jps.Class)
-		jps.Enabled = false
+	if not jps.activeRotation() and jps.Combat == false then
+		if string.len(jps.customRotationFunc) < 10 then
+			write("JPS does not have a rotation for your",jps.Spec,jps.Class)
+			jps.Enabled = false
+		end
 		return 
 	end
 

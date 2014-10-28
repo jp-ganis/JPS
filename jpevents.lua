@@ -381,6 +381,9 @@ jps.registerEvent("RAID_ROSTER_UPDATE", jps.SortRaidStatus)
 -- Dual Spec Respec -- only fire when spec change no other event before
 jps.registerEvent("ACTIVE_TALENT_GROUP_CHANGED", jps.detectSpec)
 jps.registerEvent("ACTIVE_TALENT_GROUP_CHANGED", jps.resetRotationTable)
+jps.registerEvent("ACTIVE_TALENT_GROUP_CHANGED", function()
+	jps.detectSpecDisabled = false
+end)
 
 -- Save on Logout
 jps.registerEvent("PLAYER_LEAVING_WORLD", jps_SAVE_PROFILE)
