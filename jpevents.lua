@@ -407,7 +407,7 @@ jps.registerEvent("UI_ERROR_MESSAGE", function(event_error)
 			LOG.debug("SPELL_FAILED_NOT_BEHIND - %s", event_error)
 			jps.isNotBehind = true
 			jps.isBehind = false
-		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) then
+		elseif jps.FaceTarget and ((event_error == SPELL_FAILED_UNIT_NOT_INFRONT) or (event_error == ERR_BADATTACKFACING)) and not jps.moving then
 			LOG.debug("ERR_BADATTACKFACING - %s", event_error)			
 
 			local TargetGuid = UnitGUID("target")
