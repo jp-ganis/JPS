@@ -39,9 +39,10 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
 
     {"nested", not jps.MultiTarget, {
         { rogue.spells.preparation, 'not jps.buff(rogue.spells.vanish) and jps.cooldown(rogue.spells.vanish) > 60' },
-        { rogue.spells.vanish, 'IsInGroup() and not jps.buff(rogue.spells.stealth) ' },
+        { rogue.spells.vanish, 'IsInGroup() and not jps.buff(rogue.spells.stealth) and jps.UseCDs ' },
         { rogue.spells.ambush },
         { rogue.spells.sliceAndDice, 'jps.buffDuration(rogue.spells.sliceAndDice) <= 2' },
+		{ rogue.spells.dispatch,    'UnitMana("player") > 90 and jps.debuffDuration(rogue.spells.rupture) < 4' },
         { rogue.spells.dispatch,    'UnitMana("player") > 90 and jps.debuffDuration(rogue.spells.rupture) < 4' },
         { rogue.spells.mutilate,     'UnitMana("player") > 90 and jps.debuffDuration(rogue.spells.rupture) < 4' },
         { rogue.spells.rupture,    'jps.debuffDuration(rogue.spells.rupture) < 2' },
@@ -67,7 +68,7 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
 local spellTableOOC = {
 	{ rogue.spells.deadlyPoison, 'not jps.buff(rogue.spells.deadlyPoison)' },
     { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison)' },
-	{ rogue.spells.stealth, 'not jps.buff(rogue.spells.vanish) and jps.pulltimer() 2'},
+	{ rogue.spells.stealth, 'not jps.buff(rogue.spells.vanish) and jps.pulltimer() < 2'},
 }
 
 
