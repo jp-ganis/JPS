@@ -1,7 +1,9 @@
-rogue = {}
+if not rogue  then rogue = {} end
 
 function toSpellName(id) local name = GetSpellInfo(id); return name end
 rogue.spells = {}
+rogue.spells["anticipation"] = toSpellName(114015)
+rogue.spells["blindside"] = toSpellName(121152)
 rogue.spells["kick"] = toSpellName(1766)
 rogue.spells["shadowBlades"] = toSpellName(121471)
 rogue.spells["preparation"] = toSpellName(14185)
@@ -23,7 +25,7 @@ rogue.spells["leechingPoison"] = toSpellName(108211)
 jps.registerStaticTable("ROGUE","ASSASSINATION",{
     -- Poisons
     { rogue.spells.deadlyPoison, 'not jps.buff(rogue.spells.deadlyPoison)' },
-    { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison)' },
+    { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison) and jps.talentInfo(rogue.spells.leechingPoison)' },
 
     -- Healthstone
     {jps.useBagItem(5512), 'jps.hp("player") < 0.65' },
@@ -42,6 +44,7 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
         { rogue.spells.vanish, 'IsInGroup() and not jps.buff(rogue.spells.stealth) and jps.UseCDs ' },
         { rogue.spells.ambush },
         { rogue.spells.sliceAndDice, 'jps.buffDuration(rogue.spells.sliceAndDice) <= 2' },
+		{ rogue.spells.dispatch,    'jps.buff(rogue.spells.blindside)' },
 		{ rogue.spells.dispatch,    'UnitMana("player") > 90 and jps.debuffDuration(rogue.spells.rupture) < 4' },
         { rogue.spells.dispatch,    'UnitMana("player") > 90 and jps.debuffDuration(rogue.spells.rupture) < 4' },
         { rogue.spells.mutilate,     'UnitMana("player") > 90 and jps.debuffDuration(rogue.spells.rupture) < 4' },
@@ -67,7 +70,7 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
 -- out of combat rotation
 local spellTableOOC = {
 	{ rogue.spells.deadlyPoison, 'not jps.buff(rogue.spells.deadlyPoison)' },
-    { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison)' },
+    { rogue.spells.leechingPoison, 'not jps.buff(rogue.spells.leechingPoison) and jps.talentInfo(rogue.spells.leechingPoison)' },
 	{ rogue.spells.stealth, 'not jps.buff(rogue.spells.vanish) and jps.pulltimer() < 2'},
 }
 
