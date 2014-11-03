@@ -110,7 +110,7 @@ spellTable = {
 		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and mage.crystalTimeLeft() >8 and not jps.myDebuff(mage.netherTempest)'}
 	}},
 	--aoe > 5 enemies
-	{"nested",'fh.UnitsAroundUnit("target", 10) >= 5', {
+	{"nested",'fh.UnitsAroundUnit("target", 10) >= 5 or jps.MultiTarget', {
 		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
 		{mage.supernova},
 		{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4'},
@@ -127,14 +127,14 @@ spellTable = {
 		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
 		{mage.arcaneOrb, 'jps.buffStacks(arcaneCharge) < 4' },
 		{mage.supernova, 'mage.targetIsCrystal()' },
-		{mage.presenceOfMind, 'jps.mana() > 0.96' },
+		{mage.presenceOfMind, 'jps.mana() > 0.96 and not jps.Moving' },
 		{mage.arcaneBlast, 'jps.buffStacks(arcaneCharge)>=4 and jps.mana() > 0.93' },
 		{mage.arcaneMissiles, 'jps.buffStacks(arcaneCharge)>=4 and jps.ChannelTimeLeft("player") == 0' },
 		{mage.supernova, 'jps.mana() < 0.96' },
 		
 		--{callactionlist,mage.name==mage.conserve, 'jps.cooldown(mage.evocation)-jps.cooldown(mage.evocation) < 5 ' },
 		{mage.evocation,'jps.TimeToDie("target") > 10 and jps.mana() < 0.50 ' },
-		{mage.presenceOfMind, 'onCD' },
+		{mage.presenceOfMind, 'not jps.Moving' },
 		{mage.arcaneBlast, 'onCD' },
 	}},
 	--low mana
@@ -144,14 +144,14 @@ spellTable = {
 	{mage.supernova, 'jps.TimeToDie("target") < 8' },
 	{mage.supernova, 'jps.buff(mage.arcanePower) and not mage.hasCrystal() and mage.supernovaCharges() == 2' },
 	{mage.arcaneOrb, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2' },
-	{mage.presenceOfMind, 'jps.mana() > 0.96' },
+	{mage.presenceOfMind, 'jps.mana() > 0.96  and not jps.Moving' },
 	{mage.arcaneBlast, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.mana() > 0.93' },
 	{mage.arcaneMissiles, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and not jps.talentInfo(mage.overpowered) and jps.ChannelTimeLeft("player") == 0'},
 	{mage.arcaneMissiles, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.cooldown(mage.arcanePower) > mage.spellhasteCalc(10) and jps.ChannelTimeLeft("player") == 0' },
 	{mage.supernova, 'jps.mana() < 0.96 and jps.buffStacks(mage.arcaneMissilesBuff) < 2 and jps.buff(mage.arcanePower) ' },
 	{mage.supernova, 'jps.mana() < 0.96 and jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.buff(mage.arcanePower) ' },
 	{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player")==4' },
-	{mage.presenceOfMind, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2' },
+	{mage.presenceOfMind, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2  and not jps.Moving' },
 	{mage.arcaneBlast, 'onCD' },
 	{mage.arcaneBarrage,'jps.Moving'},
 
