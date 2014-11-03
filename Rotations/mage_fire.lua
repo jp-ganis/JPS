@@ -140,7 +140,7 @@ function mage.shouldCombustion()
 end
 local spellTable = {
 	--buffs
-	{mage.slowFall, 'IsFalling()==1 and not jps.buff("slow fall")' },
+	{mage.slowFall, 'IsFalling() and not jps.buff("slow fall")',"player" },
 	{mage.arcaneBrilliance, 'not jps.buff("arcane brilliance")' }, 
 	{mage.iceBarrier, 'not jps.buff("ice barrier")' }, 
 	{mage.runeOfPower, 'mage.hasTwoRunes() and IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune of Power")'}, 
@@ -193,3 +193,16 @@ jps.registerRotation("MAGE","FIRE",function()
 
 	return parseStaticSpellTable(spellTable)
 end,"Fire 6.0.2 90")
+
+spellTableOOC = {
+	--cds defensive
+	{mage.slowFall, 'IsFalling() and not jps.buff(mage.slowFall)' ,"player"},
+	--cds offensive
+	{ mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
+	{ mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)' ,"player"},
+}
+jps.registerRotation("MAGE","FIRE",function() 
+
+	return parseStaticSpellTable(spellTableOOC)
+end,"OOC 6.0.2 90",false,false,nil,true)
+
