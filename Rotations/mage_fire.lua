@@ -1,4 +1,4 @@
-mage = {}
+if not mage then mage = {} end
 
 mage.pyroblast = "Pyroblast"
 mage.infenroBlast = "Inferno Blast"
