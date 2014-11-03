@@ -308,6 +308,7 @@ jps.UserInitiatedSpellsToIgnore = {
 	1953, -- blink
 	19263, -- Deterrence
 	781, -- Disengage
+	108839, --Ice Floes
 	
 }
 
