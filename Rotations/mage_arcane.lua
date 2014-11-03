@@ -1,102 +1,163 @@
 --[[[
-@rotation Arcane PVE SingleTarget 5.3/Arcane PVE > 4 Targets 5.3
+@rotation Arcane PVE Simcraft lvl 90 6.0.2
 @class mage
-@spec fire
-@author jpganis
+@spec arcane
+@author pcmd
 @description 
-SimCraft 5.3
+SimCraft 6.0.2
 ]]--
 
-jps.registerRotation("MAGE","ARCANE",function()
-	local spell = nil
-	local target = nil	
+if not mage then mage = {} end
+mage.activeDot = "active dot";
+mage.activeEnemies = "active enemies";
+mage.arcaneBarrage = "arcane barrage";
+mage.arcaneBlast = "arcane blast";
+mage.arcaneBrilliance = "arcane brilliance";
+mage.arcaneCharge = "arcane charge";
+mage.arcaneExplosion = "arcane explosion";
+mage.arcaneInstability = "arcane instability";
+mage.arcaneMissiles = "arcane missiles";
+mage.arcaneMissilesBuff = "arcane missiles!"
+mage.arcaneOrb = "arcane orb";
+mage.arcanePower = "arcane power";
+mage.arcaneTorrent = "arcane torrent";
+mage.blazingSpeed = "blazing speed";
+mage.bloodFury = "blood fury";
+mage.berserking ="Berserking";
+mage.coldSnap = "cold snap";
+mage.coneOfCold = "cone of cold";
+mage.counterspell = "counterspell";
+mage.crystalSequence = "crystal sequence";
+mage.currentTarget = "current target";
+mage.danger = "danger";
+mage.evocation = "evocation";
+mage.executeTime = "execute time";
+mage.iceFloes = "ice floes";
+mage.mirrorImage = "mirror image";
+mage.netherTempest = "nether tempest";
+mage.overpowered = "overpowered";
+mage.presenceOfMind = "presence of mind";
+mage.prismaticCrystal = "prismatic crystal";
+mage.rechargeTime = "recharge time";
+mage.runeOfPower = "rune of power";
+mage.supernova = "supernova";
+mage.slowFall = "slow fall";
+mage.hasRune = function()
+	local hasOne,_ = GetTotemInfo(1)
+	local hasSecond,_ = GetTotemInfo(2)
+	if hasOne ~= false or hasSecond ~= false then 
+		return true
+	end
+	return false
+end
 
-	local player = jpsName
-	local mana = UnitPower(player,0)/UnitPowerMax(player,0)
-	local stacks = jps.debuffStacks("arcane charge","player")
-	local mStacks = jps.buffStacks("arcane missiles!")
-	local alterTimeActive = jps.buff("alter time")
+mage.hasCrystal = function()
+	return false
+end
+mage.crystalTimeLeft = function()
+	return 0
+end
+
+mage.shouldBurn = function()
+	return jps.TimeToDie("target") < jps.mana()*0.35*UnitSpellHaste("player") or jps.cooldown(mage.evocation) <= (jps.mana()-30)*0.3*UnitSpellHaste("player") or (jps.buff(mage.arcanePower) and jps.cooldown(mage.evocation) <= (jps.mana()-30)*0.4*UnitSpellHaste("player"))
+end
+mage.supernovaCharges = function() 
+	local cur, max = GetSpellCharges("Supernova")
+	return cur
+end
+mage.targetIsCrystal = function()
+	if UnitName("target") == mage.prismaticCrystal then
+		return true
+	end
+	return false
+end
+
+mage.shouldUseCDs = function() 
+	return jps.UseCDs and jps.TimeToDie("target") < 30 or (jps.debuffStacks(mage.arcaneCharge,"player")==4 and ( not jps.talentInfo(mage.prismaticCrystal) or jps.cooldown(mage.prismaticCrystal) > 15))
+end
+
+mage.spellhasteCalc = function(no)
+	return UnitSpellHaste("player") * no
+end
+spellTable = {
+	--interrupts
+	{mage.counterspell, 'jps.shouldKick("target")' },
+
+	--cds defensive
+	{mage.slowFall, 'IsFalling()==1 and not jps.buff(mage.slowFall)' },
 	
-	local spellTable = {
-		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
-		
-		{ "ice barrier",				 not jps.buff("ice barrier") }, 
-		
-		{ "Ice Block", jps.hp() < 0.10  and not jps.buff("Ice Block","player") },
-		
-		{ "rune of power",				 jps.buffDuration("rune of power") < jps.CastTimeLeft() and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
-		{ "mirror image",				 jps.UseCDs },
-		{ "Counterspell",				 jps.Interrupts and jps.shouldKick("target") },
-		
-		{ "rune of power",				 (not jps.buff("rune of power") or jps.buffDuration("rune of power")) and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
-		{ "rune of power",				 jps.cooldown("arcane power")==0 and jps.buffDuration("rune of power") < jps.buffDuration("arcane power") and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
-		{ "mirror image",				 jps.UseCDs },
-		{ {"macro",				"/use Mana Gem"}, mana < 0.8 and GetItemCount("Mana Gem", 0, 1) > 0 and not alterTimeActive, player }, 
-		
-		{ "arcane power",				(jps.buffDuration("rune of power") >=jps.buffDuration("arcane power") and mStacks ==2 and stacks >2) or jps.TimeToDie("target") <jps.buffDuration("arcane power")+5 and not jps.Moving },
-		
-		{ jps.DPSRacial, jps.UseCDs and not alterTimeActive and ( jps.buff("arcane power") or jps.TimeToDie("target") < 15) },
-		-- On-use Trinkets.
-		{ jps.useTrinket(0), jps.UseCDs },
-		{ jps.useTrinket(1), jps.UseCDs },
+	--cds offensive
+	{ mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
+	{ mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)' }, 
 
-		-- Requires herbalism
-		{ "Lifeblood",						jps.UseCDs},
-
-		{ "alter time",				 not alterTimeActive and jps.buff("arcane power") and jps.UseCDs},
+	{"nested",'mage.shouldUseCDs() and jps.canDPS("target") and not jps.Moving',{
+		{mage.coldSnap, 'not jps.buff(mage.presenceOfMind) and jps.cooldown(mage.presenceOfMind) > 75 and jps.UseCDs' },
+		{mage.mirrorImage, 'jps.UseCDs' },
+		{mage.arcanePower},
+		{mage.bloodFury},
+		{mage.berserking}
 		
-		{ "arcane barrage",				 alterTimeActive and jps.buffDuration("alter time") <2 },
-		{ "arcane missiles",				 alterTimeActive and mStacks >= 2 },
-		{ "arcane blast",				 alterTimeActive },
-		{ "arcane missiles",				 mStacks == 2 and jps.cooldown("arcane power") >0 and stacks ==4 },
-		{ "Nether Tempest" , not jps.debuff("Nether Tempest")},
-		{ "living bomb",				 not jps.debuff("Living Bomb") and jps.TimeToDie("target") > 11 },
-		{ "Living Bomb",    jps.debuffDuration("Living Bomb","mouseover") == 0  and jps.canDPS("mouseover") and jps.TimeToDie("mouseover") > 11, "mouseover" },
-		{ "arcane barrage",				 stacks == 4 and mana < .95 },
-		{ "presence of mind" , jps.UseCds },
-		{ "arcane blast" },
-		{ "arcane barrage",				 jps.Moving },
-	}
-
-	return parseSpellTable(spellTable)
-end, "Arcane PVE SingleTarget 5.3")
-
-jps.registerRotation("MAGE","ARCANE",function()
-	local spell = nil
-	local target = nil	
-
-	local player = jpsName
-	local mana = UnitPower(player,0)/UnitPowerMax(player,0)
-	local stacks = jps.debuffStacks("arcane charge","player")
-	local mStacks = jps.buffStacks("arcane missiles!")
-	local alterTimeActive = jps.buff("alter time")
+	}},
 	
-	-- only short cd's 
-	spellTable = {
-		{ "arcane brilliance",				 not jps.buff("arcane brilliance") }, 
-		
-		{ "mage armor",				 not jps.buff("mage armor") }, 
-		{ "ice barrier",				 not jps.buff("ice barrier") }, 
-		
-		{ "Ice Block",				 ((UnitHealth("player") / UnitHealthMax("player")) < 0.20 ) and not jps.buff("Ice Block","player") },
-		
-		{ "rune of power",				 (not jps.buff("rune of power") or jps.buffDuration("rune of power") < jps.CastTimeLeft()) and IsShiftKeyDown() == true and GetCurrentKeyBoardFocus() == nil },
-		{ "Counterspell",				 jps.Interrupts and jps.shouldKick("target") },
-
-
-		{ {"macro",				"/use Mana Gem"}, mana < 0.8 and GetItemCount("Mana Gem",0, 1) > 0 and not alterTimeActive, player }, 
-		
-		{ "arcane power",				(jps.buffDuration("rune of power") >=jps.buffDuration("arcane power") and mStacks ==2 and stacks >2) or jps.TimeToDie("target") <jps.buffDuration("arcane power")+5 and not jps.Moving },
-		
-		{ "arcane missiles",				mStacks == 2 },
-		{ "Nether Tempest" , not jps.debuff("Nether Tempest")},
-		{ "living bomb",				 not jps.debuff("Living Bomb") and jps.TimeToDie("target") > 11 },
-		{ "arcane barrage",				 },
-		{ "arcane Explosion",				 },
-		{ "fire blast ",				 jps.Moving },
-		{ "ice lance ",				 jps.Moving },
-	}
-		
+	--prepare crsytal
+	{"nested","jps.cooldown(mage.prismaticCrystal) == 0", {
+		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcangePower) < 0.5'},
+		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcangePower) > 45 and jps.glyphInfo(62210)'},
+	}},
 	
-	return parseSpellTable(spellTable)
-end, "Arcane PVE > 4 Targets 5.3")
+	--crystal rotation
+	{"nested","mage.hasCrystal()",{
+		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and mage.crystalTimeLeft() >8 and not jps.myDebuff(mage.netherTempest)'}
+	}},
+	--aoe > 5 enemies
+	{"nested",'fh.UnitsAroundUnit("target", 10) >= 5', {
+		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
+		{mage.supernova},
+		{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4'},
+		{mage.arcaneOrb,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4'},
+		{mage.coneOfCold,'jps.glyphInfo(115705)'},
+		{mage.arcaneExplosion}
+	}},
+	
+	--burn
+	{"nested","mage.shouldBurn()",{
+		{mage.arcaneMissiles, 'jps.buff(mage.arcaneMissiles)==3 and jps.ChannelTimeLeft("player") == 0' },
+		{mage.arcaneMissiles, 'jps.buff(mage.arcaneInstability) and jps.buffDuration(mage.arcaneInstability) < jps.spellCastTime(mage.arcaneBlast) and jps.ChannelTimeLeft("player") == 0' },
+		{mage.supernova, 'jps.TimeToDie("target") < 8 or mage.supernovaCharges()==2 ' },
+		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
+		{mage.arcaneOrb, 'jps.buffStacks(arcaneCharge) < 4' },
+		{mage.supernova, 'mage.targetIsCrystal()' },
+		{mage.presenceOfMind, 'jps.mana() > 0.96' },
+		{mage.arcaneBlast, 'jps.buffStacks(arcaneCharge)>=4 and jps.mana() > 0.93' },
+		{mage.arcaneMissiles, 'jps.buffStacks(arcaneCharge)>=4 and jps.ChannelTimeLeft("player") == 0' },
+		{mage.supernova, 'jps.mana() < 0.96' },
+		
+		--{callactionlist,mage.name==mage.conserve, 'jps.cooldown(mage.evocation)-jps.cooldown(mage.evocation) < 5 ' },
+		{mage.evocation,'jps.TimeToDie("target") > 10 and jps.mana() < 0.50 ' },
+		{mage.presenceOfMind, 'onCD' },
+		{mage.arcaneBlast, 'onCD' },
+	}},
+	--low mana
+	{mage.arcaneMissiles, 'jps.buff(mage.arcaneMissiles)==3 or (jps.talentInfo(mage.overpowered) and jps.buff(mage.arcanePower) and jps.buffDuration(mage.arcanePower) < jps.spellCastTime(mage.arcaneBlast)) and jps.ChannelTimeLeft("player") == 0' },
+	{mage.arcaneMissiles, 'jps.buff(mage.arcaneInstability) and jps.buffDuration(mage.arcaneInstability) < jps.spellCastTime(mage.arcaneBlast) and jps.ChannelTimeLeft("player") == 0' },
+	{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
+	{mage.supernova, 'jps.TimeToDie("target") < 8' },
+	{mage.supernova, 'jps.buff(mage.arcanePower) and not mage.hasCrystal() and mage.supernovaCharges() == 2' },
+	{mage.arcaneOrb, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2' },
+	{mage.presenceOfMind, 'jps.mana() > 0.96' },
+	{mage.arcaneBlast, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.mana() > 0.93' },
+	{mage.arcaneMissiles, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and not jps.talentInfo(mage.overpowered) and jps.ChannelTimeLeft("player") == 0'},
+	{mage.arcaneMissiles, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.cooldown(mage.arcanePower) > mage.spellhasteCalc(10) and jps.ChannelTimeLeft("player") == 0' },
+	{mage.supernova, 'jps.mana() < 0.96 and jps.buffStacks(mage.arcaneMissilesBuff) < 2 and jps.buff(mage.arcanePower) ' },
+	{mage.supernova, 'jps.mana() < 0.96 and jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.buff(mage.arcanePower) ' },
+	{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player")==4' },
+	{mage.presenceOfMind, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2' },
+	{mage.arcaneBlast, 'onCD' },
+	{mage.arcaneBarrage,'jps.Moving'},
+
+}
+
+jps.registerRotation("MAGE","ARCANE",function() 
+
+	return parseStaticSpellTable(spellTable)
+end,"Arcane Simcraft 6.0.2 90")
