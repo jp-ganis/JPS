@@ -24,6 +24,7 @@ mage.arcaneTorrent = "arcane torrent";
 mage.blazingSpeed = "blazing speed";
 mage.bloodFury = "blood fury";
 mage.berserking ="Berserking";
+mage.blink = "blink";
 mage.coldSnap = "cold snap";
 mage.coneOfCold = "cone of cold";
 mage.counterspell = "counterspell";
@@ -96,7 +97,7 @@ spellTable = {
 	{mage.slowFall, 'jps.fallingFor() > 1.5 and not jps.buff(mage.slowFall)' ,"player"},
 	
 	--cds offensive
-	{mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
+	{mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'},
 	{mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)',"player" }, 
 
 	{"nested",'mage.shouldUseCDs() and jps.canDPS("target") and not jps.Moving',{
@@ -110,8 +111,8 @@ spellTable = {
 	
 	--prepare crsytal
 	{"nested","jps.cooldown(mage.prismaticCrystal) == 0", {
-		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcangePower) < 0.5'},
-		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcangePower) > 45 and jps.glyphInfo(62210)'},
+		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcanePower) < 0.5'},
+		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcanePower) > 45 and jps.glyphInfo(62210)'},
 	}},
 	
 	--crystal rotation
