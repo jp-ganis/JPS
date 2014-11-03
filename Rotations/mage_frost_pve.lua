@@ -64,7 +64,7 @@ jps.registerStaticTable("MAGE","FROST",{
 	-- Noxxic
 	-- pre fight
 	{ "Summon Water Elemental", 'ma_fr.hasPet() == false and not jps.Moving'},
-	{ "slow fall", 'IsFalling()==1 and not jps.buff("slow fall")' },
+	{ "slow fall", 'IsFalling() and not jps.buff("slow fall")',"player" },
 	{ "arcane brilliance", 'not jps.buff("arcane brilliance")' }, 
 
 	{ "ice barrier", 'not jps.buff("ice barrier")' }, 
@@ -100,3 +100,17 @@ jps.registerStaticTable("MAGE","FROST",{
 	{ "frostbolt" , 'not jps.Moving' }, 
 	{ "ice lance", 'jps.Moving'}, 
 },"6.0.2 lvl 90 PVE",true,false)
+
+
+spellTableOOC = {
+	--cds defensive
+	{"Slow Fall", 'IsFalling() and not jps.buff("Slow Fall")' ,"player"},
+	--cds offensive
+	{ "Rune of Power", 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown("Rune Of Power")'}, 
+	{ "Arcane Brilliance", 'not jps.buff("Arcane Brilliance")' ,"player"},
+}
+jps.registerRotation("MAGE","FROST",function() 
+
+	return parseStaticSpellTable(spellTableOOC)
+end,"OOC 6.0.2 90",false,false,nil,true)
+
