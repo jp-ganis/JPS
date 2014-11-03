@@ -93,11 +93,11 @@ spellTable = {
 	{mage.counterspell, 'jps.shouldKick("target")' },
 
 	--cds defensive
-	{mage.slowFall, 'IsFalling() and not jps.buff(mage.slowFall)' ,"player"},
+	{mage.slowFall, 'jps.fallingFor() > 1.5 and not jps.buff(mage.slowFall)' ,"player"},
 	
 	--cds offensive
-	{ mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
-	{ mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)',"player" }, 
+	{mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
+	{mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)',"player" }, 
 
 	{"nested",'mage.shouldUseCDs() and jps.canDPS("target") and not jps.Moving',{
 		{mage.coldSnap, 'not jps.buff(mage.presenceOfMind) and jps.cooldown(mage.presenceOfMind) > 75 and jps.UseCDs' },
@@ -174,10 +174,10 @@ end,"Arcane Simcraft 6.0.2 90")
 
 spellTableOOC = {
 	--cds defensive
-	{mage.slowFall, 'IsFalling() and not jps.buff(mage.slowFall)' ,"player"},
+	{mage.slowFall, 'jps.fallingFor() > 1.5 and not jps.buff(mage.slowFall)' ,"player"},
 	--cds offensive
-	{ mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
-	{ mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)' },
+	{mage.runeOfPower, 'IsAltKeyDown() == true and GetCurrentKeyBoardFocus() == nil and jps.IsSpellKnown(mage.runeOfPower)'}, 
+	{mage.arcaneBrilliance, 'not jps.buff(mage.arcaneBrilliance)' },
 }
 jps.registerRotation("MAGE","ARCANE",function() 
 

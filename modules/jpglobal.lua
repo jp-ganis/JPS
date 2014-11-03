@@ -138,10 +138,45 @@ function jps.combatTime()
 	return GetTime() - jps.combatStart
 end
 
+
+--[[[
+@function jps.movingFor()
+@description 
+get's the time the player is moving
+[br][i]Usage:[/i][br]
+[code]
+jps.movingFor()
+
+[/code]
+
+
+@returns int: time in seconds
+]]--
+function jps.movingFor()
+	if not jps.Moving then return 0 end
+	return GetTime() - jps.startedMoving
+end
+
+--[[[
+@function jps.fallingFor()
+@description 
+get's the time the player is falling
+[br][i]Usage:[/i][br]
+[code]
+jps.fallingFor()
+
+[/code]
+
+
+@returns int: time in seconds
+]]--
+function jps.fallingFor()
+	if not jps.falling then return 0 end
+	return GetTime() - jps.startedFalling
+end
 ------------------------------
 -- function like C / PHP ternary operator val = (condition) ? true : false
 ------------------------------
-
 function Ternary(condition, doIt, notDo)
 	if condition then return doIt else return notDo end
 end

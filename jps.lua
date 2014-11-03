@@ -56,6 +56,9 @@ jps.NextCast = nil
 jps.Error = nil
 jps.Lag = nil
 jps.Moving = nil
+jps.startedMoving = 0
+jps.Falling = nil
+jps.startedFalling = 0
 jps.MovingTarget = nil
 jps.HarmSpell = nil
 jps.IconSpell = nil
@@ -371,7 +374,19 @@ function jps_Combat()
 	end
 	
 	-- Movement
-	jps.Moving = GetUnitSpeed("player") > 0
+	isMoving = GetUnitSpeed("player") > 0
+	if jps.Moving == false and isMoving == true then
+		jps.startedMoving = GetTime()
+	end
+	jps.Moving = isMoving
+	
+	isFalling = IsFalling()
+	if jps.falling == false and isFalling == true then
+		jps.startedFalling = GetTime()
+	end
+
+	jps.falling = isFalling
+
 	jps.MovingTarget = GetUnitSpeed("target") > 0
 	
 	if not jps.Casting and jps.ThisCast ~= nil then
