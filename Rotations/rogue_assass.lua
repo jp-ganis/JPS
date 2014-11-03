@@ -35,7 +35,6 @@ jps.registerStaticTable("ROGUE","ASSASSINATION",{
 
     -- CD's
     { jps.DPSRacial, 'jps.UseCDs' },
-    { jps.useSynapseSprings() , 'jps.useSynapseSprings() ~= "" and jps.UseCDs' },
     { jps.useTrinket(0),       'jps.UseCDs' },
     { jps.useTrinket(1),       'jps.UseCDs' },
 
