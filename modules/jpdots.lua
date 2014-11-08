@@ -110,7 +110,7 @@ function jps.dotTracker.isTrivial(unit)
 		return true
 	end
 	members = GetNumGroupMembers() or 1
-	if UnitHealth(unit) < (members * UnitHealthMax("player")) then
+	if UnitHealth(unit) < ((members * UnitHealthMax("player"))/2) then
 		return true
 	end
 	return false
