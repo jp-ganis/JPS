@@ -105,6 +105,17 @@ function jps.dotTracker.castTable(spellId, unit)
 	return dotTracker.castTableStatic(spellId, unit)()
 end
 
+function jps.dotTracker.isTrivial(unit)
+	if UnitLevel(unit) < UnitLevel("player") then 
+		return true
+	end
+	members = GetNumGroupMembers() or 1
+	if UnitHealth(unit) < (members * UnitHealthMax("player")) then
+		return true
+	end
+	return false
+end
+
 --[[[ Internal Function - Recast Logic ]]--
 function dotTracker.shouldSpellBeCast(spellId, unit)
 	if tonumber(spellId) then
@@ -115,6 +126,9 @@ function dotTracker.shouldSpellBeCast(spellId, unit)
 	-- check if we can attack
 	if not jps.canDPS(unit) then 
 		return false
+	end
+	if jps.dotTracker.isTrivial(unit) then 
+		return false 
 	end
 	
 	-- here's the actual logic
