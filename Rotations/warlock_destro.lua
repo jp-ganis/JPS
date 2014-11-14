@@ -194,8 +194,13 @@ jps.registerRotation("WARLOCK","DESTRUCTION",function()
 		if jps.canDPS("mouseover") and not jps.debuff("Empowered Touch of Y'Shaarj","mouseover") and UnitHealth("mouseover") > 10 then
 			return "Shadowburn","mouseover"
 		end
-	end
+end
 
+	if jps.IsSpellKnown(wl.spells.cataclysm) and jps.cooldown(wl.spells.cataclysm) == 0 and IsShiftKeyDown() and IsAltKeyDown() == true and not GetCurrentKeyBoardFocus() then
+		jps.Cast(wl.spells.cataclysm)
+	end --spells out of spelltable are currently necessary when they come from talents :(
+	
+	
 	if jps.IsSpellKnown("Shadowfury") and jps.cooldown("Shadowfury") == 0 and IsAltKeyDown() == true and not GetCurrentKeyBoardFocus() then
 		jps.Cast("Shadowfury")
 	end
@@ -211,7 +216,7 @@ end,"Destruction 5.3")
 -- out of combat rotation
 local spellTableOOC = {
 	{"Dark Intent",'not jps.buff("Dark Intent")',"player"},
-	{"Summon Voidwalker",'not jps.Moving and jps.talentInfo("Grimoire of Sacrifice") and not wl.hasPet() and not jps.buff("Grimoire of Sacrifice") and not jps.isRecast("Summon Voidwalker")',"player"},
+	{"Summon Voidwalker",'not jps.IsCasting("player") and not jps.Moving and jps.talentInfo("Grimoire of Sacrifice") and not wl.hasPet() and not jps.buff("Grimoire of Sacrifice") and not jps.isRecast("Summon Voidwalker")',"player"},
 	{"Grimoire of Sacrifice",'jps.talentInfo("Grimoire of Sacrifice") and wl.hasPet() and not jps.buff("Grimoire of Sacrifice")',"player"},
 }
 
