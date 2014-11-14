@@ -13,7 +13,7 @@ local function isSoulburnSoulSwapTarget(unit)
 	local burnPhase = jps.hp("target") <= 0.20;
    
    -- If focus exists and is not the same as target, consider attacking focus too
-	if not UnitExists(unit) or UnitIsFriend("player", unit) then
+	if not UnitExists(unit) or UnitIsFriend("player", unit) or  jps.dotTracker.isTrivial("target") then
 		return false
 	end
 
@@ -64,7 +64,7 @@ end
 local function cancelChannelingIfNecessary()
 
 	local stopChanneling = false
-	if UnitChannelInfo("player") == wl.spells.drainSoul then
+	if UnitChannelInfo("player") == wl.spells.drainSoul and not jps.dotTracker.isTrivial("target") then
 		if UnitClassification("target") == "worldboss" or UnitClassification("target") == "elite" then
 			local oneDotMissing, allDotsMissing = getDotStatus("target")
 			if oneDotMissing then stopChanneling = true end
@@ -126,7 +126,7 @@ local spellTable = {
 		wl.soulburnSoulSwapTable(),
 
 		-- Haunt
-		{"nested", 'not jps.isRecast(wl.spells.haunt,"target")', {
+		{"nested", 'not jps.isRecast(wl.spells.haunt,"target") ', {
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") < 1.5 and jps.hp("target") <= 0.20 and jps.soulShards() >= 1' },
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") < 1.5 and jps.soulShards() == 4'},
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") == 0 and jps.soulShards() >= 2'}, 
