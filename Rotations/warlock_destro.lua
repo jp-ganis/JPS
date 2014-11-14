@@ -129,6 +129,7 @@ local spellTable = {
 		
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.buff(wl.spells.darkSoulInstability) and jps.emberShards() >= 19 and jps.hpTotal("target") > 30000' ,"target" },
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.TimeToDie("target", 0.2) > 5.0 and jps.burningEmbers() >= 3 and jps.buffStacks(wl.spells.backdraft) < 3 and jps.hpTotal("target") > 30000' ,"target"},
+		{wl.spells.chaosBolt, 'jps.talentInfo(wl.spells.charredRemains) and not jps.Moving and jps.emberShards() >= 3' ,"target"},
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.emberShards() >= 35 and jps.hpTotal("target") > 30000' ,"target"},
 		{wl.spells.chaosBolt, 'not jps.Moving and wl.hasProc(1) and jps.emberShards() >= 10 and jps.buffStacks(wl.spells.backdraft) < 3 and jps.hpTotal("target") > 30000' ,"target"},
 		{wl.spells.conflagrate },
