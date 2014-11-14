@@ -62,6 +62,8 @@ wl.spells["shadowburn"] = toSpellName(17877)
 wl.spells["chaosBolt"] = toSpellName(116858)
 wl.spells["incinerate"] = toSpellName(29722)
 wl.spells["conflagrate"] = toSpellName(17962)
+wl.spells["charredRemains"] = toSpellName(157696)
+
 --Demonology
 wl.spells["darkSoulKnowledge"] = toSpellName(113861)
 wl.spells["metamorphosis"] = toSpellName(103958)
