@@ -142,6 +142,7 @@ local spellTable = {
 	
 	{"nested", 'jps.MultiTarget', {
 		--{wl.spells.shadowburn, 'jps.hp("target") <= 0.19 and jps.burningEmbers() > 0 and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()'  },
+		{wl.spells.chaosBolt, 'jps.talentInfo(wl.spells.charredRemains) and jps.burningEmbers >= 3'},
 		{wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player")' },
 		{wl.spells.immolate , 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(wl.spells.immolate) <= 2.0 and jps.LastCast ~= wl.spells.immolate'},
 		{wl.spells.incinerate },
