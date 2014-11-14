@@ -106,11 +106,14 @@ function jps.dotTracker.castTable(spellId, unit)
 end
 
 function jps.dotTracker.isTrivial(unit)
-	if UnitLevel(unit) ~= -1 and UnitLevel(unit) < UnitLevel("player") then 
+	if UnitLevel(unit) == -1 then return false end
+	
+	if UnitLevel(unit) < UnitLevel("player")then 
 		return true
 	end
+	
 	members = GetNumGroupMembers() or 1
-	if UnitHealth(unit) < ((members * UnitHealthMax("player"))/2) then
+	if UnitHealth(unit) < (members * UnitHealthMax("player")) then
 		return true
 	end
 	return false
