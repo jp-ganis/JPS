@@ -23,7 +23,11 @@ function isShadowBurnUnit(unit)
 	if unitHP <= 1000000 then return true end
 	return false
 end
-
+function isHavocUnit(unit) 
+	if not UnitExists(unit) then  return false end
+	if UnitIsUnit("target",unit) then return false end
+	return true
+end
 wl.extraButtons = {}
 
 function addUIButton(name, posX, posY, icon)
@@ -114,10 +118,10 @@ local spellTable = {
 
 
 	{"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
-		{wl.spells.havoc, 'not wl.btn("mouseoverGateway") and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
-		{wl.spells.havoc, 'not jps.Moving and jps.emberShards() >= 35  and jps.canDPS("focus") ', "focus"  },
-		{wl.spells.havoc, 'not jps.Moving and jps.burningEmbers() > 0 and wl.hasProc(1) and jps.emberShards() >= 15 and jps.canDPS("focus") ', "focus"  },
-								
+		{wl.spells.havoc, 'isHavocUnit("mouseover") and not wl.btn("mouseoverGateway") and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()', "mouseover" },
+		{wl.spells.havoc, 'isHavocUnit("focus") and not jps.Moving and jps.emberShards() >= 35  and jps.canDPS("focus") ', "focus"  },
+		{wl.spells.havoc, 'isHavocUnit("focus") and not jps.Moving and jps.burningEmbers() > 0 and wl.hasProc(1) and jps.emberShards() >= 15 and jps.canDPS("focus") ', "focus"  },
+		
 		{wl.spells.shadowburn, 'jps.hp("target") <= 0.19 and jps.burningEmbers() > 0 and unitNotGarroshMCed("target")'  },
 		{wl.spells.chaosBolt, 'not jps.Moving and jps.burningEmbers() > 0 and jps.buffStacks(wl.spells.havoc)>=3'},
 		{wl.spells.incinerate, 'jps.buff("backlash")'},
@@ -144,7 +148,7 @@ local spellTable = {
 	{"nested", 'jps.MultiTarget', {
 		--{wl.spells.shadowburn, 'jps.hp("target") <= 0.19 and jps.burningEmbers() > 0 and not IsShiftKeyDown() and IsControlKeyDown() and not GetCurrentKeyBoardFocus()'  },
 		{wl.spells.chaosBolt, 'jps.talentInfo(wl.spells.charredRemains) and jps.burningEmbers() >= 3'},
-		{wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player")' },
+		{wl.spells.conflagrate, 'jps.buff(wl.spells.fireAndBrimstone, "player") and GetSpellCharges(wl.spells.conflagrate) >= 2 ' },
 		{wl.spells.immolate , 'jps.buff(wl.spells.fireAndBrimstone, "player") and jps.myDebuffDuration(wl.spells.immolate) <= 2.0 and jps.LastCast ~= wl.spells.immolate'},
 		{wl.spells.incinerate },
 	}},
