@@ -90,7 +90,7 @@ wl.spells["grimoireOfService"] = toSpellName(108501)
 wl.spells["harvestLife"] = toSpellName(689)
 wl.spells["moltenCore"] = toSpellName(140074)
 wl.spells["demonicSynergy"] = toSpellName(171982)
-
+wl.spells["demonBolt"] = toSpellName(157695)
 -- Professions
 wl.spells["lifeblood"] = toSpellName(121279)
 
@@ -100,30 +100,18 @@ function wl.hasProc(min)
 	local power = 0
 	local id = 0;
 	if jps.buff(wl.spells.darkSoulMisery) then power = power +2; id = wl.spells.darkSoulMisery; end 
-	
-	if jps.buff(126577) then power = power +1; id = 126577; end  --Inner Brilliance, int
-	if jps.buff(138703) then power = power +1; id = 138703; end  --Acceleration, haste
-	if jps.buff(139133) then power = power +1; id = 139133; end  --Mastermind, int
-	if jps.buff(125487) then power = power +1; id = 125487; end 	--Lightweave, int
 	if jps.buff(wl.spells.darkSoulKnowledge) then id = 113861; power = power +1 end
 	if jps.bloodlusting() then power = power +1; id = 40; end 
-	if jps.buff(105702) then power = power +2; id = 105702; end  --potion of jade serpent
-	if jps.buff(128985) then power = power +1; id = 128985; end 	--Blessing of the Celestials, int
-	if jps.buff(104423) then power = power +1; id = 104423; end 	--Windsong, haste
-	if jps.buff(104993) then power = power +0.5; id = 104993; end --Jade Spirit, int
-	if jps.buff(126659) then power = power +1; id = 126659; end --Quickened Tongues,haste
-	if jps.buff(138786) then power = power +1; id = 138786; end --Wushoolay's Lightning,  int
-	if jps.buff(138788) then power = power +1; id = 138788; end --Electrified, int
-	if jps.debuff(138002) then power = power +1; id = 138002; end  --fluidity jinrokh, dmg
-	if jps.buff(112879) then power = power +1; id = 112879; end  -- primal nutriment jikun, dmg
-	if jps.buff(138963) then power = power +1; id = 138963; end  --Perfect Aim, 1005 crit
-	--t16
+	if jps.buff(156426) then power = power +2; id = 156426; end  --draenic intellect potion
 
-	if jps.buff(146046) then power = power +1; id = 146046; end  -- expanded mind, immerseus trinket, int
-	if jps.buff(148906) then power = power +1; id = 148906; end  -- toxic power, shamans trinket, int
-	if jps.buff(146184) then power = power +1; id = 146184; end  -- garrosh trinket, int
-	if jps.buff(148897) then power = power +1; id = 148897; end  -- malkorok trinket int
-	if jps.buff(171982) then power = power +1; id = 171982; end  -- demonic synergy demo
+	if jps.buff(162919) then power = power +1; id = 162919; end  -- nightmare fire , darkmoon trinket, crit
+	if jps.buff(177594) then power = power +1; id = 177594; end  -- sudden clarity, boe trinket, sp
+	if jps.buff(165832) then power = power +1; id = 165832; end  -- multistrike, dungeon trinket, multistrike
+	if jps.buff(171982) then power = power +1; id = 171982; end  -- demonic synergy demoq
+	if jps.buff(177052) then power = power +1; id = 177052; end  -- Darmac's Unstable Talisman
+	if jps.buff(177085) then power = power +1; id = 177085; end  -- Blackiron Micro Crucible
+	if jps.buff(177047) then power = power +1; id = 177047; end  -- Goren Soul Repository
+	if jps.buff(176875) then power = power +1; id = 176875; end  -- Shards of Nothing
 	
 	local durationLeft = 0;
 	
