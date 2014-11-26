@@ -312,7 +312,7 @@ end
 
 -- set's jps.NextSpell if user manually uses a spell/item
 hooksecurefunc("UseAction", function(...)
-	if jps.Enabled and (select(1, ...) ~= false) and InCombatLockdown() == true then
+	if jps.Enabled and (select(3, ...) ~= nil) and InCombatLockdown() == true  then
 		local stype,id,_ = GetActionInfo(select(1, ...))
 		if stype == "spell" then
 			local name = select(1,GetSpellInfo(id))
@@ -323,9 +323,38 @@ hooksecurefunc("UseAction", function(...)
 				end
 			end
 		end
+		if stype == "item" then
+			local res = jps.useBagItem(id)
+			
+			if res == nil and IsEquippedItem(id) then
+				slot = select(9, GetItemInfo(id))
+				if string.find(slot, "TRINKET") ~= nil then
+					s1 = select(1,GetInventorySlotInfo("Trinket0Slot"))
+					s2 = select(1,GetInventorySlotInfo("Trinket1Slot"))
+					t1 = GetInventoryItemID("player", s1)
+					t2 = GetInventoryItemID("player", s2)
+
+					if t1 == id then
+						jps.NextSpell = "/use "..s1
+					end
+					if t2 == id then
+						jps.NextSpell = "/use "..s2
+					end
+					
+				end
+			end
+			if res ~= nil then
+				jps.NextSpell = res[2]
+			end
+		end
+		if stype == "macro" then
+			macroText = select(3, GetMacroInfo(id))
+			if string.find(macroText,"jps") == nil then
+				jps.NextSpell = macroText
+			end
+		end
 	end
 end)
-
 ------------------------
 -- COMBAT
 ------------------------
@@ -391,15 +420,21 @@ function jps_Combat()
 	
 	if not jps.Casting and jps.ThisCast ~= nil then
 		if jps.NextSpell ~= nil then
-			if jps.canCast(jps.NextSpell, jps.Target) then
-				jps.Cast(jps.NextSpell)
-				if jps.getConfigVal("print manually casted spells") == 1 then
-					write("Next Spell "..jps.NextSpell.. " was casted")
-				end
+			if string.find(jps.NextSpell,"/") ~= nil then
+				jps.Macro(jps.NextSpell)
+
 				jps.NextSpell = nil
 			else
-				if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
-				jps.Cast(jps.ThisCast)
+				if jps.canCast(jps.NextSpell, jps.Target) then
+					jps.Cast(jps.NextSpell)
+					if jps.getConfigVal("print manually casted spells") == 1 then
+						write("Next Spell "..jps.NextSpell.. " was casted")
+					end
+					jps.NextSpell = nil
+				else
+					if jps.cooldown(jps.NextSpell) > 3 then jps.NextSpell = nil end
+					jps.Cast(jps.ThisCast)
+				end
 			end
 		else
 			jps.Cast(jps.ThisCast)
