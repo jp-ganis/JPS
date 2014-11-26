@@ -236,7 +236,7 @@ end
 -- "Summon Black Ox Statue" - 115315 - Monk 
 -- "cataclysm" - 152108 Warlock
 -- "earthquake" - 61882 shaman 
-- "binding shot" - 109248 hunter 
+-- "binding shot" - 109248 hunter 
 
 --JPTODO: 6.0 jps.spellNeedSelectTable need new spell Ids for new ground spells
 jps.spellNeedSelectTable = {109248,30283,88685,724,32375,43265,62618,2120,104233,115180,114158,73921,88747, 82939, 82941, 60192, 115313, 115460, 114192, 6544, 33395, 116011, 5740, 115315, 152108,61882}
