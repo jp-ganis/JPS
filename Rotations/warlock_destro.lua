@@ -18,7 +18,7 @@ function isShadowBurnUnit(unit)
 	if jps.emberShards() >= 35 then return true end
 	if jps.buffStacks(wl.spells.havoc)>=1 then return true end
 	if wl.hasProc(1) then return true end
-	unitHP = jps.hp(unit, "abs")
+	unitHP = jps.hpTotal(unit)
 	if unitHP > 5000000 then return false end
 	if unitHP <= 1000000 then return true end
 	return false
