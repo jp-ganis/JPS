@@ -342,6 +342,7 @@ hooksecurefunc("UseAction", function(...)
 					end
 					
 				end
+				-- this does not work for engineer glider / nitro boots... coming soon!
 			end
 			if res ~= nil then
 				jps.NextSpell = res[2]
