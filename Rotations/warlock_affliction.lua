@@ -1,7 +1,7 @@
-local function getDotStatus(unit)
+function getDotStatus(unit)
 	local castCorruption = jps.myDebuffDuration("corruption" ,unit) <= 3
-	local castAgony = jps.myDebuffDuration("agony", unit) <= 3
-	local castUnstableAffliction = jps.myDebuffDuration("unstableAffliction", unit) <= 3
+	local castAgony = jps.myDebuffDuration("agony", unit) <= 4
+	local castUnstableAffliction = jps.myDebuffDuration("Unstable Affliction", unit) <= 3
 	return (castCorruption or castAgony or castUnstableAffliction), (castCorruption and castAgony and castUnstableAffliction)
 end
 
@@ -63,8 +63,8 @@ end
 -- aborts channeling spells, if necessary
 local function cancelChannelingIfNecessary()
 
-	local stopChanneling = false
 	if UnitChannelInfo("player") == wl.spells.drainSoul and not jps.dotTracker.isTrivial("target") then
+	local stopChanneling = false
 		if UnitClassification("target") == "worldboss" or UnitClassification("target") == "elite" then
 			local oneDotMissing, allDotsMissing = getDotStatus("target")
 			if oneDotMissing then stopChanneling = true end
@@ -98,12 +98,17 @@ function wl.socDuration(unit,soulburned)
 	return 0
 end
 
+function wl.canSoulSwap()
+	if not UnitExists("mouseover") then return false end
+	if jps.myDebuff(wl.spells.corruption) and jps.myDebuff(wl.spells.agony) and  jps.myDebuff(wl.spells.unstableAffliction) and not jps.buff("soul swap") and jps.soulShards() >= 1 and IsShiftKeyDown() == true and IsAltKeyDown() == true and jps.canDPS("mouseover") and not UnitIsUnit("target","mouseover") then
+		return true
+	end
+	return false
+end
 
 
 local spellTable = {
-	{"soulburn", 'jps.soulShards() > 1 and IsShiftKeyDown() == true and IsControlKeyDown() == true and not jps.buff("soulburn")',"target"},
-	{"soul swap", 'jps.buff("soulburn") and IsShiftKeyDown() == true and IsControlKeyDown() == true ',"target"},
-	
+
 	-- Interrupts
 	wl.getInterruptSpell("target"),
 	wl.getInterruptSpell("focus"),
@@ -114,7 +119,11 @@ local spellTable = {
 	{ jps.useBagItem(5512), 'jps.hp("player") < 0.65' }, -- Healthstone
 	
 	-- CD's
-	{ {"macro","/cast " .. wl.spells.darkSoulMisery}, 'jps.cooldown(wl.spells.darkSoulMisery) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulMisery) and wl.hasProc(1) == true' },
+	{"soul swap", 'wl.canSoulSwap()',"target"},
+	{"soul swap", 'jps.buff("soul swap") and jps.canDPS("mouseover")',"mouseover"},
+	
+	
+	{ {"macro","/cast " .. wl.spells.darkSoulMisery}, 'jps.cooldown(wl.spells.darkSoulMisery) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulMisery) ' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
 	{ jps.useTrinket(0),	   'jps.UseCDs' },
@@ -123,7 +132,6 @@ local spellTable = {
 	{"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
 		-- Life Tap
 		{wl.spells.lifeTap, 'jps.mana() < 0.4 and jps.mana() < jps.hp("player")' },
-		wl.soulburnSoulSwapTable(),
 
 		-- Haunt
 		{"nested", 'not jps.isRecast(wl.spells.haunt,"target") ', {
@@ -143,7 +151,7 @@ local spellTable = {
 		{wl.spells.drainSoul },
 	}},
 	{"nested", 'not jps.MultiTarget and IsAltKeyDown()', {
-		wl.soulburnSoulSwapTable(),
+	
 		jps.dotTracker.castTableStatic("agony"),
 		jps.dotTracker.castTableStatic("corruption"),
 
@@ -185,6 +193,11 @@ Modifiers:[br]
 jps.registerRotation("WARLOCK","AFFLICTION",function()
 	wl.deactivateBurningRushIfNotMoving(1)
 
+	if jps.IsSpellKnown("Shadowfury") and jps.cooldown("Shadowfury") == 0 and IsAltKeyDown() == true and not GetCurrentKeyBoardFocus() and  IsShiftKeyDown() == false and  IsControlKeyDown() == false then
+		jps.Cast("Shadowfury")
+	end --spells out of spelltable are currently necessary when they come from talents :(
+	
+	
 	if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
 		SpellStopCasting()
 		jps.NextSpell = nil
