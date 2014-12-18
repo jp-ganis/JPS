@@ -48,6 +48,9 @@ wl.spells["drainSoul"] = toSpellName(103103)
 wl.spells["lifeTap"] = toSpellName(1454)
 wl.spells["soulSwap"] = toSpellName(86121)
 wl.spells["soulburn"] = toSpellName(74434)
+wl.spells["agony"] = toSpellName(980)
+wl.spells["unstableAffliction"] = toSpellName(30108)
+
 --Destruction
 wl.spells["immolate"] = toSpellName(348)
 wl.spells["felFlame"] = toSpellName(77799)
