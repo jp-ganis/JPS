@@ -206,4 +206,4 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
 	cancelChannelingIfNecessary()
 
 	return parseStaticSpellTable(spellTable)
-end,"Affliction 5.3")
+end,"Affliction 6.0.2")
