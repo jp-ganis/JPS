@@ -61,16 +61,17 @@ end
 
 
 -- aborts channeling spells, if necessary
-local function cancelChannelingIfNecessary()
-
-	if UnitChannelInfo("player") == wl.spells.drainSoul and not jps.dotTracker.isTrivial("target") then
-	local stopChanneling = false
-		if UnitClassification("target") == "worldboss" or UnitClassification("target") == "elite" then
-			local oneDotMissing, allDotsMissing = getDotStatus("target")
+local function cancelChannelingIfNecessary(unit)
+	stopChanneling = false
+	if UnitChannelInfo("player") == wl.spells.drainSoul and not jps.dotTracker.isTrivial(unit) then
+		local stopChanneling = false
+		if UnitClassification(unit) == "worldboss" or UnitClassification(unit) == "elite" then
+			local oneDotMissing, allDotsMissing = getDotStatus(unit)
 			if oneDotMissing then stopChanneling = true end
 		end
 	end
 	if IsAltKeyDown() or IsControlKeyDown() then stopChanneling  = true end 
+
 	if stopChanneling then
 		SpellStopCasting()
 		jps.NextSpell = nil
@@ -99,8 +100,7 @@ function wl.socDuration(unit,soulburned)
 end
 
 function wl.canSoulSwap()
-	if not UnitExists("mouseover") then return false end
-	if jps.myDebuff(wl.spells.corruption) and jps.myDebuff(wl.spells.agony) and  jps.myDebuff(wl.spells.unstableAffliction) and not jps.buff("soul swap") and jps.soulShards() >= 1 and IsShiftKeyDown() == true and IsAltKeyDown() == true and jps.canDPS("mouseover") and not UnitIsUnit("target","mouseover") then
+	if jps.myDebuff(wl.spells.corruption) and jps.myDebuff(wl.spells.agony) and  jps.myDebuff(wl.spells.unstableAffliction) and not jps.buff("soul swap") and jps.soulShards() >= 1 and IsShiftKeyDown() == true and IsAltKeyDown() == true and not UnitIsUnit("target","mouseover") then
 		return true
 	end
 	return false
@@ -168,6 +168,7 @@ local spellTable = {
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") < 1.5 and jps.hp("target") <= 0.20 and jps.soulShards() >= 1' },
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") < 1.5 and jps.soulShards() == 4'},
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") == 0 and jps.soulShards() >= 2'},
+			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "mouseover") == 0 and jps.soulShards() >= 2 and jps.canDPS("mouseover")',"mouseover"},
 			{wl.spells.haunt, 'jps.myDebuffDuration(wl.spells.haunt, "target") == 0 and jps.buff(wl.spells.darkSoulMisery) and jps.soulShards() >= 1'},
 		}},
 		{wl.spells.drainSoul },
@@ -198,12 +199,14 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
 	end --spells out of spelltable are currently necessary when they come from talents :(
 	
 	
-	if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 then
+	if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 and  IsShiftKeyDown() == false and  IsControlKeyDown() == false then
 		SpellStopCasting()
 		jps.NextSpell = nil
 	end
 
-	cancelChannelingIfNecessary()
-
+	cancelChannelingIfNecessary("target")
+	cancelChannelingIfNecessary("boss1")
+	cancelChannelingIfNecessary("boss2")
+	
 	return parseStaticSpellTable(spellTable)
-end,"Affliction 6.0.2")
+end,"Affliction 5.3")
