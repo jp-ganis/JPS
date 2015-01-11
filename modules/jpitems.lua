@@ -1,12 +1,26 @@
---[[[
-@module Functions: Items & Equipment
-@description
-Functions which handle Items (e.g. trinkets, items in bag)
+--[[
+	 JPS - WoW Protected Lua DPS AddOn
+	Copyright (C) 2011 Jp Ganis
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 ]]--
 
-
+--------------------------
+-- LOCALIZATION
+--------------------------
 local L = MyLocalizationTable
---JPTODO: 6.0 Remove jps.glovesCooldown)
+
 function jps.glovesCooldown()
 	local start, duration, enabled = GetInventoryItemCooldown("player", 10)
 	if enabled==0 then return 999 end
@@ -16,19 +30,6 @@ function jps.glovesCooldown()
 end
 
 local useBagItemMacros = {}
---[[[
-@function jps.useBagItem
-@description 
-uses a item in our bag
-[br][i]Usage:[/i][br]
-[code]
-jps.useBagItem("Healthstone")
-
-[/code]
-@param string: Item Name
-
-@returns nil
-]]--
 function jps.useBagItem(itemName)
 	if type(itemName) == "number" then
 		itemName, _ = GetItemInfo(itemName) -- get localized name when ID is passed
@@ -102,7 +103,6 @@ jps.validTrinketStringsMana = {
 	{L["Use"], "Spirit"},
 	{L["Use"], "Mana"},
 }
-
 function jps.isManaRegTrinket(trinket)
 	for k,valTable in pairs(jps.validTrinketStringsMana) do 
 		if parseTrinketText(trinket, valTable) == true then
@@ -157,19 +157,6 @@ function jps.itemCooldown(item) -- start, duration, enable = GetItemCooldown(ite
 end
 
 local useSlotMacros = {}
---[[[
-@function jps.useSlot
-@description 
-tries to use a slot we have equipped (e.g. glider, nitro boost etc..)
-[br][i]Usage:[/i][br]
-[code]
-jps.useSlot(10)
-
-[/code]
-@param int: slotID from our equipment
-
-@returns nil
-]]--
 function jps.useSlot(num)
 	-- get the Trinket ID
 	local trinketId = GetInventoryItemID("player", num)
@@ -193,20 +180,29 @@ function jps.useSlot(num)
 	return useSlotMacros[num]
 end
 
--- For trinket's. Pass 0 or 1 for the number.
---[[[
-@function jps.useTrinket
-@description 
-uses a on-use trinket
-[br][i]Usage:[/i][br]
-[code]
-jps.useTrinket(0)[br]
-jps.useTrinket(1)
-[/code]
-@param int: trinket number (0 or 1)
+function jps.useEquipSlot(num)
+	-- get the Trinket ID
+	local trinketId = GetInventoryItemID("player", num)
+	if not trinketId then return false end
 
-@returns nil
-]]--
+	-- Check if it's on cooldown
+	local trinketCd = jps.itemCooldown(trinketId)
+	if trinketCd > 0 then return false end
+
+	 -- Check if it's usable
+	local trinketUsable = GetItemSpell(trinketId)
+	if not trinketUsable then return false end
+
+	-- Abort Disenchant (or any Spell Targeting) if active
+	if SpellIsTargeting() then
+		SpellStopTargeting()
+	end
+
+	-- Use it
+	return true
+end
+
+-- For trinket's. Pass 0 or 1 for the number.
 function jps.useTrinket(trinketNum)
 	-- The index actually starts at 0
 	local slotName = "Trinket"..(trinketNum).."Slot" -- "Trinket0Slot" "Trinket1Slot"
@@ -215,4 +211,23 @@ function jps.useTrinket(trinketNum)
 	local slotId = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
 
 	return jps.useSlot(slotId)
+end
+
+function jps.useTrinketBool(trinketNum)
+   -- The index actually starts at 0
+   local slotName = "Trinket"..(trinketNum).."Slot" -- "Trinket0Slot" "Trinket1Slot"
+   
+   -- Get the slot ID
+   local slotId = select(1,GetInventorySlotInfo(slotName)) -- "Trinket0Slot" est 13 "Trinket1Slot" est 14
+   -- get the Trinket ID
+   local trinketId = GetInventoryItemID("player", slotId)
+   if not trinketId then return false end
+   -- Check if it's on cooldown
+   local trinketCd = jps.itemCooldown(trinketId)
+   if trinketCd > 0 then return false end
+   -- Check if it's usable
+   local trinketUsable = GetItemSpell(trinketId)
+   if not trinketUsable then return false end
+
+   return true
 end
