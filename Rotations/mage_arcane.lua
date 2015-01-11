@@ -55,9 +55,12 @@ mage.hasRune = function()
 end
 
 mage.hasCrystal = function()
-	return false
+	return UnitName("target") == "Prismatic Crystal"
 end
 mage.crystalTimeLeft = function()
+	if mage.hasCrystal() then
+		return jps.mana("target") * 12 
+	end
 	return 0
 end
 
@@ -69,6 +72,7 @@ mage.supernovaCharges = function()
 	return cur
 end
 mage.targetIsCrystal = function()
+	if not UnitExists("target") then return false end 
 	if UnitName("target") == mage.prismaticCrystal then
 		return true
 	end
@@ -84,6 +88,7 @@ mage.spellhasteCalc = function(no)
 end
 mage.canCastWhileMove = function()
 	local cur, max = GetSpellCharges(mage.iceFloes)
+	if not cur then return false end
 	if cur > 0 or jps.buff(mage.aspecOfTheFox) then
 		return true
 	end
@@ -103,6 +108,8 @@ spellTable = {
 	{"nested",'mage.shouldUseCDs() and jps.canDPS("target") and not jps.Moving',{
 		{mage.coldSnap, 'not jps.buff(mage.presenceOfMind) and jps.cooldown(mage.presenceOfMind) > 75 and jps.UseCDs' },
 		{mage.mirrorImage, 'jps.UseCDs' },
+        { {"macro","/use 13"}, 'jps.useEquipSlot(13)'},
+        { {"macro","/use 14"}, 'jps.useEquipSlot(14)'},
 		{mage.arcanePower},
 		{mage.bloodFury},
 		{mage.berserking}
@@ -110,7 +117,7 @@ spellTable = {
 	}},
 	
 	--prepare crsytal
-	{"nested","jps.cooldown(mage.prismaticCrystal) == 0", {
+	{"nested","jps.cooldown(mage.prismaticCrystal) == 0 and IsShiftKeyDown()", {
 		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcanePower) < 0.5'},
 		{mage.prismaticCrystal, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.cooldown(mage.arcanePower) > 45 and jps.glyphInfo(62210)'},
 	}},
@@ -126,20 +133,25 @@ spellTable = {
 		{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player") >= 4'},
 		{mage.arcaneOrb,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4'},
 		{mage.coneOfCold,'jps.glyphInfo(115705)'},
+		{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player")==4' },
 		{mage.arcaneExplosion}
 	}},
 	
 	--burn
 	{"nested","mage.shouldBurn()",{
-		{mage.arcaneMissiles, 'jps.buff(mage.arcaneMissiles)==3 and jps.ChannelTimeLeft("player") == 0' },
+		{mage.arcaneMissiles, 'jps.buffStacks(mage.arcaneMissiles)==3 and jps.ChannelTimeLeft("player") == 0' },
 		{mage.arcaneMissiles, 'jps.buff(mage.arcaneInstability) and jps.buffDuration(mage.arcaneInstability) < jps.spellCastTime(mage.arcaneBlast) and jps.ChannelTimeLeft("player") == 0' },
+		{mage.arcaneMissiles, 'jps.buffStacks(mage.arcaneMissilesBuff) > 0 and mage.targetIsCrystal()' },
+
 		{mage.supernova, 'jps.TimeToDie("target") < 8 or mage.supernovaCharges()==2 ' },
+		{mage.supernova, 'jps.cooldown("prismatic crystal") > 24 and jps.talentInfo("Pristmatic Crystal")' },
+
 		{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
-		{mage.arcaneOrb, 'jps.buffStacks(arcaneCharge) < 4' },
+		{mage.arcaneOrb, 'jps.buffStacks(mage.arcaneCharge) < 4' },
 		{mage.supernova, 'mage.targetIsCrystal()' },
 		{mage.presenceOfMind, 'jps.mana() > 0.96 and not jps.Moving' },
-		{mage.arcaneBlast, 'jps.buffStacks(arcaneCharge)>=4 and jps.mana() > 0.93' },
-		{mage.arcaneMissiles, 'jps.buffStacks(arcaneCharge)>=4 and jps.ChannelTimeLeft("player") == 0' },
+		{mage.arcaneBlast, 'jps.buffStacks(mage.arcaneCharge)>=4 and jps.mana() > 0.93' },
+		{mage.arcaneMissiles, 'jps.buffStacks(mage.arcaneCharge)>=4 and jps.ChannelTimeLeft("player") == 0' },
 		{mage.supernova, 'jps.mana() < 0.96' },
 		
 		--{callactionlist,mage.name==mage.conserve, 'jps.cooldown(mage.evocation)-jps.cooldown(mage.evocation) < 5 ' },
@@ -148,11 +160,15 @@ spellTable = {
 		{mage.arcaneBlast, 'not jps.Moving or mage.canCastWhileMove()' },
 	}},
 	--low mana
-	{mage.arcaneMissiles, 'jps.buff(mage.arcaneMissiles)==3 or (jps.talentInfo(mage.overpowered) and jps.buff(mage.arcanePower) and jps.buffDuration(mage.arcanePower) < jps.spellCastTime(mage.arcaneBlast)) and jps.ChannelTimeLeft("player") == 0' },
+	{mage.arcaneMissiles, 'jps.buffStacks(mage.arcaneMissilesBuff)==3 or (jps.talentInfo(mage.overpowered) and jps.buff(mage.arcanePower) and jps.buffDuration(mage.arcanePower) < jps.spellCastTime(mage.arcaneBlast)) and jps.ChannelTimeLeft("player") == 0' },
 	{mage.arcaneMissiles, 'jps.buff(mage.arcaneInstability) and jps.buffDuration(mage.arcaneInstability) < jps.spellCastTime(mage.arcaneBlast) and jps.ChannelTimeLeft("player") == 0' },
+	{mage.arcaneMissiles, 'jps.buffStacks(mage.arcaneMissilesBuff) > 0 and mage.targetIsCrystal()' },
+
 	{mage.netherTempest,'jps.debuffStacks(mage.arcaneCharge,"player") >= 4 and jps.myDebuffDuration(mage.netherTempest) < 3.5'},
 	{mage.supernova, 'jps.TimeToDie("target") < 8' },
-	{mage.supernova, 'jps.buff(mage.arcanePower) and not mage.hasCrystal() and mage.supernovaCharges() == 2' },
+	{mage.supernova, 'jps.buff(mage.arcanePower)' },
+	{mage.supernova, 'jps.cooldown("prismatic crystal") > 24 and jps.talentInfo("Pristmatic Crystal")' },
+
 	{mage.arcaneOrb, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2' },
 	{mage.presenceOfMind, 'jps.mana() > 0.96  and not jps.Moving' },
 	{mage.arcaneBlast, 'jps.debuffStacks(mage.arcaneCharge,"player")==4 and jps.mana() > 0.93' },
@@ -163,7 +179,8 @@ spellTable = {
 	{mage.arcaneBarrage, 'jps.debuffStacks(mage.arcaneCharge,"player")==4' },
 	{mage.presenceOfMind, 'jps.debuffStacks(mage.arcaneCharge,"player") < 2  and not jps.Moving' },
 	{mage.arcaneBlast, 'not jps.Moving or mage.canCastWhileMove()' },
-	{mage.arcaneBarrage,'jps.Moving'},
+	{mage.arcaneBarrage,'jps.Moving and jps.buffStacks(mage.arcaneMissilesBuff) == 0'},
+
 }
 
 jps.registerRotation("MAGE","ARCANE",function() 
