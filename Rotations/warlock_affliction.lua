@@ -1,6 +1,6 @@
 function getDotStatus(unit)
 	local castCorruption = jps.myDebuffDuration("corruption" ,unit) <= 3
-	local castAgony = jps.myDebuffDuration("agony", unit) <= 4
+	local castAgony = jps.myDebuffDuration("agony", unit) <= 5
 	local castUnstableAffliction = jps.myDebuffDuration("Unstable Affliction", unit) <= 3
 	return (castCorruption or castAgony or castUnstableAffliction), (castCorruption and castAgony and castUnstableAffliction)
 end
@@ -63,16 +63,17 @@ end
 -- aborts channeling spells, if necessary
 local function cancelChannelingIfNecessary(unit)
 	stopChanneling = false
-	if UnitChannelInfo("player") == wl.spells.drainSoul and not jps.dotTracker.isTrivial(unit) then
+	if not UnitExists(unit) then return false end
+	if UnitChannelInfo("player") == wl.spells.drainSoul and jps.dotTracker.isTrivial(unit) == false then
 		local stopChanneling = false
-		if UnitClassification(unit) == "worldboss" or UnitClassification(unit) == "elite" then
+		if UnitLevel(unit) == -1 or UnitClassification(unit) == "elite" then
 			local oneDotMissing, allDotsMissing = getDotStatus(unit)
 			if oneDotMissing then stopChanneling = true end
 		end
 	end
 	if IsAltKeyDown() or IsControlKeyDown() then stopChanneling  = true end 
 
-	if stopChanneling then
+	if stopChanneling == true then
 		SpellStopCasting()
 		jps.NextSpell = nil
 	end
@@ -126,8 +127,8 @@ local spellTable = {
 	{ {"macro","/cast " .. wl.spells.darkSoulMisery}, 'jps.cooldown(wl.spells.darkSoulMisery) == 0 and jps.UseCDs and not jps.buff(wl.spells.darkSoulMisery) ' },
 	{ jps.getDPSRacial(), 'jps.UseCDs' },
 	{ wl.spells.lifeblood, 'jps.UseCDs' },
-	{ jps.useTrinket(0),	   'jps.UseCDs' },
-	{ jps.useTrinket(1),	   'jps.UseCDs' },	
+	{ {"macro","/use 13"}, 'jps.useEquipSlot(13) and jps.UseCDs'},
+	{ {"macro","/use 14"}, 'jps.useEquipSlot(14) and jps.UseCDs'},
 
 	{"nested", 'not jps.MultiTarget and not IsAltKeyDown()', {
 		-- Life Tap
@@ -143,10 +144,11 @@ local spellTable = {
 		-- DoT's
 
 		jps.dotTracker.castTableStatic("agony"),
+		jps.dotTracker.castTableStatic("corruption"),
 		{"nested", 'not jps.Moving', {
 			jps.dotTracker.castTableStatic("Unstable Affliction"),
 		}},
-		jps.dotTracker.castTableStatic("corruption"),
+		
 		-- Filler
 		{wl.spells.drainSoul },
 	}},
@@ -198,6 +200,16 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
 		jps.Cast("Shadowfury")
 	end --spells out of spelltable are currently necessary when they come from talents :(
 	
+	if IsShiftKeyDown() and not IsAltKeyDown() and not IsControlKeyDown() and jps.canDPS("mouseover") and not jps.IsCastingSpell("Fear","player") then
+		jps.Target = "mouseover"
+		jps.Cast("Fear")
+	end
+	
+	if not IsShiftKeyDown() and not IsAltKeyDown() and  IsControlKeyDown() and jps.canDPS("mouseover")  then
+		jps.Target = "mouseover"
+		jps.Cast("Shadow Lock")
+	end
+
 	
 	if IsAltKeyDown() and jps.CastTimeLeft("player") >= 0 and  IsShiftKeyDown() == false and  IsControlKeyDown() == false then
 		SpellStopCasting()
@@ -207,6 +219,10 @@ jps.registerRotation("WARLOCK","AFFLICTION",function()
 	cancelChannelingIfNecessary("target")
 	cancelChannelingIfNecessary("boss1")
 	cancelChannelingIfNecessary("boss2")
-	
+	cancelChannelingIfNecessary("boss3")
+	cancelChannelingIfNecessary("boss4")
+	cancelChannelingIfNecessary("boss5")
+	cancelChannelingIfNecessary("boss6")
+	cancelChannelingIfNecessary("mouseover")
 	return parseStaticSpellTable(spellTable)
 end,"Affliction 5.3")
