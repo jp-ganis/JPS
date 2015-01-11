@@ -18,7 +18,6 @@ wl.spells["opticalBlast"] = toSpellName(119911)
 wl.spells["spellLock"] = toSpellName(19647)
 wl.spells["mortalCoil"] = toSpellName(6789)
 wl.spells["createHealthstone"] = toSpellName(6201)
-wl.spells["curseOfTheElements"] = toSpellName(1490)
 wl.spells["demonicCircleSummon"] = toSpellName(48018)
 wl.spells["demonicCircleTeleport"] = toSpellName(48020)
 wl.spells["demonicGateway"] = toSpellName(113901)
@@ -37,7 +36,6 @@ wl.spells["burningRush"] = toSpellName(111400)
 wl.spells["soulStone"] = toSpellName(20707)
 wl.spells["shadowfury"] = toSpellName(30283)
 wl.spells["cataclysm"] = toSpellName(152108)
-
 --Affliction
 wl.spells["corruption"] = toSpellName(172)
 wl.spells["darkSoulMisery"] = toSpellName(113860)
@@ -50,7 +48,6 @@ wl.spells["soulSwap"] = toSpellName(86121)
 wl.spells["soulburn"] = toSpellName(74434)
 wl.spells["agony"] = toSpellName(980)
 wl.spells["unstableAffliction"] = toSpellName(30108)
-
 --Destruction
 wl.spells["immolate"] = toSpellName(348)
 wl.spells["felFlame"] = toSpellName(77799)
@@ -66,7 +63,6 @@ wl.spells["chaosBolt"] = toSpellName(116858)
 wl.spells["incinerate"] = toSpellName(29722)
 wl.spells["conflagrate"] = toSpellName(17962)
 wl.spells["charredRemains"] = toSpellName(157696)
-
 --Demonology
 wl.spells["darkSoulKnowledge"] = toSpellName(113861)
 wl.spells["metamorphosis"] = toSpellName(103958)
@@ -92,10 +88,10 @@ wl.spells["grimoireFelguard"] = toSpellName(111898)
 wl.spells["grimoireOfService"] = toSpellName(108501)
 wl.spells["harvestLife"] = toSpellName(689)
 wl.spells["moltenCore"] = toSpellName(140074)
-wl.spells["demonicSynergy"] = toSpellName(171982)
 wl.spells["demonBolt"] = toSpellName(157695)
 -- Professions
 wl.spells["lifeblood"] = toSpellName(121279)
+
 
 
 -- check if our procs are up
@@ -115,7 +111,6 @@ function wl.hasProc(min)
 	if jps.buff(177085) then power = power +1; id = 177085; end  -- Blackiron Micro Crucible
 	if jps.buff(177047) then power = power +1; id = 177047; end  -- Goren Soul Repository
 	if jps.buff(176875) then power = power +1; id = 176875; end  -- Shards of Nothing
-	
 	local durationLeft = 0;
 	
 	if id ~= 40 and id ~= 138002 and id ~= 0 then
@@ -146,6 +141,8 @@ function wl.getInterruptSpell(unit)
 			canInterrupt = true
 		elseif jps.canCast("Command Demon", unit) and select(3,GetSpellInfo("Command Demon"))=="Interface\\Icons\\Spell_Shadow_MindRot" then -- GoSac Felhunter
 			canInterrupt = true
+		elseif jps.canCast("Command Demon", unit) and select(3,GetSpellInfo("Command Demon"))=="Interface\\Icons\\Spell_Shadow_PainAndSuffering" then -- GoSac terroguard
+			canInterrupt = true
 		end
 		local shouldInterrupt = jps.Interrupts and jps.shouldKick(unit) and jps.CastTimeLeft(unit) < wl.maxIntCastLength
 		interruptSpellTables[unit][2] = canInterrupt and shouldInterrupt
@@ -165,8 +162,7 @@ wl.attackFocus = jps.cachedValue(function()
 end)
 
 function wl.hasPet()
-	if UnitExists("pet") == false then return false end
-	return true
+	return UnitExists("pet")
 end
 	
 -- Deactivate Burning Rush after n seconds of not moving
