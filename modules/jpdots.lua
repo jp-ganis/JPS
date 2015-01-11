@@ -79,7 +79,46 @@ function jps.dotTracker.castTableStatic(spellId, unit)
 		end
 	end
 end
+--[[[
+@function jps.dotTracker.castTableStaticOtherUnits
+@description 
+Generates a static Spell Table Function for the given DoT for old-style Spell Tables.[br]
+The DoT Tracker will track your DoT's on all valid units except your current target ( [code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code]) and will tell you when to recast the spell.
+If it is pandemic safe and you don't loose DPS your DoT's will always be re-applied. If it is not pandemic safe
+[br]
+[br][i]Usage:[/i][br]
+[code]
+local staticSpellTable = {[br]
+...[br]
+jps.dotTracker.castTable("Immolate"),[br]
+...[br]
+}[br]
+[/code]
+@param spellID Spell-ID to cast, can be a spell name, a spell id
+@param unit [i]Optional:[/i] Unit to cast upon, if [code]nil[/code] all of [code]target[/code], 
+			[code]focus[/code], [code]mouseover[/code] and [code]boss1-4[/code] will be tried in this order
+@returns Spell-Table Function for static Spell Tables
+]]--
+function jps.dotTracker.castTableStaticOtherUnits(spellId)
+	-- find actual spell id, it was given as spell table key or spell table entry
+		return function()
 
+		local name,rank,_ = GetSpellInfo(spellId)
+		-- if no unit is given, try all of them
+		if not unit then
+			for i, dottableUnit in ipairs(dotTracker.dottableUnits) do
+				if UnitExists(unit) then
+					if dotTracker.shouldSpellBeCast(spellId, dottableUnit) and ( not UnitIsUnit(unit, "target") or unit ~= "target")then
+						return dotTracker.setStaticResult(spellId, name, true, dottableUnit)
+					end 
+				end
+			end		   
+			return dotTracker.setStaticResult(spellId, name, false)
+		else
+			return dotTracker.setStaticResult(spellId, name, dotTracker.shouldSpellBeCast(spellId, unit), unit)
+		end
+	end
+end
 
 --[[[
 @function jps.dotTracker.castTable
