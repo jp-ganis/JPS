@@ -28,7 +28,7 @@ druidBalance.starsurgeRecharge = function()
 end
 
 druidBalance.eclipseChange = function() 
-	local cycleTime = 30/2
+	local cycleTime = 40/2
 	if jps.talentInfo("Euphoria") then
 		cycleTime = cycleTime/2
 	end
@@ -39,7 +39,7 @@ druidBalance.eclipseChange = function()
 	if power == 0 then power =  1 end
 	if power < 0 then power = power *-1 end
 	
-	return cycleTime * ((100 - power)/100)
+	return ((power / 100 ) * cycleTime)+1
 end
 
 
@@ -48,6 +48,13 @@ druidBalance.lunarPower = function()
 	if power > 0 then return 0 end 
 	if power < 0 then power = power * -1 end
 	return power
+end
+
+druidBalance.shouldCastWrath = function()
+	local power = jps.eclipsePower()
+end
+druidBalance.shouldCastStarfire = function() 
+	local power = jps.eclipsePower()
 end
 spellTableBalance = {
 		
@@ -87,10 +94,11 @@ spellTableBalance = {
 	
 	{druidBalance.starsurge, 'GetSpellCharges(druidBalance.starsurge)==2 and druidBalance.starsurgeRecharge() < 6' },
 	{druidBalance.starsurge, 'GetSpellCharges(druidBalance.starsurge)==3 ' },
-	{druidBalance.wrath, 'druidBalance.lunarPower() > 0' },
-	{druidBalance.starfire, 'jps.eclipsePower() >= 0' },
-	
-    }
+	{druidBalance.wrath, 'druidBalance.lunarPower() > 0 and druidBalance.eclipseChange() > jps.spellCastTime(druidBalance.wrath)' },
+	{druidBalance.wrath, 'jps.eclipsePower() > 0 and jps.spellCastTime(druidBalance.wrath) > druidBalance.eclipseChange()' },	{druidBalance.starfire, 'jps.eclipsePower() >= 0' },
+	{druidBalance.starfire, 'jps.eclipsePower() >= 0 and druidBalance.eclipseChange() > jps.spellCastTime(druidBalance.starfire)' },
+	{druidBalance.starfire, 'druidBalance.lunarPower() > 0 and jps.spellCastTime(druidBalance.starfire) > druidBalance.eclipseChange()' },
+	}
 		
   },
 		
@@ -114,9 +122,10 @@ spellTableBalance = {
 
 	
 	
-	{druidBalance.wrath, 'druidBalance.lunarPower() > 0' },
-	{druidBalance.starfire, 'jps.eclipsePower() >= 0' },
-
+	{druidBalance.wrath, 'druidBalance.lunarPower() > 0 and druidBalance.eclipseChange() > jps.spellCastTime(druidBalance.wrath)' },
+	{druidBalance.wrath, 'jps.eclipsePower() > 0 and jps.spellCastTime(druidBalance.wrath) > druidBalance.eclipseChange()' },	
+	{druidBalance.starfire, 'jps.eclipsePower() >= 0 and druidBalance.eclipseChange() > jps.spellCastTime(druidBalance.starfire)' },
+	{druidBalance.starfire, 'druidBalance.lunarPower() > 0 and jps.spellCastTime(druidBalance.starfire) > druidBalance.eclipseChange()' },
 	
 }
 		
