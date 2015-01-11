@@ -109,6 +109,11 @@ do
 	-- Localization for Class & Spec
 		["Training Dummy"]= "Mannequin d'entraînement",
 		["Raider's Training Dummy"] = "Mannequin d'entraînement d'écumeur de raids",
+		["Dungeoneer's Training Dummy"] ="",
+		["Healing Dummy"] ="",
+		["Combat Dummy"] ="",
+		["Advanced Target Dummy"] ="",
+		["Dummy"] ="Mannequin",
 		["Discipline"] = "Discipline",
 		["Holy"] = "Sacré",
 		["Restoration"] = "Restauration",
@@ -125,6 +130,30 @@ do
 		["Hunter"] = "Chasseur",
 		["Rogue"] = "Voleur",
 		["Use"] = "Utiliser",
+		} , {__index = function(t, index) return index end})
+	elseif (GetLocale() == "deDE") then
+			MyLocalizationTable = setmetatable({
+	-- localization for jps.lua & jps.data & Rotations
+		["Drink"] = "Trinken",
+	-- Localization for Class & Spec
+
+		["Dummy"] ="Trainingsattrappe",
+		["Discipline"] = "Disziplin",
+		["Holy"] = "Heilig",
+		["Restoration"] = "Wiederherstellungs",
+		["Mistweaver"] = "Nebelwiker",
+		["Priest"] = "Priester",
+		["Druid"] = "Druide",
+		["Paladin"] = "Paladin",
+		["Mage"] = "Magier",
+		["Warlock"] = "Hexenmeister",
+		["Shaman"] = "Schamane",
+		["Warrior"] = "Krieger",
+		["Paladin"] = "Paladin",
+		["Death Knight"] = "Todesritter",
+		["Hunter"] = "Jäger",
+		["Rogue"] = "Schurke",
+		["Use"] = "Benutzen",
 		} , {__index = function(t, index) return index end})
 	else
 		MyLocalizationTable = setmetatable({}, {__index = function(t, index) return index end})
