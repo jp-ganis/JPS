@@ -171,18 +171,20 @@ function dotTracker.shouldSpellBeCast(spellId, unit)
 	if not jps.canDPS(unit) then 
 		return false
 	end
+	if jps.Class == L["Warlock"] then
+		if jps.Spec == "Destruction" then
+			if UnitName("target") == "Spore Shooter" then return false end -- we need a better logic for small adds... like on brackenspore, Mar'gok.. we never ever need to put immolate on them 
+		end
+	end
+	
 	if jps.IsCastingSpell("Arcane Protection",unit) then return false end
 	if jps.IsCastingSpell("Awaken Runestone",unit) then return false end
-	if UnitExists("mouseover") and unit == "mouseover" then
-		if UnitName("mouseover") == "Spore Shooter" and name == "Agony" then return false end
-		if UnitName("mouseover") == "Mind Fungus" and name == "Agony" then return false end
-	end
+
 	if jps.dotTracker.isTrivial(unit) and jps.Spec ~= "Affliction" then 
 		return false 
 	end
 	
 	-- here's the actual logic
-
 	local _,_,_,_,_,duration,expires = UnitDebuff(unit,name,"","player")
 	local castSpell = false
 
