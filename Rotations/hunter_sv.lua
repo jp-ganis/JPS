@@ -47,63 +47,56 @@ function hunter.isBoss()
 	return false
 end
 spellTableSV =  {
-
-    -- Revive pet
-    --{ hunter.spells.heartOfThePhoenix, 'UnitIsDead("pet") == true and HasPetUI() == true' }, -- Instant revive pet (only some pets, Ferocity)
-    --{ hunter.spells.revivePet, '((UnitIsDead("pet") == true and HasPetUI() == true) or HasPetUI() == false) and not jps.Moving' },
-
-    -- Heal pet
-    { hunter.spells.mendPet, 'jps.hp("pet") < 0.90 and not jps.buff(hunter.spells.mendPet, "pet") and UnitExists("pet") == true and not UnitIsDead("pet")' },
-
-    -- Misdirection
-    { hunter.spells.misdirection, 'jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == false and not IsInGroup() and UnitExists("pet") == true', 'pet' }, -- IsInGroup() returns true/false. Works for any party/raid
-    { hunter.spells.misdirection, 'jps.combatTime() < 24 and  jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == true', 'focus' },
-
-    -- Interrupt
-    { hunter.spells.counterShot, 'jps.shouldKick()' },
-    --{ hunter.spells.counterShot, 'jps.shouldKick() and jps.CastTimeLeft("target") < 1.4' },
-
-    -- Healthstone
-    { jps.useBagItem(5512), 'jps.hp("player") < 0.30' },
-
-    -- Trinkets and stuff
-		{ {"macro","/use 13"}, 'jps.useEquipSlot(13) and jps.UseCDs'},
-		{ {"macro","/use 14"}, 'jps.useEquipSlot(14) and jps.UseCDs'},
-    { "Berserking", 'jps.UseCDs' },
+	
+	-- Revive pet
+	--{ hunter.spells.heartOfThePhoenix, 'UnitIsDead("pet") == true and HasPetUI() == true' }, -- Instant revive pet (only some pets, Ferocity)
+	--{ hunter.spells.revivePet, '((UnitIsDead("pet") == true and HasPetUI() == true) or HasPetUI() == false) and not jps.Moving' },
+	
+	-- Heal pet
+	{ hunter.spells.mendPet, 'jps.hp("pet") < 0.90 and not jps.buff(hunter.spells.mendPet, "pet") and UnitExists("pet") == true and not UnitIsDead("pet")' },
+	
+	-- Misdirection
+	{ hunter.spells.misdirection, 'jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == false and not IsInGroup() and UnitExists("pet") == true', 'pet' }, -- IsInGroup() returns true/false. Works for any party/raid
+	{ hunter.spells.misdirection, 'jps.combatTime() < 24 and  jps.Defensive and not jps.buff(hunter.spells.misdirection) and UnitExists("focus") == true', 'focus' },
+	
+	-- Interrupt
+	{ hunter.spells.counterShot, 'jps.shouldKick()' },
+	--{ hunter.spells.counterShot, 'jps.shouldKick() and jps.CastTimeLeft("target") < 1.4' },
+	
+	-- Healthstone
+	{ jps.useBagItem(5512), 'jps.hp("player") < 0.30' },
+	
+	-- Trinkets and stuff
+	{ {"macro","/use 13"}, 'jps.useEquipSlot(13) and jps.UseCDs'},
+	{ {"macro","/use 14"}, 'jps.useEquipSlot(14) and jps.UseCDs'},
+	{ "Berserking", 'jps.UseCDs' },
 	{ "Blood Fury", 'jps.UseCDs' },
 	{ hunter.spells.arcaneShot, 'jps.myDebuffDuration("Serpent Sting") <= 2'},
 	{ hunter.spells.arcaneShot, 'jps.myDebuffDuration("Serpent Sting","mouseover") <= 2 and jps.canDPS("mouseover")',"mouseover"},
-
-	{ hunter.spells.aMurderOfCrows, 'jps.UseCDs' },
-
-    -- Traps
-    { hunter.spells.trapLauncher, 'not jps.buff(hunter.spells.trapLauncher)' },
-    { hunter.spells.explosiveTrap, '(hunter.trapKey() == 1 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
-    { hunter.spells.freezingTrap, '(hunter.trapKey() == 2 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
-    { hunter.spells.iceTrap, '(hunter.trapKey() == 3 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
-
-    -- Rotation
-    { hunter.spells.chimaeraShot },
-    { hunter.spells.killShot },
-    { hunter.spells.rapidFire, 'jps.UseCDs and jps.hp("target") < 0.80 and not jps.bloodlusting()' },
 	
-    { hunter.spells.stampede, 'jps.UseCDs and jps.TimeToDie("target") > 20' },
+	{ hunter.spells.aMurderOfCrows, 'jps.UseCDs' },
+	
+	-- Traps
+	{ hunter.spells.trapLauncher, 'not jps.buff(hunter.spells.trapLauncher)' },
+	{ hunter.spells.explosiveTrap, '(hunter.trapKey() == 1 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+	{ hunter.spells.freezingTrap, '(hunter.trapKey() == 2 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+	{ hunter.spells.iceTrap, '(hunter.trapKey() == 3 or hunter.trapKey() == 6) and jps.buff(hunter.spells.trapLauncher)' },
+	
+	-- Rotation
+	
+	{ hunter.spells.stampede, 'jps.UseCDs and jps.TimeToDie("target") > 20' },
 	{ hunter.spells.glaiveToss, 'jps.MultiTarget and jps.UseCDs' },
 	{ hunter.spells.barrage, 'jps.MultiTarget and jps.UseCDs' },
 	{ hunter.spells.multiShot,'jps.MultiTarget and jps.buff("Bombardment") '},
 	{ hunter.spells.multiShot,'jps.MultiTarget and jps.cooldown("barrage") > 5'},
-
-    {"nested", jps.buff(hunter.buffs.carefulAim), {
-        { hunter.spells.aimedShot },
-        { hunter.spells.arcaneShot },
-    }},
-    { hunter.spells.direBeast, 'jps.focus() < 90 and UnitExists("pet")== true' },
-    { hunter.spells.glaiveToss },
-    { hunter.spells.powershot },
-
+	
+	{ hunter.spells.direBeast, 'jps.focus() < 90 and UnitExists("pet")== true' },
+	{ hunter.spells.glaiveToss },
+	{ hunter.spells.powershot },
+	
 	{ hunter.spells.blackArrow},
 	{ hunter.spells.explosiveShot },
-    { hunter.spells.arcaneShot },
+	{ hunter.spells.arcaneShot },
 	{ hunter.spells.cobraShot	},
 	{ hunter.spells.focusingShot,'jps.focus() < 60'	},
 }
