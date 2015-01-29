@@ -13,8 +13,8 @@ jps.registerRotation("DRUID","GUARDIAN",function()
 	-- Other stuff
 	local rage = UnitMana("player")
 	local lacCount = jps.debuffStacks("lacerate")
-	local lacDuration = jps.debuffDuration("lacerate")
-	local thrashDuration = jps.debuffDuration("thrash")
+	local lacDuration = jps.myDebuffDuration("lacerate")
+	local thrashDuration = jps.myDebuffDuration("thrash")
 	local hp = UnitHealth("player")/UnitHealthMax("player") * 100
 	local onCD = "onCD"
 
@@ -22,17 +22,12 @@ jps.registerRotation("DRUID","GUARDIAN",function()
 	{
 
 		-- Buffs
-		{ "mark of the wild",		 	not jps.hasStatsBuff("player") , player },
+		{ "mark of the wild",		 	not jps.hasStatsBuff("player") and not jps.buff("Bear Form"), player },
 		--[[{nil,									IsSpellInRange("lacerate","target") ~= 1 },]]--
-
+		{"Bear Form", not jps.buff("Bear Form")},
+		
 		-- Interrupts
-		{"skull bash",						jps.Interrupts and jps.shouldKick() },
-		{"mighty bash",					jps.Interrupts and jps.shouldKick() },
-
-		-- Healing / Support
-		{"heart of the wild",			IsControlKeyDown() == true},
-		{"rejuvenation",					jps.buff("heart of the wild") and hp < 75 and not jps.buff("rejuvenation")},
-		{"rejuvenation", 				jps.buff("heart of the wild") and IsControlKeyDown() == true and IsSpellInRange("rejuvenation", "mouseover"), "mouseover" },
+		{"skull bash",						jps.shouldKick() },
 
 		-- Defense
 		{"barkskin",						hp < 75 and jps.UseCDs},
@@ -52,10 +47,10 @@ jps.registerRotation("DRUID","GUARDIAN",function()
 		-- Single Target
 		{"mangle",			onCD or jps.buff("berserk") },
 		{"maul",			rage > 90 and hp >= 85 },
-		{"faerie fire",		not jps.debuff("weakened armor") },
 		{"thrash",			not jps.debuff("thrash") or thrashDuration < 3 },
 		{"lacerate",		lacCount < 3 or lacDuration < 1 },
-		{"faerie fire",		onCD },
+		--{"trash"},
+	
 	}
 
 	spell,target = parseSpellTable(spellTable)
