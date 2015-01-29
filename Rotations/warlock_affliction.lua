@@ -66,7 +66,7 @@ local function cancelChannelingIfNecessary(unit)
 	if not UnitExists(unit) then return false end
 	if UnitChannelInfo("player") == wl.spells.drainSoul and jps.dotTracker.isTrivial(unit) == false then
 		local stopChanneling = false
-		if UnitLevel(unit) == -1 or UnitClassification(unit) == "elite" or string.match(GetUnitName(unit), L["Dummy"]) then
+		if UnitLevel(unit) == -1 or UnitClassification(unit) == "elite" then
 			local oneDotMissing, allDotsMissing = getDotStatus(unit)
 			if oneDotMissing then stopChanneling = true end
 		end
