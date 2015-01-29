@@ -91,7 +91,7 @@ wl.spells["moltenCore"] = toSpellName(140074)
 wl.spells["demonBolt"] = toSpellName(157695)
 -- Professions
 wl.spells["lifeblood"] = toSpellName(121279)
-
+wl.spells["grimoireOfSupremacy"] = toSpellName(108499)
 
 
 -- check if our procs are up
