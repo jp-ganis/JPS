@@ -25,7 +25,22 @@ function jps.playerInLFR()
 	return false
 end
 
+function jps.unitIsEnemy(unit)
+	if unit == nil then unit = "player" end
+	if not UnitExists(unit) then return false end
+	if UnitIsEnemy ("player",unit) then return true end
+	return false
+end
+
 function jps.findMeAggroTank(targetUnit)
+	if not targetUnit then
+		if UnitExists("target") then
+			targetUnit = "target"
+		end
+		if UnitExists("boss1") and not targetUnit then
+			targetUnit = "boss1"
+		end
+	end
 	local allTanks = jps.findTanksInRaid()
 	local highestThreat = 0
 	local aggroTank = "player"
@@ -37,7 +52,7 @@ function jps.findMeAggroTank(targetUnit)
 		end
 	end
 	if aggroTank == "player" and jps.tableLength(allTanks) > 0 and targetUnit ~= nil then --yeah nobody is tanking our target :):D so just return "a" tank
-		return jps.findMeAggroTank()
+		return jps.findMeATank()
 	end
 	if jps.Debug then write("found Aggro Tank: "..aggroTank) end
 	return aggroTank
@@ -45,6 +60,7 @@ end
 
 function jps.unitGotAggro(unit)
 	if unit == nil then unit = "player" end
+	if not UnitExists(unit) then return false end
 	if UnitThreatSituation(unit) == 3 then return true end
 	return false
 end
@@ -73,6 +89,10 @@ function jps.findTanksInRaid()
 			foundTank = true
 		end
 		if foundTank == false and jps.buff("bear form",unitName) then
+			table.insert(myTanks, unitName);
+			foundTank = true
+		end
+		if foundTank == false and jps.buff("Defensive Stance",unitName) then
 			table.insert(myTanks, unitName);
 			foundTank = true
 		end
