@@ -26,7 +26,7 @@ end
 
 function wl.shouldMouseoverDoom()
 	if not jps.canDPS("mouseover") then return false end
-	if jps.debuff(wl.spells.doom, "mouseover") then return false end
+	if jps.myDebuffDuration(wl.spells.doom, "mouseover") > 20 then return false end
 	return true
 end
 
