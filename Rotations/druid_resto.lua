@@ -24,7 +24,7 @@ druid.spells["wildMushroom"] = toSpellName(145205)
 
 druid.groupHealTable = {"NoSpell", false, "player"}
 function druid.groupHealTarget()
-    local tank = jps.findMeATank()
+    local tank = jps.findMeAggroTank()
     local healTarget = jps.LowestInRaidStatus()
     if jps.canHeal(tank) and jps.hp(tank) <= 0.5 then healTarget = tank end
     if jps.hpInc("player") < 0.2 then healTarget = "player" end
@@ -100,7 +100,7 @@ function druid.legacyDefaultTarget()
     local me = "player"
     
     -- Tank is focus.
-    tank = jps.findMeATank()
+    tank = jps.findMeAggroTank()
     
     --Default to healing lowest partymember
     local defaultTarget = jps.LowestInRaidStatus()
@@ -116,6 +116,10 @@ function druid.legacyDefaultHP()
     return jps.hpInc(druid.legacyDefaultTarget())
 end
 
+function druid.hasLivingMushroom()
+	if GetTotemInfo(1) then return true end
+	return false
+end
 --[[[
 @rotation Legacy Rotation
 @class DRUID
@@ -135,28 +139,44 @@ jps.registerStaticTable("DRUID","RESTORATION",{
     -- Buffs
     { druid.spells.markOfTheWild, 'not jps.buff(druid.spells.markOfTheWild)', player },
     
+	{ {"macro","/use 13"}, 'jps.useEquipSlot(13) and jps.UseCDs and jps.isManaRegTrinket(0) and jps.mana() < 0.8'},
+	{ {"macro","/use 14"}, 'jps.useEquipSlot(14) and jps.UseCDs and jps.isManaRegTrinket(1) and jps.mana() < 0.8'},
+
     -- CDs
     { druid.spells.barkskin, 'jps.hp() < 0.50' },
     
     {druid.spells.wildMushroom, 'IsShiftKeyDown() == true'  },
+    {druid.spells.wildMushroom, 'not druid.hasLivingMushroom() and jps.unitGotAggro("mouseover")'  },
     
+	
 	{"nested",'jps.Interrupts', {
 		druid.dispel
 	}},
-    { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeATank()) < 3', jps.findMeATank },
+    { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeAggroTank()) < 3', jps.findMeAggroTank },
     { druid.spells.swiftmend, 'druid.legacyDefaultHP() < 0.85 and (jps.buff(druid.spells.rejuvination,druid.legacyDefaultTarget()) or jps.buff(druid.spells.regrowth,druid.legacyDefaultTarget()))', druid.legacyDefaultTarget },
     { druid.spells.wildGrowth, 'druid.legacyDefaultHP() < 0.90 and jps.MultiTarget', druid.legacyDefaultTarget },
-    { druid.spells.rejuvination, 'druid.legacyDefaultHP() < 0.85 and not jps.buff(druid.spells.rejuvination,druid.legacyDefaultTarget())', druid.legacyDefaultTarget },
+	
 	--{ druid.spells.rejuvination, 'jps.talentInfo("Germination") and druid.legacyDefaultHP() < 0.65 and jps.buff(druid.spells.rejuvination,druid.legacyDefaultTarget()) and not jps.buff("Rejuvenation (Germination)",druid.legacyDefaultTarget())', druid.legacyDefaultTarget },
-	
-    { druid.spells.rejuvination, 'jps.buffDuration(druid.spells.rejuvination,jps.findMeATank()) < 3', jps.findMeATank },    
-	{ druid.spells.rejuvination, 'jps.buff(druid.spells.rejuvination,jps.findMeATank()) and jps.talentInfo("Germination") and not jps.buff("Rejuvenation (Germination)",jps.findMeATank()) ', jps.findMeATank },  
-	
-	{ druid.spells.healingTouch, '(jps.buff(druid.spells.naturesSwiftness) or not jps.Moving) and jps.hp(jps.findMeATank()) < 0.70', jps.findMeATank },   
-	{ druid.spells.healingTouch, '(jps.buff(druid.spells.naturesSwiftness) or not jps.Moving) and druid.legacyDefaultHP() < 0.60', druid.legacyDefaultTarget },    
 
-    { druid.spells.regrowth, 'druid.legacyDefaultHP() < 0.50', druid.legacyDefaultTarget },
+
+	{ druid.spells.regrowth, 'jps.hp(jps.findMeAggroTank()) < 0.45', jps.findMeAggroTank },   
+    { druid.spells.regrowth, 'druid.legacyDefaultHP() < 0.45', jps.findMeAggroTank },	
+	{ druid.spells.healingTouch, 'not jps.Moving and jps.hp(jps.findMeAggroTank()) < 0.70', jps.findMeAggroTank },   
+	{ druid.spells.healingTouch, 'not jps.Moving and druid.legacyDefaultHP() < 0.65', druid.legacyDefaultTarget },    
+	{ druid.spells.healingTouch, 'jps.buff(druid.spells.naturesSwiftness) and jps.hp(jps.findMeAggroTank()) < 0.70', jps.findMeAggroTank },   
+	{ druid.spells.healingTouch, 'jps.buff(druid.spells.naturesSwiftness) and druid.legacyDefaultHP() < 0.65', druid.legacyDefaultTarget },    
+  
+	{ druid.spells.rejuvination, 'druid.legacyDefaultHP() < 0.85 and not jps.buff(druid.spells.rejuvination,druid.legacyDefaultTarget())', druid.legacyDefaultTarget },
+		
+    { druid.spells.rejuvination, 'jps.buffDuration(druid.spells.rejuvination,jps.findMeAggroTank()) < 3', jps.findMeAggroTank },    
+	{ druid.spells.rejuvination, 'jps.buff(druid.spells.rejuvination,jps.findMeAggroTank()) and jps.talentInfo("Germination") and not jps.buff("Rejuvenation (Germination)",jps.findMeAggroTank()) and jps.hp(jps.findMeAggroTank()) < 0.95 ', jps.findMeAggroTank },  
+	
+
+	
     { druid.spells.naturesSwiftness, 'druid.legacyDefaultHP() < 0.40' },
+		
+	{ druid.spells.rejuvination, 'jps.buff(druid.spells.rejuvination,druid.legacyDefaultTarget()) and jps.talentInfo("Germination") and not jps.buff("Rejuvenation (Germination)",druid.legacyDefaultTarget()) and jps.hp(druid.legacyDefaultTarget()) < 0.7 ', druid.legacyDefaultTarget},  
+	
 }, "Legacy Rotation")
 
 
@@ -196,7 +216,7 @@ jps.registerStaticTable("DRUID","RESTORATION",{
     -- Group Heal
     {"nested", 'not jps.Defensive', {
         -- Lifebloom on tank
-        { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeATank()) < 3', jps.findMeATank },
+        { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeAggroTank()) < 3', jps.findMeAggroTank },
         -- Group Heal
         { druid.spells.rejuvination, 'jps.hpInc(druid.groupHealTarget()) < 0.80 and not jps.buff(druid.spells.rejuvination,druid.groupHealTarget())', druid.groupHealTarget },
         { druid.spells.swiftmend, 'jps.buff(druid.spells.rejuvination,druid.groupHealTarget()) or jps.buff(druid.spells.regrowth,druid.groupHealTarget())', druid.groupHealTarget },
@@ -206,7 +226,7 @@ jps.registerStaticTable("DRUID","RESTORATION",{
     -- Focus Heal
     {"nested", 'jps.Defensive and druid.focusHealTarget() ~= nil', {
         { druid.spells.regrowth, 'jps.buffDuration(druid.spells.harmony) < 2 and not jps.buff(druid.spells.regrowth, druid.focusHealTarget())', druid.focusHealTarget },
-        { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeATank()) < 3', jps.findMeATank },
+        { druid.spells.lifebloom, 'jps.buffDuration(druid.spells.lifebloom,jps.findMeAggroTank()) < 3', jps.findMeAggroTank },
         { druid.spells.rejuvination, 'jps.buffDuration(druid.spells.rejuvination,druid.focusHealTarget()) < 2', druid.focusHealTarget },
         { druid.spells.swiftmend, 'jps.buff(druid.spells.rejuvination,druid.focusHealTarget()) or jps.buff(druid.spells.regrowth,druid.focusHealTarget())', druid.focusHealTarget },
         { druid.spells.naturesSwiftness, 'jps.hpInc(druid.focusHealTarget()) < 0.40' },
