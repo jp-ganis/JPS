@@ -29,7 +29,7 @@ end
 
 function jps.MagicDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 	if not jps.canHeal(unit) then return false end
-	if debuffunit == nil then debuffunit = "Magic" end
+	if debuffunit == nil then debuffunit = L["Magic"] end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
@@ -44,7 +44,7 @@ end
 
 function jps.DiseaseDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 	if not jps.canHeal(unit) then return false end
-	if debuffunit == nil then debuffunit = "Disease" end
+	if debuffunit == nil then debuffunit = L["Disease"] end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
@@ -59,7 +59,7 @@ end
 
 function jps.PoisonDispel(unit,debuffunit) -- "Magic" -- "Disease" -- "Poison"
 	if not jps.canHeal(unit) then return false end
-	if debuffunit == nil then debuffunit = "Poison" end
+	if debuffunit == nil then debuffunit = L["Poison"] end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
@@ -74,7 +74,7 @@ end
 
 function jps.CurseDispel(unit,debuffunit) 
 	if not jps.canHeal(unit) then return false end
-	if debuffunit == nil then debuffunit = "Curse" end
+	if debuffunit == nil then debuffunit = L["Curse"] end
 	local auraName, icon, count, debuffType, expirationTime, castBy
 	local i = 1
 	auraName, _, icon, count, debuffType, _, expirationTime, castBy, _, _, spellId = UnitDebuff(unit, i) -- UnitAura(unit,i,"HARMFUL") 
