@@ -231,22 +231,6 @@ do
 		["Combat Dummy"] ="",
 		["Advanced Target Dummy"] ="",
 		["Dummy"] ="Тренировочный манекен",
-		["Discipline"] = "Послушание",
-		["Holy"] = "Свет",
-		["Restoration"] = "Исцеление",
-		["Mistweaver"] = "Ткач туманов",
-		["Priest"] = "Жрец",
-		["Druid"] = "Друид",
-		["Paladin"] = "Паладин",
-		["Mage"] = "Маг",
-		["Warlock"] = "Чернокнижник",
-		["Shaman"] = "Шаман",
-		["Warrior"] = "Воин",
-		["Paladin"] = "Паладин",
-		["Death Knight"] = "Рыцарь смерти",
-		["Hunter"] = "Охотник",
-		["Rogue"] = "Разбойник",
-		["Use"] = "Использовать",
 		} , {__index = function(t, index) return index end})
 	else
 		MyLocalizationTable = setmetatable({}, {__index = function(t, index) return index end})
